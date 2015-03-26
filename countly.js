@@ -201,6 +201,44 @@
 		
 		//getting os
 		var nAgt = navigator.userAgent;
+		var browser = navigator.appName;
+		var version = '' + parseFloat(navigator.appVersion);
+		var nameOffset, verOffset;
+		
+		// Opera
+        if (nAgt.indexOf('Opera') != -1) {
+            browser = 'Opera';
+        }
+        // MSIE
+        else if (nAgt.indexOf('MSIE') != -1) {
+            browser = 'Internet Explorer';
+        }
+        // Chrome
+        else if (nAgt.indexOf('Chrome') != -1) {
+            browser = 'Chrome';
+        }
+        // Safari
+        else if (nAgt.indexOf('Safari') != -1) {
+            browser = 'Safari';
+        }
+        // Firefox
+        else if (nAgt.indexOf('Firefox') != -1) {
+            browser = 'Firefox';
+        }
+        // MSIE 11+
+        else if (nAgt.indexOf('Trident/') != -1) {
+            browser = 'Internet Explorer';
+        }
+        // Other browsers
+        else if ((nameOffset = nAgt.lastIndexOf(' ') + 1) < (verOffset = nAgt.lastIndexOf('/'))) {
+            browser = nAgt.substring(nameOffset, verOffset);
+            if (browser.toLowerCase() == browser.toUpperCase()) {
+                browser = navigator.appName;
+            }
+        }
+		
+		metrics._carrier = browser;
+		
         var os = "unknown";
         var clientStrings = [
             {s:'Windows 3.11', r:/Win16/},
