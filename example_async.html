@@ -1,0 +1,56 @@
+<html>
+<head>
+<script type='text/javascript'>
+//some default pre init
+var Countly = Countly || {};
+Countly.q = Countly.q || [];
+
+//provide countly initialization parameters
+Countly.app_key = "740ac50f01d81fd9e9914323ea482ad44918bfc9";
+Countly.url = "http://178.62.137.211";
+
+//start pushing function calls to queue
+
+//start session on each page view
+Countly.q.push(['begin_session']);
+
+//add any events you want like pageView
+Countly.q.push(['add_event',{
+	key:"asyncPageView", 
+	"segmentation": {
+		"url": window.location.pathname
+	}
+}]);
+
+//end session on leaving page
+window.onunload = function(){
+	Countly.end_session();
+};
+
+//load countly script asynchronously
+(function() {
+	var cly = document.createElement('script'); cly.type = 'text/javascript'; 
+	cly.async = true;
+	//enter url of script here
+	cly.src = 'countly.min.js';
+	cly.onload = function(){Countly.init()};
+	var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(cly, s);
+})();
+</script>
+</head>
+<body>
+<script type='text/javascript'>
+//send event on button click
+function clickEvent(ob){
+	Countly.q.push(['add_event',{
+		key:"asyncButtonClick", 
+		"segmentation": {
+			"id": ob.id
+		}
+	}]);
+}
+</script>
+<input type="button" id="asyncTestButton" onclick="clickEvent(this)" value="Test Button">
+<p><a href='http://count.ly/'>Count.ly</a></p>
+</body>
+</html>

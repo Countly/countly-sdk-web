@@ -1,0 +1,45 @@
+<html>
+<head>
+<!--Countly script-->
+<script type='text/javascript' src='countly.min.js'></script>
+<script type='text/javascript'>
+
+//initializing countly with params
+Countly.init({
+	app_key: "2b0d8dc1b768952ec42c423417842f0d1d7f9982",
+	url: "http://178.62.137.211",
+	debug:true
+})
+//start session on each page view
+Countly.begin_session();
+
+//add any events you want like pageView
+Countly.add_event({
+	"key": "pageView",
+	"segmentation": {
+		"url": window.location.pathname
+	}
+});
+
+//end session on leaving page
+window.onunload = function(){
+	Countly.end_session();
+};
+</script>
+</head>
+<body>
+<script type='text/javascript'>
+//send event on button click
+function clickEvent(ob){
+	Countly.add_event({
+		key:"buttonClick", 
+		"segmentation": {
+			"id": ob.id
+		}
+	});
+}
+</script>
+<input type="button" id="testButton" onclick="clickEvent(this)" value="Test Button">
+<p><a href='http://count.ly/'>Count.ly</a></p>
+</body>
+</html>
