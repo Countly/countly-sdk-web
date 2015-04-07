@@ -27,6 +27,7 @@
 			if(Countly.q.constructor !== Array)
 				Countly.q = [];
 			heartBeat();
+			store("cly_id", Countly.device_id);
 			log("Countly initialized");
 		}
 	};
@@ -60,6 +61,14 @@
 			sessionStarted = false;
 			toRequestQueue({end_session:1, session_duration:getTimestamp()-lastBeat});
 		}
+	};
+	
+	Countly.change_id = function(newId){
+		var oldId = Countly.device_id;
+		Countly.device_id = newId;
+		store("cly_id", Countly.device_id);
+		log("Changing id");
+		toRequestQueue({old_device_id:oldId});
 	};
 	
 	Countly.add_event = function(event){
