@@ -4,7 +4,7 @@
 	var inited = false,
 		sessionStarted = false,
 		apiPath = "/i",
-		beatInterval = 1000,
+		beatInterval = 500,
 		requestQueue = [],
 		eventQueue = [],
 		autoExtend = true,
@@ -90,6 +90,189 @@
 		var props = ["name", "username", "email", "organization", "phone", "picture", "gender", "byear", "custom"];
 		toRequestQueue({user_details: JSON.stringify(getProperties(user, props))});
 	}
+    
+    /**
+	*  PULIC HELP METHODS FOR COMMON ACTIONS
+	**/
+    
+    Countly.track_sessions = function(){
+        //start session
+        Countly.begin_session();
+        
+        //end session on unload
+        window.onunload = function(){
+            Countly.end_session();
+        };
+    };
+    
+    Countly.track_pageview = function(){
+        //track pageview
+        Countly.add_event({
+            "key": "pageView",
+            "segmentation": {
+                "host": window.location.host,
+                "path": window.location.pathname,
+                "protocol": window.location.protocol,
+                "hash": window.location.hash,
+                "query": window.location.search,
+                "url": window.location.href
+            }
+        });
+    };
+    
+    Countly.track_clicks = function(){
+        function trackClicks(){
+            //add any events you want like pageView
+            if(document.getElementsByTagName){
+                var links = document.getElementsByTagName("a");
+                for(var i = 0; i < links.length; i++){
+                    add_event(links[i], "click", function(event){
+
+                        //get element which was clicked
+                        var elem = get_event_target(event);
+                        
+                        //cross browser click coordinates
+                        get_page_coord(event);
+                        
+                        //record click event
+                        Countly.add_event({
+                            "key": "linkClick",
+                            "segmentation": {
+                                "href": elem.href,
+                                "text": elem.innerText,
+                                "id": elem.id,
+                                "x":event.pageX,
+                                "y":event.pageY
+                            }
+                        });
+                        
+                        //anticipate page unload
+                        if(elem.href && elem.target !== '_blank' && !(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey)){
+                            //most probably user will leave the page
+                            
+                            //end Countly session
+                            Countly.end_session();
+                            
+                            //prevent user from leaving
+                            prevent_default(event);
+                            
+                            //allow user to leave after some time
+                            setTimeout(function() {
+                                window.location.href = elem.href;
+                            }, 1000);
+                        }
+                    });
+                }
+            }
+            else{
+                log("Can't track clicks");
+            }
+        }
+        if (document.readyState === "complete") {
+            trackClicks();
+        }
+        else{
+            add_event(window, "load", trackClicks);
+        }
+    };
+    
+    Countly.track_forms = function(){
+        function getInputName(input){
+            return input.name || input.id || input.type || input.nodeName;
+        };
+        function processForm(form){
+            // use to avoid duplicate submits
+            var submitted = false;
+            add_event(form, "submit", function(event){
+                if(!submitted){
+                    submitted = true;
+                    
+                    var segmentation = {
+                        "id": form.id,
+                        "name": form.name,
+                        "action": form.action,
+                        "method": form.method
+                    };
+                    
+                    //get input values
+                    var input;
+                    if(form.elements)
+                        for(var i = 0; i < form.elements.length; i++){
+                            input = form.elements[i];
+                            if(input.nodeName.toLowerCase() == "select"){
+                                if(input.multiple){
+                                    var values = [];
+                                    if(input.options)
+                                        for(var j = 0; j < input.options.length; j++){
+                                            if (input.options[j].selected)
+                                                values.push(input.options[j].value);
+                                        }
+                                    segmentation["input:"+getInputName(input)] = values.join();
+                                }
+                                else
+                                    segmentation["input:"+getInputName(input)] = input.options[input.selectedIndex].value;
+                            }
+                            else if(input.nodeName.toLowerCase() == "input"){
+                                if(input.type){
+                                    if(input.type.toLowerCase() == "checkbox" || input.type.toLowerCase() == "radio"){
+                                        if(input.checked)
+                                            segmentation["input:"+getInputName(input)] = input.value;
+                                    }
+                                    else{
+                                        segmentation["input:"+getInputName(input)] = input.value;
+                                    }
+                                }
+                                else
+                                    segmentation["input:"+getInputName(input)] = input.value;
+                            }
+                            else if(input.nodeName.toLowerCase() == "textarea"){
+                                segmentation["input:"+getInputName(input)] = input.value;
+                            }
+                            else if(input.value){
+                                segmentation["input:"+getInputName(input)] = input.value;
+                            }
+                        }
+                    
+                    //record submit event
+                    Countly.add_event({
+                        "key": "formSubmit",
+                        "segmentation": segmentation
+                    });
+                    
+                    //form will refresh page
+                    
+                    //end Countly session
+                    Countly.end_session();
+                    
+                    //prevent user from leaving
+                    prevent_default(event);
+                    
+                    //allow user to leave after some time
+                    setTimeout(function() {
+                        form.submit();
+                    }, 1000);
+                }
+            });
+        };
+        function trackForms(){
+            //add any events you want like pageView
+            if(document.getElementsByTagName){
+                var forms = document.getElementsByTagName("form");
+                for(var i = 0; i < forms.length; i++){
+                    processForm(forms[i]);
+                }
+            }
+            else{
+                log("Can't track forms");
+            }
+        }
+        if (document.readyState === "complete") {
+            trackForms();
+        }
+        else{
+            add_event(window, "load", trackForms);
+        }
+    };
 	
 	/**
 	*  PRIVATE METHODS
@@ -388,6 +571,69 @@
 		}
 		return ob;
 	};
+    
+    //add event
+	var add_event = function(element, type, listener){
+		if(element.addEventListener)
+		{
+			element.addEventListener(type, listener, false);
+		}
+		else
+		{
+			element.attachEvent('on' +  type, listener);
+		}
+	};
+    
+    //get element that fired event
+    var get_event_target = function(event){
+        if(!event)
+        {
+            return window.event.srcElement;
+        }
+        else if(event.target)
+        {
+            return event.target; 
+        }
+        else
+        {
+            return event.srcElement;
+        }
+    };
+    
+    //prevent default event behavior
+    var prevent_default = function(event){
+        if(window.event)
+        {
+            window.event.returnValue = false;
+        }
+        else if(event.preventDefault)
+        {
+            event.preventDefault();
+        }
+        else
+        {
+            event.returnValue = false;
+        }
+    };
+    
+    //get page coordinates
+    function get_page_coord(e)
+    {
+        //checking if pageY and pageX is already available
+        if (typeof e.pageY == 'undefined' &&  
+            typeof e.clientX == 'number' && 
+            document.documentElement)
+        {
+            //if not, then add scrolling positions
+            e.pageX = e.clientX + document.body.scrollLeft
+                + document.documentElement.scrollLeft;
+            e.pageY = e.clientY + document.body.scrollTop
+                + document.documentElement.scrollTop;
+        };
+        //return e which now contains pageX and pageY attributes
+        return e;
+    }
+
 	/**
 	* Simple localStorage with Cookie Fallback
 	* v.1.0.0
