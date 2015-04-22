@@ -1,0 +1,42 @@
+<html>
+<head>
+<!--Countly script-->
+<script type='text/javascript' src='countly.min.js'></script>
+<script type='text/javascript'>
+
+//initializing countly with params
+Countly.init({
+	app_key: "YOUR_API_KEY",
+	url: "http://yourdomain.com", //or none for default countly cloud
+	debug:true
+});
+
+//track sessions automatically
+Countly.track_sessions();
+
+//track pageviews automatically
+Countly.track_pageview();
+
+//track link clicks automatically
+Countly.track_clicks();
+
+//track form submissions automatically
+Countly.track_forms();
+
+
+</script>
+</head>
+<body>
+<form method='post' name='comments'>
+<p><input type="text" name="message" value="Message Name"></p>
+<p><textarea>Message</textarea></p>
+<p><select>
+<option value='option1'>Option1</option>
+<option value='option2'>Option2</option>
+<option value='option3'>Option3</option>
+</select></p>
+<p><input type="submit" value="Submit"></p>
+</form>
+<p><a href='http://count.ly/'>Count.ly</a></p>
+</body>
+</html>
