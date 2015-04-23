@@ -323,7 +323,7 @@
 		//extend session if needed
 		if(sessionStarted && autoExtend){
 			var last = getTimestamp();
-			if(last - lastBeat > 30){
+			if(last - lastBeat > 60){
 				Countly.session_duration(last - lastBeat);
 				lastBeat = last;
 			}
