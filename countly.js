@@ -168,11 +168,12 @@
         });
     };
     
-    Countly.track_clicks = function(){
+    Countly.track_clicks = function(parent){
+        parent = parent || document;
         function trackClicks(){
             //add any events you want like pageView
-            if(document.getElementsByTagName){
-                var links = document.getElementsByTagName("a");
+            if(parent.getElementsByTagName){
+                var links = parent.getElementsByTagName("a");
                 for(var i = 0; i < links.length; i++){
                     add_event(links[i], "click", function(event){
 
@@ -224,7 +225,8 @@
         }
     };
     
-    Countly.track_forms = function(){
+    Countly.track_forms = function(parent){
+        parent = parent || document;
         function getInputName(input){
             return input.name || input.id || input.type || input.nodeName;
         };
@@ -304,8 +306,8 @@
         };
         function trackForms(){
             //add any events you want like pageView
-            if(document.getElementsByTagName){
-                var forms = document.getElementsByTagName("form");
+            if(parent.getElementsByTagName){
+                var forms = parent.getElementsByTagName("form");
                 for(var i = 0; i < forms.length; i++){
                     processForm(forms[i]);
                 }
