@@ -100,9 +100,57 @@
         Countly.begin_session();
         
         //end session on unload
-        window.onunload = function(){
+        add_event(window, "unload", function(){
             Countly.end_session();
-        };
+        });
+        
+        //manage sessions on window visibility events
+        var hidden = "hidden";
+        
+        function onchange(){
+            if (document[hidden]) {
+                Countly.end_session();
+            } else {
+                Countly.begin_session();
+            }
+        }
+        
+        //Page Visibility API
+        if (hidden in document)
+            document.addEventListener("visibilitychange", onchange);
+        else if ((hidden = "mozHidden") in document)
+            document.addEventListener("mozvisibilitychange", onchange);
+        else if ((hidden = "webkitHidden") in document)
+            document.addEventListener("webkitvisibilitychange", onchange);
+        else if ((hidden = "msHidden") in document)
+            document.addEventListener("msvisibilitychange", onchange);
+        // IE 9 and lower:
+        else if ("onfocusin" in document){
+            add_event(window, "focusin", function(){
+                Countly.begin_session();
+            });
+            add_event(window, "focusout", function(){
+                Countly.end_session();
+            });
+        }
+        // All others:
+        else{
+            //old way
+            add_event(window, "focus", function(){
+                Countly.begin_session();
+            });
+            add_event(window, "blur", function(){
+                Countly.end_session();
+            });
+            
+            //newer mobile compatible way
+            add_event(window, "pageshow", function(){
+                Countly.begin_session();
+            });
+            add_event(window, "pagehide", function(){
+                Countly.end_session();
+            });
+        }
     };
     
     Countly.track_pageview = function(){
