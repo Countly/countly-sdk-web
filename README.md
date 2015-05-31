@@ -32,6 +32,7 @@ There are also other Countly SDK repositories below:
 Glad you asked. We need ideas, feedbacks and constructive comments. All your suggestions will be taken care with upmost importance. We are on [Twitter](http://twitter.com/gocountly) and [Facebook](http://www.facebook.com/Countly) if you would like to keep up with our fast progress!
 
 If you like Countly, why not use one of our badges and give a link back to us, so others know about this wonderful platform? 
+
 ![Light badge](https://count.ly/wp-content/uploads/2014/10/countly_badge_5.png)  ![Dark badge](https://count.ly/wp-content/uploads/2014/10/countly_badge_6.png)
 
 ### Support
