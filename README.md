@@ -37,3 +37,5 @@ If you like Countly, why not use one of our badges and give a link back to us, s
 
 ### Support
 
+For community support page, see [http://support.count.ly](http://support.count.ly "Countly Support").
+
