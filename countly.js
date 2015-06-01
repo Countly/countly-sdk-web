@@ -100,6 +100,9 @@
         Countly.begin_session();
         
         //end session on unload
+        add_event(window, "beforeunload", function(){
+            Countly.end_session();
+        });
         add_event(window, "unload", function(){
             Countly.end_session();
         });
