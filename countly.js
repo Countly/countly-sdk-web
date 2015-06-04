@@ -19,7 +19,7 @@
 			Countly.app_key = ob.app_key || Countly.app_key || null;
 			Countly.device_id = ob.device_id || Countly.device_id || getId();
 			Countly.url = stripTrailingSlash(ob.url || Countly.url || "https://cloud.count.ly");
-			Countly.app_version = ob.app_version || Countly.app_version || null;
+			Countly.app_version = ob.app_version || Countly.app_version || "0.0";
 			Countly.country_code = ob.country_code || Countly.country_code || null;
 			Countly.city = ob.city || Countly.city || null;
 			Countly.ip_address = ob.ip_address || Countly.ip_address || null;
