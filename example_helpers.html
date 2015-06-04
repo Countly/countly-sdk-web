@@ -23,7 +23,27 @@ Countly.track_clicks();
 //track form submissions automatically
 Countly.track_forms();
 
+//track javascript errors
+Countly.track_errors({jquery:"1.10", jqueryui:"1.10"});
 
+//let's cause some errors
+function cause_error(){
+    undefined_function();
+}
+
+function unhandled_error(){
+    Countly.add_log('Pressed unhandled button'); 
+    cause_error();
+}
+
+function handled_error(){
+    Countly.add_log('Pressed handled button'); 
+    try{
+        cause_error();
+    }catch(err){
+        Countly.log_error(err)
+    }
+}
 </script>
 </head>
 <body>
@@ -37,6 +57,8 @@ Countly.track_forms();
 </select></p>
 <p><input type="submit" value="Submit"></p>
 </form>
+<p><button onclick="unhandled_error()">Unhandled Error</button></p>
+<p><button onclick="handled_error()">Handled Error</button></p>
 <p><a href='http://count.ly/'>Count.ly</a></p>
 </body>
 </html>
