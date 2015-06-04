@@ -7,11 +7,15 @@
 		beatInterval = 500,
 		requestQueue = [],
 		eventQueue = [],
+        crashLogs = [],
+        crashSegments = null,
 		autoExtend = true,
-		lastBeat;
+		lastBeat,
+        startTime;
 	
 	Countly.init = function(ob){
 		if(!inited){
+            startTime = getTimestamp();
 			inited = true;
 			requestQueue = store("cly_queue") || [],
 			ob = ob || {};
@@ -87,6 +91,46 @@
 		var props = ["name", "username", "email", "organization", "phone", "picture", "gender", "byear", "custom"];
 		toRequestQueue({user_details: JSON.stringify(getProperties(user, props))});
 	}
+    
+    Countly.track_errors = function(segments){
+        crashSegments = segments;
+        window.onerror = function(msg, url, line, col, err) {
+            if(err)
+                recordError(err, false);
+            else{
+                col = col || (window.event && window.event.errorCharacter);
+                var error = "";
+                if(msg)
+                    error += msg+"\n";
+                if(url)
+                    error += "at "+url;
+                if(line)
+                    error += ":"+line;
+                if(col)
+                    error += ":"+col;
+                error += "\n";
+                
+                try{
+                    var stack = [];
+                    var f = arguments.callee.caller;
+                    while (f) {
+                        stack.push(f.name);
+                        f = f.caller;
+                    }
+                    error += stack.join("\n");
+                }catch(err){}
+                recordError(error, false);
+            }
+        };
+    }
+    
+    Countly.log_error = function(err){
+        recordError(err, true);
+    }
+    
+    Countly.add_log = function(record){
+        crashLogs.push(record);
+    }
     
     /**
 	*  PULIC HELP METHODS FOR COMMON ACTIONS
@@ -561,6 +605,59 @@
 	function getTimestamp(){
 		return Math.floor(new Date().getTime() / 1000);
 	};
+    
+    function recordError(err, nonfatal){
+        var error = "";
+        if(typeof err === "object"){
+            if(err.stack)
+                error = err.stack;
+            else{
+                if(err.name)
+                    error += err.name+":";
+                if(err.message)
+                    error += err.message+"\n";
+                if(err.fileName)
+                    error += "in "+err.fileName+"\n";
+                if(err.lineNumber)
+                    error += "on "+err.lineNumber;
+                if(err.columnNumber)
+                    error += ":"+err.columnNumber;
+            }
+        }
+        else{
+            error = err+"";
+        }
+        nonfatal = (nonfatal) ? true : false;
+        var metrics = getMetrics();
+        var ob = {_os:metrics._os, _os_version:metrics._os_version, _resolution:metrics._resolution, _error:error, _app_version:metrics._app_version, _manufacture:metrics._carrier, _run:getTimestamp()-startTime};
+        
+        var battery = navigator.battery || navigator.webkitBattery || navigator.mozBattery || navigator.msBattery;
+        if (battery) 
+            ob._bat = Math.floor(battery.level * 100);
+        
+        if(typeof navigator.onLine !== 'undefined')
+            ob._online = (navigator.onLine) ? true : false;
+        
+        if(document.hasFocus)
+            ob._background = (document.hasFocus()) ? false : true;
+        
+        if(crashLogs.length > 0)
+            ob._logs = crashLogs.join("\n");
+        
+        ob._nonfatal = nonfatal;
+        
+        if(crashSegments)
+            ob._custom = crashSegments;
+        
+        try{
+            var canvas = document.createElement("canvas");
+            gl = canvas.getContext("experimental-webgl");
+            ob._opengl = gl.getParameter(gl.VERSION);
+        }
+        catch(err){}
+        
+        toRequestQueue({crash: JSON.stringify(ob)});
+    };
 	
 	//sending xml HTTP request
 	function sendXmlHttpRequest(params, callback) {
