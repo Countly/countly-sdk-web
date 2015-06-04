@@ -40,10 +40,7 @@
 			autoExtend = (noHeartBeat) ? false : true;
 			var req = {};
 			req.begin_session = 1;
-			if(!store("cly_first_"+Countly.device_id)){
-				store("cly_first_"+Countly.device_id, true);
-				req.metrics = JSON.stringify(getMetrics());
-			}
+			req.metrics = JSON.stringify(getMetrics());
 			toRequestQueue(req);
 		}
 	};
@@ -434,8 +431,7 @@
 		var metrics = {};
 		
 		//getting app version
-		if(Countly.app_version)
-			metrics._app_version = Countly.app_version;
+		metrics._app_version = Countly.app_version;
 		
 		//getting resolution
 		if (screen.width) {
