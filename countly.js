@@ -440,8 +440,8 @@
 			var params = requestQueue.shift();
 			log("Processing request", params);
 			sendXmlHttpRequest(params, function(err, params){
-				log("Request Finished", params, false);
-				if(typeof err  !== "undefined"){
+				log("Request Finished", params, err);
+				if(err){
 					requestQueue.unshift(params);
 					store("cly_queue", requestQueue, true);
 				}
