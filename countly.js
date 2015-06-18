@@ -1,6 +1,6 @@
 (function (Countly) {
 	'use strict';
-	
+
 	var inited = false,
 		sessionStarted = false,
 		apiPath = "/i",
@@ -95,18 +95,18 @@
     Countly.track_errors = function(segments){
         crashSegments = segments;
         window.onerror = function(msg, url, line, col, err) {
-            if(err)
+            if(typeof err !== "undefined")
                 recordError(err, false);
             else{
                 col = col || (window.event && window.event.errorCharacter);
                 var error = "";
-                if(msg)
+                if(typeof msg !== "undefined")
                     error += msg+"\n";
-                if(url)
+                if(typeof url !== "undefined")
                     error += "at "+url;
-                if(line)
+                if(typeof line !== "undefined")
                     error += ":"+line;
-                if(col)
+                if(typeof col !== "undefined")
                     error += ":"+col;
                 error += "\n";
                 
@@ -216,7 +216,7 @@
         parent = parent || document;
         function trackClicks(){
             //add any events you want like pageView
-            if(parent.getElementsByTagName){
+            if(typeof parent.getElementsByTagName !== "undefined"){
                 var links = parent.getElementsByTagName("a");
                 for(var i = 0; i < links.length; i++){
                     add_event(links[i], "click", function(event){
@@ -240,7 +240,7 @@
                         });
                         
                         //anticipate page unload
-                        if(elem.href && elem.target !== '_blank' && !(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey)){
+                        if(typeof elem.href !== "undefined" && elem.target !== '_blank' && !(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey)){
                             //most probably user will leave the page
                             
                             //end Countly session
@@ -290,13 +290,13 @@
                     
                     //get input values
                     var input;
-                    if(form.elements)
+                    if(typeof form.elements !== "undefined")
                         for(var i = 0; i < form.elements.length; i++){
                             input = form.elements[i];
                             if(input.nodeName.toLowerCase() == "select"){
-                                if(input.multiple){
+                                if(typeof input.multiple !== "undefined"){
                                     var values = [];
-                                    if(input.options)
+                                    if(typeof input.options !== "undefined")
                                         for(var j = 0; j < input.options.length; j++){
                                             if (input.options[j].selected)
                                                 values.push(input.options[j].value);
@@ -307,9 +307,9 @@
                                     segmentation["input:"+getInputName(input)] = input.options[input.selectedIndex].value;
                             }
                             else if(input.nodeName.toLowerCase() == "input"){
-                                if(input.type){
+                                if(typeof input.type !== "undefined"){
                                     if(input.type.toLowerCase() == "checkbox" || input.type.toLowerCase() == "radio"){
-                                        if(input.checked)
+                                        if(typeof input.checked !== "undefined")
                                             segmentation["input:"+getInputName(input)] = input.value;
                                     }
                                     else{
@@ -322,7 +322,7 @@
                             else if(input.nodeName.toLowerCase() == "textarea"){
                                 segmentation["input:"+getInputName(input)] = input.value;
                             }
-                            else if(input.value){
+                            else if(typeof input.value !== "undefined"){
                                 segmentation["input:"+getInputName(input)] = input.value;
                             }
                         }
@@ -350,7 +350,7 @@
         };
         function trackForms(){
             //add any events you want like pageView
-            if(parent.getElementsByTagName){
+            if(typeof parent.getElementsByTagName !== "undefined"){
                 var forms = parent.getElementsByTagName("form");
                 for(var i = 0; i < forms.length; i++){
                     processForm(forms[i]);
@@ -382,13 +382,13 @@
 		request.app_key = Countly.app_key;
 		request.device_id = Countly.device_id;
 		
-		if(Countly.country_code)
+		if(typeof Countly.country_code !== "undefined")
 			request.country_code = Countly.country_code;
 		
-		if(Countly.city)
+		if(typeof Countly.city !== "undefined")
 			request.city = Countly.city;
 		
-		if(Countly.ip_address)
+		if(typeof Countly.ip_address !== "undefined")
 			request.ip_address = Countly.ip_address;
 			
 		request.timestamp = getTimestamp();
@@ -401,13 +401,13 @@
 	function heartBeat(){
 		
 		//process queue
-		if(Countly.q && Countly.q.length > 0){
+		if(typeof Countly.q !== "undefined" && Countly.q.length > 0){
 			var req;
 			for(var i = 0; i < Countly.q.length; i++){
 				req = Countly.q[i];
 				if(req.constructor === Array && req.length > 0){
 					log("Processing queued call", req);
-					if(Countly[req[0]])
+					if(typeof Countly[req[0]] !== "undefined")
 						Countly[req[0]](req[1]);
 				}
 			}
@@ -441,7 +441,7 @@
 			log("Processing request", params);
 			sendXmlHttpRequest(params, function(err, params){
 				log("Request Finished", params, false);
-				if(err){
+				if(typeof err  !== "undefined"){
 					requestQueue.unshift(params);
 					store("cly_queue", requestQueue, true);
 				}
@@ -594,7 +594,7 @@
 		
 		//getting locale
 		var locale = navigator.language || navigator.browserLanguage || navigator.systemLanguage || navigator.userLanguage;
-		if(locale)
+		if(typeof locale !== "undefined")
 			metrics._locale = locale;
 		
 		log("Got metrics", metrics);
@@ -603,7 +603,7 @@
 	
 	//log stuff
 	function log(){
-		if(Countly.debug && console)
+		if(typeof Countly.debug !== "undefined" && typeof console !== "undefined")
 			console.log( Array.prototype.slice.call(arguments) );
 	};
 	
@@ -615,18 +615,18 @@
     function recordError(err, nonfatal){
         var error = "";
         if(typeof err === "object"){
-            if(err.stack)
+            if(typeof err.stack !== "undefined")
                 error = err.stack;
             else{
-                if(err.name)
+                if(typeof err.name !== "undefined")
                     error += err.name+":";
-                if(err.message)
+                if(typeof err.message !== "undefined")
                     error += err.message+"\n";
-                if(err.fileName)
+                if(typeof err.fileName !== "undefined")
                     error += "in "+err.fileName+"\n";
-                if(err.lineNumber)
+                if(typeof err.lineNumber !== "undefined")
                     error += "on "+err.lineNumber;
-                if(err.columnNumber)
+                if(typeof err.columnNumber !== "undefined")
                     error += ":"+err.columnNumber;
             }
         }
@@ -644,15 +644,14 @@
         if(typeof navigator.onLine !== 'undefined')
             ob._online = (navigator.onLine) ? true : false;
         
-        if(document.hasFocus)
-            ob._background = (document.hasFocus()) ? false : true;
+        ob._background = (document.hasFocus()) ? false : true;
         
         if(crashLogs.length > 0)
             ob._logs = crashLogs.join("\n");
         
         ob._nonfatal = nonfatal;
         
-        if(crashSegments)
+        if(typeof crashSegments !== "undefined")
             ob._custom = crashSegments;
         
         try{
@@ -718,7 +717,7 @@
 		var prop;
 		for(var i = 0; i < props.length; i++){
 			prop = props[i];
-			if(orig[prop])
+			if(typeof orig[prop] !== "undefined")
 				ob[prop] = orig[prop];
 		}
 		return ob;
@@ -726,7 +725,7 @@
     
     //add event
 	var add_event = function(element, type, listener){
-		if(element.addEventListener)
+		if(typeof element.addEventListener !== "undefined")
 		{
 			element.addEventListener(type, listener, false);
 		}
@@ -742,7 +741,7 @@
         {
             return window.event.srcElement;
         }
-        else if(event.target)
+        else if(typeof event.target !== "undefined")
         {
             return event.target; 
         }
@@ -754,11 +753,11 @@
     
     //prevent default event behavior
     var prevent_default = function(event){
-        if(window.event)
+        if(typeof window.event !== "undefined")
         {
             window.event.returnValue = false;
         }
-        else if(event.preventDefault)
+        else if(typeof event.preventDefault !== "undefined")
         {
             event.preventDefault();
         }
@@ -803,12 +802,12 @@
 	*/
 	
 	var store = function store(key, value, storageOnly) {
-	
+        storageOnly = storageOnly || false;
 		var lsSupport = false,
 			data;
 		
 		// Check for native support
-		if (localStorage) {
+		if (typeof localStorage !== "undefined") {
 			lsSupport = true;
 		}
 		
