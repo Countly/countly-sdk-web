@@ -382,13 +382,13 @@
 		request.app_key = Countly.app_key;
 		request.device_id = Countly.device_id;
 		
-		if(typeof Countly.country_code !== "undefined")
+		if(Countly.country_code)
 			request.country_code = Countly.country_code;
 		
-		if(typeof Countly.city !== "undefined")
+		if(Countly.city)
 			request.city = Countly.city;
 		
-		if(typeof Countly.ip_address !== "undefined")
+		if(Countly.ip_address != null)
 			request.ip_address = Countly.ip_address;
 			
 		request.timestamp = getTimestamp();
