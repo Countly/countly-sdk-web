@@ -485,6 +485,7 @@
         }
 		
 		//getting os
+        var nVer = navigator.appVersion;
 		var nAgt = navigator.userAgent;
 		var browser = navigator.appName;
 		var version = '' + parseFloat(navigator.appVersion);
