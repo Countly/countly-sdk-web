@@ -554,6 +554,7 @@
             {s:'Windows 8', r:/(Windows 8|Windows NT 6.2)/},
             {s:'Windows NT 4.0', r:/(Windows NT 4.0|WinNT4.0|WinNT|Windows NT)/},
             {s:'Windows ME', r:/Windows ME/},
+            {s:'Windows Phone', r:/Windows Phone/},
             {s:'Android', r:/Android/},
             {s:'Open BSD', r:/OpenBSD/},
             {s:'Sun OS', r:/SunOS/},
@@ -578,7 +579,7 @@
 		//getting os version
         var osVersion = "unknown";
 
-        if (/Windows/.test(os)) {
+        if (/Windows/.test(os) && os != "Windows Phone") {
             osVersion = /Windows (.*)/.exec(os)[1];
             os = 'Windows';
         }
@@ -586,6 +587,10 @@
         switch (os) {
             case 'Mac OSX':
                 osVersion = /Mac OS X (10[\.\_\d]+)/.exec(nAgt)[1];
+                break;
+                
+            case 'Windows Phone':
+                osVersion = (/Windows Phone ([\.\_\d]+)/.exec(nAgt) || ["", "8.0"])[1];
                 break;
 
             case 'Android':
