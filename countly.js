@@ -616,7 +616,7 @@
 	
 	//log stuff
 	function log(){
-		if(typeof Countly.debug !== "undefined" && typeof console !== "undefined")
+		if(Countly.debug && typeof console !== "undefined")
 			console.log( Array.prototype.slice.call(arguments) );
 	};
 	
