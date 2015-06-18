@@ -496,13 +496,21 @@
 		var version = '' + parseFloat(navigator.appVersion);
 		var nameOffset, verOffset;
 		
+        // Opera Mini
+        if (nAgt.indexOf('Opera Mini') != -1) {
+            browser = 'Opera Mini';
+        }
 		// Opera
-        if (nAgt.indexOf('Opera') != -1) {
+        else if (nAgt.indexOf('Opera') != -1) {
             browser = 'Opera';
         }
         // MSIE
         else if (nAgt.indexOf('MSIE') != -1) {
             browser = 'Internet Explorer';
+        }
+        // IEMobile
+        else if (nAgt.indexOf('IEMobile') != -1) {
+            browser = 'IE Mobile';
         }
         // Chrome
         else if (nAgt.indexOf('Chrome') != -1) {
