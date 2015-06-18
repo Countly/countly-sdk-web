@@ -1,3 +1,8 @@
+/************
+* Countly Web SDK
+* https://github.com/Countly/countly-sdk-web
+* version 0.9.0
+************/
 (function (Countly) {
 	'use strict';
 
