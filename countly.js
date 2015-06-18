@@ -485,6 +485,11 @@
         }
 		
 		//getting os
+        /**
+        * From http://jsfiddle.net/ChristianL/AVyND/
+        * JavaScript Client Detection
+        * (C) viazenetti GmbH (Christian Ludwig)
+        */
         var nVer = navigator.appVersion;
 		var nAgt = navigator.userAgent;
 		var browser = navigator.appName;
