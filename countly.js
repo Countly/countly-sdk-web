@@ -87,7 +87,9 @@
 			event.count = 1;
 		
 		var props = ["key", "count", "sum", "segmentation"];
-		eventQueue.push(getProperties(event, props));
+        var e = getProperties(event, props);
+        e.timestamp = getTimestamp();
+		eventQueue.push(e);
 		log("Adding event: ", event);
 	};
 	
