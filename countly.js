@@ -66,6 +66,7 @@
 			log("Ending session");
 			sessionStarted = false;
 			toRequestQueue({end_session:1, session_duration:getTimestamp()-lastBeat});
+            heartBeat();
 		}
 	};
 	
