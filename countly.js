@@ -16,6 +16,8 @@
         crashSegments = null,
 		autoExtend = true,
 		lastBeat,
+        failTimeout = 0,
+        failTimeoutAmount = 60,
         startTime;
 	
 	Countly.init = function(ob){
@@ -444,17 +446,18 @@
 		}
 		
 		//process request queue with event queue
-		if(requestQueue.length > 0){
-			var params = requestQueue.shift();
-			log("Processing request", params);
-			sendXmlHttpRequest(params, function(err, params){
-				log("Request Finished", params, err);
-				if(err){
-					requestQueue.unshift(params);
-					store("cly_queue", requestQueue, true);
-				}
-			});
-			store("cly_queue", requestQueue, true);
+		if(requestQueue.length > 0 && getTimestamp() > failTimeout){
+            var params = requestQueue.shift();
+            log("Processing request", params);
+            sendXmlHttpRequest(params, function(err, params){
+                log("Request Finished", params, err);
+                if(err){
+                    requestQueue.unshift(params);
+                    store("cly_queue", requestQueue, true);
+                    failTimeout = getTimestamp() + failTimeoutAmount;
+                }
+            });
+            store("cly_queue", requestQueue, true);
 		}
 		
 		setTimeout(heartBeat, beatInterval);
