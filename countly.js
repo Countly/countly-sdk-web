@@ -439,7 +439,7 @@
 			}
 			else{
 				var events = eventQueue.splice(0, 10);
-				toRequestQueue({events: JSON.stringify(eventQueue)});
+				toRequestQueue({events: JSON.stringify(events)});
 			}
 		}
 		
