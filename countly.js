@@ -1,7 +1,7 @@
 /************
 * Countly Web SDK
 * https://github.com/Countly/countly-sdk-web
-* version 0.9.1
+* version 0.9.2
 ************/
 (function (Countly) {
 	'use strict';
@@ -547,7 +547,7 @@
             }
         }
 		
-		metrics._carrier = browser;
+		metrics._browser = browser;
 		
         var os = "unknown";
         var clientStrings = [
@@ -659,7 +659,7 @@
         }
         nonfatal = (nonfatal) ? true : false;
         var metrics = getMetrics();
-        var ob = {_os:metrics._os, _os_version:metrics._os_version, _resolution:metrics._resolution, _error:error, _app_version:metrics._app_version, _manufacture:metrics._carrier, _run:getTimestamp()-startTime};
+        var ob = {_os:metrics._os, _os_version:metrics._os_version, _resolution:metrics._resolution, _error:error, _app_version:metrics._app_version, _manufacture:metrics._browser, _run:getTimestamp()-startTime};
         
         var battery = navigator.battery || navigator.webkitBattery || navigator.mozBattery || navigator.msBattery;
         if (battery) 
