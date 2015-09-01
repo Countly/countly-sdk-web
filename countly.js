@@ -92,6 +92,9 @@
 		var props = ["key", "count", "sum", "segmentation"];
         var e = getProperties(event, props);
         e.timestamp = getTimestamp();
+        var date = new Date();
+        e.hour = date.getHours();
+        e.dow = date.getDay();
 		eventQueue.push(e);
 		log("Adding event: ", event);
 	};
@@ -402,6 +405,9 @@
 			request.ip_address = Countly.ip_address;
 			
 		request.timestamp = getTimestamp();
+        var date = new Date();
+        request.hour = date.getHours();
+        request.dow = date.getDay();
 		
 		requestQueue.push(request);
 		store("cly_queue", requestQueue, true);
