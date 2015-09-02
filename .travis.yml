@@ -1,0 +1,15 @@
+sudo: false
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "RduTiaxZIPQe0qIu2/v4s4q63avh2emHQiJymCr4uFIF8Nrt2vcedNW/rG5fQsP8rbI3ErVruoVbrH/nO2P+VXUO/JOwu1KD98bWGViRigtZABWH1/dUUwVSYyZ+hMjU/KldHkqWAYQzhxTdfxL/e8dVczn1Zi9VCO0KqSDIJC8="
+
+addons:
+  coverity_scan:
+    project:
+      name: "Countly/countly-sdk-web"
+    notification_email: hello@count.ly
+    build_command_prepend: ""
+    build_command:   ""
+    branch_pattern: master
