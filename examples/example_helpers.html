@@ -55,10 +55,11 @@ function handled_error(){
 <option value='option2'>Option2</option>
 <option value='option3'>Option3</option>
 </select></p>
-<p><input type="submit" value="Submit"></p>
+<p><input id="submit-form" type="submit" value="Submit"></p>
 </form>
-<p><button onclick="unhandled_error()">Unhandled Error</button></p>
-<p><button onclick="handled_error()">Handled Error</button></p>
+<p><button id="unhandled_error" onclick="unhandled_error()">Unhandled Error</button></p>
+<p><button id="handled_error" onclick="handled_error()">Handled Error</button></p>
+<p><a id="track_link" href='#link'>Dummy link</a></p>
 <p><a href='http://count.ly/'>Count.ly</a></p>
 </body>
 </html>
