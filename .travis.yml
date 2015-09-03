@@ -13,5 +13,5 @@ addons:
       name: "Countly/countly-sdk-web"
     notification_email: hello@count.ly
     build_command_prepend: ""
-    build_command:   ""
+    build_command:   "phantomjs testrunner.js"
     branch_pattern: master
