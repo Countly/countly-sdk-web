@@ -7,7 +7,8 @@ Countly.q = Countly.q || [];
 
 //provide countly initialization parameters
 Countly.app_key = "YOUR_API_KEY";
-Countly.url = "http://yourdomain.com"; //or none for default countly cloud
+Countly.url = "http://cloud.count.ly"; //or none for default countly cloud
+Countly.debug = true;
 
 //start pushing function calls to queue
 
@@ -16,7 +17,7 @@ Countly.q.push(['begin_session']);
 
 //add any events you want like pageView
 Countly.q.push(['add_event',{
-	key:"asyncPageView", 
+	key:"pageView", 
 	"segmentation": {
 		"url": window.location.pathname
 	}
@@ -32,7 +33,7 @@ window.onunload = function(){
 	var cly = document.createElement('script'); cly.type = 'text/javascript'; 
 	cly.async = true;
 	//enter url of script here
-	cly.src = 'countly.min.js';
+	cly.src = '../lib/countly.min.js';
 	cly.onload = function(){Countly.init()};
 	var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(cly, s);
 })();
@@ -43,14 +44,14 @@ window.onunload = function(){
 //send event on button click
 function clickEvent(ob){
 	Countly.q.push(['add_event',{
-		key:"asyncButtonClick", 
+		key:"buttonClick", 
 		"segmentation": {
 			"id": ob.id
 		}
 	}]);
 }
 </script>
-<input type="button" id="asyncTestButton" onclick="clickEvent(this)" value="Test Button">
+<input type="button" id="testButton" onclick="clickEvent(this)" value="Test Button">
 <p><a href='http://count.ly/'>Count.ly</a></p>
 </body>
 </html>
