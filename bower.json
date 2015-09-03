@@ -1,0 +1,28 @@
+{
+  "name": "countly-sdk-web",
+  "version": "0.9.2",
+  "description": "Countly Web SDK",
+  "main": "countly.min.js",
+  "keywords": [
+    "Countly",
+    "Analytics",
+    "Web",
+    "Mobile"
+  ],
+  "authors": [
+    "Countly"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/countly/countly-sdk-web.git"
+  },
+  "license": "MIT",
+  "homepage": "https://count.ly/",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
