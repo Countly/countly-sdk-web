@@ -16,7 +16,7 @@
     "type": "git",
     "url": "git://github.com/countly/countly-sdk-web.git"
   },
-  "license": "MIT",
+  "license": "./LICENSE",
   "homepage": "https://count.ly/",
   "ignore": [
     "**/.*",
