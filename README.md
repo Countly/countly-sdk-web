@@ -1,3 +1,8 @@
+#Countly Web SDK [![Build Status](https://api.travis-ci.org/Countly/countly-sdk-web.png)](https://travis-ci.org/Countly/countly-sdk-web)
+
+##Install using bower
+    bower install countly-sdk-web
+
 ##What's Countly?
 [Countly](http://count.ly) is an innovative, real-time, open source mobile analytics application. 
 It collects data from mobile devices, and visualizes this information to analyze mobile application 
