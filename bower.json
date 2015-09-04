@@ -3,6 +3,7 @@
   "version": "15.08.0",
   "description": "Countly Web SDK",
   "main": "lib/countly.min.js",
+  "moduleType": "globals",
   "keywords": [
     "Countly",
     "Analytics",
