@@ -18,8 +18,5 @@ addons:
       name: "Countly/countly-sdk-web"
     notification_email: ar2rsawseen@yahoo.com
     build_command_prepend: ""
-    build_command:
-      - casperjs test test/tests_sync.js
-      - casperjs test test/tests_async.js
-      - casperjs test test/tests_helpers.js
+    build_command: casperjs test test/tests_helpers.js
     branch_pattern: master
