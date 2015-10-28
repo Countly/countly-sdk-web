@@ -21,7 +21,7 @@ casper.test.begin("Testing example_sync.html", 353, function(test) {
     tests.push(function (message){
         test.assertEquals(message[0], 'Adding event: ');
         var params = JSON.parse(message[1]);
-        test.assertEquals(params.key, "pageView");
+        test.assertEquals(params.key, "[CLY]_view");
         test.assertEquals(params.count, 1);
         test.assert((params.segmentation) ? true : false);
         test.assert((params.segmentation.path) ? true : false);
@@ -91,7 +91,7 @@ casper.test.begin("Testing example_sync.html", 353, function(test) {
         test.assert((params.dow) ? true : false);
         
         params.events = JSON.parse(params.events);
-        test.assertEquals(params.events[0].key, 'pageView');
+        test.assertEquals(params.events[0].key, '[CLY]_view');
         test.assert((params.events[0].segmentation) ? true : false);
         test.assert((params.events[0].segmentation.url) ? true : false);
         test.assert((params.events[0].segmentation.path) ? true : false);
@@ -122,7 +122,7 @@ casper.test.begin("Testing example_sync.html", 353, function(test) {
         test.assert((params.dow) ? true : false);
         
         params.events = JSON.parse(params.events);
-        test.assertEquals(params.events[0].key, 'pageView');
+        test.assertEquals(params.events[0].key, '[CLY]_view');
         test.assert((params.events[0].segmentation) ? true : false);
         test.assert((params.events[0].segmentation.url) ? true : false);
         test.assert((params.events[0].segmentation.path) ? true : false);
@@ -247,7 +247,7 @@ casper.test.begin("Testing example_sync.html", 353, function(test) {
     tests.push(function (message){
         test.assertEquals(message[0], 'Adding event: ');
         var params = JSON.parse(message[1]);
-        test.assertEquals(params.key, "pageView");
+        test.assertEquals(params.key, "[CLY]_view");
         test.assertEquals(params.count, 1);
         test.assert((params.segmentation) ? true : false);
         test.assert((params.segmentation.path) ? true : false);
@@ -305,7 +305,7 @@ casper.test.begin("Testing example_sync.html", 353, function(test) {
         test.assert((params.dow) ? true : false);
         
         params.events = JSON.parse(params.events);
-        test.assertEquals(params.events[0].key, 'pageView');
+        test.assertEquals(params.events[0].key, '[CLY]_view');
         test.assert((params.events[0].segmentation) ? true : false);
         test.assert((params.events[0].segmentation.url) ? true : false);
         test.assert((params.events[0].segmentation.path) ? true : false);
@@ -328,7 +328,7 @@ casper.test.begin("Testing example_sync.html", 353, function(test) {
         test.assert((params.dow) ? true : false);
         
         params.events = JSON.parse(params.events);
-        test.assertEquals(params.events[0].key, 'pageView');
+        test.assertEquals(params.events[0].key, '[CLY]_view');
         test.assert((params.events[0].segmentation) ? true : false);
         test.assert((params.events[0].segmentation.url) ? true : false);
         test.assert((params.events[0].segmentation.path) ? true : false);

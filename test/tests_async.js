@@ -26,14 +26,14 @@ casper.test.begin("Testing example_async.html", 117, function(test) {
         test.assertEquals(message[0], 'Processing queued call');
         var params = JSON.parse(message[1])
         test.assertEquals(params[0], "add_event");
-        test.assertEquals(params[1].key, "pageView");
+        test.assertEquals(params[1].key, "[CLY]_view");
         test.assert((params[1].segmentation) ? true : false);
         test.assert((params[1].segmentation.url) ? true : false);
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Adding event: ');
         var params = JSON.parse(message[1]);
-        test.assertEquals(params.key, "pageView");
+        test.assertEquals(params.key, "[CLY]_view");
         test.assert((params.segmentation) ? true : false);
         test.assert((params.segmentation.url) ? true : false);
         test.assertEquals(params.count, 1);
@@ -101,7 +101,7 @@ casper.test.begin("Testing example_async.html", 117, function(test) {
         test.assert((params.dow) ? true : false);
         
         params.events = JSON.parse(params.events);
-        test.assertEquals(params.events[0].key, 'pageView');
+        test.assertEquals(params.events[0].key, '[CLY]_view');
         test.assert((params.events[0].segmentation) ? true : false);
         test.assert((params.events[0].segmentation.url) ? true : false);
         test.assertEquals(params.events[0].count, 1);
@@ -118,7 +118,7 @@ casper.test.begin("Testing example_async.html", 117, function(test) {
         test.assert((params.hour) ? true : false);
         test.assert((params.dow) ? true : false);
         params.events = JSON.parse(params.events);
-        test.assertEquals(params.events[0].key, 'pageView');
+        test.assertEquals(params.events[0].key, '[CLY]_view');
         test.assert((params.events[0].segmentation) ? true : false);
         test.assert((params.events[0].segmentation.url) ? true : false);
         test.assertEquals(params.events[0].count, 1);
