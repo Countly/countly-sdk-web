@@ -27,18 +27,6 @@ casper.test.begin("Testing example_sync.html", 353, function(test) {
         test.assert((params.segmentation.name) ? true : false);
     });
     tests.push(function (message){
-        test.assertEquals(message[0], 'Adding event: ');
-        var params = JSON.parse(message[1]);
-        test.assertEquals(params.key, "linkClick");
-        test.assertEquals(params.count, 1);
-        test.assert((params.segmentation) ? true : false);
-        test.assert((params.segmentation.href) ? true : false);
-        test.assertEquals(params.segmentation.text, "Dummy link");
-        test.assertEquals(params.segmentation.id, "track_link");
-        test.assert((params.segmentation.x) ? true : false);
-        test.assert((params.segmentation.y) ? true : false);
-    });
-    tests.push(function (message){
         test.assertEquals(message[0], 'Processing request');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.begin_session, 1);
@@ -57,6 +45,18 @@ casper.test.begin("Testing example_sync.html", 353, function(test) {
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Sending XML HTTP request');
+    });
+    tests.push(function (message){
+        test.assertEquals(message[0], 'Adding event: ');
+        var params = JSON.parse(message[1]);
+        test.assertEquals(params.key, "linkClick");
+        test.assertEquals(params.count, 1);
+        test.assert((params.segmentation) ? true : false);
+        test.assert((params.segmentation.href) ? true : false);
+        test.assertEquals(params.segmentation.text, "Dummy link");
+        test.assertEquals(params.segmentation.id, "track_link");
+        test.assert((params.segmentation.x) ? true : false);
+        test.assert((params.segmentation.y) ? true : false);
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Request Finished');
