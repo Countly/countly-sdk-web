@@ -24,12 +24,7 @@ casper.test.begin("Testing example_sync.html", 353, function(test) {
         test.assertEquals(params.key, "[CLY]_view");
         test.assertEquals(params.count, 1);
         test.assert((params.segmentation) ? true : false);
-        test.assert((params.segmentation.path) ? true : false);
-        test.assert((params.segmentation.url) ? true : false);
-        test.assertEquals(params.segmentation.host, "");
-        test.assertEquals(params.segmentation.protocol, "file:");
-        test.assertEquals(params.segmentation.hash, "");
-        test.assertEquals(params.segmentation.query, "");
+        test.assert((params.segmentation.name) ? true : false);
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Adding event: ');
@@ -93,12 +88,7 @@ casper.test.begin("Testing example_sync.html", 353, function(test) {
         params.events = JSON.parse(params.events);
         test.assertEquals(params.events[0].key, '[CLY]_view');
         test.assert((params.events[0].segmentation) ? true : false);
-        test.assert((params.events[0].segmentation.url) ? true : false);
-        test.assert((params.events[0].segmentation.path) ? true : false);
-        test.assertEquals(params.events[0].segmentation.host, "");
-        test.assertEquals(params.events[0].segmentation.protocol, "file:");
-        test.assertEquals(params.events[0].segmentation.hash, "");
-        test.assertEquals(params.events[0].segmentation.query, "");
+        test.assert((params.segmentation.name) ? true : false);
         test.assertEquals(params.events[0].count, 1);
         
         test.assertEquals(params.events[1].key, 'linkClick');
@@ -124,12 +114,7 @@ casper.test.begin("Testing example_sync.html", 353, function(test) {
         params.events = JSON.parse(params.events);
         test.assertEquals(params.events[0].key, '[CLY]_view');
         test.assert((params.events[0].segmentation) ? true : false);
-        test.assert((params.events[0].segmentation.url) ? true : false);
-        test.assert((params.events[0].segmentation.path) ? true : false);
-        test.assertEquals(params.events[0].segmentation.host, "");
-        test.assertEquals(params.events[0].segmentation.protocol, "file:");
-        test.assertEquals(params.events[0].segmentation.hash, "");
-        test.assertEquals(params.events[0].segmentation.query, "");
+        test.assert((params.segmentation.name) ? true : false);
         test.assertEquals(params.events[0].count, 1);
         
         test.assertEquals(params.events[1].key, 'linkClick');
@@ -250,12 +235,7 @@ casper.test.begin("Testing example_sync.html", 353, function(test) {
         test.assertEquals(params.key, "[CLY]_view");
         test.assertEquals(params.count, 1);
         test.assert((params.segmentation) ? true : false);
-        test.assert((params.segmentation.path) ? true : false);
-        test.assert((params.segmentation.url) ? true : false);
-        test.assertEquals(params.segmentation.host, "");
-        test.assertEquals(params.segmentation.protocol, "file:");
-        test.assertEquals(params.segmentation.hash, "#link");
-        test.assertEquals(params.segmentation.query, "");
+        test.assert((params.segmentation.name) ? true : false);
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Processing request');
@@ -307,12 +287,7 @@ casper.test.begin("Testing example_sync.html", 353, function(test) {
         params.events = JSON.parse(params.events);
         test.assertEquals(params.events[0].key, '[CLY]_view');
         test.assert((params.events[0].segmentation) ? true : false);
-        test.assert((params.events[0].segmentation.url) ? true : false);
-        test.assert((params.events[0].segmentation.path) ? true : false);
-        test.assertEquals(params.events[0].segmentation.host, "");
-        test.assertEquals(params.events[0].segmentation.protocol, "file:");
-        test.assertEquals(params.events[0].segmentation.hash, "#link");
-        test.assertEquals(params.events[0].segmentation.query, "");
+        test.assert((params.segmentation.name) ? true : false);
         test.assertEquals(params.events[0].count, 1);
     });
     tests.push(function (message){
@@ -330,12 +305,7 @@ casper.test.begin("Testing example_sync.html", 353, function(test) {
         params.events = JSON.parse(params.events);
         test.assertEquals(params.events[0].key, '[CLY]_view');
         test.assert((params.events[0].segmentation) ? true : false);
-        test.assert((params.events[0].segmentation.url) ? true : false);
-        test.assert((params.events[0].segmentation.path) ? true : false);
-        test.assertEquals(params.events[0].segmentation.host, "");
-        test.assertEquals(params.events[0].segmentation.protocol, "file:");
-        test.assertEquals(params.events[0].segmentation.hash, "#link");
-        test.assertEquals(params.events[0].segmentation.query, "");
+        test.assert((params.segmentation.name) ? true : false);
         test.assertEquals(params.events[0].count, 1);
     });
     tests.push(function (message){
