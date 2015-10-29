@@ -1,5 +1,5 @@
 var fs = require("fs");
-casper.test.begin("Testing example_sync.html", 353, function(test) {
+casper.test.begin("Testing example_sync.html", 427, function(test) {
     var tests = [];
     var cnt = 0;
     tests.push(function (message){
@@ -27,24 +27,18 @@ casper.test.begin("Testing example_sync.html", 353, function(test) {
         test.assert((params.segmentation.name) ? true : false);
     });
     tests.push(function (message){
-        test.assertEquals(message[0], 'Processing request');
+        test.assertEquals(message[0], 'Adding event: ');
         var params = JSON.parse(message[1]);
-        test.assertEquals(params.begin_session, 1);
-        test.assertEquals(params.app_key, "YOUR_API_KEY");
-        test.assert((params.device_id) ? true : false);
-        test.assert((params.timestamp) ? true : false);
-        test.assert((params.hour) ? true : false);
-        test.assert((params.dow) ? true : false);
-        params.metrics = JSON.parse(params.metrics);
-        test.assertEquals(params.metrics._app_version, '0.0');
-        test.assertEquals(params.metrics._resolution, '1024x768');
-        test.assertEquals(params.metrics._browser, 'Safari');
-        test.assertEquals(params.metrics._os, 'Linux');
-        test.assertEquals(params.metrics._os_version, 'unknown');
-        test.assertEquals(params.metrics._locale, 'en-US');
-    });
-    tests.push(function (message){
-        test.assertEquals(message[0], 'Sending XML HTTP request');
+        test.assertEquals(params.key, "[CLY]_action");
+        test.assertEquals(params.count, 1);
+        test.assert((params.segmentation) ? true : false);
+        test.assertEquals(params.segmentation.type, "click");
+        test.assert((params.segmentation.x) ? true : false);
+        test.assert((params.segmentation.y) ? true : false);
+        test.assert((params.segmentation.width) ? true : false);
+        test.assert((params.segmentation.height) ? true : false);
+        test.assert((params.segmentation.rx) ? true : false);
+        test.assert((params.segmentation.ry) ? true : false);
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Adding event: ');
@@ -53,10 +47,30 @@ casper.test.begin("Testing example_sync.html", 353, function(test) {
         test.assertEquals(params.count, 1);
         test.assert((params.segmentation) ? true : false);
         test.assert((params.segmentation.href) ? true : false);
-        test.assertEquals(params.segmentation.text, "Dummy link");
-        test.assertEquals(params.segmentation.id, "track_link");
+        test.assert((params.segmentation.text) ? true : false);
+        test.assert((params.segmentation.id) ? true : false);
         test.assert((params.segmentation.x) ? true : false);
         test.assert((params.segmentation.y) ? true : false);
+    });
+    tests.push(function (message){
+        test.assertEquals(message[0], 'Processing request');
+        var params = JSON.parse(message[1]);
+        test.assertEquals(params.begin_session, 1);
+        test.assertEquals(params.app_key, "YOUR_API_KEY");
+        test.assert((params.device_id) ? true : false);
+        test.assert((params.timestamp) ? true : false);
+        test.assert((params.hour) ? true : false);
+        test.assert((params.dow) ? true : false);
+        params.metrics = JSON.parse(params.metrics);
+        test.assertEquals(params.metrics._app_version, '0.0');
+        test.assertEquals(params.metrics._resolution, '1024x768');
+        test.assertEquals(params.metrics._browser, 'Safari');
+        test.assertEquals(params.metrics._os, 'Linux');
+        test.assertEquals(params.metrics._os_version, 'unknown');
+        test.assertEquals(params.metrics._locale, 'en-US');
+    });
+    tests.push(function (message){
+        test.assertEquals(message[0], 'Sending XML HTTP request');
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Request Finished');
@@ -79,6 +93,7 @@ casper.test.begin("Testing example_sync.html", 353, function(test) {
     tests.push(function (message){
         test.assertEquals(message[0], 'Processing request');
         var params = JSON.parse(message[1]);
+
         test.assertEquals(params.app_key, "YOUR_API_KEY");
         test.assert((params.device_id) ? true : false);
         test.assert((params.timestamp) ? true : false);
@@ -86,18 +101,33 @@ casper.test.begin("Testing example_sync.html", 353, function(test) {
         test.assert((params.dow) ? true : false);
         
         params.events = JSON.parse(params.events);
+        test.assertEquals(params.events.length, 3);
+        
         test.assertEquals(params.events[0].key, '[CLY]_view');
         test.assert((params.events[0].segmentation) ? true : false);
-        test.assert((params.segmentation.name) ? true : false);
+        test.assert((params.events[0].segmentation.name) ? true : false);
         test.assertEquals(params.events[0].count, 1);
         
-        test.assertEquals(params.events[1].key, 'linkClick');
+        test.assertEquals(params.events[1].key, "[CLY]_action");
+        test.assertEquals(params.events[1].count, 1);
         test.assert((params.events[1].segmentation) ? true : false);
-        test.assert((params.events[1].segmentation.href) ? true : false);
-        test.assertEquals(params.events[1].segmentation.text, "Dummy link");
-        test.assertEquals(params.events[1].segmentation.id, "track_link");
+        test.assertEquals(params.events[1].segmentation.type, "click");
         test.assert((params.events[1].segmentation.x) ? true : false);
         test.assert((params.events[1].segmentation.y) ? true : false);
+        test.assert((params.events[1].segmentation.width) ? true : false);
+        test.assert((params.events[1].segmentation.height) ? true : false);
+        test.assert((params.events[1].segmentation.rx) ? true : false);
+        test.assert((params.events[1].segmentation.ry) ? true : false);
+        
+        test.assertEquals(params.events[2].key, "linkClick");
+        test.assertEquals(params.events[2].count, 1);
+        test.assert((params.events[2].segmentation) ? true : false);
+        test.assert((params.events[2].segmentation.href) ? true : false);
+        test.assert((params.events[2].segmentation.text) ? true : false);
+        test.assert((params.events[2].segmentation.id) ? true : false);
+        test.assert((params.events[2].segmentation.x) ? true : false);
+        test.assert((params.events[2].segmentation.y) ? true : false);
+        
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Sending XML HTTP request');
@@ -112,19 +142,49 @@ casper.test.begin("Testing example_sync.html", 353, function(test) {
         test.assert((params.dow) ? true : false);
         
         params.events = JSON.parse(params.events);
+        test.assertEquals(params.events.length, 3);
+        
         test.assertEquals(params.events[0].key, '[CLY]_view');
         test.assert((params.events[0].segmentation) ? true : false);
-        test.assert((params.segmentation.name) ? true : false);
+        test.assert((params.events[0].segmentation.name) ? true : false);
         test.assertEquals(params.events[0].count, 1);
         
-        test.assertEquals(params.events[1].key, 'linkClick');
+        test.assertEquals(params.events[1].key, "[CLY]_action");
+        test.assertEquals(params.events[1].count, 1);
         test.assert((params.events[1].segmentation) ? true : false);
-        test.assert((params.events[1].segmentation.href) ? true : false);
-        test.assertEquals(params.events[1].segmentation.text, "Dummy link");
-        test.assertEquals(params.events[1].segmentation.id, "track_link");
+        test.assertEquals(params.events[1].segmentation.type, "click");
         test.assert((params.events[1].segmentation.x) ? true : false);
         test.assert((params.events[1].segmentation.y) ? true : false);
+        test.assert((params.events[1].segmentation.width) ? true : false);
+        test.assert((params.events[1].segmentation.height) ? true : false);
+        test.assert((params.events[1].segmentation.rx) ? true : false);
+        test.assert((params.events[1].segmentation.ry) ? true : false);
+        
+        test.assertEquals(params.events[2].key, "linkClick");
+        test.assertEquals(params.events[2].count, 1);
+        test.assert((params.events[2].segmentation) ? true : false);
+        test.assert((params.events[2].segmentation.href) ? true : false);
+        test.assert((params.events[2].segmentation.text) ? true : false);
+        test.assert((params.events[2].segmentation.id) ? true : false);
+        test.assert((params.events[2].segmentation.x) ? true : false);
+        test.assert((params.events[2].segmentation.y) ? true : false);
     });
+    
+    tests.push(function (message){
+        test.assertEquals(message[0], 'Adding event: ');
+        var params = JSON.parse(message[1]);
+        test.assertEquals(params.key, "[CLY]_action");
+        test.assertEquals(params.count, 1);
+        test.assert((params.segmentation) ? true : false);
+        test.assertEquals(params.segmentation.type, "click");
+        test.assert((params.segmentation.x) ? true : false);
+        test.assert((params.segmentation.y) ? true : false);
+        test.assert((params.segmentation.width) ? true : false);
+        test.assert((params.segmentation.height) ? true : false);
+        test.assert((params.segmentation.rx) ? true : false);
+        test.assert((params.segmentation.ry) ? true : false);
+    });
+    
     tests.push(function (message){
         test.assertEquals(message[0], 'Adding event: ');
         var params = JSON.parse(message[1]);
@@ -178,16 +238,29 @@ casper.test.begin("Testing example_sync.html", 353, function(test) {
         test.assert((params.dow) ? true : false);
         
         params.events = JSON.parse(params.events);
-        test.assertEquals(params.events[0].key, 'formSubmit');
+        test.assertEquals(params.events.length, 2);
+        
+        test.assertEquals(params.events[0].key, "[CLY]_action");
+        test.assertEquals(params.events[0].count, 1);
         test.assert((params.events[0].segmentation) ? true : false);
-        test.assertEquals(params.events[0].segmentation.id, "");
-        test.assertEquals(params.events[0].segmentation.name, "comments");
-        test.assertEquals(params.events[0].segmentation.action, "");
-        test.assertEquals(params.events[0].segmentation.method, "post");
-        test.assertEquals(params.events[0].segmentation["input:message"], "Message Name");
-        test.assertEquals(params.events[0].segmentation["input:textarea"], "Message");
-        test.assertEquals(params.events[0].segmentation["input:select-one"], "option1");
-        test.assertEquals(params.events[0].segmentation["input:submit-form"], "Submit");
+        test.assertEquals(params.events[0].segmentation.type, "click");
+        test.assert((params.events[0].segmentation.x) ? true : false);
+        test.assert((params.events[0].segmentation.y) ? true : false);
+        test.assert((params.events[0].segmentation.width) ? true : false);
+        test.assert((params.events[0].segmentation.height) ? true : false);
+        test.assert((params.events[0].segmentation.rx) ? true : false);
+        test.assert((params.events[0].segmentation.ry) ? true : false);
+        
+        test.assertEquals(params.events[1].key, 'formSubmit');
+        test.assert((params.events[1].segmentation) ? true : false);
+        test.assertEquals(params.events[1].segmentation.id, "");
+        test.assertEquals(params.events[1].segmentation.name, "comments");
+        test.assertEquals(params.events[1].segmentation.action, "");
+        test.assertEquals(params.events[1].segmentation.method, "post");
+        test.assertEquals(params.events[1].segmentation["input:message"], "Message Name");
+        test.assertEquals(params.events[1].segmentation["input:textarea"], "Message");
+        test.assertEquals(params.events[1].segmentation["input:select-one"], "option1");
+        test.assertEquals(params.events[1].segmentation["input:submit-form"], "Submit");
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Sending XML HTTP request');
@@ -202,16 +275,29 @@ casper.test.begin("Testing example_sync.html", 353, function(test) {
         test.assert((params.dow) ? true : false);
         
         params.events = JSON.parse(params.events);
-        test.assertEquals(params.events[0].key, 'formSubmit');
+        test.assertEquals(params.events.length, 2);
+        
+        test.assertEquals(params.events[0].key, "[CLY]_action");
+        test.assertEquals(params.events[0].count, 1);
         test.assert((params.events[0].segmentation) ? true : false);
-        test.assertEquals(params.events[0].segmentation.id, "");
-        test.assertEquals(params.events[0].segmentation.name, "comments");
-        test.assertEquals(params.events[0].segmentation.action, "");
-        test.assertEquals(params.events[0].segmentation.method, "post");
-        test.assertEquals(params.events[0].segmentation["input:message"], "Message Name");
-        test.assertEquals(params.events[0].segmentation["input:textarea"], "Message");
-        test.assertEquals(params.events[0].segmentation["input:select-one"], "option1");
-        test.assertEquals(params.events[0].segmentation["input:submit-form"], "Submit");
+        test.assertEquals(params.events[0].segmentation.type, "click");
+        test.assert((params.events[0].segmentation.x) ? true : false);
+        test.assert((params.events[0].segmentation.y) ? true : false);
+        test.assert((params.events[0].segmentation.width) ? true : false);
+        test.assert((params.events[0].segmentation.height) ? true : false);
+        test.assert((params.events[0].segmentation.rx) ? true : false);
+        test.assert((params.events[0].segmentation.ry) ? true : false);
+        
+        test.assertEquals(params.events[1].key, 'formSubmit');
+        test.assert((params.events[1].segmentation) ? true : false);
+        test.assertEquals(params.events[1].segmentation.id, "");
+        test.assertEquals(params.events[1].segmentation.name, "comments");
+        test.assertEquals(params.events[1].segmentation.action, "");
+        test.assertEquals(params.events[1].segmentation.method, "post");
+        test.assertEquals(params.events[1].segmentation["input:message"], "Message Name");
+        test.assertEquals(params.events[1].segmentation["input:textarea"], "Message");
+        test.assertEquals(params.events[1].segmentation["input:select-one"], "option1");
+        test.assertEquals(params.events[1].segmentation["input:submit-form"], "Submit");
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Countly initialized');
@@ -287,7 +373,7 @@ casper.test.begin("Testing example_sync.html", 353, function(test) {
         params.events = JSON.parse(params.events);
         test.assertEquals(params.events[0].key, '[CLY]_view');
         test.assert((params.events[0].segmentation) ? true : false);
-        test.assert((params.segmentation.name) ? true : false);
+        test.assert((params.events[0].segmentation.name) ? true : false);
         test.assertEquals(params.events[0].count, 1);
     });
     tests.push(function (message){
@@ -305,10 +391,24 @@ casper.test.begin("Testing example_sync.html", 353, function(test) {
         params.events = JSON.parse(params.events);
         test.assertEquals(params.events[0].key, '[CLY]_view');
         test.assert((params.events[0].segmentation) ? true : false);
-        test.assert((params.segmentation.name) ? true : false);
+        test.assert((params.events[0].segmentation.name) ? true : false);
         test.assertEquals(params.events[0].count, 1);
     });
     tests.push(function (message){
+        test.assertEquals(message[0], 'Adding event: ');
+        var params = JSON.parse(message[1]);
+        test.assertEquals(params.key, "[CLY]_action");
+        test.assertEquals(params.count, 1);
+        test.assert((params.segmentation) ? true : false);
+        test.assertEquals(params.segmentation.type, "click");
+        test.assert((params.segmentation.x) ? true : false);
+        test.assert((params.segmentation.y) ? true : false);
+        test.assert((params.segmentation.width) ? true : false);
+        test.assert((params.segmentation.height) ? true : false);
+        test.assert((params.segmentation.rx) ? true : false);
+        test.assert((params.segmentation.ry) ? true : false);
+    });
+    tests.push(function (message){
         test.assertEquals(message[0], 'Got metrics');
         var params = JSON.parse(message[1]);
         test.assertEquals(params._app_version, '0.0');
@@ -433,6 +533,43 @@ casper.test.begin("Testing example_sync.html", 353, function(test) {
         test.assert((params.crash._custom) ? true : false);
         test.assertEquals(params.crash._custom.jquery, "1.10");
         test.assertEquals(params.crash._custom.jqueryui, "1.10");
+    });
+    tests.push(function (message){
+        test.assertEquals(message[0], 'Processing request');
+        var params = JSON.parse(message[1]);
+        params.events = JSON.parse(params.events);
+        test.assertEquals(params.events.length, 1);
+        
+        test.assertEquals(params.events[0].key, "[CLY]_action");
+        test.assertEquals(params.events[0].count, 1);
+        test.assert((params.events[0].segmentation) ? true : false);
+        test.assertEquals(params.events[0].segmentation.type, "click");
+        test.assert((params.events[0].segmentation.x) ? true : false);
+        test.assert((params.events[0].segmentation.y) ? true : false);
+        test.assert((params.events[0].segmentation.width) ? true : false);
+        test.assert((params.events[0].segmentation.height) ? true : false);
+        test.assert((params.events[0].segmentation.rx) ? true : false);
+        test.assert((params.events[0].segmentation.ry) ? true : false);
+    });
+    tests.push(function (message){
+        test.assertEquals(message[0], 'Sending XML HTTP request');
+    });
+    tests.push(function (message){
+        test.assertEquals(message[0], 'Request Finished');
+        var params = JSON.parse(message[1]);
+        params.events = JSON.parse(params.events);
+        test.assertEquals(params.events.length, 1);
+        
+        test.assertEquals(params.events[0].key, "[CLY]_action");
+        test.assertEquals(params.events[0].count, 1);
+        test.assert((params.events[0].segmentation) ? true : false);
+        test.assertEquals(params.events[0].segmentation.type, "click");
+        test.assert((params.events[0].segmentation.x) ? true : false);
+        test.assert((params.events[0].segmentation.y) ? true : false);
+        test.assert((params.events[0].segmentation.width) ? true : false);
+        test.assert((params.events[0].segmentation.height) ? true : false);
+        test.assert((params.events[0].segmentation.rx) ? true : false);
+        test.assert((params.events[0].segmentation.ry) ? true : false);
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Session extended');
