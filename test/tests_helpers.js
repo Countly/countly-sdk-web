@@ -1,4 +1,7 @@
 var fs = require("fs");
+function exists(value){
+    return (typeof value != "undefined") ? true : false;
+}
 casper.test.begin("Testing example_sync.html", 427, function(test) {
     var tests = [];
     var cnt = 0;
@@ -23,44 +26,44 @@ casper.test.begin("Testing example_sync.html", 427, function(test) {
         var params = JSON.parse(message[1]);
         test.assertEquals(params.key, "[CLY]_view");
         test.assertEquals(params.count, 1);
-        test.assert((params.segmentation) ? true : false);
-        test.assert((params.segmentation.name) ? true : false);
+        test.assert(exists(params.segmentation));
+        test.assert(exists(params.segmentation.name));
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Adding event: ');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.key, "[CLY]_action");
         test.assertEquals(params.count, 1);
-        test.assert((params.segmentation) ? true : false);
+        test.assert(exists(params.segmentation));
         test.assertEquals(params.segmentation.type, "click");
-        test.assert((params.segmentation.x) ? true : false);
-        test.assert((params.segmentation.y) ? true : false);
-        test.assert((params.segmentation.width) ? true : false);
-        test.assert((params.segmentation.height) ? true : false);
-        test.assert((params.segmentation.rx) ? true : false);
-        test.assert((params.segmentation.ry) ? true : false);
+        test.assert(exists(params.segmentation.x));
+        test.assert(exists(params.segmentation.y));
+        test.assert(exists(params.segmentation.width));
+        test.assert(exists(params.segmentation.height));
+        test.assert(exists(params.segmentation.rx));
+        test.assert(exists(params.segmentation.ry));
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Adding event: ');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.key, "linkClick");
         test.assertEquals(params.count, 1);
-        test.assert((params.segmentation) ? true : false);
-        test.assert((params.segmentation.href) ? true : false);
-        test.assert((params.segmentation.text) ? true : false);
-        test.assert((params.segmentation.id) ? true : false);
-        test.assert((params.segmentation.x) ? true : false);
-        test.assert((params.segmentation.y) ? true : false);
+        test.assert(exists(params.segmentation));
+        test.assert(exists(params.segmentation.href));
+        test.assert(exists(params.segmentation.text));
+        test.assert(exists(params.segmentation.id));
+        test.assert(exists(params.segmentation.x));
+        test.assert(exists(params.segmentation.y));
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Processing request');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.begin_session, 1);
         test.assertEquals(params.app_key, "YOUR_API_KEY");
-        test.assert((params.device_id) ? true : false);
-        test.assert((params.timestamp) ? true : false);
-        test.assert((params.hour) ? true : false);
-        test.assert((params.dow) ? true : false);
+        test.assert(exists(params.device_id));
+        test.assert(exists(params.timestamp));
+        test.assert(exists(params.hour));
+        test.assert(exists(params.dow));
         params.metrics = JSON.parse(params.metrics);
         test.assertEquals(params.metrics._app_version, '0.0');
         test.assertEquals(params.metrics._resolution, '1024x768');
@@ -77,10 +80,10 @@ casper.test.begin("Testing example_sync.html", 427, function(test) {
         var params = JSON.parse(message[1]);
         test.assertEquals(params.begin_session, 1);
         test.assertEquals(params.app_key, "YOUR_API_KEY");
-        test.assert((params.device_id) ? true : false);
-        test.assert((params.timestamp) ? true : false);
-        test.assert((params.hour) ? true : false);
-        test.assert((params.dow) ? true : false);
+        test.assert(exists(params.device_id));
+        test.assert(exists(params.timestamp));
+        test.assert(exists(params.hour));
+        test.assert(exists(params.dow));
         
         params.metrics = JSON.parse(params.metrics);
         test.assertEquals(params.metrics._app_version, '0.0');
@@ -95,38 +98,38 @@ casper.test.begin("Testing example_sync.html", 427, function(test) {
         var params = JSON.parse(message[1]);
 
         test.assertEquals(params.app_key, "YOUR_API_KEY");
-        test.assert((params.device_id) ? true : false);
-        test.assert((params.timestamp) ? true : false);
-        test.assert((params.hour) ? true : false);
-        test.assert((params.dow) ? true : false);
+        test.assert(exists(params.device_id));
+        test.assert(exists(params.timestamp));
+        test.assert(exists(params.hour));
+        test.assert(exists(params.dow));
         
         params.events = JSON.parse(params.events);
         test.assertEquals(params.events.length, 3);
         
         test.assertEquals(params.events[0].key, '[CLY]_view');
-        test.assert((params.events[0].segmentation) ? true : false);
-        test.assert((params.events[0].segmentation.name) ? true : false);
+        test.assert(exists(params.events[0].segmentation));
+        test.assert(exists(params.events[0].segmentation.name));
         test.assertEquals(params.events[0].count, 1);
         
         test.assertEquals(params.events[1].key, "[CLY]_action");
         test.assertEquals(params.events[1].count, 1);
-        test.assert((params.events[1].segmentation) ? true : false);
+        test.assert(exists(params.events[1].segmentation));
         test.assertEquals(params.events[1].segmentation.type, "click");
-        test.assert((params.events[1].segmentation.x) ? true : false);
-        test.assert((params.events[1].segmentation.y) ? true : false);
-        test.assert((params.events[1].segmentation.width) ? true : false);
-        test.assert((params.events[1].segmentation.height) ? true : false);
-        test.assert((params.events[1].segmentation.rx) ? true : false);
-        test.assert((params.events[1].segmentation.ry) ? true : false);
+        test.assert(exists(params.events[1].segmentation.x));
+        test.assert(exists(params.events[1].segmentation.y));
+        test.assert(exists(params.events[1].segmentation.width));
+        test.assert(exists(params.events[1].segmentation.height));
+        test.assert(exists(params.events[1].segmentation.rx));
+        test.assert(exists(params.events[1].segmentation.ry));
         
         test.assertEquals(params.events[2].key, "linkClick");
         test.assertEquals(params.events[2].count, 1);
-        test.assert((params.events[2].segmentation) ? true : false);
-        test.assert((params.events[2].segmentation.href) ? true : false);
-        test.assert((params.events[2].segmentation.text) ? true : false);
-        test.assert((params.events[2].segmentation.id) ? true : false);
-        test.assert((params.events[2].segmentation.x) ? true : false);
-        test.assert((params.events[2].segmentation.y) ? true : false);
+        test.assert(exists(params.events[2].segmentation));
+        test.assert(exists(params.events[2].segmentation.href));
+        test.assert(exists(params.events[2].segmentation.text));
+        test.assert(exists(params.events[2].segmentation.id));
+        test.assert(exists(params.events[2].segmentation.x));
+        test.assert(exists(params.events[2].segmentation.y));
         
     });
     tests.push(function (message){
@@ -136,38 +139,38 @@ casper.test.begin("Testing example_sync.html", 427, function(test) {
         test.assertEquals(message[0], 'Request Finished');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.app_key, "YOUR_API_KEY");
-        test.assert((params.device_id) ? true : false);
-        test.assert((params.timestamp) ? true : false);
-        test.assert((params.hour) ? true : false);
-        test.assert((params.dow) ? true : false);
+        test.assert(exists(params.device_id));
+        test.assert(exists(params.timestamp));
+        test.assert(exists(params.hour));
+        test.assert(exists(params.dow));
         
         params.events = JSON.parse(params.events);
         test.assertEquals(params.events.length, 3);
         
         test.assertEquals(params.events[0].key, '[CLY]_view');
-        test.assert((params.events[0].segmentation) ? true : false);
-        test.assert((params.events[0].segmentation.name) ? true : false);
+        test.assert(exists(params.events[0].segmentation));
+        test.assert(exists(params.events[0].segmentation.name));
         test.assertEquals(params.events[0].count, 1);
         
         test.assertEquals(params.events[1].key, "[CLY]_action");
         test.assertEquals(params.events[1].count, 1);
-        test.assert((params.events[1].segmentation) ? true : false);
+        test.assert(exists(params.events[1].segmentation));
         test.assertEquals(params.events[1].segmentation.type, "click");
-        test.assert((params.events[1].segmentation.x) ? true : false);
-        test.assert((params.events[1].segmentation.y) ? true : false);
-        test.assert((params.events[1].segmentation.width) ? true : false);
-        test.assert((params.events[1].segmentation.height) ? true : false);
-        test.assert((params.events[1].segmentation.rx) ? true : false);
-        test.assert((params.events[1].segmentation.ry) ? true : false);
+        test.assert(exists(params.events[1].segmentation.x));
+        test.assert(exists(params.events[1].segmentation.y));
+        test.assert(exists(params.events[1].segmentation.width));
+        test.assert(exists(params.events[1].segmentation.height));
+        test.assert(exists(params.events[1].segmentation.rx));
+        test.assert(exists(params.events[1].segmentation.ry));
         
         test.assertEquals(params.events[2].key, "linkClick");
         test.assertEquals(params.events[2].count, 1);
-        test.assert((params.events[2].segmentation) ? true : false);
-        test.assert((params.events[2].segmentation.href) ? true : false);
-        test.assert((params.events[2].segmentation.text) ? true : false);
-        test.assert((params.events[2].segmentation.id) ? true : false);
-        test.assert((params.events[2].segmentation.x) ? true : false);
-        test.assert((params.events[2].segmentation.y) ? true : false);
+        test.assert(exists(params.events[2].segmentation));
+        test.assert(exists(params.events[2].segmentation.href));
+        test.assert(exists(params.events[2].segmentation.text));
+        test.assert(exists(params.events[2].segmentation.id));
+        test.assert(exists(params.events[2].segmentation.x));
+        test.assert(exists(params.events[2].segmentation.y));
     });
     
     tests.push(function (message){
@@ -175,14 +178,14 @@ casper.test.begin("Testing example_sync.html", 427, function(test) {
         var params = JSON.parse(message[1]);
         test.assertEquals(params.key, "[CLY]_action");
         test.assertEquals(params.count, 1);
-        test.assert((params.segmentation) ? true : false);
+        test.assert(exists(params.segmentation));
         test.assertEquals(params.segmentation.type, "click");
-        test.assert((params.segmentation.x) ? true : false);
-        test.assert((params.segmentation.y) ? true : false);
-        test.assert((params.segmentation.width) ? true : false);
-        test.assert((params.segmentation.height) ? true : false);
-        test.assert((params.segmentation.rx) ? true : false);
-        test.assert((params.segmentation.ry) ? true : false);
+        test.assert(exists(params.segmentation.x));
+        test.assert(exists(params.segmentation.y));
+        test.assert(exists(params.segmentation.width));
+        test.assert(exists(params.segmentation.height));
+        test.assert(exists(params.segmentation.rx));
+        test.assert(exists(params.segmentation.ry));
     });
     
     tests.push(function (message){
@@ -190,7 +193,7 @@ casper.test.begin("Testing example_sync.html", 427, function(test) {
         var params = JSON.parse(message[1]);
         test.assertEquals(params.key, "formSubmit");
         test.assertEquals(params.count, 1);
-        test.assert((params.segmentation) ? true : false);
+        test.assert(exists(params.segmentation));
         test.assertEquals(params.segmentation.id, "");
         test.assertEquals(params.segmentation.name, "comments");
         test.assertEquals(params.segmentation.action, "");
@@ -209,10 +212,10 @@ casper.test.begin("Testing example_sync.html", 427, function(test) {
         test.assertEquals(params.end_session, 1);
         test.assertEquals(params.session_duration, 30);
         test.assertEquals(params.app_key, "YOUR_API_KEY");
-        test.assert((params.device_id) ? true : false);
-        test.assert((params.timestamp) ? true : false);
-        test.assert((params.hour) ? true : false);
-        test.assert((params.dow) ? true : false);
+        test.assert(exists(params.device_id));
+        test.assert(exists(params.timestamp));
+        test.assert(exists(params.hour));
+        test.assert(exists(params.dow));
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Sending XML HTTP request');
@@ -223,36 +226,36 @@ casper.test.begin("Testing example_sync.html", 427, function(test) {
         test.assertEquals(params.end_session, 1);
         test.assertEquals(params.session_duration, 30);
         test.assertEquals(params.app_key, "YOUR_API_KEY");
-        test.assert((params.device_id) ? true : false);
-        test.assert((params.timestamp) ? true : false);
-        test.assert((params.hour) ? true : false);
-        test.assert((params.dow) ? true : false);
+        test.assert(exists(params.device_id));
+        test.assert(exists(params.timestamp));
+        test.assert(exists(params.hour));
+        test.assert(exists(params.dow));
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Processing request');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.app_key, "YOUR_API_KEY");
-        test.assert((params.device_id) ? true : false);
-        test.assert((params.timestamp) ? true : false);
-        test.assert((params.hour) ? true : false);
-        test.assert((params.dow) ? true : false);
+        test.assert(exists(params.device_id));
+        test.assert(exists(params.timestamp));
+        test.assert(exists(params.hour));
+        test.assert(exists(params.dow));
         
         params.events = JSON.parse(params.events);
         test.assertEquals(params.events.length, 2);
         
         test.assertEquals(params.events[0].key, "[CLY]_action");
         test.assertEquals(params.events[0].count, 1);
-        test.assert((params.events[0].segmentation) ? true : false);
+        test.assert(exists(params.events[0].segmentation));
         test.assertEquals(params.events[0].segmentation.type, "click");
-        test.assert((params.events[0].segmentation.x) ? true : false);
-        test.assert((params.events[0].segmentation.y) ? true : false);
-        test.assert((params.events[0].segmentation.width) ? true : false);
-        test.assert((params.events[0].segmentation.height) ? true : false);
-        test.assert((params.events[0].segmentation.rx) ? true : false);
-        test.assert((params.events[0].segmentation.ry) ? true : false);
+        test.assert(exists(params.events[0].segmentation.x));
+        test.assert(exists(params.events[0].segmentation.y));
+        test.assert(exists(params.events[0].segmentation.width));
+        test.assert(exists(params.events[0].segmentation.height));
+        test.assert(exists(params.events[0].segmentation.rx));
+        test.assert(exists(params.events[0].segmentation.ry));
         
         test.assertEquals(params.events[1].key, 'formSubmit');
-        test.assert((params.events[1].segmentation) ? true : false);
+        test.assert(exists(params.events[1].segmentation));
         test.assertEquals(params.events[1].segmentation.id, "");
         test.assertEquals(params.events[1].segmentation.name, "comments");
         test.assertEquals(params.events[1].segmentation.action, "");
@@ -269,27 +272,27 @@ casper.test.begin("Testing example_sync.html", 427, function(test) {
         test.assertEquals(message[0], 'Request Finished');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.app_key, "YOUR_API_KEY");
-        test.assert((params.device_id) ? true : false);
-        test.assert((params.timestamp) ? true : false);
-        test.assert((params.hour) ? true : false);
-        test.assert((params.dow) ? true : false);
+        test.assert(exists(params.device_id));
+        test.assert(exists(params.timestamp));
+        test.assert(exists(params.hour));
+        test.assert(exists(params.dow));
         
         params.events = JSON.parse(params.events);
         test.assertEquals(params.events.length, 2);
         
         test.assertEquals(params.events[0].key, "[CLY]_action");
         test.assertEquals(params.events[0].count, 1);
-        test.assert((params.events[0].segmentation) ? true : false);
+        test.assert(exists(params.events[0].segmentation));
         test.assertEquals(params.events[0].segmentation.type, "click");
-        test.assert((params.events[0].segmentation.x) ? true : false);
-        test.assert((params.events[0].segmentation.y) ? true : false);
-        test.assert((params.events[0].segmentation.width) ? true : false);
-        test.assert((params.events[0].segmentation.height) ? true : false);
-        test.assert((params.events[0].segmentation.rx) ? true : false);
-        test.assert((params.events[0].segmentation.ry) ? true : false);
+        test.assert(exists(params.events[0].segmentation.x));
+        test.assert(exists(params.events[0].segmentation.y));
+        test.assert(exists(params.events[0].segmentation.width));
+        test.assert(exists(params.events[0].segmentation.height));
+        test.assert(exists(params.events[0].segmentation.rx));
+        test.assert(exists(params.events[0].segmentation.ry));
         
         test.assertEquals(params.events[1].key, 'formSubmit');
-        test.assert((params.events[1].segmentation) ? true : false);
+        test.assert(exists(params.events[1].segmentation));
         test.assertEquals(params.events[1].segmentation.id, "");
         test.assertEquals(params.events[1].segmentation.name, "comments");
         test.assertEquals(params.events[1].segmentation.action, "");
@@ -320,18 +323,18 @@ casper.test.begin("Testing example_sync.html", 427, function(test) {
         var params = JSON.parse(message[1]);
         test.assertEquals(params.key, "[CLY]_view");
         test.assertEquals(params.count, 1);
-        test.assert((params.segmentation) ? true : false);
-        test.assert((params.segmentation.name) ? true : false);
+        test.assert(exists(params.segmentation));
+        test.assert(exists(params.segmentation.name));
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Processing request');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.begin_session, 1);
         test.assertEquals(params.app_key, "YOUR_API_KEY");
-        test.assert((params.device_id) ? true : false);
-        test.assert((params.timestamp) ? true : false);
-        test.assert((params.hour) ? true : false);
-        test.assert((params.dow) ? true : false);
+        test.assert(exists(params.device_id));
+        test.assert(exists(params.timestamp));
+        test.assert(exists(params.hour));
+        test.assert(exists(params.dow));
         params.metrics = JSON.parse(params.metrics);
         test.assertEquals(params.metrics._app_version, '0.0');
         test.assertEquals(params.metrics._resolution, '1024x768');
@@ -348,10 +351,10 @@ casper.test.begin("Testing example_sync.html", 427, function(test) {
         var params = JSON.parse(message[1]);
         test.assertEquals(params.begin_session, 1);
         test.assertEquals(params.app_key, "YOUR_API_KEY");
-        test.assert((params.device_id) ? true : false);
-        test.assert((params.timestamp) ? true : false);
-        test.assert((params.hour) ? true : false);
-        test.assert((params.dow) ? true : false);
+        test.assert(exists(params.device_id));
+        test.assert(exists(params.timestamp));
+        test.assert(exists(params.hour));
+        test.assert(exists(params.dow));
         
         params.metrics = JSON.parse(params.metrics);
         test.assertEquals(params.metrics._app_version, '0.0');
@@ -365,15 +368,15 @@ casper.test.begin("Testing example_sync.html", 427, function(test) {
         test.assertEquals(message[0], 'Processing request');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.app_key, "YOUR_API_KEY");
-        test.assert((params.device_id) ? true : false);
-        test.assert((params.timestamp) ? true : false);
-        test.assert((params.hour) ? true : false);
-        test.assert((params.dow) ? true : false);
+        test.assert(exists(params.device_id));
+        test.assert(exists(params.timestamp));
+        test.assert(exists(params.hour));
+        test.assert(exists(params.dow));
         
         params.events = JSON.parse(params.events);
         test.assertEquals(params.events[0].key, '[CLY]_view');
-        test.assert((params.events[0].segmentation) ? true : false);
-        test.assert((params.events[0].segmentation.name) ? true : false);
+        test.assert(exists(params.events[0].segmentation));
+        test.assert(exists(params.events[0].segmentation.name));
         test.assertEquals(params.events[0].count, 1);
     });
     tests.push(function (message){
@@ -383,15 +386,15 @@ casper.test.begin("Testing example_sync.html", 427, function(test) {
         test.assertEquals(message[0], 'Request Finished');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.app_key, "YOUR_API_KEY");
-        test.assert((params.device_id) ? true : false);
-        test.assert((params.timestamp) ? true : false);
-        test.assert((params.hour) ? true : false);
-        test.assert((params.dow) ? true : false);
+        test.assert(exists(params.device_id));
+        test.assert(exists(params.timestamp));
+        test.assert(exists(params.hour));
+        test.assert(exists(params.dow));
         
         params.events = JSON.parse(params.events);
         test.assertEquals(params.events[0].key, '[CLY]_view');
-        test.assert((params.events[0].segmentation) ? true : false);
-        test.assert((params.events[0].segmentation.name) ? true : false);
+        test.assert(exists(params.events[0].segmentation));
+        test.assert(exists(params.events[0].segmentation.name));
         test.assertEquals(params.events[0].count, 1);
     });
     tests.push(function (message){
@@ -399,14 +402,14 @@ casper.test.begin("Testing example_sync.html", 427, function(test) {
         var params = JSON.parse(message[1]);
         test.assertEquals(params.key, "[CLY]_action");
         test.assertEquals(params.count, 1);
-        test.assert((params.segmentation) ? true : false);
+        test.assert(exists(params.segmentation));
         test.assertEquals(params.segmentation.type, "click");
-        test.assert((params.segmentation.x) ? true : false);
-        test.assert((params.segmentation.y) ? true : false);
-        test.assert((params.segmentation.width) ? true : false);
-        test.assert((params.segmentation.height) ? true : false);
-        test.assert((params.segmentation.rx) ? true : false);
-        test.assert((params.segmentation.ry) ? true : false);
+        test.assert(exists(params.segmentation.x));
+        test.assert(exists(params.segmentation.y));
+        test.assert(exists(params.segmentation.width));
+        test.assert(exists(params.segmentation.height));
+        test.assert(exists(params.segmentation.rx));
+        test.assert(exists(params.segmentation.ry));
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Got metrics');
@@ -432,10 +435,10 @@ casper.test.begin("Testing example_sync.html", 427, function(test) {
         test.assertEquals(message[0], 'Processing request');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.app_key, "YOUR_API_KEY");
-        test.assert((params.device_id) ? true : false);
-        test.assert((params.timestamp) ? true : false);
-        test.assert((params.hour) ? true : false);
-        test.assert((params.dow) ? true : false);
+        test.assert(exists(params.device_id));
+        test.assert(exists(params.timestamp));
+        test.assert(exists(params.hour));
+        test.assert(exists(params.dow));
         
         params.crash = JSON.parse(params.crash);
         test.assertEquals(params.crash._os, 'Linux');
@@ -447,9 +450,9 @@ casper.test.begin("Testing example_sync.html", 427, function(test) {
         test.assertEquals(params.crash._background, true);
         test.assertEquals(params.crash._nonfatal, false);
         test.assertEquals(params.crash._logs, "Pressed unhandled button");
-        test.assert((params.crash._error) ? true : false);
-        test.assert((params.crash._run) ? true : false);
-        test.assert((params.crash._custom) ? true : false);
+        test.assert(exists(params.crash._error));
+        test.assert(exists(params.crash._run));
+        test.assert(exists(params.crash._custom));
         test.assertEquals(params.crash._custom.jquery, "1.10");
         test.assertEquals(params.crash._custom.jqueryui, "1.10");
     });
@@ -460,10 +463,10 @@ casper.test.begin("Testing example_sync.html", 427, function(test) {
         test.assertEquals(message[0], 'Request Finished');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.app_key, "YOUR_API_KEY");
-        test.assert((params.device_id) ? true : false);
-        test.assert((params.timestamp) ? true : false);
-        test.assert((params.hour) ? true : false);
-        test.assert((params.dow) ? true : false);
+        test.assert(exists(params.device_id));
+        test.assert(exists(params.timestamp));
+        test.assert(exists(params.hour));
+        test.assert(exists(params.dow));
         
         params.crash = JSON.parse(params.crash);
         test.assertEquals(params.crash._os, 'Linux');
@@ -475,9 +478,9 @@ casper.test.begin("Testing example_sync.html", 427, function(test) {
         test.assertEquals(params.crash._background, true);
         test.assertEquals(params.crash._nonfatal, false);
         test.assertEquals(params.crash._logs, "Pressed unhandled button");
-        test.assert((params.crash._error) ? true : false);
-        test.assert((params.crash._run) ? true : false);
-        test.assert((params.crash._custom) ? true : false);
+        test.assert(exists(params.crash._error));
+        test.assert(exists(params.crash._run));
+        test.assert(exists(params.crash._custom));
         test.assertEquals(params.crash._custom.jquery, "1.10");
         test.assertEquals(params.crash._custom.jqueryui, "1.10");
     });
@@ -485,10 +488,10 @@ casper.test.begin("Testing example_sync.html", 427, function(test) {
         test.assertEquals(message[0], 'Processing request');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.app_key, "YOUR_API_KEY");
-        test.assert((params.device_id) ? true : false);
-        test.assert((params.timestamp) ? true : false);
-        test.assert((params.hour) ? true : false);
-        test.assert((params.dow) ? true : false);
+        test.assert(exists(params.device_id));
+        test.assert(exists(params.timestamp));
+        test.assert(exists(params.hour));
+        test.assert(exists(params.dow));
         
         params.crash = JSON.parse(params.crash);
         test.assertEquals(params.crash._os, 'Linux');
@@ -500,9 +503,9 @@ casper.test.begin("Testing example_sync.html", 427, function(test) {
         test.assertEquals(params.crash._background, true);
         test.assertEquals(params.crash._nonfatal, true);
         test.assertEquals(params.crash._logs, "Pressed handled button");
-        test.assert((params.crash._error) ? true : false);
-        test.assert((params.crash._run) ? true : false);
-        test.assert((params.crash._custom) ? true : false);
+        test.assert(exists(params.crash._error));
+        test.assert(exists(params.crash._run));
+        test.assert(exists(params.crash._custom));
         test.assertEquals(params.crash._custom.jquery, "1.10");
         test.assertEquals(params.crash._custom.jqueryui, "1.10");
     });
@@ -513,10 +516,10 @@ casper.test.begin("Testing example_sync.html", 427, function(test) {
         test.assertEquals(message[0], 'Request Finished');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.app_key, "YOUR_API_KEY");
-        test.assert((params.device_id) ? true : false);
-        test.assert((params.timestamp) ? true : false);
-        test.assert((params.hour) ? true : false);
-        test.assert((params.dow) ? true : false);
+        test.assert(exists(params.device_id));
+        test.assert(exists(params.timestamp));
+        test.assert(exists(params.hour));
+        test.assert(exists(params.dow));
         
         params.crash = JSON.parse(params.crash);
         test.assertEquals(params.crash._os, 'Linux');
@@ -528,9 +531,9 @@ casper.test.begin("Testing example_sync.html", 427, function(test) {
         test.assertEquals(params.crash._background, true);
         test.assertEquals(params.crash._nonfatal, true);
         test.assertEquals(params.crash._logs, "Pressed handled button");
-        test.assert((params.crash._error) ? true : false);
-        test.assert((params.crash._run) ? true : false);
-        test.assert((params.crash._custom) ? true : false);
+        test.assert(exists(params.crash._error));
+        test.assert(exists(params.crash._run));
+        test.assert(exists(params.crash._custom));
         test.assertEquals(params.crash._custom.jquery, "1.10");
         test.assertEquals(params.crash._custom.jqueryui, "1.10");
     });
@@ -542,14 +545,14 @@ casper.test.begin("Testing example_sync.html", 427, function(test) {
         
         test.assertEquals(params.events[0].key, "[CLY]_action");
         test.assertEquals(params.events[0].count, 1);
-        test.assert((params.events[0].segmentation) ? true : false);
+        test.assert(exists(params.events[0].segmentation));
         test.assertEquals(params.events[0].segmentation.type, "click");
-        test.assert((params.events[0].segmentation.x) ? true : false);
-        test.assert((params.events[0].segmentation.y) ? true : false);
-        test.assert((params.events[0].segmentation.width) ? true : false);
-        test.assert((params.events[0].segmentation.height) ? true : false);
-        test.assert((params.events[0].segmentation.rx) ? true : false);
-        test.assert((params.events[0].segmentation.ry) ? true : false);
+        test.assert(exists(params.events[0].segmentation.x));
+        test.assert(exists(params.events[0].segmentation.y));
+        test.assert(exists(params.events[0].segmentation.width));
+        test.assert(exists(params.events[0].segmentation.height));
+        test.assert(exists(params.events[0].segmentation.rx));
+        test.assert(exists(params.events[0].segmentation.ry));
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Sending XML HTTP request');
@@ -562,14 +565,14 @@ casper.test.begin("Testing example_sync.html", 427, function(test) {
         
         test.assertEquals(params.events[0].key, "[CLY]_action");
         test.assertEquals(params.events[0].count, 1);
-        test.assert((params.events[0].segmentation) ? true : false);
+        test.assert(exists(params.events[0].segmentation));
         test.assertEquals(params.events[0].segmentation.type, "click");
-        test.assert((params.events[0].segmentation.x) ? true : false);
-        test.assert((params.events[0].segmentation.y) ? true : false);
-        test.assert((params.events[0].segmentation.width) ? true : false);
-        test.assert((params.events[0].segmentation.height) ? true : false);
-        test.assert((params.events[0].segmentation.rx) ? true : false);
-        test.assert((params.events[0].segmentation.ry) ? true : false);
+        test.assert(exists(params.events[0].segmentation.x));
+        test.assert(exists(params.events[0].segmentation.y));
+        test.assert(exists(params.events[0].segmentation.width));
+        test.assert(exists(params.events[0].segmentation.height));
+        test.assert(exists(params.events[0].segmentation.rx));
+        test.assert(exists(params.events[0].segmentation.ry));
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Session extended');
@@ -580,10 +583,10 @@ casper.test.begin("Testing example_sync.html", 427, function(test) {
         var params = JSON.parse(message[1]);
         test.assertEquals(params.session_duration, 61);
         test.assertEquals(params.app_key, "YOUR_API_KEY");
-        test.assert((params.device_id) ? true : false);
-        test.assert((params.timestamp) ? true : false);
-        test.assert((params.hour) ? true : false);
-        test.assert((params.dow) ? true : false);
+        test.assert(exists(params.device_id));
+        test.assert(exists(params.timestamp));
+        test.assert(exists(params.hour));
+        test.assert(exists(params.dow));
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Sending XML HTTP request');
@@ -593,10 +596,10 @@ casper.test.begin("Testing example_sync.html", 427, function(test) {
         var params = JSON.parse(message[1]);
         test.assertEquals(params.session_duration, 61);
         test.assertEquals(params.app_key, "YOUR_API_KEY");
-        test.assert((params.device_id) ? true : false);
-        test.assert((params.timestamp) ? true : false);
-        test.assert((params.hour) ? true : false);
-        test.assert((params.dow) ? true : false);
+        test.assert(exists(params.device_id));
+        test.assert(exists(params.timestamp));
+        test.assert(exists(params.hour));
+        test.assert(exists(params.dow));
     });
     casper.on('remote.message', function(message) {
         this.echo(message);

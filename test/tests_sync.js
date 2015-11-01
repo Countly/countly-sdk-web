@@ -1,4 +1,7 @@
 var fs = require("fs");
+function exists(value){
+    return (typeof value != "undefined") ? true : false;
+}
 casper.test.begin("Testing example_sync.html", 92, function(test) {
     var tests = [];
     var cnt = 0;
@@ -22,15 +25,15 @@ casper.test.begin("Testing example_sync.html", 92, function(test) {
         test.assertEquals(message[0], 'Adding event: ');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.key, "pageView");
-        test.assert((params.segmentation) ? true : false);
-        test.assert((params.segmentation.url) ? true : false);
+        test.assert(exists(params.segmentation));
+        test.assert(exists(params.segmentation.url));
         test.assertEquals(params.count, 1);
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Adding event: ');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.key, "buttonClick");
-        test.assert((params.segmentation) ? true : false);
+        test.assert(exists(params.segmentation));
         test.assertEquals(params.segmentation.id, "testButton");
         test.assertEquals(params.count, 1);
     });
@@ -39,10 +42,10 @@ casper.test.begin("Testing example_sync.html", 92, function(test) {
         var params = JSON.parse(message[1]);
         test.assertEquals(params.begin_session, 1);
         test.assertEquals(params.app_key, "YOUR_API_KEY");
-        test.assert((params.device_id) ? true : false);
-        test.assert((params.timestamp) ? true : false);
-        test.assert((params.hour) ? true : false);
-        test.assert((params.dow) ? true : false);
+        test.assert(exists(params.device_id));
+        test.assert(exists(params.timestamp));
+        test.assert(exists(params.hour));
+        test.assert(exists(params.dow));
         params.metrics = JSON.parse(params.metrics);
         test.assertEquals(params.metrics._app_version, '0.0');
         test.assertEquals(params.metrics._resolution, '1024x768');
@@ -59,10 +62,10 @@ casper.test.begin("Testing example_sync.html", 92, function(test) {
         var params = JSON.parse(message[1]);
         test.assertEquals(params.begin_session, 1);
         test.assertEquals(params.app_key, "YOUR_API_KEY");
-        test.assert((params.device_id) ? true : false);
-        test.assert((params.timestamp) ? true : false);
-        test.assert((params.hour) ? true : false);
-        test.assert((params.dow) ? true : false);
+        test.assert(exists(params.device_id));
+        test.assert(exists(params.timestamp));
+        test.assert(exists(params.hour));
+        test.assert(exists(params.dow));
         
         params.metrics = JSON.parse(params.metrics);
         test.assertEquals(params.metrics._app_version, '0.0');
@@ -76,19 +79,19 @@ casper.test.begin("Testing example_sync.html", 92, function(test) {
         test.assertEquals(message[0], 'Processing request');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.app_key, "YOUR_API_KEY");
-        test.assert((params.device_id) ? true : false);
-        test.assert((params.timestamp) ? true : false);
-        test.assert((params.hour) ? true : false);
-        test.assert((params.dow) ? true : false);
+        test.assert(exists(params.device_id));
+        test.assert(exists(params.timestamp));
+        test.assert(exists(params.hour));
+        test.assert(exists(params.dow));
         
         params.events = JSON.parse(params.events);
         test.assertEquals(params.events[0].key, 'pageView');
-        test.assert((params.events[0].segmentation) ? true : false);
-        test.assert((params.events[0].segmentation.url) ? true : false);
+        test.assert(exists(params.events[0].segmentation));
+        test.assert(exists(params.events[0].segmentation.url));
         test.assertEquals(params.events[0].count, 1);
         
         test.assertEquals(params.events[1].key, 'buttonClick');
-        test.assert((params.events[1].segmentation) ? true : false);
+        test.assert(exists(params.events[1].segmentation));
         test.assertEquals(params.events[1].segmentation.id, "testButton");
         test.assertEquals(params.events[1].count, 1);
     });
@@ -99,19 +102,19 @@ casper.test.begin("Testing example_sync.html", 92, function(test) {
         test.assertEquals(message[0], 'Request Finished');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.app_key, "YOUR_API_KEY");
-        test.assert((params.device_id) ? true : false);
-        test.assert((params.timestamp) ? true : false);
-        test.assert((params.hour) ? true : false);
-        test.assert((params.dow) ? true : false);
+        test.assert(exists(params.device_id));
+        test.assert(exists(params.timestamp));
+        test.assert(exists(params.hour));
+        test.assert(exists(params.dow));
         
         params.events = JSON.parse(params.events);
         test.assertEquals(params.events[0].key, 'pageView');
-        test.assert((params.events[0].segmentation) ? true : false);
-        test.assert((params.events[0].segmentation.url) ? true : false);
+        test.assert(exists(params.events[0].segmentation));
+        test.assert(exists(params.events[0].segmentation.url));
         test.assertEquals(params.events[0].count, 1);
         
         test.assertEquals(params.events[1].key, 'buttonClick');
-        test.assert((params.events[1].segmentation) ? true : false);
+        test.assert(exists(params.events[1].segmentation));
         test.assertEquals(params.events[1].segmentation.id, "testButton");
         test.assertEquals(params.events[1].count, 1);
     });
@@ -124,10 +127,10 @@ casper.test.begin("Testing example_sync.html", 92, function(test) {
         var params = JSON.parse(message[1]);
         test.assertEquals(params.session_duration, 61);
         test.assertEquals(params.app_key, "YOUR_API_KEY");
-        test.assert((params.device_id) ? true : false);
-        test.assert((params.timestamp) ? true : false);
-        test.assert((params.hour) ? true : false);
-        test.assert((params.dow) ? true : false);
+        test.assert(exists(params.device_id));
+        test.assert(exists(params.timestamp));
+        test.assert(exists(params.hour));
+        test.assert(exists(params.dow));
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Sending XML HTTP request');
@@ -137,10 +140,10 @@ casper.test.begin("Testing example_sync.html", 92, function(test) {
         var params = JSON.parse(message[1]);
         test.assertEquals(params.session_duration, 61);
         test.assertEquals(params.app_key, "YOUR_API_KEY");
-        test.assert((params.device_id) ? true : false);
-        test.assert((params.timestamp) ? true : false);
-        test.assert((params.hour) ? true : false);
-        test.assert((params.dow) ? true : false);
+        test.assert(exists(params.device_id));
+        test.assert(exists(params.timestamp));
+        test.assert(exists(params.hour));
+        test.assert(exists(params.dow));
     });
     casper.on('remote.message', function(message) {
         this.echo(message);
