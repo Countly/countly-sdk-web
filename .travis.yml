@@ -2,7 +2,9 @@ language: javascript
 sudo: false
 before_script:
   - npm install -g casperjs
+  - npm install -g jshint
 script: 
+  - jshint lib/countly.js
   - casperjs test test/tests_sync.js
   - casperjs test test/tests_async.js
   - casperjs test test/tests_helpers.js
