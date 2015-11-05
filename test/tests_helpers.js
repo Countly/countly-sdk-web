@@ -2,7 +2,7 @@ var fs = require("fs");
 function exists(value){
     return (typeof value != "undefined") ? true : false;
 }
-casper.test.begin("Testing example_sync.html", 427, function(test) {
+casper.test.begin("Testing example_sync.html", 443, function(test) {
     var tests = [];
     var cnt = 0;
     tests.push(function (message){
@@ -207,6 +207,15 @@ casper.test.begin("Testing example_sync.html", 427, function(test) {
         test.assertEquals(message[0], 'Ending session');
     });
     tests.push(function (message){
+        test.assertEquals(message[0], 'Adding event: ');
+        var params = JSON.parse(message[1]);
+        test.assertEquals(params.key, "[CLY]_view");
+        test.assertEquals(params.count, 1);
+        test.assertEquals(params.dur, 30);
+        test.assert(exists(params.segmentation));
+        test.assert(exists(params.segmentation.name));
+    });
+    tests.push(function (message){
         test.assertEquals(message[0], 'Processing request');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.end_session, 1);
@@ -241,7 +250,7 @@ casper.test.begin("Testing example_sync.html", 427, function(test) {
         test.assert(exists(params.dow));
         
         params.events = JSON.parse(params.events);
-        test.assertEquals(params.events.length, 2);
+        test.assertEquals(params.events.length, 3);
         
         test.assertEquals(params.events[0].key, "[CLY]_action");
         test.assertEquals(params.events[0].count, 1);
@@ -264,6 +273,12 @@ casper.test.begin("Testing example_sync.html", 427, function(test) {
         test.assertEquals(params.events[1].segmentation["input:textarea"], "Message");
         test.assertEquals(params.events[1].segmentation["input:select-one"], "option1");
         test.assertEquals(params.events[1].segmentation["input:submit-form"], "Submit");
+        
+        test.assertEquals(params.events[2].key, "[CLY]_view");
+        test.assertEquals(params.events[2].count, 1);
+        test.assertEquals(params.events[2].dur, 30);
+        test.assert(exists(params.events[2].segmentation));
+        test.assert(exists(params.events[2].segmentation.name));
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Sending XML HTTP request');
@@ -278,7 +293,7 @@ casper.test.begin("Testing example_sync.html", 427, function(test) {
         test.assert(exists(params.dow));
         
         params.events = JSON.parse(params.events);
-        test.assertEquals(params.events.length, 2);
+        test.assertEquals(params.events.length, 3);
         
         test.assertEquals(params.events[0].key, "[CLY]_action");
         test.assertEquals(params.events[0].count, 1);
@@ -301,6 +316,12 @@ casper.test.begin("Testing example_sync.html", 427, function(test) {
         test.assertEquals(params.events[1].segmentation["input:textarea"], "Message");
         test.assertEquals(params.events[1].segmentation["input:select-one"], "option1");
         test.assertEquals(params.events[1].segmentation["input:submit-form"], "Submit");
+        
+        test.assertEquals(params.events[2].key, "[CLY]_view");
+        test.assertEquals(params.events[2].count, 1);
+        test.assertEquals(params.events[2].dur, 30);
+        test.assert(exists(params.events[2].segmentation));
+        test.assert(exists(params.events[2].segmentation.name));
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Countly initialized');
