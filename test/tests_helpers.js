@@ -40,8 +40,6 @@ casper.test.begin("Testing example_sync.html", 443, function(test) {
         test.assert(exists(params.segmentation.y));
         test.assert(exists(params.segmentation.width));
         test.assert(exists(params.segmentation.height));
-        test.assert(exists(params.segmentation.rx));
-        test.assert(exists(params.segmentation.ry));
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Adding event: ');
@@ -119,8 +117,6 @@ casper.test.begin("Testing example_sync.html", 443, function(test) {
         test.assert(exists(params.events[1].segmentation.y));
         test.assert(exists(params.events[1].segmentation.width));
         test.assert(exists(params.events[1].segmentation.height));
-        test.assert(exists(params.events[1].segmentation.rx));
-        test.assert(exists(params.events[1].segmentation.ry));
         
         test.assertEquals(params.events[2].key, "linkClick");
         test.assertEquals(params.events[2].count, 1);
@@ -160,8 +156,6 @@ casper.test.begin("Testing example_sync.html", 443, function(test) {
         test.assert(exists(params.events[1].segmentation.y));
         test.assert(exists(params.events[1].segmentation.width));
         test.assert(exists(params.events[1].segmentation.height));
-        test.assert(exists(params.events[1].segmentation.rx));
-        test.assert(exists(params.events[1].segmentation.ry));
         
         test.assertEquals(params.events[2].key, "linkClick");
         test.assertEquals(params.events[2].count, 1);
@@ -184,8 +178,6 @@ casper.test.begin("Testing example_sync.html", 443, function(test) {
         test.assert(exists(params.segmentation.y));
         test.assert(exists(params.segmentation.width));
         test.assert(exists(params.segmentation.height));
-        test.assert(exists(params.segmentation.rx));
-        test.assert(exists(params.segmentation.ry));
     });
     
     tests.push(function (message){
@@ -260,8 +252,6 @@ casper.test.begin("Testing example_sync.html", 443, function(test) {
         test.assert(exists(params.events[0].segmentation.y));
         test.assert(exists(params.events[0].segmentation.width));
         test.assert(exists(params.events[0].segmentation.height));
-        test.assert(exists(params.events[0].segmentation.rx));
-        test.assert(exists(params.events[0].segmentation.ry));
         
         test.assertEquals(params.events[1].key, 'formSubmit');
         test.assert(exists(params.events[1].segmentation));
@@ -303,8 +293,6 @@ casper.test.begin("Testing example_sync.html", 443, function(test) {
         test.assert(exists(params.events[0].segmentation.y));
         test.assert(exists(params.events[0].segmentation.width));
         test.assert(exists(params.events[0].segmentation.height));
-        test.assert(exists(params.events[0].segmentation.rx));
-        test.assert(exists(params.events[0].segmentation.ry));
         
         test.assertEquals(params.events[1].key, 'formSubmit');
         test.assert(exists(params.events[1].segmentation));
@@ -429,8 +417,6 @@ casper.test.begin("Testing example_sync.html", 443, function(test) {
         test.assert(exists(params.segmentation.y));
         test.assert(exists(params.segmentation.width));
         test.assert(exists(params.segmentation.height));
-        test.assert(exists(params.segmentation.rx));
-        test.assert(exists(params.segmentation.ry));
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Got metrics');
@@ -572,8 +558,6 @@ casper.test.begin("Testing example_sync.html", 443, function(test) {
         test.assert(exists(params.events[0].segmentation.y));
         test.assert(exists(params.events[0].segmentation.width));
         test.assert(exists(params.events[0].segmentation.height));
-        test.assert(exists(params.events[0].segmentation.rx));
-        test.assert(exists(params.events[0].segmentation.ry));
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Sending XML HTTP request');
@@ -592,8 +576,6 @@ casper.test.begin("Testing example_sync.html", 443, function(test) {
         test.assert(exists(params.events[0].segmentation.y));
         test.assert(exists(params.events[0].segmentation.width));
         test.assert(exists(params.events[0].segmentation.height));
-        test.assert(exists(params.events[0].segmentation.rx));
-        test.assert(exists(params.events[0].segmentation.ry));
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Session extended');
