@@ -41,7 +41,7 @@ casper.test.begin("Testing example_sync.html", 92, function(test) {
         test.assertEquals(message[0], 'Processing request');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.begin_session, 1);
-        test.assertEquals(params.app_key, "YOUR_API_KEY");
+        test.assertEquals(params.app_key, "YOUR_APP_KEY");
         test.assert(exists(params.device_id));
         test.assert(exists(params.timestamp));
         test.assert(exists(params.hour));
@@ -61,7 +61,7 @@ casper.test.begin("Testing example_sync.html", 92, function(test) {
         test.assertEquals(message[0], 'Request Finished');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.begin_session, 1);
-        test.assertEquals(params.app_key, "YOUR_API_KEY");
+        test.assertEquals(params.app_key, "YOUR_APP_KEY");
         test.assert(exists(params.device_id));
         test.assert(exists(params.timestamp));
         test.assert(exists(params.hour));
@@ -78,7 +78,7 @@ casper.test.begin("Testing example_sync.html", 92, function(test) {
     tests.push(function (message){
         test.assertEquals(message[0], 'Processing request');
         var params = JSON.parse(message[1]);
-        test.assertEquals(params.app_key, "YOUR_API_KEY");
+        test.assertEquals(params.app_key, "YOUR_APP_KEY");
         test.assert(exists(params.device_id));
         test.assert(exists(params.timestamp));
         test.assert(exists(params.hour));
@@ -101,7 +101,7 @@ casper.test.begin("Testing example_sync.html", 92, function(test) {
     tests.push(function (message){
         test.assertEquals(message[0], 'Request Finished');
         var params = JSON.parse(message[1]);
-        test.assertEquals(params.app_key, "YOUR_API_KEY");
+        test.assertEquals(params.app_key, "YOUR_APP_KEY");
         test.assert(exists(params.device_id));
         test.assert(exists(params.timestamp));
         test.assert(exists(params.hour));
@@ -126,7 +126,7 @@ casper.test.begin("Testing example_sync.html", 92, function(test) {
         test.assertEquals(message[0], 'Processing request');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.session_duration, 61);
-        test.assertEquals(params.app_key, "YOUR_API_KEY");
+        test.assertEquals(params.app_key, "YOUR_APP_KEY");
         test.assert(exists(params.device_id));
         test.assert(exists(params.timestamp));
         test.assert(exists(params.hour));
@@ -139,7 +139,7 @@ casper.test.begin("Testing example_sync.html", 92, function(test) {
         test.assertEquals(message[0], 'Request Finished');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.session_duration, 61);
-        test.assertEquals(params.app_key, "YOUR_API_KEY");
+        test.assertEquals(params.app_key, "YOUR_APP_KEY");
         test.assert(exists(params.device_id));
         test.assert(exists(params.timestamp));
         test.assert(exists(params.hour));
