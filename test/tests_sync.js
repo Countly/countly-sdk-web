@@ -2,7 +2,7 @@ var fs = require("fs");
 function exists(value){
     return (typeof value != "undefined") ? true : false;
 }
-casper.test.begin("Testing example_sync.html", 92, function(test) {
+casper.test.begin("Testing example_sync.html", 98, function(test) {
     var tests = [];
     var cnt = 0;
     tests.push(function (message){
@@ -24,9 +24,11 @@ casper.test.begin("Testing example_sync.html", 92, function(test) {
     tests.push(function (message){
         test.assertEquals(message[0], 'Adding event: ');
         var params = JSON.parse(message[1]);
-        test.assertEquals(params.key, "pageView");
+        test.assertEquals(params.key, "[CLY]_view");
         test.assert(exists(params.segmentation));
-        test.assert(exists(params.segmentation.url));
+        test.assert(exists(params.segmentation.name));
+        test.assert(exists(params.segmentation.visit));
+        test.assert(exists(params.segmentation.segment));
         test.assertEquals(params.count, 1);
     });
     tests.push(function (message){
@@ -85,9 +87,11 @@ casper.test.begin("Testing example_sync.html", 92, function(test) {
         test.assert(exists(params.dow));
         
         params.events = JSON.parse(params.events);
-        test.assertEquals(params.events[0].key, 'pageView');
+        test.assertEquals(params.events[0].key, '[CLY]_view');
         test.assert(exists(params.events[0].segmentation));
-        test.assert(exists(params.events[0].segmentation.url));
+        test.assert(exists(params.events[0].segmentation.name));
+        test.assert(exists(params.events[0].segmentation.visit));
+        test.assert(exists(params.events[0].segmentation.segment));
         test.assertEquals(params.events[0].count, 1);
         
         test.assertEquals(params.events[1].key, 'buttonClick');
@@ -108,9 +112,11 @@ casper.test.begin("Testing example_sync.html", 92, function(test) {
         test.assert(exists(params.dow));
         
         params.events = JSON.parse(params.events);
-        test.assertEquals(params.events[0].key, 'pageView');
+        test.assertEquals(params.events[0].key, '[CLY]_view');
         test.assert(exists(params.events[0].segmentation));
-        test.assert(exists(params.events[0].segmentation.url));
+        test.assert(exists(params.events[0].segmentation.name));
+        test.assert(exists(params.events[0].segmentation.visit));
+        test.assert(exists(params.events[0].segmentation.segment));
         test.assertEquals(params.events[0].count, 1);
         
         test.assertEquals(params.events[1].key, 'buttonClick');
