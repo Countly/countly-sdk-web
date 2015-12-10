@@ -11,22 +11,11 @@ Countly.url = "http://cloud.count.ly"; //or none for default countly cloud
 Countly.debug = true;
 
 //start pushing function calls to queue
-
-//start session on each page view
-Countly.q.push(['begin_session']);
-
-//add any events you want like pageView
-Countly.q.push(['add_event',{
-	key:"pageView", 
-	"segmentation": {
-		"url": window.location.pathname
-	}
-}]);
-
-//end session on leaving page
-window.onunload = function(){
-	Countly.end_session();
-};
+//track sessions automatically
+Countly.q.push(['track_sessions']);
+  
+//track sessions automatically
+Countly.q.push(['track_pageview']);
 
 //load countly script asynchronously
 (function() {

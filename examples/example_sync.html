@@ -1,5 +1,7 @@
 <html>
 <head>
+<input type="button" id="testButton" onclick="clickEvent(this)" value="Test Button">
+<p><a href='http://count.ly/'>Count.ly</a></p>
 <!--Countly script-->
 <script type='text/javascript' src='../lib/countly.min.js'></script>
 <script type='text/javascript'>
@@ -10,21 +12,10 @@ Countly.init({
 	url: "http://cloud.count.ly", //or none for default countly cloud
 	debug:true
 })
-//start session on each page view
-Countly.begin_session();
-
-//add any events you want like pageView
-Countly.add_event({
-	"key": "pageView",
-	"segmentation": {
-		"url": window.location.pathname
-	}
-});
-
-//end session on leaving page
-window.onunload = function(){
-	Countly.end_session();
-};
+//track sessions automatically
+Countly.track_sessions();
+//track pageviews automatically
+Countly.track_pageview();
 </script>
 </head>
 <body>
@@ -39,7 +30,5 @@ function clickEvent(ob){
 	});
 }
 </script>
-<input type="button" id="testButton" onclick="clickEvent(this)" value="Test Button">
-<p><a href='http://count.ly/'>Count.ly</a></p>
 </body>
 </html>
