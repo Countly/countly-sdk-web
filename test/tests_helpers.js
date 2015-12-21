@@ -2,7 +2,7 @@ var fs = require("fs");
 function exists(value){
     return (typeof value != "undefined") ? true : false;
 }
-casper.test.begin("Testing example_sync.html", 425, function(test) {
+casper.test.begin("Testing example_sync.html", 421, function(test) {
     var tests = [];
     var cnt = 0;
     tests.push(function (message){
@@ -452,7 +452,6 @@ casper.test.begin("Testing example_sync.html", 425, function(test) {
         test.assertEquals(params.crash._os_version, 'unknown');
         test.assertEquals(params.crash._resolution, '1024x768');
         test.assertEquals(params.crash._app_version, '0.0');
-        test.assertEquals(params.crash._manufacture, 'Safari');
         test.assertEquals(params.crash._online, false);
         test.assertEquals(params.crash._background, true);
         test.assertEquals(params.crash._nonfatal, false);
@@ -480,7 +479,6 @@ casper.test.begin("Testing example_sync.html", 425, function(test) {
         test.assertEquals(params.crash._os_version, 'unknown');
         test.assertEquals(params.crash._resolution, '1024x768');
         test.assertEquals(params.crash._app_version, '0.0');
-        test.assertEquals(params.crash._manufacture, 'Safari');
         test.assertEquals(params.crash._online, false);
         test.assertEquals(params.crash._background, true);
         test.assertEquals(params.crash._nonfatal, false);
@@ -505,7 +503,6 @@ casper.test.begin("Testing example_sync.html", 425, function(test) {
         test.assertEquals(params.crash._os_version, 'unknown');
         test.assertEquals(params.crash._resolution, '1024x768');
         test.assertEquals(params.crash._app_version, '0.0');
-        test.assertEquals(params.crash._manufacture, 'Safari');
         test.assertEquals(params.crash._online, false);
         test.assertEquals(params.crash._background, true);
         test.assertEquals(params.crash._nonfatal, true);
@@ -533,7 +530,6 @@ casper.test.begin("Testing example_sync.html", 425, function(test) {
         test.assertEquals(params.crash._os_version, 'unknown');
         test.assertEquals(params.crash._resolution, '1024x768');
         test.assertEquals(params.crash._app_version, '0.0');
-        test.assertEquals(params.crash._manufacture, 'Safari');
         test.assertEquals(params.crash._online, false);
         test.assertEquals(params.crash._background, true);
         test.assertEquals(params.crash._nonfatal, true);
