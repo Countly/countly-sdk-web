@@ -1,0 +1,42 @@
+{
+  "name": "countly-sdk-web",
+  "version": "15.08.0",
+  "description": "Countly Web SDK",
+  "main": "lib/countly.js",
+  "directories": {
+    "example": "examples",
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Countly/countly-sdk-web"
+  },
+  "keywords": [
+    "Countly",
+    "Analytics",
+    "Web"
+  ],
+  "author": "Countly <hello@count.ly> (https://count.ly/)",
+  "license": "./LICENSE",
+  "bugs": {
+    "url": "https://github.com/Countly/countly-sdk-web/issues"
+  },
+  "homepage": "https://count.ly/",
+  "dependencies": {},
+  "devDependencies": {
+    "casperjs": "*",
+    "jshint": "*"
+  },
+  "npmName": "countly-sdk-web",
+  "npmFileMap": [
+    {
+      "basePath": "lib",
+      "files": [
+        "countly.min.js"
+      ]
+    }
+  ]
+}
