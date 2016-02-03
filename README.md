@@ -1,6 +1,11 @@
 #Countly Web SDK [![Build Status](https://api.travis-ci.org/Countly/countly-sdk-web.png)](https://travis-ci.org/Countly/countly-sdk-web)
 
-##Install using package managers
+##How to get Countly Web SDK?
+
+### Available with Countly server
+Since Countly server 16.02, Countly Web SDK is available in your Countly server installation in `countly/frontend/express/public/sdk/web/countly.min.js` which should be available through URL as `http://yourserver.com/sdk/web/countly.min.js`
+
+###Install using package managers
 
     bower install countly-sdk-web
 or
