@@ -2,7 +2,7 @@
   "name": "countly-sdk-web",
   "version": "15.08.0",
   "description": "Countly Web SDK",
-  "main": "lib/countly.min.js",
+  "main": "lib/countly.js",
   "moduleType": "globals",
   "keywords": [
     "Countly",
