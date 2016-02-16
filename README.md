@@ -11,6 +11,10 @@ Since Countly server 16.02, Countly Web SDK is available in your Countly server 
 or
 
     npm install countly-sdk-web
+    
+###Or use CDN
+
+    https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/15.08.0/countly.min.js
 
 ##What's Countly?
 [Countly](http://count.ly) is an innovative, real-time, open source mobile analytics application. 
