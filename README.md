@@ -14,7 +14,12 @@ or
     
 ###Or use CDN
 
-    https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/15.08.0/countly.min.js
+[https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/15.08.0/countly.min.js](https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/15.08.0/countly.min.js)
+
+##How to use Countly Web SDK?
+
+Link to the script and call helper methods based on what you want to track: sessions, views, clicks, custom events, user data, etc.
+More information is available at [http://resources.count.ly/docs/countly-sdk-for-web](http://resources.count.ly/docs/countly-sdk-for-web)
 
 ##What's Countly?
 [Countly](http://count.ly) is an innovative, real-time, open source mobile analytics application. 
