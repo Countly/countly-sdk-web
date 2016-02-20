@@ -14,7 +14,7 @@ or
     
 ###Or use CDN
 
-[https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/15.08.0/countly.min.js](https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/15.08.0/countly.min.js)
+[https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/16.2.0/countly.min.js](https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/16.2.0/countly.min.js)
 
 ##How to use Countly Web SDK?
 
