@@ -12,9 +12,13 @@ or
 
     npm install countly-sdk-web
     
-###Or use CDN
+###Use CDN
 
 [https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/16.2.0/countly.min.js](https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/16.2.0/countly.min.js)
+
+or
+
+[https://cdn.jsdelivr.net/countly-sdk-web/latest/countly.min.js](https://cdn.jsdelivr.net/countly-sdk-web/latest/countly.min.js)
 
 ##How to use Countly Web SDK?
 
