@@ -1,0 +1,7 @@
+{
+  "files": {
+    "included": [
+      "lib/countly.js"
+    ]
+  }
+}
