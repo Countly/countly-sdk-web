@@ -817,12 +817,13 @@
                         //load labels for inputs
                         var labelData = {};
                         var labels = parent.getElementsByTagName('LABEL');
-                        for (var i = 0; i &lt; labels.length; i++) {
-                            if (labels[i].htmlFor != '') {
+                        var i, j;
+                        for (i = 0; i &lt; labels.length; i++) {
+                            if (labels[i].htmlFor &amp;&amp; labels[i].htmlFor !== '') {
                                 labelData[labels[i].htmlFor] = labels[i].innerText || labels[i].textContent || labels[i].innerHTML;		
                             }
                         }
-                        for(var i = 0; i &lt; form.elements.length; i++){
+                        for(i = 0; i &lt; form.elements.length; i++){
                             input = form.elements[i];
                             //check if element should be ignored
                             if(input.className.indexOf("cly_user_ignore") == -1){
@@ -832,7 +833,7 @@
                                     if(typeof input.multiple !== "undefined"){
                                         var values = [];
                                         if(typeof input.options !== "undefined")
-                                            for(var j = 0; j &lt; input.options.length; j++){
+                                            for(j = 0; j &lt; input.options.length; j++){
                                                 if (input.options[j].selected)
                                                     values.push(input.options[j].value);
                                             }
@@ -863,8 +864,8 @@
                                 //check if input was marked to be collected
                                 if(input.className &amp;&amp; input.className.indexOf("cly_user_") != -1){
                                     var classes = input.className.split(" ");
-                                    for(var j = 0; j &lt; classes.length; j++){
-                                        if(classes[j].indexOf("cly_user_") == 0){
+                                    for(j = 0; j &lt; classes.length; j++){
+                                        if(classes[j].indexOf("cly_user_") === 0){
                                             userdata[classes[j].replace("cly_user_", "")] = value;
                                             hasUserInfo = true;
                                             break;
@@ -877,41 +878,41 @@
                                 (input.id &amp;&amp; input.id.toLowerCase().indexOf("email") != -1) ||
                                 (input.id &amp;&amp; labelData[input.id] &amp;&amp; labelData[input.id].toLowerCase().indexOf("email") != -1) ||
                                 (/[^@\s]+@[^@\s]+\.[^@\s]+/).test(value)){
-                                    if(!userdata["email"]){
-                                        userdata["email"] = value;
+                                    if(!userdata.email){
+                                        userdata.email = value;
                                     }
                                     hasUserInfo = true;
                                 }
                                 else if((input.name &amp;&amp; input.name.toLowerCase().indexOf("username") != -1) ||
                                 (input.id &amp;&amp; input.id.toLowerCase().indexOf("username") != -1) ||
                                 (input.id &amp;&amp; labelData[input.id] &amp;&amp; labelData[input.id].toLowerCase().indexOf("username") != -1) ){
-                                    if(!userdata["username"]){
-                                        userdata["username"] = value;
+                                    if(!userdata.username){
+                                        userdata.username = value;
                                     }
                                     hasUserInfo = true;
                                 }
                                 else if((input.name &amp;&amp; input.name.toLowerCase().indexOf("name") != -1) ||
                                 (input.id &amp;&amp; input.id.toLowerCase().indexOf("name") != -1) ||
                                 (input.id &amp;&amp; labelData[input.id] &amp;&amp; labelData[input.id].toLowerCase().indexOf("name") != -1) ){
-                                    if(!userdata["name"]){
-                                        userdata["name"] = "";
+                                    if(!userdata.name){
+                                        userdata.name = "";
                                     }
-                                    userdata["name"] += value+" ";
+                                    userdata.name += value+" ";
                                     hasUserInfo = true;
                                 }
                                 else if((input.name &amp;&amp; (input.name.toLowerCase().indexOf("tel") != -1 || input.name.toLowerCase().indexOf("phone") != -1 || input.name.toLowerCase().indexOf("number") != -1)) ||
                                 (input.id &amp;&amp; (input.id.toLowerCase().indexOf("tel") != -1 || input.id.toLowerCase().indexOf("phone") != -1 || input.id.toLowerCase().indexOf("number") != -1)) ||
                                 (input.id &amp;&amp; labelData[input.id] &amp;&amp; (labelData[input.id].toLowerCase().indexOf("tel") != -1 || labelData[input.id].toLowerCase().indexOf("phone") != -1 || labelData[input.id].toLowerCase().indexOf("number") != -1)) ){
-                                    if(!userdata["phone"]){
-                                        userdata["phone"] = value;
+                                    if(!userdata.phone){
+                                        userdata.phone = value;
                                     }
                                     hasUserInfo = true;
                                 }
                                 else if((input.name &amp;&amp; (input.name.toLowerCase().indexOf("org") != -1 || input.name.toLowerCase().indexOf("company") != -1)) ||
                                 (input.id &amp;&amp; (input.id.toLowerCase().indexOf("org") != -1 || input.id.toLowerCase().indexOf("company") != -1)) ||
                                 (input.id &amp;&amp; labelData[input.id] &amp;&amp; (labelData[input.id].toLowerCase().indexOf("org") != -1 || labelData[input.id].toLowerCase().indexOf("company") != -1)) ){
-                                    if(!userdata["organization"]){
-                                        userdata["organization"] = value;
+                                    if(!userdata.organization){
+                                        userdata.organization = value;
                                     }
                                     hasUserInfo = true;
                                 }
@@ -1676,7 +1677,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sun Mar 27 2016 16:53:20 GMT+0300 (FLE Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sun Mar 27 2016 17:17:58 GMT+0300 (FLE Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

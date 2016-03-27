@@ -13,7 +13,7 @@ Countly.init({
 	url: "http://data.count.ly", //or none for default countly cloud
 	debug:true
 });
-
+Countly.begin_session();
 //gather user information automatically
 Countly.collect_from_forms(document, true);
 </script>
