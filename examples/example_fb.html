@@ -1,0 +1,49 @@
+<!--
+Example on collecting user information from FaceBook
+-->
+<html>
+<head>
+<!--Countly script-->
+<script type='text/javascript' src='../lib/countly.min.js'></script>
+<script type='text/javascript'>
+
+//initializing countly with params
+Countly.init({
+	app_key: "YOUR_APP_KEY",
+	url: "http://data.count.ly", //or none for default countly cloud
+	debug:true
+});
+</script>
+</head>
+<body>
+<script src="https://connect.facebook.net/en_US/all.js"></script>
+<script type="text/javascript">
+FB.init({
+    appId: '251676171676751',
+    status: true,
+    cookie: true,
+    oauth: true
+});
+
+function CountlyGatherFBData(){
+    Countly.facebook_userdata({"location":"location.name", "tz":"timezone", "somekey":"none.existing.key"});
+};
+
+FB.getLoginStatus(function(stsResp) {
+    if(stsResp.authResponse) {
+		//alert("is logged in");
+        CountlyGatherFBData();
+    } else {
+        FB.login(function(loginResp) {
+            if(loginResp.authResponse) {
+				//alert("authenticated");
+                CountlyGatherFBData();
+            } else {
+                alert('Please authorize this application to use it!');
+            }
+        });
+    }
+});
+</script>
+</body>
+</html>
