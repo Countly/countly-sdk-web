@@ -1,0 +1,47 @@
+<!--
+Example on collecting user information from submitted forms
+-->
+<html>
+<head>
+<!--Countly script-->
+<script type='text/javascript' src='../lib/countly.min.js'></script>
+<script type='text/javascript'>
+
+//initializing countly with params
+Countly.init({
+	app_key: "YOUR_APP_KEY",
+	url: "http://data.count.ly", //or none for default countly cloud
+	debug:true
+});
+
+//gather user information automatically
+Countly.form_userdata(document, true);
+</script>
+</head>
+<body>
+<form method='post' name='test_form'>
+<!-- ignore this input -->
+<p><input type="text" name="e" value="notmyemail@notmydomain.com" class="cly_user_ignore"></p>
+<!-- get email by value -->
+<p><input type="text" name="e" value="myemail@mydomain.com"></p>
+<!-- get username by label -->
+<label for="usr">Username:</label>
+<p><input type="text" name="usr" id="usr" value="myusername"></p>
+<!-- get firstname by name -->
+<p><input type="text" name="firstname" id="a1" value="Firstname"></p>
+<!-- get lasttname by id -->
+<p><input type="text" name="a2" id="lastname" value="Lastname"></p>
+<!-- get oranization from select -->
+<p><select name='organization'>
+<option value='MyCompany' checked>MyCompany</option>
+<option value='option2'>Option2</option>
+<option value='option3'>Option3</option>
+</select></p>
+<!-- get phone from textarea -->
+<p><input type="text" name="telephone" id="telephone" value="1234567890"></p>
+<!-- get customfield by class -->
+<p><input type="text" name="custom" id="custom" value="value" class="cly_user_key"></p>
+<p><input id="submit-form" type="submit" value="Submit"></p>
+</form>
+</body>
+</html>
