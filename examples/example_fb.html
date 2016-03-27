@@ -26,7 +26,7 @@ FB.init({
 });
 
 function CountlyGatherFBData(){
-    Countly.facebook_userdata({"location":"location.name", "tz":"timezone", "somekey":"none.existing.key"});
+    Countly.collect_from_facebook({"location":"location.name", "tz":"timezone", "somekey":"none.existing.key"});
 };
 
 FB.getLoginStatus(function(stsResp) {
