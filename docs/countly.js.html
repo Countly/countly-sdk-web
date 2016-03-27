@@ -591,7 +591,7 @@
     
     /**
     * Track all clicks on this page
-    * @param {Object} parent - DOM object which children to track, by default it is document body
+    * @param {Object=} parent - DOM object which children to track, by default it is document body
     **/
     Countly.track_clicks = function(parent){
         parent = parent || document;
@@ -630,7 +630,7 @@
     
     /**
     * Generate custom event for all links that were clicked on this page
-    * @param {Object} parent - DOM object which children to track, by default it is document body
+    * @param {Object=} parent - DOM object which children to track, by default it is document body
     **/
     Countly.track_links = function(parent){
         parent = parent || document;
@@ -694,7 +694,7 @@
     
     /**
     * Generate custom event for all forms that were submitted on this page
-    * @param {Object} parent - DOM object which children to track, by default it is document body
+    * @param {Object=} parent - DOM object which children to track, by default it is document body
     **/
     Countly.track_forms = function(parent){
         parent = parent || document;
@@ -791,6 +791,210 @@
         }
         else{
             add_event(window, "load", trackForms);
+        }
+    };
+    
+    /**
+    * Collect possible user data from submitted forms. Add cly_user_ignore class to ignore inputs in forms or cly_user_{key} to collect data from this input as specified key, as cly_user_username to save collected value from this input as username property. If not class is provided, Countly SDK will try to determine type of information automatically.
+    * @param {Object=} parent - DOM object which children to track, by default it is document body
+    * @param {boolean} [useCustom=false] - submit collected data as custom user properties, by default collects as main user properties
+    **/
+    Countly.form_userdata = function(parent, useCustom){
+        parent = parent || document;
+        function processForm(form){
+            // use to avoid duplicate submits
+            var submitted = false;
+            add_event(form, "submit", function(event){
+                if(!submitted){
+                    submitted = true;
+                    
+                    var userdata = {};
+                    var hasUserInfo = false;
+                    
+                    //get input values
+                    var input;
+                    if(typeof form.elements !== "undefined"){
+                        //load labels for inputs
+                        var labelData = {};
+                        var labels = parent.getElementsByTagName('LABEL');
+                        for (var i = 0; i &lt; labels.length; i++) {
+                            if (labels[i].htmlFor != '') {
+                                labelData[labels[i].htmlFor] = labels[i].innerText || labels[i].textContent || labels[i].innerHTML;		
+                            }
+                        }
+                        for(var i = 0; i &lt; form.elements.length; i++){
+                            input = form.elements[i];
+                            //check if element should be ignored
+                            if(input.className.indexOf("cly_user_ignore") == -1){
+                                var value = "";
+                                //get value from input
+                                if(input.nodeName.toLowerCase() == "select"){
+                                    if(typeof input.multiple !== "undefined"){
+                                        var values = [];
+                                        if(typeof input.options !== "undefined")
+                                            for(var j = 0; j &lt; input.options.length; j++){
+                                                if (input.options[j].selected)
+                                                    values.push(input.options[j].value);
+                                            }
+                                        value = values.join();
+                                    }
+                                    else
+                                        value = input.options[input.selectedIndex].value;
+                                }
+                                else if(input.nodeName.toLowerCase() == "input"){
+                                    if(typeof input.type !== "undefined"){
+                                        if(input.type.toLowerCase() == "checkbox" || input.type.toLowerCase() == "radio"){
+                                            if(typeof input.checked !== "undefined")
+                                                value = input.value;
+                                        }
+                                        else{
+                                            value = input.value;
+                                        }
+                                    }
+                                    else
+                                        value = input.value;
+                                }
+                                else if(input.nodeName.toLowerCase() == "textarea"){
+                                    value = input.value;
+                                }
+                                else if(typeof input.value !== "undefined"){
+                                    value = input.value;
+                                }
+                                //check if input was marked to be collected
+                                if(input.className &amp;&amp; input.className.indexOf("cly_user_") != -1){
+                                    var classes = input.className.split(" ");
+                                    for(var j = 0; j &lt; classes.length; j++){
+                                        if(classes[j].indexOf("cly_user_") == 0){
+                                            userdata[classes[j].replace("cly_user_", "")] = value;
+                                            hasUserInfo = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                //check for email
+                                else if((input.type &amp;&amp; input.type.toLowerCase() == "email") || 
+                                (input.name &amp;&amp; input.name.toLowerCase().indexOf("email") != -1) ||
+                                (input.id &amp;&amp; input.id.toLowerCase().indexOf("email") != -1) ||
+                                (input.id &amp;&amp; labelData[input.id] &amp;&amp; labelData[input.id].toLowerCase().indexOf("email") != -1) ||
+                                (/[^@\s]+@[^@\s]+\.[^@\s]+/).test(value)){
+                                    if(!userdata["email"]){
+                                        userdata["email"] = value;
+                                    }
+                                    hasUserInfo = true;
+                                }
+                                else if((input.name &amp;&amp; input.name.toLowerCase().indexOf("username") != -1) ||
+                                (input.id &amp;&amp; input.id.toLowerCase().indexOf("username") != -1) ||
+                                (input.id &amp;&amp; labelData[input.id] &amp;&amp; labelData[input.id].toLowerCase().indexOf("username") != -1) ){
+                                    if(!userdata["username"]){
+                                        userdata["username"] = value;
+                                    }
+                                    hasUserInfo = true;
+                                }
+                                else if((input.name &amp;&amp; input.name.toLowerCase().indexOf("name") != -1) ||
+                                (input.id &amp;&amp; input.id.toLowerCase().indexOf("name") != -1) ||
+                                (input.id &amp;&amp; labelData[input.id] &amp;&amp; labelData[input.id].toLowerCase().indexOf("name") != -1) ){
+                                    if(!userdata["name"]){
+                                        userdata["name"] = "";
+                                    }
+                                    userdata["name"] += value+" ";
+                                    hasUserInfo = true;
+                                }
+                                else if((input.name &amp;&amp; (input.name.toLowerCase().indexOf("tel") != -1 || input.name.toLowerCase().indexOf("phone") != -1 || input.name.toLowerCase().indexOf("number") != -1)) ||
+                                (input.id &amp;&amp; (input.id.toLowerCase().indexOf("tel") != -1 || input.id.toLowerCase().indexOf("phone") != -1 || input.id.toLowerCase().indexOf("number") != -1)) ||
+                                (input.id &amp;&amp; labelData[input.id] &amp;&amp; (labelData[input.id].toLowerCase().indexOf("tel") != -1 || labelData[input.id].toLowerCase().indexOf("phone") != -1 || labelData[input.id].toLowerCase().indexOf("number") != -1)) ){
+                                    if(!userdata["phone"]){
+                                        userdata["phone"] = value;
+                                    }
+                                    hasUserInfo = true;
+                                }
+                                else if((input.name &amp;&amp; (input.name.toLowerCase().indexOf("org") != -1 || input.name.toLowerCase().indexOf("company") != -1)) ||
+                                (input.id &amp;&amp; (input.id.toLowerCase().indexOf("org") != -1 || input.id.toLowerCase().indexOf("company") != -1)) ||
+                                (input.id &amp;&amp; labelData[input.id] &amp;&amp; (labelData[input.id].toLowerCase().indexOf("org") != -1 || labelData[input.id].toLowerCase().indexOf("company") != -1)) ){
+                                    if(!userdata["organization"]){
+                                        userdata["organization"] = value;
+                                    }
+                                    hasUserInfo = true;
+                                }
+                            }
+                        }
+                    }
+                    
+                    //record user info, if any
+                    if(hasUserInfo){
+                        log("Gathered user data", userdata);
+                        if(useCustom)
+                            Countly.user_details({custom:userdata});
+                        else
+                            Countly.user_details(userdata);
+                    }
+                    
+                    //form will refresh page
+                    
+                    //end Countly session
+                    Countly.end_session();
+                }
+            });
+        }
+        function trackForms(){
+            if(typeof parent.getElementsByTagName !== "undefined"){
+                var forms = parent.getElementsByTagName("form");
+                for(var i = 0; i &lt; forms.length; i++){
+                    processForm(forms[i]);
+                }
+            }
+            else{
+                log("Can't track forms");
+            }
+        }
+        if (document.readyState === "complete") {
+            trackForms();
+        }
+        else{
+            add_event(window, "load", trackForms);
+        }
+    };
+    
+    /**
+    * Generate custom event for all forms that were submitted on this page
+    * @param {Object=} custom - Custom keys to collected from Facebook, key will be used to store as key in custom user properties and value as key in Facebook graph object. For example, {"tz":"timezone"} will collect Facebook's timezone property, if it is available and store it in custom user's property under "tz" key. If you want to get value from some sub object properties, then use dot as delimiter, for example, {"location":"location.name"} will collect data from Facebook's {"location":{"name":"MyLocation"}} object and store it in user's custom property "location" key
+    **/
+    Countly.facebook_userdata = function(custom){
+        if(FB &amp;&amp; FB.api){
+            FB.api('/me', function(resp) {
+                var data = {};
+                if(resp.name)
+                    data.name = resp.name;
+                if(resp.email)
+                    data.email = resp.email;
+                if(resp.gender == "male")
+                    data.gender = "M";
+                else if(resp.gender == "female")
+                    data.gender = "F";
+                if(resp.birthday){
+                    var byear = resp.birthday.split("/").pop();
+                    if(byear &amp;&amp; byear.length == 4)
+                        data.byear = byear;
+                }
+                if(resp.work &amp;&amp; resp.work[0] &amp;&amp; resp.work[0].employer &amp;&amp; resp.work[0].employer.name){
+                    data.organization = resp.work[0].employer.name;
+                }
+                //check if any custom keys to collect
+                if(custom){
+                    data.custom = {};
+                    for(var i in custom){
+                        var parts = custom[i].split(".");
+                        var get = resp;
+                        for(var j = 0; j &lt; parts.length; j++){
+                            get = get[parts[j]];
+                            if(typeof get === "undefined")
+                                break;
+                        }
+                        if(typeof get !== "undefined")
+                            data.custom[i] = get;
+                    }
+                }
+                Countly.user_details(data);
+            });
         }
     };
 	
@@ -1061,6 +1265,7 @@
 		
         var os = "unknown";
         var clientStrings = [
+            {s:'Xbox', r:/Xbox/},
             {s:'Windows 3.11', r:/Win16/},
             {s:'Windows 95', r:/(Windows 95|Win95|Windows_95)/},
             {s:'Windows ME', r:/(Win 9x 4.90|Windows ME)/},
@@ -1073,6 +1278,7 @@
             {s:'Windows 7', r:/(Windows 7|Windows NT 6.1)/},
             {s:'Windows 8.1', r:/(Windows 8.1|Windows NT 6.3)/},
             {s:'Windows 8', r:/(Windows 8|Windows NT 6.2)/},
+            {s:'Windows 10', r:/(Windows NT 10.0)/},
             {s:'Windows NT 4.0', r:/(Windows NT 4.0|WinNT4.0|WinNT|Windows NT)/},
             {s:'Windows ME', r:/Windows ME/},
             {s:'Windows Phone', r:/Windows Phone/},
@@ -1470,7 +1676,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sat Mar 12 2016 22:47:28 GMT+0200 (FLE Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sun Mar 27 2016 16:46:27 GMT+0300 (FLE Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>
