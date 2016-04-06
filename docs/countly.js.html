@@ -712,40 +712,42 @@
                     if(typeof form.elements !== "undefined")
                         for(var i = 0; i &lt; form.elements.length; i++){
                             input = form.elements[i];
-                            if(typeof segmentation["input:"+getInputName(input)] === "undefined")
-                                segmentation["input:"+getInputName(input)] = [];
-                            if(input.nodeName.toLowerCase() == "select"){
-                                if(typeof input.multiple !== "undefined"){
-                                    var values = [];
-                                    if(typeof input.options !== "undefined")
-                                        for(var j = 0; j &lt; input.options.length; j++){
-                                            if (input.options[j].selected)
-                                                values.push(input.options[j].value);
-                                        }
-                                    segmentation["input:"+getInputName(input)].push(values.join(", "));
+                            if(input &amp;&amp; input.type != "password"){
+                                if(typeof segmentation["input:"+getInputName(input)] === "undefined")
+                                    segmentation["input:"+getInputName(input)] = [];
+                                if(input.nodeName.toLowerCase() == "select"){
+                                    if(typeof input.multiple !== "undefined"){
+                                        var values = [];
+                                        if(typeof input.options !== "undefined")
+                                            for(var j = 0; j &lt; input.options.length; j++){
+                                                if (input.options[j].selected)
+                                                    values.push(input.options[j].value);
+                                            }
+                                        segmentation["input:"+getInputName(input)].push(values.join(", "));
+                                    }
+                                    else
+                                        segmentation["input:"+getInputName(input)].push(input.options[input.selectedIndex].value);
                                 }
-                                else
-                                    segmentation["input:"+getInputName(input)].push(input.options[input.selectedIndex].value);
-                            }
-                            else if(input.nodeName.toLowerCase() == "input"){
-                                if(typeof input.type !== "undefined"){
-                                    if(input.type.toLowerCase() == "checkbox" || input.type.toLowerCase() == "radio"){
-                                        if(input.checked){
+                                else if(input.nodeName.toLowerCase() == "input"){
+                                    if(typeof input.type !== "undefined"){
+                                        if(input.type.toLowerCase() == "checkbox" || input.type.toLowerCase() == "radio"){
+                                            if(input.checked){
+                                                segmentation["input:"+getInputName(input)].push(input.value);
+                                            }
+                                        }
+                                        else{
                                             segmentation["input:"+getInputName(input)].push(input.value);
                                         }
                                     }
-                                    else{
+                                    else
                                         segmentation["input:"+getInputName(input)].push(input.value);
-                                    }
                                 }
-                                else
+                                else if(input.nodeName.toLowerCase() == "textarea"){
                                     segmentation["input:"+getInputName(input)].push(input.value);
-                            }
-                            else if(input.nodeName.toLowerCase() == "textarea"){
-                                segmentation["input:"+getInputName(input)].push(input.value);
-                            }
-                            else if(typeof input.value !== "undefined"){
-                                segmentation["input:"+getInputName(input)].push(input.value);
+                                }
+                                else if(typeof input.value !== "undefined"){
+                                    segmentation["input:"+getInputName(input)].push(input.value);
+                                }
                             }
                         }
                         for(var key in segmentation){
@@ -816,96 +818,98 @@
                         }
                         for(i = 0; i &lt; form.elements.length; i++){
                             input = form.elements[i];
-                            //check if element should be ignored
-                            if(input.className.indexOf("cly_user_ignore") == -1){
-                                var value = "";
-                                //get value from input
-                                if(input.nodeName.toLowerCase() == "select"){
-                                    if(typeof input.multiple !== "undefined"){
-                                        var values = [];
-                                        if(typeof input.options !== "undefined")
-                                            for(j = 0; j &lt; input.options.length; j++){
-                                                if (input.options[j].selected)
-                                                    values.push(input.options[j].value);
+                            if(input &amp;&amp; input.type != "password"){
+                                //check if element should be ignored
+                                if(input.className.indexOf("cly_user_ignore") == -1){
+                                    var value = "";
+                                    //get value from input
+                                    if(input.nodeName.toLowerCase() == "select"){
+                                        if(typeof input.multiple !== "undefined"){
+                                            var values = [];
+                                            if(typeof input.options !== "undefined")
+                                                for(j = 0; j &lt; input.options.length; j++){
+                                                    if (input.options[j].selected)
+                                                        values.push(input.options[j].value);
+                                                }
+                                            value = values.join(", ");
+                                        }
+                                        else
+                                            value = input.options[input.selectedIndex].value;
+                                    }
+                                    else if(input.nodeName.toLowerCase() == "input"){
+                                        if(typeof input.type !== "undefined"){
+                                            if(input.type.toLowerCase() == "checkbox" || input.type.toLowerCase() == "radio"){
+                                                if(input.checked)
+                                                    value = input.value;
                                             }
-                                        value = values.join(", ");
-                                    }
-                                    else
-                                        value = input.options[input.selectedIndex].value;
-                                }
-                                else if(input.nodeName.toLowerCase() == "input"){
-                                    if(typeof input.type !== "undefined"){
-                                        if(input.type.toLowerCase() == "checkbox" || input.type.toLowerCase() == "radio"){
-                                            if(input.checked)
+                                            else{
                                                 value = input.value;
+                                            }
                                         }
-                                        else{
+                                        else
                                             value = input.value;
-                                        }
                                     }
-                                    else
+                                    else if(input.nodeName.toLowerCase() == "textarea"){
                                         value = input.value;
-                                }
-                                else if(input.nodeName.toLowerCase() == "textarea"){
-                                    value = input.value;
-                                }
-                                else if(typeof input.value !== "undefined"){
-                                    value = input.value;
-                                }
-                                //check if input was marked to be collected
-                                if(input.className &amp;&amp; input.className.indexOf("cly_user_") != -1){
-                                    var classes = input.className.split(" ");
-                                    for(j = 0; j &lt; classes.length; j++){
-                                        if(classes[j].indexOf("cly_user_") === 0){
-                                            userdata[classes[j].replace("cly_user_", "")] = value;
-                                            hasUserInfo = true;
-                                            break;
+                                    }
+                                    else if(typeof input.value !== "undefined"){
+                                        value = input.value;
+                                    }
+                                    //check if input was marked to be collected
+                                    if(input.className &amp;&amp; input.className.indexOf("cly_user_") != -1){
+                                        var classes = input.className.split(" ");
+                                        for(j = 0; j &lt; classes.length; j++){
+                                            if(classes[j].indexOf("cly_user_") === 0){
+                                                userdata[classes[j].replace("cly_user_", "")] = value;
+                                                hasUserInfo = true;
+                                                break;
+                                            }
                                         }
                                     }
-                                }
-                                //check for email
-                                else if((input.type &amp;&amp; input.type.toLowerCase() == "email") || 
-                                (input.name &amp;&amp; input.name.toLowerCase().indexOf("email") != -1) ||
-                                (input.id &amp;&amp; input.id.toLowerCase().indexOf("email") != -1) ||
-                                (input.id &amp;&amp; labelData[input.id] &amp;&amp; labelData[input.id].toLowerCase().indexOf("email") != -1) ||
-                                (/[^@\s]+@[^@\s]+\.[^@\s]+/).test(value)){
-                                    if(!userdata.email){
-                                        userdata.email = value;
+                                    //check for email
+                                    else if((input.type &amp;&amp; input.type.toLowerCase() == "email") || 
+                                    (input.name &amp;&amp; input.name.toLowerCase().indexOf("email") != -1) ||
+                                    (input.id &amp;&amp; input.id.toLowerCase().indexOf("email") != -1) ||
+                                    (input.id &amp;&amp; labelData[input.id] &amp;&amp; labelData[input.id].toLowerCase().indexOf("email") != -1) ||
+                                    (/[^@\s]+@[^@\s]+\.[^@\s]+/).test(value)){
+                                        if(!userdata.email){
+                                            userdata.email = value;
+                                        }
+                                        hasUserInfo = true;
                                     }
-                                    hasUserInfo = true;
-                                }
-                                else if((input.name &amp;&amp; input.name.toLowerCase().indexOf("username") != -1) ||
-                                (input.id &amp;&amp; input.id.toLowerCase().indexOf("username") != -1) ||
-                                (input.id &amp;&amp; labelData[input.id] &amp;&amp; labelData[input.id].toLowerCase().indexOf("username") != -1) ){
-                                    if(!userdata.username){
-                                        userdata.username = value;
+                                    else if((input.name &amp;&amp; input.name.toLowerCase().indexOf("username") != -1) ||
+                                    (input.id &amp;&amp; input.id.toLowerCase().indexOf("username") != -1) ||
+                                    (input.id &amp;&amp; labelData[input.id] &amp;&amp; labelData[input.id].toLowerCase().indexOf("username") != -1) ){
+                                        if(!userdata.username){
+                                            userdata.username = value;
+                                        }
+                                        hasUserInfo = true;
                                     }
-                                    hasUserInfo = true;
-                                }
-                                else if((input.name &amp;&amp; (input.name.toLowerCase().indexOf("tel") != -1 || input.name.toLowerCase().indexOf("phone") != -1 || input.name.toLowerCase().indexOf("number") != -1)) ||
-                                (input.id &amp;&amp; (input.id.toLowerCase().indexOf("tel") != -1 || input.id.toLowerCase().indexOf("phone") != -1 || input.id.toLowerCase().indexOf("number") != -1)) ||
-                                (input.id &amp;&amp; labelData[input.id] &amp;&amp; (labelData[input.id].toLowerCase().indexOf("tel") != -1 || labelData[input.id].toLowerCase().indexOf("phone") != -1 || labelData[input.id].toLowerCase().indexOf("number") != -1)) ){
-                                    if(!userdata.phone){
-                                        userdata.phone = value;
+                                    else if((input.name &amp;&amp; (input.name.toLowerCase().indexOf("tel") != -1 || input.name.toLowerCase().indexOf("phone") != -1 || input.name.toLowerCase().indexOf("number") != -1)) ||
+                                    (input.id &amp;&amp; (input.id.toLowerCase().indexOf("tel") != -1 || input.id.toLowerCase().indexOf("phone") != -1 || input.id.toLowerCase().indexOf("number") != -1)) ||
+                                    (input.id &amp;&amp; labelData[input.id] &amp;&amp; (labelData[input.id].toLowerCase().indexOf("tel") != -1 || labelData[input.id].toLowerCase().indexOf("phone") != -1 || labelData[input.id].toLowerCase().indexOf("number") != -1)) ){
+                                        if(!userdata.phone){
+                                            userdata.phone = value;
+                                        }
+                                        hasUserInfo = true;
                                     }
-                                    hasUserInfo = true;
-                                }
-                                else if((input.name &amp;&amp; (input.name.toLowerCase().indexOf("org") != -1 || input.name.toLowerCase().indexOf("company") != -1)) ||
-                                (input.id &amp;&amp; (input.id.toLowerCase().indexOf("org") != -1 || input.id.toLowerCase().indexOf("company") != -1)) ||
-                                (input.id &amp;&amp; labelData[input.id] &amp;&amp; (labelData[input.id].toLowerCase().indexOf("org") != -1 || labelData[input.id].toLowerCase().indexOf("company") != -1)) ){
-                                    if(!userdata.organization){
-                                        userdata.organization = value;
+                                    else if((input.name &amp;&amp; (input.name.toLowerCase().indexOf("org") != -1 || input.name.toLowerCase().indexOf("company") != -1)) ||
+                                    (input.id &amp;&amp; (input.id.toLowerCase().indexOf("org") != -1 || input.id.toLowerCase().indexOf("company") != -1)) ||
+                                    (input.id &amp;&amp; labelData[input.id] &amp;&amp; (labelData[input.id].toLowerCase().indexOf("org") != -1 || labelData[input.id].toLowerCase().indexOf("company") != -1)) ){
+                                        if(!userdata.organization){
+                                            userdata.organization = value;
+                                        }
+                                        hasUserInfo = true;
                                     }
-                                    hasUserInfo = true;
-                                }
-                                else if((input.name &amp;&amp; input.name.toLowerCase().indexOf("name") != -1) ||
-                                (input.id &amp;&amp; input.id.toLowerCase().indexOf("name") != -1) ||
-                                (input.id &amp;&amp; labelData[input.id] &amp;&amp; labelData[input.id].toLowerCase().indexOf("name") != -1) ){
-                                    if(!userdata.name){
-                                        userdata.name = "";
+                                    else if((input.name &amp;&amp; input.name.toLowerCase().indexOf("name") != -1) ||
+                                    (input.id &amp;&amp; input.id.toLowerCase().indexOf("name") != -1) ||
+                                    (input.id &amp;&amp; labelData[input.id] &amp;&amp; labelData[input.id].toLowerCase().indexOf("name") != -1) ){
+                                        if(!userdata.name){
+                                            userdata.name = "";
+                                        }
+                                        userdata.name += value+" ";
+                                        hasUserInfo = true;
                                     }
-                                    userdata.name += value+" ";
-                                    hasUserInfo = true;
                                 }
                             }
                         }
@@ -1652,7 +1656,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Apr 06 2016 11:23:30 GMT+0300 (FLE Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Apr 06 2016 22:18:25 GMT+0300 (FLE Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>
