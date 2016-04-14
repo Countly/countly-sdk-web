@@ -1,18 +1,30 @@
 #Countly Web SDK [![Build Status](https://api.travis-ci.org/Countly/countly-sdk-web.png)](https://travis-ci.org/Countly/countly-sdk-web) [![npm version](https://badge.fury.io/js/countly-sdk-web.svg)](https://badge.fury.io/js/countly-sdk-web) [![Bower version](https://badge.fury.io/bo/countly-sdk-web.svg)](https://badge.fury.io/bo/countly-sdk-web) [![Inline docs](http://inch-ci.org/github/Countly/countly-sdk-web.svg?branch=master)](http://inch-ci.org/github/Countly/countly-sdk-web)
 
-##How to get Countly Web SDK?
+##What's Countly?
+[Countly](http://count.ly) is an innovative, real-time, open source mobile analytics application. 
+It collects data from mobile devices, and visualizes this information to analyze mobile application 
+usage and end-user behavior. There are two parts of Countly: the server that collects and analyzes data, 
+and mobile SDK that sends this data. Both parts are open source with different licensing terms.
 
-### Available with Countly server
+This repository includes the Countly Web SDK. For more information about this SDK, [Countly SDK for Web](http://resources.count.ly/v1.0/docs/countly-sdk-for-web) documentation at [Countly Resources](http://resources.count.ly).
+
+## Implementing Countly SDK in your web pages
+
+There are 3 ways to get Countly SDK.
+
+###1. Available with Countly server
 Since Countly server 16.02, Countly Web SDK is available in your Countly server installation in `countly/frontend/express/public/sdk/web/countly.min.js` which should be available through URL as `http://yourserver.com/sdk/web/countly.min.js`
 
-###Install using package managers
+###2. Installation using package managers
 
     bower install countly-sdk-web
 or
 
     npm install countly-sdk-web
     
-###Use CDN
+###3. Use a CDN (content delivery network)
+
+Countly web SDK is available on CDNJS. Use either
 
 [https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/16.2.0/countly.min.js](https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/16.2.0/countly.min.js)
 
@@ -22,25 +34,12 @@ or
 
 ##How to use Countly Web SDK?
 
-Link to the script and call helper methods based on what you want to track: sessions, views, clicks, custom events, user data, etc.
-More information is available at [http://resources.count.ly/docs/countly-sdk-for-web](http://resources.count.ly/docs/countly-sdk-for-web)
-
-##What's Countly?
-[Countly](http://count.ly) is an innovative, real-time, open source mobile analytics application. 
-It collects data from mobile devices, and visualizes this information to analyze mobile application 
-usage and end-user behavior. There are two parts of Countly: the server that collects and analyzes data, 
-and mobile SDK that sends this data. Both parts are open source with different licensing terms.
-
-##About
-
-This repository includes the Countly Web SDK.
-
-Need help? See [Countly SDK for Web](http://resources.count.ly/v1.0/docs/countly-sdk-for-web) documentation at [Countly Resources](http://resources.count.ly).
+Link to the script and call helper methods based on what you want to track: sessions, views, clicks, custom events, user data, etc. More information is available at [http://resources.count.ly/docs/countly-sdk-for-web](http://resources.count.ly/docs/countly-sdk-for-web)
 
 
 ### Other Github resources ###
 
-Check Countly Server source code here: 
+Check Countly Community Edition source code here: 
 
 - [Countly Server](https://github.com/Countly/countly-server)
 
