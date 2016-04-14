@@ -36,6 +36,7 @@ or
 
 Link to the script and call helper methods based on what you want to track: sessions, views, clicks, custom events, user data, etc. More information is available at [http://resources.count.ly/docs/countly-sdk-for-web](http://resources.count.ly/docs/countly-sdk-for-web)
 
+![Using Countly web SDK in your web page](https://github.com/Countly/countly-sdk-web/blob/master/docs/screenshot.png)
 
 ### Other Github resources ###
 
