@@ -8,8 +8,8 @@
 
 //initializing countly with params
 Countly.init({
-	app_key: "f399aa0a6305c2bd51d304ca666418ae8d93d9bc",
-	url: "http://178.62.137.211", //or none for default countly cloud
+	app_key: "YOUR_APP_KEY",
+	url: "http://cloud.count.ly", //or none for default countly cloud
 	debug:true
 })
 //track sessions automatically
@@ -22,13 +22,12 @@ Countly.track_pageview();
 <script type='text/javascript'>
 //send event on button click
 function clickEvent(ob){
-Countly.q.push(['add_event',{
-   "key": "LevelComplete",
-   "count": 1,
-   "segmentation": {
-      "level": "3"
-   }
-}]);
+	Countly.add_event({
+		key:"buttonClick", 
+		"segmentation": {
+			"id": ob.id
+		}
+	});
 }
 </script>
 </body>
