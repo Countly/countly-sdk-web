@@ -52,6 +52,7 @@
 		eventQueue = [],
         crashLogs = [],
         timedEvents = {},
+        ignoreReferrers = [],
         crashSegments = null,
 		autoExtend = true,
 		lastBeat,
@@ -63,11 +64,13 @@
         failTimeoutAmount = 60,
         inactivityTime = 20,
         inactivityCounter = 0,
+        sessionUpdate = 60,
+        maxEventBatch = 10,
         readyToProcess = true,
         platform,
         urlParseRE = /^(((([^:\/#\?]+:)?(?:(\/\/)((?:(([^:@\/#\?]+)(?:\:([^:@\/#\?]+))?)@)?(([^:\/#\?\]\[]+|\[[^\/\]@#?]+\])(?:\:([0-9]+))?))?)?)?((\/?(?:[^\/\?#]+\/+)*)([^\?#]*)))?(\?[^#]+)?)(#.*)?/,
         searchBotRE = /(nuhk|Googlebot|Yammybot|Openbot|Slurp|MSNBot|Ask Jeeves\/Teoma|ia_archiver|bingbot|Google Web Preview|Mediapartners-Google|AdsBot-Google|Baiduspider|Ezooms|YahooSeeker|AltaVista|AVSearch|Mercator|Scooter|InfoSeek|Ultraseek|Lycos|Wget|YandexBot|Yandex|YaDirectFetcher|SiteBot|Exabot|AhrefsBot|MJ12bot|TurnitinBot|magpie-crawler|Nutch Crawler|CMS Crawler|rogerbot|Domnutch|ssearch_bot|XoviBot|netseer|digincore|fr-crawler|wesee|AliasIO)/,
-        isBot = false,
+        ignoreVisitor = false,
         trackTime = true,
         startTime;
 
@@ -87,6 +90,11 @@
 * @property {number} [queue_sizel=1000] - maximum amount of queued requests to store
 * @property {number} [fail_timeout=60] - set time in seconds to wait after failed connection to server in seconds
 * @property {number} [inactivity_time=20] - after how many minutes user should be counted as inactive, if he did not perform any actions, as mouse move, scroll or keypress
+* @property {number} [session_update=60] - how often in seconds should session be extended
+* @property {number} [max_events=10] - maximum amount of events to send in one batch
+* @property {array=} ignore_referrers - array with referrers to ignore
+* @property {boolean} [ignore_prefetch=true] - ignore prefetching and pre rendering from counting as real website visits
+* @property {boolean} [force_post=false] - force using post method for all requests
 */
 
 /**
@@ -105,6 +113,9 @@
             queueSize = ob.queue_size || Countly.queue_size || queueSize;
             failTimeoutAmount = ob.fail_timeout || Countly.fail_timeout || failTimeoutAmount;
             inactivityTime = ob.inactivity_time || Countly.inactivity_time || inactivityTime;
+            sessionUpdate = ob.session_update || Countly.session_update || sessionUpdate;
+            maxEventBatch = ob.max_events || Countly.max_events || maxEventBatch;
+            Countly.ignore_prefetch = ob.ignore_prefetch || Countly.ignore_prefetch || true;
 			Countly.debug = ob.debug || Countly.debug || false;
 			Countly.app_key = ob.app_key || Countly.app_key || null;
 			Countly.device_id = ob.device_id || Countly.device_id || getId();
@@ -114,24 +125,38 @@
 			Countly.city = ob.city || Countly.city || null;
 			Countly.ip_address = ob.ip_address || Countly.ip_address || null;
 			Countly.ignore_bots = ob.ignore_bots || Countly.ignore_bots || true;
+			Countly.force_post = ob.force_post || Countly.force_post || false;
 			Countly.q = Countly.q || [];
-            log("Countly initialized");
-            if(searchBotRE.test(navigator.userAgent)){
-                isBot = true;
+            if(ob.ignore_referrers &amp;&amp; ob.ignore_referrers.constructor === Array){
+                ignoreReferrers = ob.ignore_referrers;
             }
-			if(Countly.q.constructor !== Array)
-				Countly.q = [];
-			heartBeat();
-			store("cly_id", Countly.device_id);
-            if (location.search) {
-                var parts = location.search.substring(1).split('&amp;');
-
-                for (var i = 0; i &lt; parts.length; i++) {
-                    var nv = parts[i].split('=');
-                    if (nv[0] == "cly_id")
-                        store("cly_cmp_id", nv[1]);
-                    else if(nv[0] == "cly_uid")
-                        store("cly_cmp_uid", nv[1]);
+            else if(Countly.ignore_referrers &amp;&amp; Countly.ignore_referrers.constructor === Array){
+                ignoreReferrers = Countly.ignore_referrers;
+            }
+            
+            if (Countly.ignore_prefetch &amp;&amp; typeof document.visibilityState !== 'undefined' &amp;&amp; document.visibilityState === 'prerender') {
+                ignoreVisitor = true;
+            }
+            if(Countly.ignore_bots &amp;&amp; searchBotRE.test(navigator.userAgent)){
+                ignoreVisitor = true;
+            }
+            
+            if(!ignoreVisitor){
+                log("Countly initialized");
+                if(Countly.q.constructor !== Array)
+                    Countly.q = [];
+                heartBeat();
+                store("cly_id", Countly.device_id);
+                if (location.search) {
+                    var parts = location.search.substring(1).split('&amp;');
+    
+                    for (var i = 0; i &lt; parts.length; i++) {
+                        var nv = parts[i].split('=');
+                        if (nv[0] == "cly_id")
+                            store("cly_cmp_id", nv[1]);
+                        else if(nv[0] == "cly_uid")
+                            store("cly_cmp_uid", nv[1]);
+                    }
                 }
             }
 		}
@@ -256,7 +281,7 @@
 			return;
 		}
         if(!timedEvents[event.key]){
-            log("Timed event with key " + key + " was not started");
+            log("Timed event with key " + event.key + " was not started");
             return;
         }
         event.dur = getTimestamp() - timedEvents[event.key];
@@ -1073,7 +1098,7 @@
 	//insert request to queue
 	function toRequestQueue(request){
         //ignore bots
-        if(Countly.ignore_bots &amp;&amp; isBot)
+        if(ignoreVisitor)
             return;
         
 		if(!Countly.app_key || !Countly.device_id){
@@ -1135,7 +1160,7 @@
 		//extend session if needed
 		if(sessionStarted &amp;&amp; autoExtend &amp;&amp; trackTime){
 			var last = getTimestamp();
-			if(last - lastBeat > 60){
+			if(last - lastBeat > sessionUpdate){
 				Countly.session_duration(last - lastBeat);
 				lastBeat = last;
 			}
@@ -1143,12 +1168,12 @@
 		
 		//process event queue
 		if(eventQueue.length > 0){
-			if(eventQueue.length &lt;= 10){
+			if(eventQueue.length &lt;= maxEventBatch){
 				toRequestQueue({events: JSON.stringify(eventQueue)});
 				eventQueue = [];
 			}
 			else{
-				var events = eventQueue.splice(0, 10);
+				var events = eventQueue.splice(0, maxEventBatch);
 				toRequestQueue({events: JSON.stringify(events)});
 			}
             store("cly_event", eventQueue);
@@ -1396,8 +1421,24 @@
         if(typeof document.referrer !== "undefined" &amp;&amp; document.referrer.length){
             var matches = urlParseRE.exec(document.referrer);
             //do not report referrers of current website
-            if(matches &amp;&amp; matches[11] &amp;&amp; matches[11] != window.location.hostname)
-                metrics._store = document.referrer;
+            if(matches &amp;&amp; matches[11] &amp;&amp; matches[11] != window.location.hostname){
+                var ignoring = false;
+                if(ignoreReferrers &amp;&amp; ignoreReferrers.length){
+                    for(var i = 0; i &lt; ignoreReferrers.length; i++){
+                        try{
+                            var reg = new RegExp(ignoreReferrers[i]);
+                            if(reg.test(document.referrer)){
+                                log("Ignored:", document.referrer);
+                                ignoring = true;
+                                break;
+                            }
+                        }
+                        catch(ex){}
+                    }
+                }
+                if(!ignoring)
+                    metrics._store = document.referrer;
+            }
         }
 		
 		log("Got metrics", metrics);
@@ -1481,8 +1522,20 @@
         try {
 			log("Sending XML HTTP request");
             var xhr = window.XMLHttpRequest ? new window.XMLHttpRequest() : window.ActiveXObject ? new ActiveXObject('Microsoft.XMLHTTP') : null;
-
-            xhr.open('GET', Countly.url + apiPath + "?" + prepareParams(params), true);
+            
+            var data = prepareParams(params);      
+            var method = "GET";
+            if(data.length >= 2000)
+                method = "POST";
+            else if(Countly.force_post)
+                method = "POST";
+            
+            if(method === "GET")
+                xhr.open('GET', Countly.url + apiPath + "?" + data, true);
+            else{
+                xhr.open('POST', Countly.url + apiPath, true);
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            }
 
             // fallback on error
             xhr.onreadystatechange = function () {
@@ -1493,8 +1546,10 @@
                     if (typeof callback === 'function') { callback(true, params); }
                 }
             };
-
-            xhr.send();
+            if(method == "GET")
+                xhr.send();
+            else
+                xhr.send(data);
         } catch (e) {
             // fallback
 			log("Failed XML HTTP request", e);
@@ -1715,7 +1770,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Fri Jul 08 2016 19:45:01 GMT+0300 (FLE Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Aug 10 2016 14:49:21 GMT+0300 (FLE Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>
