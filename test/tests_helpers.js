@@ -2,7 +2,7 @@ var fs = require("fs");
 function exists(value){
     return (typeof value != "undefined") ? true : false;
 }
-casper.test.begin("Testing example_sync.html", 435, function(test) {
+casper.test.begin("Testing example_sync.html", 403, function(test) {
     var tests = [];
     var cnt = 0;
     tests.push(function (message){
