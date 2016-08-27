@@ -16,9 +16,6 @@ casper.test.begin("Testing example_sync.html", 98, function(test) {
         var params = JSON.parse(message[1]);
         test.assertEquals(params._app_version, '0.0');
         test.assertEquals(params._resolution, '1024x768');
-        test.assertEquals(params._browser, 'Safari');
-        test.assertEquals(params._os, 'Linux');
-        test.assertEquals(params._os_version, 'unknown');
         test.assertEquals(params._locale, 'en-US');
     });
     tests.push(function (message){
@@ -51,9 +48,6 @@ casper.test.begin("Testing example_sync.html", 98, function(test) {
         params.metrics = JSON.parse(params.metrics);
         test.assertEquals(params.metrics._app_version, '0.0');
         test.assertEquals(params.metrics._resolution, '1024x768');
-        test.assertEquals(params.metrics._browser, 'Safari');
-        test.assertEquals(params.metrics._os, 'Linux');
-        test.assertEquals(params.metrics._os_version, 'unknown');
         test.assertEquals(params.metrics._locale, 'en-US');
     });
     tests.push(function (message){
@@ -72,9 +66,6 @@ casper.test.begin("Testing example_sync.html", 98, function(test) {
         params.metrics = JSON.parse(params.metrics);
         test.assertEquals(params.metrics._app_version, '0.0');
         test.assertEquals(params.metrics._resolution, '1024x768');
-        test.assertEquals(params.metrics._browser, 'Safari');
-        test.assertEquals(params.metrics._os, 'Linux');
-        test.assertEquals(params.metrics._os_version, 'unknown');
         test.assertEquals(params.metrics._locale, 'en-US');
     });
     tests.push(function (message){
