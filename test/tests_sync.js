@@ -2,7 +2,7 @@ var fs = require("fs");
 function exists(value){
     return (typeof value != "undefined") ? true : false;
 }
-casper.test.begin("Testing example_sync.html", 89, function(test) {
+casper.test.begin("Testing example_sync.html", 87, function(test) {
     var tests = [];
     var cnt = 0;
     tests.push(function (message){
@@ -25,7 +25,6 @@ casper.test.begin("Testing example_sync.html", 89, function(test) {
         test.assert(exists(params.segmentation));
         test.assert(exists(params.segmentation.name));
         test.assert(exists(params.segmentation.visit));
-        test.assert(exists(params.segmentation.segment));
         test.assertEquals(params.count, 1);
     });
     tests.push(function (message){
@@ -82,7 +81,6 @@ casper.test.begin("Testing example_sync.html", 89, function(test) {
         test.assert(exists(params.events[0].segmentation));
         test.assert(exists(params.events[0].segmentation.name));
         test.assert(exists(params.events[0].segmentation.visit));
-        test.assert(exists(params.events[0].segmentation.segment));
         test.assertEquals(params.events[0].count, 1);
         
         test.assertEquals(params.events[1].key, 'buttonClick');
@@ -107,7 +105,6 @@ casper.test.begin("Testing example_sync.html", 89, function(test) {
         test.assert(exists(params.events[0].segmentation));
         test.assert(exists(params.events[0].segmentation.name));
         test.assert(exists(params.events[0].segmentation.visit));
-        test.assert(exists(params.events[0].segmentation.segment));
         test.assertEquals(params.events[0].count, 1);
         
         test.assertEquals(params.events[1].key, 'buttonClick');
