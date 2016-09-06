@@ -698,9 +698,7 @@
                 setTimeout(function(){shouldProcess = true;}, 1000);
             }
         }
-        //add any events you want like pageView
-        add_event(parent, "mousedown", processClick);
-        add_event(parent, "mouseup", processClick);
+        //add any events you want
         add_event(parent, "click", processClick);
     };
     
@@ -710,12 +708,12 @@
     **/
     Countly.track_links = function(parent){
         parent = parent || document;
-        function trackClicks(){
-            function processClick(event){
+         function processClick(event){
 
-                //get element which was clicked
-                var elem = get_event_target(event);
-                
+             //get element which was clicked
+             var elem = get_event_target(event).closest('a');
+             
+             if(elem){
                 //cross browser click coordinates
                 get_page_coord(event);
                 
@@ -740,24 +738,11 @@
                         Countly.end_session();
                     }
                 }
-            }
-            //add any events you want like pageView
-            if(typeof parent.getElementsByTagName !== "undefined"){
-                var links = parent.getElementsByTagName("a");
-                for(var i = 0; i &lt; links.length; i++){
-                    add_event(links[i], "click", processClick);
-                }
-            }
-            else{
-                log("Can't track clicks");
-            }
-        }
-        if (document.readyState === "complete") {
-            trackClicks();
-        }
-        else{
-            add_event(window, "load", trackClicks);
-        }
+             }
+         }
+
+        //add any events you want
+        add_event(parent, "click", processClick);
     };
     
     /**
@@ -769,98 +754,77 @@
         function getInputName(input){
             return input.name || input.id || input.type || input.nodeName;
         }
-        function processForm(form){
-            // use to avoid duplicate submits
-            var submitted = false;
-            add_event(form, "submit", function(event){
-                if(!submitted){
-                    submitted = true;
-                    
-                    var segmentation = {
-                        "id": form.id,
-                        "name": form.name,
-                        "action": form.action,
-                        "method": form.method
-                    };
-                    
-                    //get input values
-                    var input;
-                    if(typeof form.elements !== "undefined")
-                        for(var i = 0; i &lt; form.elements.length; i++){
-                            input = form.elements[i];
-                            if(input &amp;&amp; input.type != "password"){
-                                if(typeof segmentation["input:"+getInputName(input)] === "undefined")
-                                    segmentation["input:"+getInputName(input)] = [];
-                                if(input.nodeName.toLowerCase() == "select"){
-                                    if(typeof input.multiple !== "undefined"){
-                                        var values = [];
-                                        if(typeof input.options !== "undefined")
-                                            for(var j = 0; j &lt; input.options.length; j++){
-                                                if (input.options[j].selected)
-                                                    values.push(input.options[j].value);
-                                            }
-                                        segmentation["input:"+getInputName(input)].push(values.join(", "));
+        function processForm(event){
+            var form = get_event_target(event);
+            var segmentation = {
+                "id": form.id,
+                "name": form.name,
+                "action": form.action,
+                "method": form.method
+            };
+            
+            //get input values
+            var input;
+            if(typeof form.elements !== "undefined")
+                for(var i = 0; i &lt; form.elements.length; i++){
+                    input = form.elements[i];
+                    if(input &amp;&amp; input.type != "password"){
+                        if(typeof segmentation["input:"+getInputName(input)] === "undefined")
+                            segmentation["input:"+getInputName(input)] = [];
+                        if(input.nodeName.toLowerCase() == "select"){
+                            if(typeof input.multiple !== "undefined"){
+                                var values = [];
+                                if(typeof input.options !== "undefined")
+                                    for(var j = 0; j &lt; input.options.length; j++){
+                                        if (input.options[j].selected)
+                                            values.push(input.options[j].value);
                                     }
-                                    else
-                                        segmentation["input:"+getInputName(input)].push(input.options[input.selectedIndex].value);
-                                }
-                                else if(input.nodeName.toLowerCase() == "input"){
-                                    if(typeof input.type !== "undefined"){
-                                        if(input.type.toLowerCase() == "checkbox" || input.type.toLowerCase() == "radio"){
-                                            if(input.checked){
-                                                segmentation["input:"+getInputName(input)].push(input.value);
-                                            }
-                                        }
-                                        else{
-                                            segmentation["input:"+getInputName(input)].push(input.value);
-                                        }
-                                    }
-                                    else
+                                segmentation["input:"+getInputName(input)].push(values.join(", "));
+                            }
+                            else
+                                segmentation["input:"+getInputName(input)].push(input.options[input.selectedIndex].value);
+                        }
+                        else if(input.nodeName.toLowerCase() == "input"){
+                            if(typeof input.type !== "undefined"){
+                                if(input.type.toLowerCase() == "checkbox" || input.type.toLowerCase() == "radio"){
+                                    if(input.checked){
                                         segmentation["input:"+getInputName(input)].push(input.value);
+                                    }
                                 }
-                                else if(input.nodeName.toLowerCase() == "textarea"){
-                                    segmentation["input:"+getInputName(input)].push(input.value);
-                                }
-                                else if(typeof input.value !== "undefined"){
+                                else{
                                     segmentation["input:"+getInputName(input)].push(input.value);
                                 }
                             }
+                            else
+                                segmentation["input:"+getInputName(input)].push(input.value);
                         }
-                        for(var key in segmentation){
-                            if(typeof segmentation[key].join != "undefined")
-                                segmentation[key] = segmentation[key].join(", ");
+                        else if(input.nodeName.toLowerCase() == "textarea"){
+                            segmentation["input:"+getInputName(input)].push(input.value);
                         }
-                    
-                    //record submit event
-                    Countly.add_event({
-                        "key": "formSubmit",
-                        "segmentation": segmentation
-                    });
-                    
-                    //form will refresh page
-                    
-                    //end Countly session
-                    Countly.end_session();
+                        else if(typeof input.value !== "undefined"){
+                            segmentation["input:"+getInputName(input)].push(input.value);
+                        }
+                    }
                 }
+                for(var key in segmentation){
+                    if(typeof segmentation[key].join != "undefined")
+                        segmentation[key] = segmentation[key].join(", ");
+                }
+            
+            //record submit event
+            Countly.add_event({
+                "key": "formSubmit",
+                "segmentation": segmentation
             });
+            
+            //form will refresh page
+            
+            //end Countly session
+            Countly.end_session();
         }
-        function trackForms(){
-            if(typeof parent.getElementsByTagName !== "undefined"){
-                var forms = parent.getElementsByTagName("form");
-                for(var i = 0; i &lt; forms.length; i++){
-                    processForm(forms[i]);
-                }
-            }
-            else{
-                log("Can't track forms");
-            }
-        }
-        if (document.readyState === "complete") {
-            trackForms();
-        }
-        else{
-            add_event(window, "load", trackForms);
-        }
+        
+        //add any events you want
+        add_event(parent, "submit", processForm);
     };
     
     /**
@@ -870,160 +834,139 @@
     **/
     Countly.collect_from_forms = function(parent, useCustom){
         parent = parent || document;
-        function processForm(form){
-            // use to avoid duplicate submits
-            var submitted = false;
-            add_event(form, "submit", function(event){
-                if(!submitted){
-                    submitted = true;
-                    
-                    var userdata = {};
-                    var hasUserInfo = false;
-                    
-                    //get input values
-                    var input;
-                    if(typeof form.elements !== "undefined"){
-                        //load labels for inputs
-                        var labelData = {};
-                        var labels = parent.getElementsByTagName('LABEL');
-                        var i, j;
-                        for (i = 0; i &lt; labels.length; i++) {
-                            if (labels[i].htmlFor &amp;&amp; labels[i].htmlFor !== '') {
-                                labelData[labels[i].htmlFor] = labels[i].innerText || labels[i].textContent || labels[i].innerHTML;		
+        function processForm(event){
+            var form = get_event_target(event);
+            var userdata = {};
+            var hasUserInfo = false;
+            
+            //get input values
+            var input;
+            if(typeof form.elements !== "undefined"){
+                //load labels for inputs
+                var labelData = {};
+                var labels = parent.getElementsByTagName('LABEL');
+                var i, j;
+                for (i = 0; i &lt; labels.length; i++) {
+                    if (labels[i].htmlFor &amp;&amp; labels[i].htmlFor !== '') {
+                        labelData[labels[i].htmlFor] = labels[i].innerText || labels[i].textContent || labels[i].innerHTML;		
+                    }
+                }
+                for(i = 0; i &lt; form.elements.length; i++){
+                    input = form.elements[i];
+                    if(input &amp;&amp; input.type != "password"){
+                        //check if element should be ignored
+                        if(input.className.indexOf("cly_user_ignore") == -1){
+                            var value = "";
+                            //get value from input
+                            if(input.nodeName.toLowerCase() == "select"){
+                                if(typeof input.multiple !== "undefined"){
+                                    var values = [];
+                                    if(typeof input.options !== "undefined")
+                                        for(j = 0; j &lt; input.options.length; j++){
+                                            if (input.options[j].selected)
+                                                values.push(input.options[j].value);
+                                        }
+                                    value = values.join(", ");
+                                }
+                                else
+                                    value = input.options[input.selectedIndex].value;
                             }
-                        }
-                        for(i = 0; i &lt; form.elements.length; i++){
-                            input = form.elements[i];
-                            if(input &amp;&amp; input.type != "password"){
-                                //check if element should be ignored
-                                if(input.className.indexOf("cly_user_ignore") == -1){
-                                    var value = "";
-                                    //get value from input
-                                    if(input.nodeName.toLowerCase() == "select"){
-                                        if(typeof input.multiple !== "undefined"){
-                                            var values = [];
-                                            if(typeof input.options !== "undefined")
-                                                for(j = 0; j &lt; input.options.length; j++){
-                                                    if (input.options[j].selected)
-                                                        values.push(input.options[j].value);
-                                                }
-                                            value = values.join(", ");
-                                        }
-                                        else
-                                            value = input.options[input.selectedIndex].value;
-                                    }
-                                    else if(input.nodeName.toLowerCase() == "input"){
-                                        if(typeof input.type !== "undefined"){
-                                            if(input.type.toLowerCase() == "checkbox" || input.type.toLowerCase() == "radio"){
-                                                if(input.checked)
-                                                    value = input.value;
-                                            }
-                                            else{
-                                                value = input.value;
-                                            }
-                                        }
-                                        else
+                            else if(input.nodeName.toLowerCase() == "input"){
+                                if(typeof input.type !== "undefined"){
+                                    if(input.type.toLowerCase() == "checkbox" || input.type.toLowerCase() == "radio"){
+                                        if(input.checked)
                                             value = input.value;
                                     }
-                                    else if(input.nodeName.toLowerCase() == "textarea"){
+                                    else{
                                         value = input.value;
                                     }
-                                    else if(typeof input.value !== "undefined"){
-                                        value = input.value;
-                                    }
-                                    //check if input was marked to be collected
-                                    if(input.className &amp;&amp; input.className.indexOf("cly_user_") != -1){
-                                        var classes = input.className.split(" ");
-                                        for(j = 0; j &lt; classes.length; j++){
-                                            if(classes[j].indexOf("cly_user_") === 0){
-                                                userdata[classes[j].replace("cly_user_", "")] = value;
-                                                hasUserInfo = true;
-                                                break;
-                                            }
-                                        }
-                                    }
-                                    //check for email
-                                    else if((input.type &amp;&amp; input.type.toLowerCase() == "email") || 
-                                    (input.name &amp;&amp; input.name.toLowerCase().indexOf("email") != -1) ||
-                                    (input.id &amp;&amp; input.id.toLowerCase().indexOf("email") != -1) ||
-                                    (input.id &amp;&amp; labelData[input.id] &amp;&amp; labelData[input.id].toLowerCase().indexOf("email") != -1) ||
-                                    (/[^@\s]+@[^@\s]+\.[^@\s]+/).test(value)){
-                                        if(!userdata.email){
-                                            userdata.email = value;
-                                        }
+                                }
+                                else
+                                    value = input.value;
+                            }
+                            else if(input.nodeName.toLowerCase() == "textarea"){
+                                value = input.value;
+                            }
+                            else if(typeof input.value !== "undefined"){
+                                value = input.value;
+                            }
+                            //check if input was marked to be collected
+                            if(input.className &amp;&amp; input.className.indexOf("cly_user_") != -1){
+                                var classes = input.className.split(" ");
+                                for(j = 0; j &lt; classes.length; j++){
+                                    if(classes[j].indexOf("cly_user_") === 0){
+                                        userdata[classes[j].replace("cly_user_", "")] = value;
                                         hasUserInfo = true;
-                                    }
-                                    else if((input.name &amp;&amp; input.name.toLowerCase().indexOf("username") != -1) ||
-                                    (input.id &amp;&amp; input.id.toLowerCase().indexOf("username") != -1) ||
-                                    (input.id &amp;&amp; labelData[input.id] &amp;&amp; labelData[input.id].toLowerCase().indexOf("username") != -1) ){
-                                        if(!userdata.username){
-                                            userdata.username = value;
-                                        }
-                                        hasUserInfo = true;
-                                    }
-                                    else if((input.name &amp;&amp; (input.name.toLowerCase().indexOf("tel") != -1 || input.name.toLowerCase().indexOf("phone") != -1 || input.name.toLowerCase().indexOf("number") != -1)) ||
-                                    (input.id &amp;&amp; (input.id.toLowerCase().indexOf("tel") != -1 || input.id.toLowerCase().indexOf("phone") != -1 || input.id.toLowerCase().indexOf("number") != -1)) ||
-                                    (input.id &amp;&amp; labelData[input.id] &amp;&amp; (labelData[input.id].toLowerCase().indexOf("tel") != -1 || labelData[input.id].toLowerCase().indexOf("phone") != -1 || labelData[input.id].toLowerCase().indexOf("number") != -1)) ){
-                                        if(!userdata.phone){
-                                            userdata.phone = value;
-                                        }
-                                        hasUserInfo = true;
-                                    }
-                                    else if((input.name &amp;&amp; (input.name.toLowerCase().indexOf("org") != -1 || input.name.toLowerCase().indexOf("company") != -1)) ||
-                                    (input.id &amp;&amp; (input.id.toLowerCase().indexOf("org") != -1 || input.id.toLowerCase().indexOf("company") != -1)) ||
-                                    (input.id &amp;&amp; labelData[input.id] &amp;&amp; (labelData[input.id].toLowerCase().indexOf("org") != -1 || labelData[input.id].toLowerCase().indexOf("company") != -1)) ){
-                                        if(!userdata.organization){
-                                            userdata.organization = value;
-                                        }
-                                        hasUserInfo = true;
-                                    }
-                                    else if((input.name &amp;&amp; input.name.toLowerCase().indexOf("name") != -1) ||
-                                    (input.id &amp;&amp; input.id.toLowerCase().indexOf("name") != -1) ||
-                                    (input.id &amp;&amp; labelData[input.id] &amp;&amp; labelData[input.id].toLowerCase().indexOf("name") != -1) ){
-                                        if(!userdata.name){
-                                            userdata.name = "";
-                                        }
-                                        userdata.name += value+" ";
-                                        hasUserInfo = true;
+                                        break;
                                     }
                                 }
                             }
+                            //check for email
+                            else if((input.type &amp;&amp; input.type.toLowerCase() == "email") || 
+                            (input.name &amp;&amp; input.name.toLowerCase().indexOf("email") != -1) ||
+                            (input.id &amp;&amp; input.id.toLowerCase().indexOf("email") != -1) ||
+                            (input.id &amp;&amp; labelData[input.id] &amp;&amp; labelData[input.id].toLowerCase().indexOf("email") != -1) ||
+                            (/[^@\s]+@[^@\s]+\.[^@\s]+/).test(value)){
+                                if(!userdata.email){
+                                    userdata.email = value;
+                                }
+                                hasUserInfo = true;
+                            }
+                            else if((input.name &amp;&amp; input.name.toLowerCase().indexOf("username") != -1) ||
+                            (input.id &amp;&amp; input.id.toLowerCase().indexOf("username") != -1) ||
+                            (input.id &amp;&amp; labelData[input.id] &amp;&amp; labelData[input.id].toLowerCase().indexOf("username") != -1) ){
+                                if(!userdata.username){
+                                    userdata.username = value;
+                                }
+                                hasUserInfo = true;
+                            }
+                            else if((input.name &amp;&amp; (input.name.toLowerCase().indexOf("tel") != -1 || input.name.toLowerCase().indexOf("phone") != -1 || input.name.toLowerCase().indexOf("number") != -1)) ||
+                            (input.id &amp;&amp; (input.id.toLowerCase().indexOf("tel") != -1 || input.id.toLowerCase().indexOf("phone") != -1 || input.id.toLowerCase().indexOf("number") != -1)) ||
+                            (input.id &amp;&amp; labelData[input.id] &amp;&amp; (labelData[input.id].toLowerCase().indexOf("tel") != -1 || labelData[input.id].toLowerCase().indexOf("phone") != -1 || labelData[input.id].toLowerCase().indexOf("number") != -1)) ){
+                                if(!userdata.phone){
+                                    userdata.phone = value;
+                                }
+                                hasUserInfo = true;
+                            }
+                            else if((input.name &amp;&amp; (input.name.toLowerCase().indexOf("org") != -1 || input.name.toLowerCase().indexOf("company") != -1)) ||
+                            (input.id &amp;&amp; (input.id.toLowerCase().indexOf("org") != -1 || input.id.toLowerCase().indexOf("company") != -1)) ||
+                            (input.id &amp;&amp; labelData[input.id] &amp;&amp; (labelData[input.id].toLowerCase().indexOf("org") != -1 || labelData[input.id].toLowerCase().indexOf("company") != -1)) ){
+                                if(!userdata.organization){
+                                    userdata.organization = value;
+                                }
+                                hasUserInfo = true;
+                            }
+                            else if((input.name &amp;&amp; input.name.toLowerCase().indexOf("name") != -1) ||
+                            (input.id &amp;&amp; input.id.toLowerCase().indexOf("name") != -1) ||
+                            (input.id &amp;&amp; labelData[input.id] &amp;&amp; labelData[input.id].toLowerCase().indexOf("name") != -1) ){
+                                if(!userdata.name){
+                                    userdata.name = "";
+                                }
+                                userdata.name += value+" ";
+                                hasUserInfo = true;
+                            }
                         }
                     }
-                    
-                    //record user info, if any
-                    if(hasUserInfo){
-                        log("Gathered user data", userdata);
-                        if(useCustom)
-                            Countly.user_details({custom:userdata});
-                        else
-                            Countly.user_details(userdata);
-                    }
-                    
-                    //form will refresh page
-                    
-                    //end Countly session
-                    Countly.end_session();
-                }
-            });
-        }
-        function trackForms(){
-            if(typeof parent.getElementsByTagName !== "undefined"){
-                var forms = parent.getElementsByTagName("form");
-                for(var i = 0; i &lt; forms.length; i++){
-                    processForm(forms[i]);
                 }
             }
-            else{
-                log("Can't track forms");
+            
+            //record user info, if any
+            if(hasUserInfo){
+                log("Gathered user data", userdata);
+                if(useCustom)
+                    Countly.user_details({custom:userdata});
+                else
+                    Countly.user_details(userdata);
             }
+            
+            //form will refresh page
+            
+            //end Countly session
+            Countly.end_session();
         }
-        if (document.readyState === "complete") {
-            trackForms();
-        }
-        else{
-            add_event(window, "load", trackForms);
-        }
+        
+        //add any events you want
+        add_event(parent, "submit", processForm);
     };
     
     /**
@@ -1407,6 +1350,18 @@
 		return ob;
 	}
     
+    //get closest parent matching nodeName
+    if (!Element.prototype.closest) Element.prototype.closest = function (nodeName) {
+        var el = this;
+        nodeName = nodeName.toUpperCase();
+        while (el) {
+            if (el.nodeName.toUpperCase() == nodeName) {
+                return el;
+            }
+            el = el.parentElement;
+        }
+    };
+    
     //add event
 	var add_event = function(element, type, listener){
 		if(typeof element.addEventListener !== "undefined")
@@ -1591,7 +1546,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sat Aug 27 2016 12:08:34 GMT+0300 (FLE Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Sep 06 2016 19:01:53 GMT+0300 (FLE Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>
