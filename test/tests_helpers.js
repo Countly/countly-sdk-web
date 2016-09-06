@@ -417,6 +417,13 @@ casper.test.begin("Testing example_sync.html", 403, function(test) {
         test.assertEquals(params.events[0].count, 1);
     });
     tests.push(function (message){
+        test.assertEquals(message[0], 'Got metrics');
+        var params = JSON.parse(message[1]);
+        test.assertEquals(params._app_version, '0.0');
+        test.assertEquals(params._resolution, '1024x768');
+        test.assertEquals(params._locale, 'en-US');
+    });
+    tests.push(function (message){
         test.assertEquals(message[0], 'Adding event: ');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.key, "[CLY]_action");
@@ -427,13 +434,6 @@ casper.test.begin("Testing example_sync.html", 403, function(test) {
         test.assert(exists(params.segmentation.y));
         test.assert(exists(params.segmentation.width));
         test.assert(exists(params.segmentation.height));
-    });
-    tests.push(function (message){
-        test.assertEquals(message[0], 'Got metrics');
-        var params = JSON.parse(message[1]);
-        test.assertEquals(params._app_version, '0.0');
-        test.assertEquals(params._resolution, '1024x768');
-        test.assertEquals(params._locale, 'en-US');
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Got metrics');
