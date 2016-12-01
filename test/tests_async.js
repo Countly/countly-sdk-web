@@ -54,20 +54,6 @@ casper.test.begin("Testing example_async.html", 108, function(test) {
         test.assertEquals(message[0], 'Sending XML HTTP request');
     });
     tests.push(function (message){
-        test.assertEquals(message[0], 'Request Finished');
-        var params = JSON.parse(message[1]);
-        test.assertEquals(params.begin_session, 1);
-        test.assertEquals(params.app_key, "YOUR_APP_KEY");
-        test.assert(exists(params.device_id));
-        test.assert(exists(params.timestamp));
-        test.assert(exists(params.hour));
-        test.assert(exists(params.dow));
-        params.metrics = JSON.parse(params.metrics);
-        test.assertEquals(params.metrics._app_version, '0.0');
-        test.assertEquals(params.metrics._resolution, '1024x768');
-        test.assertEquals(params.metrics._locale, 'en-US');
-    });
-    tests.push(function (message){
         test.assertEquals(message[0], 'Processing queued call');
         var params = JSON.parse(message[1])
         test.assertEquals(params[0], "add_event");
@@ -82,6 +68,20 @@ casper.test.begin("Testing example_async.html", 108, function(test) {
         test.assert(exists(params.segmentation));
         test.assertEquals(params.segmentation.id, "testButton");
         test.assertEquals(params.count, 1);
+    });
+    tests.push(function (message){
+        test.assertEquals(message[0], 'Request Finished');
+        var params = JSON.parse(message[1]);
+        test.assertEquals(params.begin_session, 1);
+        test.assertEquals(params.app_key, "YOUR_APP_KEY");
+        test.assert(exists(params.device_id));
+        test.assert(exists(params.timestamp));
+        test.assert(exists(params.hour));
+        test.assert(exists(params.dow));
+        params.metrics = JSON.parse(params.metrics);
+        test.assertEquals(params.metrics._app_version, '0.0');
+        test.assertEquals(params.metrics._resolution, '1024x768');
+        test.assertEquals(params.metrics._locale, 'en-US');
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Processing request');
