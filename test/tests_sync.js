@@ -2,7 +2,7 @@ var fs = require("fs");
 function exists(value){
     return (typeof value != "undefined") ? true : false;
 }
-casper.test.begin("Testing example_sync.html", 98, function(test) {
+casper.test.begin("Testing example_sync.html", 86, function(test) {
     var tests = [];
     var cnt = 0;
     tests.push(function (message){
@@ -16,9 +16,6 @@ casper.test.begin("Testing example_sync.html", 98, function(test) {
         var params = JSON.parse(message[1]);
         test.assertEquals(params._app_version, '0.0');
         test.assertEquals(params._resolution, '1024x768');
-        test.assertEquals(params._browser, 'Safari');
-        test.assertEquals(params._os, 'Linux');
-        test.assertEquals(params._os_version, 'unknown');
         test.assertEquals(params._locale, 'en-US');
     });
     tests.push(function (message){
@@ -28,7 +25,6 @@ casper.test.begin("Testing example_sync.html", 98, function(test) {
         test.assert(exists(params.segmentation));
         test.assert(exists(params.segmentation.name));
         test.assert(exists(params.segmentation.visit));
-        test.assert(exists(params.segmentation.segment));
         test.assertEquals(params.count, 1);
     });
     tests.push(function (message){
@@ -51,9 +47,6 @@ casper.test.begin("Testing example_sync.html", 98, function(test) {
         params.metrics = JSON.parse(params.metrics);
         test.assertEquals(params.metrics._app_version, '0.0');
         test.assertEquals(params.metrics._resolution, '1024x768');
-        test.assertEquals(params.metrics._browser, 'Safari');
-        test.assertEquals(params.metrics._os, 'Linux');
-        test.assertEquals(params.metrics._os_version, 'unknown');
         test.assertEquals(params.metrics._locale, 'en-US');
     });
     tests.push(function (message){
@@ -72,9 +65,6 @@ casper.test.begin("Testing example_sync.html", 98, function(test) {
         params.metrics = JSON.parse(params.metrics);
         test.assertEquals(params.metrics._app_version, '0.0');
         test.assertEquals(params.metrics._resolution, '1024x768');
-        test.assertEquals(params.metrics._browser, 'Safari');
-        test.assertEquals(params.metrics._os, 'Linux');
-        test.assertEquals(params.metrics._os_version, 'unknown');
         test.assertEquals(params.metrics._locale, 'en-US');
     });
     tests.push(function (message){
@@ -91,7 +81,6 @@ casper.test.begin("Testing example_sync.html", 98, function(test) {
         test.assert(exists(params.events[0].segmentation));
         test.assert(exists(params.events[0].segmentation.name));
         test.assert(exists(params.events[0].segmentation.visit));
-        test.assert(exists(params.events[0].segmentation.segment));
         test.assertEquals(params.events[0].count, 1);
         
         test.assertEquals(params.events[1].key, 'buttonClick');
@@ -116,7 +105,6 @@ casper.test.begin("Testing example_sync.html", 98, function(test) {
         test.assert(exists(params.events[0].segmentation));
         test.assert(exists(params.events[0].segmentation.name));
         test.assert(exists(params.events[0].segmentation.visit));
-        test.assert(exists(params.events[0].segmentation.segment));
         test.assertEquals(params.events[0].count, 1);
         
         test.assertEquals(params.events[1].key, 'buttonClick');
