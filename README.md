@@ -24,12 +24,15 @@ Since Countly server 16.02, Countly Web SDK is available in your Countly server 
 or
 
     npm install countly-sdk-web
+or
+
+    yarn add countly-sdk-web
     
 ###3. Use a CDN (content delivery network)
 
 Countly web SDK is available on CDNJS. Use either
 
-[https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/16.2.0/countly.min.js](https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/16.2.0/countly.min.js)
+[https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/16.12.1/countly.min.js](https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/16.12.1/countly.min.js)
 
 or
 
