@@ -7,8 +7,6 @@ branches:
   - gh-pages
 env:
   global:
-  - GH_REPO_NAME: countly-sdk-web
-  - GH_REPO_REF: github.com/Countly/countly-sdk-web.git
   - secure: ONfNUHKLNXeG+mqPucbNhXnw7VRmpYKJDXLxyyO1ZxyoSZLytDH9QD3xXLLKwfqVP1DfEAI26xwipGAZejvaXB5Td+a4Q+b3B0Wx0q3kYSh+oQL/CK16HrJkeAbe68hXIYTdRMzQkbwTgDlRbmJiMoNOS6tos6H5dq7V/j5ND60=
 before_script:
 - npm install

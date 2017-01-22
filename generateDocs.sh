@@ -2,6 +2,8 @@
 
 #Original source https://gist.github.com/vidavidorra/548ffbcdae99d752da02
 
+if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "development" ]; then
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 echo 'Setting up the script...'
@@ -13,8 +15,8 @@ mkdir code_docs
 cd code_docs
 
 # Get the current gh-pages branch
-git clone -b gh-pages https://git@$GH_REPO_REF
-cd $GH_REPO_NAME
+git clone -b gh-pages http://github.com/$TRAVIS_REPO_SLUG repo
+cd repo
 
 ##### Configure git.
 # Set the push default to simple i.e. push only the current branch.
@@ -37,7 +39,7 @@ echo "" > .nojekyll
 ################################################################################
 ##### Generate JSDOC documents.          #####
 echo 'Generating JSDoc code documentation...'
-$DIR/node_modules/.bin/jsdoc $DIR/lib/countly.js $DIR/README.md -c  $DIR/jsdoc_conf.json -d  $DIR/code_docs/$GH_REPO_NAME ;
+$DIR/node_modules/.bin/jsdoc $DIR/lib/countly.js $DIR/README.md -c  $DIR/jsdoc_conf.json -d  $DIR/code_docs/repo ;
 
 ################################################################################
 ##### Upload the documentation to the gh-pages branch of the repository.   #####
@@ -59,10 +61,12 @@ if [ -f "index.html" ]; then
     # Force push to the remote gh-pages branch.
     # The ouput is redirected to /dev/null to hide any sensitive credential data
     # that might otherwise be exposed.
-    git push --force "https://${GH_REPO_TOKEN}@${GH_REPO_REF}" > /dev/null 2>&1
+    git push --force "https://${GH_REPO_TOKEN}@github.com/${TRAVIS_REPO_SLUG}" > /dev/null 2>&1
 else
     echo '' >&2
     echo 'Warning: No documentation (html) files have been found!' >&2
     echo 'Warning: Not going to push the documentation to GitHub!' >&2
     exit 1
+fi
+
 fi
