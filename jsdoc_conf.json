@@ -42,6 +42,7 @@
 			"keyword": "countly, web, sdk, jsdoc, doc, documentation"
 		},
         "search": true,
-        "collapse": false
+        "collapse": false,
+        "scripts": ["https://stats.count.ly/sdk/countly-docs.js"]
     }
 }

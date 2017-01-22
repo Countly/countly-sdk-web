@@ -1,4 +1,5 @@
-# Countly Web SDK [![Build Status](https://api.travis-ci.org/Countly/countly-sdk-web.png)](https://travis-ci.org/Countly/countly-sdk-web) [![npm version](https://badge.fury.io/js/countly-sdk-web.svg)](https://badge.fury.io/js/countly-sdk-web) [![Bower version](https://badge.fury.io/bo/countly-sdk-web.svg)](https://badge.fury.io/bo/countly-sdk-web) [![Inline docs](http://inch-ci.org/github/Countly/countly-sdk-web.svg?branch=master)](http://inch-ci.org/github/Countly/countly-sdk-web)
+# Countly Web SDK 
+[![Build Status](https://api.travis-ci.org/Countly/countly-sdk-web.png)](https://travis-ci.org/Countly/countly-sdk-web) [![npm version](https://badge.fury.io/js/countly-sdk-web.svg)](https://badge.fury.io/js/countly-sdk-web) [![Bower version](https://badge.fury.io/bo/countly-sdk-web.svg)](https://badge.fury.io/bo/countly-sdk-web) [![Inline docs](http://inch-ci.org/github/Countly/countly-sdk-web.svg?branch=master)](http://inch-ci.org/github/Countly/countly-sdk-web)
 
 ## What's Countly?
 [Countly](http://count.ly) is an innovative, real-time, open source mobile analytics application. 
