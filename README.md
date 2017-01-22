@@ -1,6 +1,6 @@
-#Countly Web SDK [![Build Status](https://api.travis-ci.org/Countly/countly-sdk-web.png)](https://travis-ci.org/Countly/countly-sdk-web) [![npm version](https://badge.fury.io/js/countly-sdk-web.svg)](https://badge.fury.io/js/countly-sdk-web) [![Bower version](https://badge.fury.io/bo/countly-sdk-web.svg)](https://badge.fury.io/bo/countly-sdk-web) [![Inline docs](http://inch-ci.org/github/Countly/countly-sdk-web.svg?branch=master)](http://inch-ci.org/github/Countly/countly-sdk-web)
+# Countly Web SDK [![Build Status](https://api.travis-ci.org/Countly/countly-sdk-web.png)](https://travis-ci.org/Countly/countly-sdk-web) [![npm version](https://badge.fury.io/js/countly-sdk-web.svg)](https://badge.fury.io/js/countly-sdk-web) [![Bower version](https://badge.fury.io/bo/countly-sdk-web.svg)](https://badge.fury.io/bo/countly-sdk-web) [![Inline docs](http://inch-ci.org/github/Countly/countly-sdk-web.svg?branch=master)](http://inch-ci.org/github/Countly/countly-sdk-web)
 
-##What's Countly?
+## What's Countly?
 [Countly](http://count.ly) is an innovative, real-time, open source mobile analytics application. 
 It collects data from mobile devices, and visualizes this information to analyze mobile application 
 usage and end-user behavior. There are two parts of Countly: the server that collects and analyzes data, 
@@ -15,10 +15,10 @@ This repository includes the Countly Web SDK. For more information about this SD
 
 There are 3 ways to get Countly SDK.
 
-###1. Available with Countly server
+### 1. Available with Countly server
 Since Countly server 16.02, Countly Web SDK is available in your Countly server installation in `countly/frontend/express/public/sdk/web/countly.min.js` which should be available through URL as `http://yourserver.com/sdk/web/countly.min.js`
 
-###2. Installation using package managers
+### 2. Installation using package managers
 
     bower install countly-sdk-web
 or
@@ -28,7 +28,7 @@ or
 
     yarn add countly-sdk-web
     
-###3. Use a CDN (content delivery network)
+### 3. Use a CDN (content delivery network)
 
 Countly web SDK is available on CDNJS. Use either
 
@@ -38,7 +38,7 @@ or
 
 [https://cdn.jsdelivr.net/countly-sdk-web/latest/countly.min.js](https://cdn.jsdelivr.net/countly-sdk-web/latest/countly.min.js)
 
-##How to use Countly Web SDK?
+## How to use Countly Web SDK?
 
 Link to the script and call helper methods based on what you want to track: sessions, views, clicks, custom events, user data, etc. More information is available at [http://resources.count.ly/docs/countly-sdk-for-web](http://resources.count.ly/docs/countly-sdk-for-web)
 
@@ -58,7 +58,7 @@ There are also other Countly SDK repositories below:
 - [Countly Appcelerator Titanium SDK](https://github.com/euforic/Titanium-Count.ly) (Community supported)
 - [Countly Unity3D SDK](https://github.com/Countly/countly-sdk-unity) (Community supported)
 
-###How can I help you with your efforts?
+### How can I help you with your efforts?
 
 Glad you asked. We need ideas, feedbacks and constructive comments. All your suggestions will be taken care with upmost importance. We are on [Twitter](http://twitter.com/gocountly) and [Facebook](http://www.facebook.com/Countly) if you would like to keep up with our fast progress!
 
