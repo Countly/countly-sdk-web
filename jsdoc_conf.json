@@ -28,6 +28,19 @@
     "docdash": {
         "static": true,
         "sort": false,
+        "disqus": "countly-documentation",
+		"openGraph": {
+			"title": "Countly Web SDK Documentation",
+			"type": "website",
+			"image": "",
+			"site_name": "Countly Web SDK Documentation",
+			"url": "http://countly.github.io/countly-sdk-web/"
+		},
+		"meta": {
+			"title": "Countly Web SDK Documentation",
+			"description": "JSDoc generated Countly Web SDK documentation",
+			"keyword": "countly, web, sdk, jsdoc, doc, documentation"
+		},
         "search": true,
         "collapse": false
     }

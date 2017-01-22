@@ -30,7 +30,7 @@
     "casperjs": "*",
     "jshint": "*",
     "jsdoc": "3.4.3",
-    "docdash": "0.4.0"
+    "docdash": "git://github.com/ar2rsawseen/docdash.git"
   },
   "npmName": "countly-sdk-web",
   "npmFileMap": [
