@@ -2,32 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
-
-    <script src="scripts/prettify/prettify.js"> </script>
-    <script src="scripts/prettify/lang-css.js"> </script>
+    <title>Home - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
 </head>
-
 <body>
 
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Countly.html">Countly</a><ul class='methods'><li data-type='method'><a href="Countly.html#.init">init</a></li><li data-type='method'><a href="Countly.html#.begin_session">begin_session</a></li><li data-type='method'><a href="Countly.html#.session_duration">session_duration</a></li><li data-type='method'><a href="Countly.html#.end_session">end_session</a></li><li data-type='method'><a href="Countly.html#.change_id">change_id</a></li><li data-type='method'><a href="Countly.html#.add_event">add_event</a></li><li data-type='method'><a href="Countly.html#.start_event">start_event</a></li><li data-type='method'><a href="Countly.html#.end_event">end_event</a></li><li data-type='method'><a href="Countly.html#.user_details">user_details</a></li><li data-type='method'><a href="Countly.html#.report_conversion">report_conversion</a></li><li data-type='method'><a href="Countly.html#.track_errors">track_errors</a></li><li data-type='method'><a href="Countly.html#.log_error">log_error</a></li><li data-type='method'><a href="Countly.html#.add_log">add_log</a></li><li data-type='method'><a href="Countly.html#.stop_time">stop_time</a></li><li data-type='method'><a href="Countly.html#.start_time">start_time</a></li><li data-type='method'><a href="Countly.html#.track_sessions">track_sessions</a></li><li data-type='method'><a href="Countly.html#.track_pageview">track_pageview</a></li><li data-type='method'><a href="Countly.html#.track_view">track_view</a></li><li data-type='method'><a href="Countly.html#.track_clicks">track_clicks</a></li><li data-type='method'><a href="Countly.html#.track_links">track_links</a></li><li data-type='method'><a href="Countly.html#.track_forms">track_forms</a></li><li data-type='method'><a href="Countly.html#.collect_from_forms">collect_from_forms</a></li><li data-type='method'><a href="Countly.html#.collect_from_facebook">collect_from_facebook</a></li></ul></li><li><a href="Countly.userData.html">userData</a><ul class='methods'><li data-type='method'><a href="Countly.userData.html#.set">set</a></li><li data-type='method'><a href="Countly.userData.html#.set_once">set_once</a></li><li data-type='method'><a href="Countly.userData.html#.increment">increment</a></li><li data-type='method'><a href="Countly.userData.html#.increment_by">increment_by</a></li><li data-type='method'><a href="Countly.userData.html#.multiply">multiply</a></li><li data-type='method'><a href="Countly.userData.html#.max">max</a></li><li data-type='method'><a href="Countly.userData.html#.min">min</a></li><li data-type='method'><a href="Countly.userData.html#.push">push</a></li><li data-type='method'><a href="Countly.userData.html#.push_unique">push_unique</a></li><li data-type='method'><a href="Countly.userData.html#.pull">pull</a></li><li data-type='method'><a href="Countly.userData.html#.save">save</a></li></ul></li></ul>
+</nav>
+
 <div id="main">
-
-    <h1 class="page-title">Home</h1>
+    
 
     
 
 
 
     
-
-
-    <h3> </h3>
-
 
 
 
@@ -40,9 +49,7 @@
     
 
 
-
-
-    <section>
+    <section class="readme">
         <article><p>#Countly Web SDK <a href="https://travis-ci.org/Countly/countly-sdk-web"><img src="https://api.travis-ci.org/Countly/countly-sdk-web.png" alt="Build Status"></a> <a href="https://badge.fury.io/js/countly-sdk-web"><img src="https://badge.fury.io/js/countly-sdk-web.svg" alt="npm version"></a> <a href="https://badge.fury.io/bo/countly-sdk-web"><img src="https://badge.fury.io/bo/countly-sdk-web.svg" alt="Bower version"></a> <a href="http://inch-ci.org/github/Countly/countly-sdk-web"><img src="http://inch-ci.org/github/Countly/countly-sdk-web.svg?branch=master" alt="Inline docs"></a></p>
 <p>##What's Countly?
 <a href="http://count.ly">Countly</a> is an innovative, real-time, open source mobile analytics application. 
@@ -54,20 +61,23 @@ and mobile SDK that sends this data. Both parts are open source with different l
 <li><strong>Slack user?</strong> <a href="http://slack.count.ly:3000/">Join our community</a> to ask questions and get answers!</li>
 <li><strong>Questions?</strong> <a href="http://community.count.ly">Ask in our Community forum</a></li>
 </ul>
-<h2>Implementing Countly SDK in your web pages</h2><p>There are 3 ways to get Countly SDK.</p>
+<h2 id="implementing-countly-sdk-in-your-web-pages">Implementing Countly SDK in your web pages</h2>
+<p>There are 3 ways to get Countly SDK.</p>
 <p>###1. Available with Countly server
 Since Countly server 16.02, Countly Web SDK is available in your Countly server installation in <code>countly/frontend/express/public/sdk/web/countly.min.js</code> which should be available through URL as <code>http://yourserver.com/sdk/web/countly.min.js</code></p>
 <p>###2. Installation using package managers</p>
 <pre class="prettyprint source"><code>bower install countly-sdk-web</code></pre><p>or</p>
-<pre class="prettyprint source"><code>npm install countly-sdk-web</code></pre><p>###3. Use a CDN (content delivery network)</p>
+<pre class="prettyprint source"><code>npm install countly-sdk-web</code></pre><p>or</p>
+<pre class="prettyprint source"><code>yarn add countly-sdk-web</code></pre><p>###3. Use a CDN (content delivery network)</p>
 <p>Countly web SDK is available on CDNJS. Use either</p>
-<p><a href="https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/16.2.0/countly.min.js">https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/16.2.0/countly.min.js</a></p>
+<p><a href="https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/16.12.1/countly.min.js">https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/16.12.1/countly.min.js</a></p>
 <p>or</p>
 <p><a href="https://cdn.jsdelivr.net/countly-sdk-web/latest/countly.min.js">https://cdn.jsdelivr.net/countly-sdk-web/latest/countly.min.js</a></p>
 <p>##How to use Countly Web SDK?</p>
 <p>Link to the script and call helper methods based on what you want to track: sessions, views, clicks, custom events, user data, etc. More information is available at <a href="http://resources.count.ly/docs/countly-sdk-for-web">http://resources.count.ly/docs/countly-sdk-for-web</a></p>
 <p><img src="https://github.com/Countly/countly-sdk-web/blob/master/docs/screenshot.png" alt="Using Countly web SDK in your web page"></p>
-<h3>Other Github resources</h3><p>Check Countly Community Edition source code here: </p>
+<h3 id="other-github-resources">Other Github resources</h3>
+<p>Check Countly Community Edition source code here: </p>
 <ul>
 <li><a href="https://github.com/Countly/countly-server">Countly Server</a></li>
 </ul>
@@ -83,7 +93,8 @@ Since Countly server 16.02, Countly Web SDK is available in your Countly server 
 <p>Glad you asked. We need ideas, feedbacks and constructive comments. All your suggestions will be taken care with upmost importance. We are on <a href="http://twitter.com/gocountly">Twitter</a> and <a href="http://www.facebook.com/Countly">Facebook</a> if you would like to keep up with our fast progress!</p>
 <p>If you like Countly, why not use one of our badges and give a link back to us, so others know about this wonderful platform? </p>
 <p><img src="https://count.ly/wp-content/uploads/2014/10/countly_badge_5.png" alt="Light badge">  <img src="https://count.ly/wp-content/uploads/2014/10/countly_badge_6.png" alt="Dark badge"></p>
-<h3>Support</h3><p>For a public community support page, visit <a href="http://community.count.ly" title="Countly Community Forum">http://community.count.ly</a>.</p>
+<h3 id="support">Support</h3>
+<p>For a public community support page, visit <a href="http://community.count.ly" title="Countly Community Forum">http://community.count.ly</a>.</p>
 <p><a href="https://nodei.co/npm/countly-sdk-web/"><img src="https://nodei.co/npm/countly-sdk-web.png?downloads=true&amp;downloadRank=true&amp;stars=true" alt="NPM"></a></p></article>
     </section>
 
@@ -92,19 +103,24 @@ Since Countly server 16.02, Countly Web SDK is available in your Countly server 
 
 
 
+    
+    
 </div>
-
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Countly.html">Countly</a></li><li><a href="Countly.userData.html">userData</a></li></ul><h3><a href="global.html">Global</a></h3>
-</nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Dec 28 2016 17:25:42 GMT+0200 (FLE Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sun Jan 22 2017 14:36:44 GMT+0200 (FLE Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/jquery-3.1.1.min.js"></script>
+
+<script src="scripts/search.js"></script>
+
+
+
 </body>
 </html>

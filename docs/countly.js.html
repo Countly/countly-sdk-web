@@ -2,22 +2,37 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: countly.js</title>
-
-    <script src="scripts/prettify/prettify.js"> </script>
-    <script src="scripts/prettify/lang-css.js"> </script>
+    <title>countly.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
 </head>
-
 <body>
 
-<div id="main">
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
 
-    <h1 class="page-title">Source: countly.js</h1>
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Countly.html">Countly</a><ul class='methods'><li data-type='method'><a href="Countly.html#.init">init</a></li><li data-type='method'><a href="Countly.html#.begin_session">begin_session</a></li><li data-type='method'><a href="Countly.html#.session_duration">session_duration</a></li><li data-type='method'><a href="Countly.html#.end_session">end_session</a></li><li data-type='method'><a href="Countly.html#.change_id">change_id</a></li><li data-type='method'><a href="Countly.html#.add_event">add_event</a></li><li data-type='method'><a href="Countly.html#.start_event">start_event</a></li><li data-type='method'><a href="Countly.html#.end_event">end_event</a></li><li data-type='method'><a href="Countly.html#.user_details">user_details</a></li><li data-type='method'><a href="Countly.html#.report_conversion">report_conversion</a></li><li data-type='method'><a href="Countly.html#.track_errors">track_errors</a></li><li data-type='method'><a href="Countly.html#.log_error">log_error</a></li><li data-type='method'><a href="Countly.html#.add_log">add_log</a></li><li data-type='method'><a href="Countly.html#.stop_time">stop_time</a></li><li data-type='method'><a href="Countly.html#.start_time">start_time</a></li><li data-type='method'><a href="Countly.html#.track_sessions">track_sessions</a></li><li data-type='method'><a href="Countly.html#.track_pageview">track_pageview</a></li><li data-type='method'><a href="Countly.html#.track_view">track_view</a></li><li data-type='method'><a href="Countly.html#.track_clicks">track_clicks</a></li><li data-type='method'><a href="Countly.html#.track_links">track_links</a></li><li data-type='method'><a href="Countly.html#.track_forms">track_forms</a></li><li data-type='method'><a href="Countly.html#.collect_from_forms">collect_from_forms</a></li><li data-type='method'><a href="Countly.html#.collect_from_facebook">collect_from_facebook</a></li></ul></li><li><a href="Countly.userData.html">userData</a><ul class='methods'><li data-type='method'><a href="Countly.userData.html#.set">set</a></li><li data-type='method'><a href="Countly.userData.html#.set_once">set_once</a></li><li data-type='method'><a href="Countly.userData.html#.increment">increment</a></li><li data-type='method'><a href="Countly.userData.html#.increment_by">increment_by</a></li><li data-type='method'><a href="Countly.userData.html#.multiply">multiply</a></li><li data-type='method'><a href="Countly.userData.html#.max">max</a></li><li data-type='method'><a href="Countly.userData.html#.min">min</a></li><li data-type='method'><a href="Countly.userData.html#.push">push</a></li><li data-type='method'><a href="Countly.userData.html#.push_unique">push_unique</a></li><li data-type='method'><a href="Countly.userData.html#.pull">pull</a></li><li data-type='method'><a href="Countly.userData.html#.save">save</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">countly.js</h1>
+    
 
     
 
@@ -32,10 +47,42 @@
 ************/
 
 /**
- * Countly object to manage the internal queue and send requests to Countly server
+ * Countly object to manage the internal queue and send requests to Countly server. More information on {@link http://resources.count.ly/docs/countly-sdk-for-web}
  * @name Countly
  * @global
  * @namespace Countly
+ * @example &lt;caption>SDK integration&lt;/caption>
+ * &lt;script type='text/javascript'>
+ *   
+ * //some default pre init
+ * var Countly = Countly || {};
+ * Countly.q = Countly.q || [];
+ * 
+ * //provide your app key that you retrieved from Countly dashboard
+ * Countly.app_key = "YOUR_APP_KEY";
+ * 
+ * //provide your server IP or name. Use try.count.ly for EE trial server.
+ * //if you use your own server, make sure you have https enabled if you use
+ * //https below.
+ * Countly.url = "https://yourdomain.com"; 
+ * 
+ * //start pushing function calls to queue
+ * //track sessions automatically
+ * Countly.q.push(['track_sessions']);
+ *   
+ * //track sessions automatically
+ * Countly.q.push(['track_pageview']);
+ *   
+ * //load countly script asynchronously
+ * (function() {
+ * 	var cly = document.createElement('script'); cly.type = 'text/javascript'; 
+ * 	cly.async = true;
+ * 	//enter url of script here
+ * 	cly.src = 'https://cdn.jsdelivr.net/countly-sdk-web/latest/countly.min.js';
+ * 	cly.onload = function(){Countly.init()};
+ * 	var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(cly, s);
+ * })();
+ * &lt;/script>
  */
 (function (Countly) {
 	'use strict';
@@ -76,31 +123,26 @@
         startTime;
 
 /**
-* Countly initialization object
-* @typedef {Object} Init
-* @property {string} app_key - app key for your app created in Countly
-* @property {string} device_id - to identify a visitor, will be auto generated if not provided
-* @property {string} url - your Countly server url, you can use your server URL or IP here
-* @property {string} [app_version=0.0] - the version of your app or website
-* @property {string=} country_code - country code for your visitor
-* @property {string=} city - name of the city of your visitor
-* @property {string=} ip_address - ip address of your visitor
-* @property {boolean} [debug=false] - output debug info into console
-* @property {boolean} [ignore_bots=true] - option to ignore traffic from bots
-* @property {number} [interval=500] - set an interval how often to check if there is any data to report and report it in miliseconds
-* @property {number} [queue_size=1000] - maximum amount of queued requests to store
-* @property {number} [fail_timeout=60] - set time in seconds to wait after failed connection to server in seconds
-* @property {number} [inactivity_time=20] - after how many minutes user should be counted as inactive, if he did not perform any actions, as mouse move, scroll or keypress
-* @property {number} [session_update=60] - how often in seconds should session be extended
-* @property {number} [max_events=10] - maximum amount of events to send in one batch
-* @property {array=} ignore_referrers - array with referrers to ignore
-* @property {boolean} [ignore_prefetch=true] - ignore prefetching and pre rendering from counting as real website visits
-* @property {boolean} [force_post=false] - force using post method for all requests
-*/
-
-/**
  * Initialize Countly object
- * @param {Init} conf - Countly initialization {@link Init} object with configuration options
+ * @param {Object} conf - Countly initialization {@link Init} object with configuration options
+ * @param {string} conf.app_key - app key for your app created in Countly
+ * @param {string} conf.device_id - to identify a visitor, will be auto generated if not provided
+ * @param {string} conf.url - your Countly server url, you can use your server URL or IP here
+ * @param {string} [conf.app_version=0.0] - the version of your app or website
+ * @param {string=} conf.country_code - country code for your visitor
+ * @param {string=} conf.city - name of the city of your visitor
+ * @param {string=} conf.ip_address - ip address of your visitor
+ * @param {boolean} [conf.debug=false] - output debug info into console
+ * @param {boolean} [conf.ignore_bots=true] - option to ignore traffic from bots
+ * @param {number} [conf.interval=500] - set an interval how often to check if there is any data to report and report it in miliseconds
+ * @param {number} [conf.queue_size=1000] - maximum amount of queued requests to store
+ * @param {number} [conf.fail_timeout=60] - set time in seconds to wait after failed connection to server in seconds
+ * @param {number} [conf.inactivity_time=20] - after how many minutes user should be counted as inactive, if he did not perform any actions, as mouse move, scroll or keypress
+ * @param {number} [conf.session_update=60] - how often in seconds should session be extended
+ * @param {number} [conf.max_events=10] - maximum amount of events to send in one batch
+ * @param {array=} conf.ignore_referrers - array with referrers to ignore
+ * @param {boolean} [conf.ignore_prefetch=true] - ignore prefetching and pre rendering from counting as real website visits
+ * @param {boolean} [conf.force_post=false] - force using post method for all requests
  */
 	Countly.init = function(ob){
 		if(!inited){
@@ -236,20 +278,15 @@
                 Countly.begin_session(!autoExtend);
         }
 	};
-    
-    /**
-    * Countly custom event object
-    * @typedef {Object} Event
-    * @property {string} key - name or id of the event
-    * @property {number} [count=1] - how many times did event occur
-    * @property {number=} sum - sum to report with event (if any)
-    * @property {number=} dur - duration to report with event (if any)
-    * @property {Object=} segmentation - object with segments key /values
-    */
 	
     /**
     * Report custom event
-    * @param {Event} event - Countly {@link Event} object
+    * @param {Object} event - Countly {@link Event} object
+    * @param {string} event.key - name or id of the event
+    * @param {number} [event.count=1] - how many times did event occur
+    * @param {number=} event.sum - sum to report with event (if any)
+    * @param {number=} event.dur - duration to report with event (if any)
+    * @param {Object=} event.segmentation - object with segments key /values
     **/
 	Countly.add_event = function(event){
 		if(!event.key){
@@ -285,7 +322,7 @@
     
     /**
     * End timed event
-    * @param {string|Event} event - event key if string or Countly {@link Event} object
+    * @param {string|object} event - event key if string or Countly event same as passed to {@link Countly.add_event}
     **/
     Countly.end_event = function(event){
         if(typeof event == "string"){
@@ -305,22 +342,17 @@
     };
 	
     /**
-    * Countly user information object
-    * @typedef {Object} UserDetails
-    * @property {string=} name - user's full name
-    * @property {string=} username - user's username or nickname
-    * @property {string=} email - user's email address
-    * @property {string=} organization - user's organization or company
-    * @property {string=} phone - user's phone number
-    * @property {string=} picture - url to user's picture
-    * @property {string=} gender - M value for male and F value for femail
-    * @property {number=} byear - user's birth year used to calculate current age
-    * @property {Object=} custom - object with custom key value properties you want to save with user
-    */
-	
-    /**
-    * Report custom event
-    * @param {UserDetails} user - Countly {@link UserDetails} object
+    * Provide information about user
+    * @param {Object} user - Countly {@link UserDetails} object
+    * @param {string=} user.name - user's full name
+    * @param {string=} user.username - user's username or nickname
+    * @param {string=} user.email - user's email address
+    * @param {string=} user.organization - user's organization or company
+    * @param {string=} user.phone - user's phone number
+    * @param {string=} user.picture - url to user's picture
+    * @param {string=} user.gender - M value for male and F value for femail
+    * @param {number=} user.byear - user's birth year used to calculate current age
+    * @param {Object=} user.custom - object with custom key value properties you want to save with user
     **/
 	Countly.user_details = function(user){
 		log("Adding userdetails: ", user);
@@ -371,7 +403,18 @@
     };
     
     /**
+    * Control user related custom properties. Don't forget to call save after finishing manipulation of custom data
     * @namespace Countly.userData
+    * @name Countly.userData
+    * @example
+    * //set custom key value property
+    * Countly.userData.set("twitter", "ar2rsawseen");
+    * //create or increase specific number property
+    * Countly.userData.increment("login_count");
+    * //add new value to array property if it is not already there
+    * Countly.userData.push_unique("selected_category", "IT");
+    * //send all custom property modified data to server
+    * Countly.userData.save();
     */
     Countly.userData = {
         /**
@@ -1575,19 +1618,24 @@
 
 
 
+    
+    
 </div>
-
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Countly.html">Countly</a></li><li><a href="Countly.userData.html">userData</a></li></ul><h3><a href="global.html">Global</a></h3>
-</nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Dec 28 2016 17:25:42 GMT+0200 (FLE Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sun Jan 22 2017 14:36:44 GMT+0200 (FLE Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/jquery-3.1.1.min.js"></script>
+
+<script src="scripts/search.js"></script>
+
+
+
 </body>
 </html>
