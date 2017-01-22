@@ -6,7 +6,7 @@ It collects data from mobile devices, and visualizes this information to analyze
 usage and end-user behavior. There are two parts of Countly: the server that collects and analyzes data, 
 and mobile SDK that sends this data. Both parts are open source with different licensing terms.
 
-This repository includes the Countly Web SDK. For more information about this SDK, [Countly SDK for Web](http://resources.count.ly/v1.0/docs/countly-sdk-for-web) documentation at [Countly Resources](http://resources.count.ly).
+This repository includes the Countly Web SDK. For more information about this SDK, [Countly SDK for Web](http://resources.count.ly/v1.0/docs/countly-sdk-for-web) integration guide at [Countly Resources](http://resources.count.ly) or [Countly Web SDK Documentation](http://countly.github.io/countly-sdk-web/)
 
 * **Slack user?** [Join our community](http://slack.count.ly:3000/) to ask questions and get answers!
 * **Questions?** [Ask in our Community forum](http://community.count.ly)
@@ -42,7 +42,7 @@ or
 
 Link to the script and call helper methods based on what you want to track: sessions, views, clicks, custom events, user data, etc. More information is available at [http://resources.count.ly/docs/countly-sdk-for-web](http://resources.count.ly/docs/countly-sdk-for-web)
 
-![Using Countly web SDK in your web page](https://github.com/Countly/countly-sdk-web/blob/master/docs/screenshot.png)
+![Using Countly web SDK in your web page](http://count.ly/wp-content/uploads/2017/01/countly-web-sdk.png)
 
 ### Other Github resources ###
 
