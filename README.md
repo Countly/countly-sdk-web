@@ -45,6 +45,8 @@ Link to the script and call helper methods based on what you want to track: sess
 
 ![Using Countly web SDK in your web page](http://count.ly/wp-content/uploads/2017/01/countly-web-sdk.png)
 
+Countly Web SDK has JSDoc3 compatible comments and you can generate documentation by running `npm run-script docs` or access online version at [http://countly.github.io/countly-sdk-web/](http://countly.github.io/countly-sdk-web/)
+
 ### Other Github resources ###
 
 Check Countly Community Edition source code here: 
