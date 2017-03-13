@@ -4,7 +4,8 @@ $( document ).ready(function() {
     };
     //on search
     $("#nav-search").on("keyup", function(event) {
-        if (!$(this).val()) {
+        var search = $(this).val();
+        if (!search) {
             //no search, show all results
             $("nav > ul > li").show();
             
@@ -24,15 +25,15 @@ $( document ).ready(function() {
             //hide all results
             $("nav > ul > li > ul li").hide();
             //show results matching filter
-            $("nav > ul > li > ul").find("a:Contains("+$(this).val()+")").parent().show();
+            $("nav > ul > li > ul").find("a:Contains("+search+")").parent().show();
             //hide parents without children
             $("nav > ul > li").each(function(){
-                if($(this).children("ul").length === 0){
-                    //has no child at all
+                if($(this).find("a:Contains("+search+")").length == 0 && $(this).children("ul").length === 0){
+                    //has no child at all and does not contain text
                     $(this).hide();
                 }
-                else if($(this).find("ul").children(':visible').length == 0){
-                    //has no visible child
+                else if($(this).find("a:Contains("+search+")").length == 0 && $(this).find("ul").children(':visible').length == 0){
+                    //has no visible child and does not contain text
                     $(this).hide();
                 }
             });
