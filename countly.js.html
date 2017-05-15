@@ -100,7 +100,7 @@
 (function (Countly) {
     'use strict';
     
-    var SDK_VERSION = "16.12";
+    var SDK_VERSION = "17.04";
     var SDK_NAME = "javascript_native_web";
 
     var inited = false,
@@ -130,8 +130,7 @@
         readyToProcess = true,
         platform,
         urlParseRE = /^(((([^:\/#\?]+:)?(?:(\/\/)((?:(([^:@\/#\?]+)(?:\:([^:@\/#\?]+))?)@)?(([^:\/#\?\]\[]+|\[[^\/\]@#?]+\])(?:\:([0-9]+))?))?)?)?((\/?(?:[^\/\?#]+\/+)*)([^\?#]*)))?(\?[^#]+)?)(#.*)?/,
-        searchBotRE = /(nuhk|Googlebot|Yammybot|Openbot|Slurp|MSNBot|Ask Jeeves\/Teoma|ia_archiver|bingbot|Google Web Preview|Mediapartners-Google|AdsBot-Google|Baiduspider|Ezooms|YahooSeeker|AltaVista|AVSearch|Mercator|Scooter|InfoSeek|Ultraseek|Lycos|Wget|YandexBot|Yandex|YaDirectFetcher|SiteBot|Exabot|AhrefsBot|MJ12bot|TurnitinBot|magpie-crawler|Nutch Crawler|CMS Crawler|rogerbot|Domnutch|ssearch_bot|XoviBot|netseer|digincore|fr-crawler|wesee|AliasIO)/,
-        ignoreVisitor = false,
+        searchBotRE = /(CountlySiteBot|nuhk|Googlebot|Yammybot|Openbot|Slurp|MSNBot|Ask Jeeves\/Teoma|ia_archiver|bingbot|Google Web Preview|Mediapartners-Google|AdsBot-Google|Baiduspider|Ezooms|YahooSeeker|AltaVista|AVSearch|Mercator|Scooter|InfoSeek|Ultraseek|Lycos|Wget|YandexBot|Yandex|YaDirectFetcher|SiteBot|Exabot|AhrefsBot|MJ12bot|TurnitinBot|magpie-crawler|Nutch Crawler|CMS Crawler|rogerbot|Domnutch|ssearch_bot|XoviBot|netseer|digincore|fr-crawler|wesee|AliasIO)/,
         trackTime = true,
         startTime;
 
@@ -190,6 +189,8 @@
             Countly.ignore_bots = ob.ignore_bots || Countly.ignore_bots || true;
             Countly.force_post = ob.force_post || Countly.force_post || false;
             Countly.q = Countly.q || [];
+            Countly.onload = Countly.onload || [];
+            Countly.ignore_visitor = ob.ignore_visitor || Countly.ignore_visitor || false;
             if(ob.ignore_referrers &amp;&amp; ob.ignore_referrers.constructor === Array){
                 ignoreReferrers = ob.ignore_referrers;
             }
@@ -199,18 +200,43 @@
             
             if(Countly.url === ""){
                 log("Please provide server URL");
-                ignoreVisitor = true;
+                Countly.ignore_visitor = true;
             }
             
             if (Countly.ignore_prefetch &amp;&amp; typeof document.visibilityState !== 'undefined' &amp;&amp; document.visibilityState === 'prerender') {
-                ignoreVisitor = true;
+                Countly.ignore_visitor = true;
             }
             if(Countly.ignore_bots &amp;&amp; searchBotRE.test(navigator.userAgent)){
-                ignoreVisitor = true;
+                Countly.ignore_visitor = true;
+            }
+            if(window.name &amp;&amp; window.name.indexOf("cly:") === 0){
+                Countly.passed_data = JSON.parse(window.name.replace("cly:", ""));
+            }
+            else if(location.hash &amp;&amp; location.hash.indexOf("#cly:") === 0){
+                Countly.passed_data = JSON.parse(location.hash.replace("#cly:", ""));
             }
             
-            if(!ignoreVisitor){
+            if(Countly.passed_data){
+                if(Countly.passed_data.token &amp;&amp; Countly.passed_data.purpose){
+                    if(Countly.passed_data.token != store("cly_old_token")){
+                        setToken(Countly.passed_data.token);
+                        store("cly_old_token", Countly.passed_data.token);
+                    }
+                    if(Countly.passed_data.purpose === "heatmap"){
+                        Countly.ignore_visitor = true;
+                        showLoader();
+                        loadJS(Countly.url+"/views/heatmap.js", hideLoader);
+                    }
+                }
+            }
+            
+            if(!Countly.ignore_visitor){
                 log("Countly initialized");
+                
+                //let code waiting for us to load, know that we have loaded
+                if(Countly.onload.constructor !== Array)
+                    Countly.onload = [];
+                
                 if(Countly.q.constructor !== Array)
                     Countly.q = [];
                 heartBeat();
@@ -270,7 +296,6 @@
             reportViewDuration();
             sessionStarted = false;
             toRequestQueue({end_session:1, session_duration:sec});
-            heartBeat();
         }
     };
     
@@ -1112,10 +1137,14 @@
         }
     }
     
+    function getLastView(){
+        return lastView;
+    }
+    
     //insert request to queue
     function toRequestQueue(request){
         //ignore bots
-        if(ignoreVisitor)
+        if(Countly.ignore_visitor)
             return;
         
         if(!Countly.app_key || !Countly.device_id){
@@ -1151,12 +1180,26 @@
     
     //heart beat
     function heartBeat(){
+        //ignore bots
+        if(Countly.ignore_visitor)
+            return;
         
+        //notify load waiters
+        var i = 0;
+        if(typeof Countly.onload !== "undefined" &amp;&amp; Countly.onload.length > 0){
+            for(i = 0; i &lt; Countly.onload.length; i++){
+                if(typeof Countly.onload[i] === "function")
+                    Countly.onload[i]();
+            }
+            Countly.onload = [];
+        }
         //process queue
         if(typeof Countly.q !== "undefined" &amp;&amp; Countly.q.length > 0){
             var req;
-            for(var i = 0; i &lt; Countly.q.length; i++){
-                req = Countly.q[i];
+            var q = Countly.q;
+            Countly.q = [];
+            for(i = 0; i &lt; q.length; i++){
+                req = q[i];
                 log("Processing queued call", req);
                 if(typeof req === "function"){
                     req();
@@ -1171,7 +1214,6 @@
                     }
                 }
             }
-            Countly.q = [];
         }
         
         //extend session if needed
@@ -1524,6 +1566,16 @@
             Math.max(D.body.clientWidth, D.documentElement.clientWidth)
         );
     }
+    
+    function setToken(token){
+        store("cly_token", token);
+    }
+    
+    function getToken(){
+        var token = store("cly_token");
+        store("cly_token", null);
+        return token;
+    }
 
     /**
     * Simple localStorage with Cookie Fallback
@@ -1630,6 +1682,83 @@
             }
             return null;
         }
+    };
+    
+    //load external js files
+    function loadJS(js, callback){
+        var fileref=document.createElement('script'),
+            loaded;
+        fileref.setAttribute("type","text/javascript");
+        fileref.setAttribute("src", js);
+        if (callback) {
+            fileref.onreadystatechange = fileref.onload = function() {
+                if (!loaded) {
+                    callback();
+                }
+                loaded = true;
+            };
+        }
+        document.getElementsByTagName("head")[0].appendChild(fileref);
+    }
+    
+    function showLoader(){
+        var loader = document.getElementById("cly-loader");
+        if(!loader){
+            log("setting up loader");
+            var css = "#cly-loader {height: 4px; width: 100%; position: absolute; z-index: 99999; overflow: hidden; background-color: #fff; top:0px; left:0px;}"+
+            "#cly-loader:before{display: block; position: absolute; content: ''; left: -200px; width: 200px; height: 4px; background-color: #2EB52B; animation: cly-loading 2s linear infinite;}"+
+            '@keyframes cly-loading { from {left: -200px; width: 30%;} 50% {width: 30%;} 70% {width: 70%;} 80% { left: 50%;} 95% {left: 120%;} to {left: 100%;}}',
+            head = document.head || document.getElementsByTagName('head')[0],
+            style = document.createElement('style');
+            style.type = 'text/css';
+            if (style.styleSheet){
+                style.styleSheet.cssText = css;
+            } else {
+                style.appendChild(document.createTextNode(css));
+            }
+            head.appendChild(style);
+            loader = document.createElement('div');
+            loader.setAttribute("id", "cly-loader");
+            document.body.appendChild(loader);
+        }
+        loader.style.display = "block"; 
+    }
+    
+    function hideLoader(){
+        var loader = document.getElementById("cly-loader");
+        if(loader){
+           loader.style.display = "none"; 
+        }
+    }
+    
+    //expose internal methods for pluggable code to reuse them
+    Countly._internals = {
+        store:store,
+        getDocWidth:getDocWidth,
+        getDocHeight:getDocHeight,
+        get_page_coord:get_page_coord,
+        get_event_target:get_event_target,
+        add_event:add_event,
+        getProperties:getProperties,
+        stripTrailingSlash:stripTrailingSlash,
+        prepareParams:prepareParams,
+        sendXmlHttpRequest:sendXmlHttpRequest,
+        recordError:recordError,
+        getMsTimestamp:getMsTimestamp,
+        getTimestamp:getTimestamp,
+        log:log,
+        getMetrics:getMetrics,
+        generateUUID:generateUUID,
+        getId:getId,
+        heartBeat:heartBeat,
+        toRequestQueue:toRequestQueue,
+        reportViewDuration:reportViewDuration,
+        loadJS:loadJS,
+        getLastView:getLastView,
+        setToken:setToken,
+        getToken:getToken,
+        showLoader:showLoader,
+        hideLoader:hideLoader
     };
 }(window.Countly = window.Countly || {}));
 </code></pre>
