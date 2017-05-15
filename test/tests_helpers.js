@@ -199,34 +199,6 @@ casper.test.begin("Testing example_sync.html", 403, function(test) {
         test.assert(exists(params.segmentation.name));
     });
     tests.push(function (message){
-        test.assertEquals(message[0], 'Processing request');
-        var params = JSON.parse(message[1]);
-        test.assertEquals(params.end_session, 1);
-        test.assert(params.session_duration >= 29 && params.session_duration <= 31);
-        test.assertEquals(params.app_key, "YOUR_APP_KEY");
-        test.assert(exists(params.device_id));
-        test.assert(exists(params.timestamp));
-        test.assert(exists(params.hour));
-        test.assert(exists(params.dow));
-    });
-    tests.push(function (message){
-        test.assertEquals(message[0], 'Sending XML HTTP request');
-    });
-    tests.push(function (message){
-        test.assertEquals(message[0], 'Failed Server XML HTTP request');
-    });
-    tests.push(function (message){
-        test.assertEquals(message[0], 'Request Finished');
-        var params = JSON.parse(message[1]);
-        test.assertEquals(params.end_session, 1);
-        test.assert(params.session_duration >= 29 && params.session_duration <= 31);
-        test.assertEquals(params.app_key, "YOUR_APP_KEY");
-        test.assert(exists(params.device_id));
-        test.assert(exists(params.timestamp));
-        test.assert(exists(params.hour));
-        test.assert(exists(params.dow));
-    });
-    tests.push(function (message){
         test.assertEquals(message[0], 'Countly initialized');
     });
     tests.push(function (message){
