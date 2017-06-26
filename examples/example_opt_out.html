@@ -1,0 +1,60 @@
+<html>
+<head>
+<h3 id='header'></h3>
+<p><input type="button" id="optButton" onclick="testOpt()" value=""></p>
+<!--Countly script-->
+<script type='text/javascript' src='../lib/countly.min.js'></script>
+<script type='text/javascript'>
+
+//initializing countly with params
+Countly.init({
+	app_key: "YOUR_APP_KEY",
+	url: "https://try.count.ly", //your server goes here
+	debug:true
+})
+//track sessions automatically
+Countly.track_sessions();
+
+//track pageviews automatically
+Countly.track_pageview();
+
+//track any clicks to webpages automatically
+Countly.track_clicks();
+
+//track link clicks automatically
+Countly.track_links();
+
+//track form submissions automatically
+Countly.track_forms();
+
+//track javascript errors
+Countly.track_errors({jquery:"1.10", jqueryui:"1.10"});
+</script>
+</head>
+<body>
+<script type='text/javascript'>
+//send event on button click
+function testOpt(){
+	if(Countly.ignore_visitor){
+        Countly.opt_in();
+    }
+    else{
+        Countly.opt_out();
+    }
+    setOpt();
+}
+function setOpt(){
+    if(Countly.ignore_visitor){
+        //opted out, allow opt in
+        document.getElementById("header").innerHTML = "You are Opted Out";
+        document.getElementById("optButton").value = "Opt in";
+    }
+    else{
+        document.getElementById("header").innerHTML = "You are Opted In";
+        document.getElementById("optButton").value = "Opt out";
+    }
+}
+setOpt();
+</script>
+</body>
+</html>
