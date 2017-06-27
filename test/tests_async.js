@@ -68,22 +68,6 @@ casper.test.begin("Testing example_async.html", 108, function(test) {
         test.assertEquals(params.metrics._locale, 'en-US');
     });
     tests.push(function (message){
-        test.assertEquals(message[0], 'Processing queued call');
-        var params = JSON.parse(message[1])
-        test.assertEquals(params[0], "add_event");
-        test.assertEquals(params[1].key, "buttonClick");
-        test.assert(exists(params[1].segmentation));
-        test.assertEquals(params[1].segmentation.id, "testButton");
-    });
-    tests.push(function (message){
-        test.assertEquals(message[0], 'Adding event: ');
-        var params = JSON.parse(message[1]);
-        test.assertEquals(params.key, "buttonClick");
-        test.assert(exists(params.segmentation));
-        test.assertEquals(params.segmentation.id, "testButton");
-        test.assertEquals(params.count, 1);
-    });
-    tests.push(function (message){
         test.assertEquals(message[0], 'Processing request');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.app_key, "YOUR_APP_KEY");
@@ -116,6 +100,22 @@ casper.test.begin("Testing example_async.html", 108, function(test) {
         test.assert(exists(params.events[0].segmentation.name));
         test.assert(exists(params.events[0].segmentation.visit));
         test.assertEquals(params.events[0].count, 1);
+    });
+    tests.push(function (message){
+        test.assertEquals(message[0], 'Processing queued call');
+        var params = JSON.parse(message[1])
+        test.assertEquals(params[0], "add_event");
+        test.assertEquals(params[1].key, "buttonClick");
+        test.assert(exists(params[1].segmentation));
+        test.assertEquals(params[1].segmentation.id, "testButton");
+    });
+    tests.push(function (message){
+        test.assertEquals(message[0], 'Adding event: ');
+        var params = JSON.parse(message[1]);
+        test.assertEquals(params.key, "buttonClick");
+        test.assert(exists(params.segmentation));
+        test.assertEquals(params.segmentation.id, "testButton");
+        test.assertEquals(params.count, 1);
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Processing request');
@@ -182,7 +182,10 @@ casper.test.begin("Testing example_async.html", 108, function(test) {
         cnt++;
     });
     casper.start(fs.workingDirectory+"/examples/example_async.html", function() {
-        this.click('input');
+        var self = this;
+        setTimeout(function(){
+           self.click('input'); 
+        }, 1000);
     }).run(function() {
         setTimeout(function(){
             casper.evaluate(function() {
