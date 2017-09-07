@@ -37,7 +37,7 @@ Countly web SDK is available on CDNJS. Use either
 
 or
 
-[https://cdn.jsdelivr.net/countly-sdk-web/latest/countly.min.js](https://cdn.jsdelivr.net/countly-sdk-web/latest/countly.min.js)
+[https://cdn.jsdelivr.net/npm/countly-sdk-web@latest/lib/countly.min.js](https://cdn.jsdelivr.net/npm/countly-sdk-web@latest/lib/countly.min.js)
 
 ## How to use Countly Web SDK?
 
