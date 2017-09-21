@@ -2,10 +2,11 @@
 [![Build Status](https://api.travis-ci.org/Countly/countly-sdk-web.png)](https://travis-ci.org/Countly/countly-sdk-web) [![npm version](https://badge.fury.io/js/countly-sdk-web.svg)](https://badge.fury.io/js/countly-sdk-web) [![Bower version](https://badge.fury.io/bo/countly-sdk-web.svg)](https://badge.fury.io/bo/countly-sdk-web) [![Inline docs](http://inch-ci.org/github/Countly/countly-sdk-web.svg?branch=master)](http://inch-ci.org/github/Countly/countly-sdk-web)
 
 ## What's Countly?
-[Countly](http://count.ly) is an innovative, real-time, open source mobile analytics application. 
-It collects data from mobile devices, and visualizes this information to analyze mobile application 
-usage and end-user behavior. There are two parts of Countly: the server that collects and analyzes data, 
-and mobile SDK that sends this data. Both parts are open source with different licensing terms.
+[Countly](http://count.ly) is an innovative, real-time, open source mobile & [web analytics](http://count.ly/web-analytics), [rich push notifications](http://count.ly/push-notifications) and [crash reporting](http://count.ly/crash-reports) platform powering more than 2500 web sites and 14000 mobile applications as of 2017 Q3. It collects data from mobile phones, tablets, Apple Watch and other internet-connected devices, and visualizes this information to analyze application usage and end-user behavior. 
+
+With the help of [Javascript SDK](http://github.com/countly/countly-sdk-web), Countly is a web analytics platform with features on par with mobile SDKs. For more information about web analytics capabilities, [see this link](http://count.ly/web-analytics).
+
+There are two parts of Countly: the server that collects and analyzes data, and an SDK (mobile, web or desktop) that sends this data. This repository includes Countly Community Edition (server side). For more information other versions (e.g Enterprise Edition), see [comparison of different Countly editions](https://count.ly/compare)
 
 This repository includes the Countly Web SDK. For more information about this SDK, [Countly SDK for Web](http://resources.count.ly/v1.0/docs/countly-sdk-for-web) integration guide at [Countly Resources](http://resources.count.ly) or [Countly Web SDK Documentation](http://countly.github.io/countly-sdk-web/)
 
@@ -33,7 +34,7 @@ or
 
 Countly web SDK is available on CDNJS. Use either
 
-[https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/16.12.1/countly.min.js](https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/17.05.0/countly.min.js)
+[https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/17.9.0/countly.min.js](https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/17.9.0/countly.min.js)
 
 or
 
