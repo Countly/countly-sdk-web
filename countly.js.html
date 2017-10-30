@@ -423,8 +423,6 @@
             toRequestQueue({campaign_id: campaign_id, campaign_user: campaign_user_id});
         else if(campaign_id)
             toRequestQueue({campaign_id: campaign_id});
-        else
-            log("No campaign data found");
     };
     
     /**************************
@@ -1667,11 +1665,9 @@
             
             // Try to parse JSON...
             try {
-            data = JSON.parse(data);
+                data = JSON.parse(data);
             }
-            catch(e) {
-            data = data;
-            }
+            catch(e) {}
             
             return data;
             
