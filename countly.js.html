@@ -874,7 +874,7 @@
             
             //get input values
             var input;
-            if(typeof form.elements !== "undefined")
+            if(typeof form.elements !== "undefined"){
                 for(var i = 0; i &lt; form.elements.length; i++){
                     input = form.elements[i];
                     if(input &amp;&amp; input.type != "password"){
@@ -919,6 +919,7 @@
                     if(typeof segmentation[key].join != "undefined")
                         segmentation[key] = segmentation[key].join(", ");
                 }
+            }
             
             //record submit event
             Countly.add_event({
