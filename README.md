@@ -10,7 +10,7 @@ There are two parts of Countly: the server that collects and analyzes data, and 
 
 This repository includes the Countly Web SDK. For more information about this SDK, [Countly SDK for Web](http://resources.count.ly/v1.0/docs/countly-sdk-for-web) integration guide at [Countly Resources](http://resources.count.ly) or [Countly Web SDK Documentation](http://countly.github.io/countly-sdk-web/)
 
-* **Slack user?** [Join our community](http://slack.count.ly:3000/) to ask questions and get answers!
+* **Slack user?** [Join our community](http://slack.count.ly) to ask questions and get answers!
 * **Questions?** [Ask in our Community forum](http://community.count.ly)
 
 ## Implementing Countly SDK in your web pages
