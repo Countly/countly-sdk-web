@@ -1,0 +1,84 @@
+<html>
+<head>
+<!--Countly script-->
+<script type='text/javascript' src='../lib/countly.js'></script>
+<script type='text/javascript'>
+
+//initializing countly with params and passing require consent as true for second param
+Countly.init({
+	app_key: "YOUR_APP_KEY",
+	url: "https://try.count.ly", //your server goes here
+	debug:true
+}, true); //this true means consent is requried
+
+//(optionally) provide custom feature tree if needed
+Countly.group_features({
+    activity:["sessions","events","views"],
+    interaction:["scrolls","clicks","forms"]
+});
+
+//we can call all the helper methods we want, they won't record until consent is provided for specific features
+Countly.track_sessions();
+Countly.track_pageview();
+Countly.track_clicks();
+Countly.track_links();
+Countly.track_forms();
+Countly.track_errors({jquery:"1.10", jqueryui:"1.10"});
+
+//Consent Management logic should be implemented and controled by developer
+//this is just a simply example of what logic it could have
+if (typeof(localStorage) !== "undefined") {
+    var consents = localStorage.getItem("consents");
+    //checking if user already provided consent
+    if(consents){
+        //we already have array with consents from previous visit, let's just pass them to Countly
+        Countly.add_consent(JSON.parse(consents));
+    }
+    else{
+        //user have not yet provided us a consent
+        //we need to display popup and ask user to give consent for specific features we want to track
+        //for example purposes, assuming user agreed to these 3
+        var response = ["activity", "interaction", "crashes"];
+        Countly.add_consent(response);
+        //let's store the response, so we don't need to re ask user each time
+        localStorage.setItem("consents", JSON.stringify(response));
+    }
+} else {
+    // Sorry! No Web Storage support..
+    // we can fallback to cookie
+}
+
+//user can then change his mind and opt out or opt back in
+//so let's provide these function to UI
+function giveConsent(){
+    //give consent to same 3 features
+    var response = ["activity", "interaction", "crashes"];
+    Countly.add_consent(response);
+    localStorage.setItem("consents", response);
+}
+function removeConsent(){
+    //remove consent from same 3 features
+    var response = ["activity", "interaction", "crashes"];
+    Countly.remove_consent(response);
+    localStorage.setItem("consents", JSON.stringify([]));
+}
+</script>
+</head>
+<body>
+<form method='post' name='comments'>
+<p><input type="text" name="message" value="Message Name"></p>
+<p><textarea>Message</textarea></p>
+<p><select>
+<option value='option1'>Option1</option>
+<option value='option2'>Option2</option>
+<option value='option3'>Option3</option>
+</select></p>
+<p><input id="submit-form" type="submit" value="Submit"></p>
+</form>
+<p><button id="unhandled_error" onclick="unhandled_error()">Unhandled Error</button></p>
+<p><a id="track_link" href='#link'>Dummy link</a></p>
+<p><a href='http://count.ly/'>Count.ly</a></p>
+<p><button onclick="giveConsent()">Give Consent</button></p>
+<p><button onclick="removeConsent()">Remove Consent</button></p>
+</body>
+</html>
