@@ -17,6 +17,7 @@ script:
 - casperjs test test/tests_sync.js
 - casperjs test test/tests_async.js
 - casperjs test test/tests_helpers.js
+- casperjs test test/tests_gdpr.js
 after_success:
 - cd $TRAVIS_BUILD_DIR
 - chmod +x generateDocs.sh

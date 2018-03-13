@@ -37,11 +37,8 @@ if (typeof(localStorage) !== "undefined") {
     else{
         //user have not yet provided us a consent
         //we need to display popup and ask user to give consent for specific features we want to track
-        //for example purposes, assuming user agreed to these 3
-        var response = ["activity", "interaction", "crashes"];
-        Countly.add_consent(response);
-        //let's store the response, so we don't need to re ask user each time
-        localStorage.setItem("consents", JSON.stringify(response));
+        //for example purposes, we will wait till user clicks "Give Consent" button
+        //to allow consent for "activity", "interaction", "crashes"
     }
 } else {
     // Sorry! No Web Storage support..
@@ -65,7 +62,7 @@ function removeConsent(){
 </script>
 </head>
 <body>
-<form method='post' name='comments'>
+<form method='post' name='comments' onsubmit="return false;">
 <p><input type="text" name="message" value="Message Name"></p>
 <p><textarea>Message</textarea></p>
 <p><select>
