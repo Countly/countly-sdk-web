@@ -52,7 +52,7 @@ function giveConsent(){
     //give consent to same 3 features
     var response = ["activity", "interaction", "crashes"];
     Countly.add_consent(response);
-    localStorage.setItem("consents", response);
+    localStorage.setItem("consents", JSON.stringify(response));
 }
 function removeConsent(){
     //remove consent from same 3 features
