@@ -4,12 +4,13 @@
 <script type='text/javascript' src='../lib/countly.js'></script>
 <script type='text/javascript'>
 
-//initializing countly with params and passing require consent as true for second param
+//initializing countly with params and passing require_consent config as true
 Countly.init({
 	app_key: "YOUR_APP_KEY",
 	url: "https://try.count.ly", //your server goes here
-	debug:true
-}, true); //this true means consent is requried
+	debug:true,
+    require_consent: true //this true means consent is required
+});
 
 //(optionally) provide custom feature tree if needed
 Countly.group_features({
