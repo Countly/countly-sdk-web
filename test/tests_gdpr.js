@@ -427,6 +427,12 @@ casper.test.begin("Testing example_gdpr.html", 456, function(test) {
         test.assertEquals(message[0], 'Adding consent for sessions');
     });
     tests.push(function (message){
+        test.assertEquals(message[0], 'Adding consent for events');
+    });
+    tests.push(function (message){
+        test.assertEquals(message[0], 'Adding consent for views');
+    });
+    tests.push(function (message){
         test.assertEquals(message[0], 'Session started');
     });
     tests.push(function (message){
@@ -435,12 +441,6 @@ casper.test.begin("Testing example_gdpr.html", 456, function(test) {
         test.assertEquals(params._app_version, '0.0');
         test.assertEquals(params._resolution, '1024x768');
         test.assertEquals(params._locale, 'en-US');
-    });
-    tests.push(function (message){
-        test.assertEquals(message[0], 'Adding consent for events');
-    });
-    tests.push(function (message){
-        test.assertEquals(message[0], 'Adding consent for views');
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Adding event: ');
