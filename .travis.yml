@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-  - "6"
+- '6'
 sudo: false
 branches:
   except:
@@ -22,3 +22,6 @@ after_success:
 - cd $TRAVIS_BUILD_DIR
 - chmod +x generateDocs.sh
 - bash generateDocs.sh
+notifications:
+  slack:
+    secure: tFVXLE/u2iRMk65ghX6vzWz7Xv43Tppq4/Q1z1T1fhs0ZDjjGVFexiap0WbU0VvVo111J5+tW8I/VmtwLpomm5nTTuhFKVjXKbu7qswLn6Jm5cOKGSpGC1kS8RdNbuJVbqAL2WjYeEftBh2Cq8KN0DIcnqz4lYDK2cay6+7mQ/M=
