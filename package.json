@@ -9,7 +9,8 @@
     "test": "test"
   },
   "scripts": {
-    "docs": "node_modules/.bin/jsdoc lib/countly.js README.md -c jsdoc_conf.json -d docs"
+    "docs": "node_modules/.bin/jsdoc lib/countly.js README.md -c jsdoc_conf.json -d docs",
+    "build": "webpack"
   },
   "repository": {
     "type": "git",
@@ -29,9 +30,11 @@
   "dependencies": {},
   "devDependencies": {
     "casperjs": "*",
-    "jshint": "*",
+    "docdash": "git://github.com/ar2rsawseen/docdash.git",
     "jsdoc": "3.4.3",
-    "docdash": "git://github.com/ar2rsawseen/docdash.git"
+    "jshint": "*",
+    "webpack": "^4.10.1",
+    "webpack-cli": "^2.1.4"
   },
   "npmName": "countly-sdk-web",
   "npmFileMap": [
