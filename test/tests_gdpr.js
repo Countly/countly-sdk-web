@@ -2,7 +2,7 @@ var fs = require("fs");
 function exists(value){
     return (typeof value != "undefined") ? true : false;
 }
-casper.test.begin("Testing example_gdpr.html", 456, function(test) {
+casper.test.begin("Testing example_gdpr.html", 407, function(test) {
     var tests = [];
     var cnt = 0;
     tests.push(function (message){
@@ -519,82 +519,6 @@ casper.test.begin("Testing example_gdpr.html", 456, function(test) {
         test.assert(exists(params.events[0].segmentation));
         test.assert(exists(params.events[0].segmentation.name));
         test.assertEquals(params.events[0].count, 1);
-    });
-    tests.push(function (message){
-        test.assertEquals(message[0], 'Ending session');
-    });
-    tests.push(function (message){
-        test.assertEquals(message[0], 'Adding event: ');
-        var params = JSON.parse(message[1]);
-        test.assertEquals(params.key, "[CLY]_view");
-        test.assertEquals(params.count, 1);
-        test.assert(params.dur >= 0 && params.dur <= 10);
-        test.assert(exists(params.segmentation));
-        test.assert(exists(params.segmentation.name));
-    });
-    tests.push(function (message){
-        test.assertEquals(message[0], 'Processing request');
-        var params = JSON.parse(message[1]);
-        test.assertEquals(params.end_session, 1);
-        test.assert(params.session_duration >= 0 && params.session_duration <= 10);
-        test.assertEquals(params.app_key, "YOUR_APP_KEY");
-        test.assert(exists(params.device_id));
-        test.assert(exists(params.timestamp));
-        test.assert(exists(params.hour));
-        test.assert(exists(params.dow));
-    });
-    tests.push(function (message){
-        test.assertEquals(message[0], 'Sending XML HTTP request');
-    });
-    tests.push(function (message){
-        test.assertEquals(message[0], 'Request Finished');
-        var params = JSON.parse(message[1]);
-        test.assertEquals(params.end_session, 1);
-        test.assert(params.session_duration >= 0 && params.session_duration <= 10);
-        test.assertEquals(params.app_key, "YOUR_APP_KEY");
-        test.assert(exists(params.device_id));
-        test.assert(exists(params.timestamp));
-        test.assert(exists(params.hour));
-        test.assert(exists(params.dow));
-    });
-    tests.push(function (message){
-        test.assertEquals(message[0], 'Processing request');
-        var params = JSON.parse(message[1]);
-        test.assertEquals(params.app_key, "YOUR_APP_KEY");
-        test.assert(exists(params.device_id));
-        test.assert(exists(params.timestamp));
-        test.assert(exists(params.hour));
-        test.assert(exists(params.dow));
-        
-        params.events = JSON.parse(params.events);
-        test.assertEquals(params.events.length, 1);
-        
-        test.assertEquals(params.events[0].key, "[CLY]_view");
-        test.assertEquals(params.events[0].count, 1);
-        test.assert(params.events[0].dur >= 0 && params.events[0].dur <= 10);
-        test.assert(exists(params.events[0].segmentation));
-        test.assert(exists(params.events[0].segmentation.name));
-    });
-    tests.push(function (message){
-        test.assertEquals(message[0], 'Sending XML HTTP request');
-    });
-    tests.push(function (message){
-        test.assertEquals(message[0], 'Request Finished');
-        var params = JSON.parse(message[1]);
-        test.assertEquals(params.app_key, "YOUR_APP_KEY");
-        test.assert(exists(params.device_id));
-        test.assert(exists(params.timestamp));
-        test.assert(exists(params.hour));
-        test.assert(exists(params.dow));
-        
-        params.events = JSON.parse(params.events);
-        test.assertEquals(params.events.length, 1);
-        
-        test.assertEquals(params.events[0].key, "[CLY]_view");
-        test.assertEquals(params.events[0].count, 1);
-        test.assert(params.events[0].dur >= 0 && params.events[0].dur <= 10);
-        test.assert(exists(params.events[0].segmentation));
-        test.assert(exists(params.events[0].segmentation.name));
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Got metrics');
