@@ -239,15 +239,19 @@
                 Countly.ignore_visitor = true;
             }
             if (window.name &amp;&amp; window.name.indexOf("cly:") === 0) {
-                Countly.passed_data = JSON.parse(window.name.replace("cly:", ""));
+                try{
+                    Countly.passed_data = JSON.parse(window.name.replace("cly:", ""));
+                } catch(ex){log("Could not parse name", window.name);}
             }
             else if (location.hash &amp;&amp; location.hash.indexOf("#cly:") === 0) {
-                Countly.passed_data = JSON.parse(location.hash.replace("#cly:", ""));
+                try{
+                    Countly.passed_data = JSON.parse(location.hash.replace("#cly:", ""));
+                } catch(ex){log("Could not parse hash", location.hash);}
             }
 
             if (Countly.passed_data) {
                 if (Countly.passed_data.token &amp;&amp; Countly.passed_data.purpose) {
-                    if (Countly.passed_data.token != store("cly_old_token")) {
+                    if (Countly.passed_data.token !== store("cly_old_token")) {
                         setToken(Countly.passed_data.token);
                         store("cly_old_token", Countly.passed_data.token);
                     }
@@ -687,7 +691,7 @@
             if (!customData[key]) {
                 customData[key] = {};
             }
-            if (mod == "$push" || mod == "$pull" || mod == "$addToSet") {
+            if (mod === "$push" || mod === "$pull" || mod === "$addToSet") {
                 if (!customData[key][mod]) {
                     customData[key][mod] = [];
                 }
@@ -812,19 +816,24 @@
         crashSegments = segments;
         //override global uncaught error handler
         window.onerror = function (msg, url, line, col, err) {
-            if (typeof err !== "undefined")
+            if (typeof err !== "undefined") {
                 recordError(err, false);
+            }
             else {
                 col = col || (window.event &amp;&amp; window.event.errorCharacter);
                 var error = "";
-                if (typeof msg !== "undefined")
+                if (typeof msg !== "undefined") {
                     error += msg + "\n";
-                if (typeof url !== "undefined")
+                }
+                if (typeof url !== "undefined") {
                     error += "at " + url;
-                if (typeof line !== "undefined")
+                }
+                if (typeof line !== "undefined") {
                     error += ":" + line;
-                if (typeof col !== "undefined")
+                }
+                if (typeof col !== "undefined") {
                     error += ":" + col;
+                }
                 error += "\n";
 
                 try {
@@ -911,14 +920,18 @@
         }
 
         //Page Visibility API
-        if (hidden in document)
+        if (hidden in document) {
             document.addEventListener("visibilitychange", onchange);
-        else if ((hidden = "mozHidden") in document)
+        }
+        else if ((hidden = "mozHidden") in document) {
             document.addEventListener("mozvisibilitychange", onchange);
-        else if ((hidden = "webkitHidden") in document)
+        }
+        else if ((hidden = "webkitHidden") in document) {
             document.addEventListener("webkitvisibilitychange", onchange);
-        else if ((hidden = "msHidden") in document)
+        }
+        else if ((hidden = "msHidden") in document) {
             document.addEventListener("msvisibilitychange", onchange);
+        }
         // IE 9 and lower:
         else if ("onfocusin" in document) {
             add_event(window, "focusin", function () {
@@ -990,7 +1003,7 @@
                         return;
                     }
                 }
-                catch (ex) { }
+                catch (ex) {log("Problem with regex", ignoreList[i]); }
             }
         }
         lastView = page;
@@ -1004,8 +1017,9 @@
         if (typeof document.referrer !== "undefined" &amp;&amp; document.referrer.length) {
             var matches = urlParseRE.exec(document.referrer);
             //do not report referrers of current website
-            if (matches &amp;&amp; matches[11] &amp;&amp; matches[11] != window.location.hostname)
+            if (matches &amp;&amp; matches[11] &amp;&amp; matches[11] !== window.location.hostname) {
                 segments.start = 1;
+            }
         }
 
         //track pageview
@@ -1171,25 +1185,29 @@
             if (typeof form.elements !== "undefined") {
                 for (var i = 0; i &lt; form.elements.length; i++) {
                     input = form.elements[i];
-                    if (input &amp;&amp; input.type != "password") {
-                        if (typeof segmentation["input:" + getInputName(input)] === "undefined")
+                    if (input &amp;&amp; input.type !== "password") {
+                        if (typeof segmentation["input:" + getInputName(input)] === "undefined") {
                             segmentation["input:" + getInputName(input)] = [];
-                        if (input.nodeName.toLowerCase() == "select") {
+                        }
+                        if (input.nodeName.toLowerCase() === "select") {
                             if (typeof input.multiple !== "undefined") {
                                 var values = [];
-                                if (typeof input.options !== "undefined")
+                                if (typeof input.options !== "undefined") {
                                     for (var j = 0; j &lt; input.options.length; j++) {
-                                        if (input.options[j].selected)
+                                        if (input.options[j].selected) {
                                             values.push(input.options[j].value);
+                                        }
                                     }
+                                }
                                 segmentation["input:" + getInputName(input)].push(values.join(", "));
                             }
-                            else
+                            else {
                                 segmentation["input:" + getInputName(input)].push(input.options[input.selectedIndex].value);
+                            }
                         }
-                        else if (input.nodeName.toLowerCase() == "input") {
+                        else if (input.nodeName.toLowerCase() === "input") {
                             if (typeof input.type !== "undefined") {
-                                if (input.type.toLowerCase() == "checkbox" || input.type.toLowerCase() == "radio") {
+                                if (input.type.toLowerCase() === "checkbox" || input.type.toLowerCase() === "radio") {
                                     if (input.checked) {
                                         segmentation["input:" + getInputName(input)].push(input.value);
                                     }
@@ -1198,10 +1216,11 @@
                                     segmentation["input:" + getInputName(input)].push(input.value);
                                 }
                             }
-                            else
+                            else {
                                 segmentation["input:" + getInputName(input)].push(input.value);
+                            }
                         }
-                        else if (input.nodeName.toLowerCase() == "textarea") {
+                        else if (input.nodeName.toLowerCase() === "textarea") {
                             segmentation["input:" + getInputName(input)].push(input.value);
                         }
                         else if (typeof input.value !== "undefined") {
@@ -1210,8 +1229,9 @@
                     }
                 }
                 for (var key in segmentation) {
-                    if (typeof segmentation[key].join != "undefined")
+                    if (typeof segmentation[key].join != "undefined") {
                         segmentation[key] = segmentation[key].join(", ");
+                    }
                 }
             }
 
@@ -1254,45 +1274,50 @@
                 }
                 for (i = 0; i &lt; form.elements.length; i++) {
                     input = form.elements[i];
-                    if (input &amp;&amp; input.type != "password") {
+                    if (input &amp;&amp; input.type !== "password") {
                         //check if element should be ignored
-                        if (input.className.indexOf("cly_user_ignore") == -1) {
+                        if (input.className.indexOf("cly_user_ignore") === -1) {
                             var value = "";
                             //get value from input
-                            if (input.nodeName.toLowerCase() == "select") {
+                            if (input.nodeName.toLowerCase() === "select") {
                                 if (typeof input.multiple !== "undefined") {
                                     var values = [];
-                                    if (typeof input.options !== "undefined")
+                                    if (typeof input.options !== "undefined") {
                                         for (j = 0; j &lt; input.options.length; j++) {
-                                            if (input.options[j].selected)
+                                            if (input.options[j].selected) {
                                                 values.push(input.options[j].value);
+                                            }
                                         }
+                                    }
                                     value = values.join(", ");
                                 }
-                                else
+                                else {
                                     value = input.options[input.selectedIndex].value;
+                                }
                             }
-                            else if (input.nodeName.toLowerCase() == "input") {
+                            else if (input.nodeName.toLowerCase() === "input") {
                                 if (typeof input.type !== "undefined") {
-                                    if (input.type.toLowerCase() == "checkbox" || input.type.toLowerCase() == "radio") {
-                                        if (input.checked)
+                                    if (input.type.toLowerCase() === "checkbox" || input.type.toLowerCase() === "radio") {
+                                        if (input.checked) {
                                             value = input.value;
+                                        }
                                     }
                                     else {
                                         value = input.value;
                                     }
                                 }
-                                else
+                                else {
                                     value = input.value;
+                                }
                             }
-                            else if (input.nodeName.toLowerCase() == "textarea") {
+                            else if (input.nodeName.toLowerCase() === "textarea") {
                                 value = input.value;
                             }
                             else if (typeof input.value !== "undefined") {
                                 value = input.value;
                             }
                             //check if input was marked to be collected
-                            if (input.className &amp;&amp; input.className.indexOf("cly_user_") != -1) {
+                            if (input.className &amp;&amp; input.className.indexOf("cly_user_") !== -1) {
                                 var classes = input.className.split(" ");
                                 for (j = 0; j &lt; classes.length; j++) {
                                     if (classes[j].indexOf("cly_user_") === 0) {
@@ -1303,43 +1328,43 @@
                                 }
                             }
                             //check for email
-                            else if ((input.type &amp;&amp; input.type.toLowerCase() == "email") ||
-                                (input.name &amp;&amp; input.name.toLowerCase().indexOf("email") != -1) ||
-                                (input.id &amp;&amp; input.id.toLowerCase().indexOf("email") != -1) ||
-                                (input.id &amp;&amp; labelData[input.id] &amp;&amp; labelData[input.id].toLowerCase().indexOf("email") != -1) ||
+                            else if ((input.type &amp;&amp; input.type.toLowerCase() === "email") ||
+                                (input.name &amp;&amp; input.name.toLowerCase().indexOf("email") !== -1) ||
+                                (input.id &amp;&amp; input.id.toLowerCase().indexOf("email") !== -1) ||
+                                (input.id &amp;&amp; labelData[input.id] &amp;&amp; labelData[input.id].toLowerCase().indexOf("email") !== -1) ||
                                 (/[^@\s]+@[^@\s]+\.[^@\s]+/).test(value)) {
                                 if (!userdata.email) {
                                     userdata.email = value;
                                 }
                                 hasUserInfo = true;
                             }
-                            else if ((input.name &amp;&amp; input.name.toLowerCase().indexOf("username") != -1) ||
-                                (input.id &amp;&amp; input.id.toLowerCase().indexOf("username") != -1) ||
-                                (input.id &amp;&amp; labelData[input.id] &amp;&amp; labelData[input.id].toLowerCase().indexOf("username") != -1)) {
+                            else if ((input.name &amp;&amp; input.name.toLowerCase().indexOf("username") !== -1) ||
+                                (input.id &amp;&amp; input.id.toLowerCase().indexOf("username") !== -1) ||
+                                (input.id &amp;&amp; labelData[input.id] &amp;&amp; labelData[input.id].toLowerCase().indexOf("username") !== -1)) {
                                 if (!userdata.username) {
                                     userdata.username = value;
                                 }
                                 hasUserInfo = true;
                             }
-                            else if ((input.name &amp;&amp; (input.name.toLowerCase().indexOf("tel") != -1 || input.name.toLowerCase().indexOf("phone") != -1 || input.name.toLowerCase().indexOf("number") != -1)) ||
-                                (input.id &amp;&amp; (input.id.toLowerCase().indexOf("tel") != -1 || input.id.toLowerCase().indexOf("phone") != -1 || input.id.toLowerCase().indexOf("number") != -1)) ||
-                                (input.id &amp;&amp; labelData[input.id] &amp;&amp; (labelData[input.id].toLowerCase().indexOf("tel") != -1 || labelData[input.id].toLowerCase().indexOf("phone") != -1 || labelData[input.id].toLowerCase().indexOf("number") != -1))) {
+                            else if ((input.name &amp;&amp; (input.name.toLowerCase().indexOf("tel") !== -1 || input.name.toLowerCase().indexOf("phone") !== -1 || input.name.toLowerCase().indexOf("number") !== -1)) ||
+                                (input.id &amp;&amp; (input.id.toLowerCase().indexOf("tel") !== -1 || input.id.toLowerCase().indexOf("phone") !== -1 || input.id.toLowerCase().indexOf("number") !== -1)) ||
+                                (input.id &amp;&amp; labelData[input.id] &amp;&amp; (labelData[input.id].toLowerCase().indexOf("tel") !== -1 || labelData[input.id].toLowerCase().indexOf("phone") !== -1 || labelData[input.id].toLowerCase().indexOf("number") !== -1))) {
                                 if (!userdata.phone) {
                                     userdata.phone = value;
                                 }
                                 hasUserInfo = true;
                             }
-                            else if ((input.name &amp;&amp; (input.name.toLowerCase().indexOf("org") != -1 || input.name.toLowerCase().indexOf("company") != -1)) ||
-                                (input.id &amp;&amp; (input.id.toLowerCase().indexOf("org") != -1 || input.id.toLowerCase().indexOf("company") != -1)) ||
-                                (input.id &amp;&amp; labelData[input.id] &amp;&amp; (labelData[input.id].toLowerCase().indexOf("org") != -1 || labelData[input.id].toLowerCase().indexOf("company") != -1))) {
+                            else if ((input.name &amp;&amp; (input.name.toLowerCase().indexOf("org") !== -1 || input.name.toLowerCase().indexOf("company") !== -1)) ||
+                                (input.id &amp;&amp; (input.id.toLowerCase().indexOf("org") !== -1 || input.id.toLowerCase().indexOf("company") !== -1)) ||
+                                (input.id &amp;&amp; labelData[input.id] &amp;&amp; (labelData[input.id].toLowerCase().indexOf("org") !== -1 || labelData[input.id].toLowerCase().indexOf("company") !== -1))) {
                                 if (!userdata.organization) {
                                     userdata.organization = value;
                                 }
                                 hasUserInfo = true;
                             }
-                            else if ((input.name &amp;&amp; input.name.toLowerCase().indexOf("name") != -1) ||
-                                (input.id &amp;&amp; input.id.toLowerCase().indexOf("name") != -1) ||
-                                (input.id &amp;&amp; labelData[input.id] &amp;&amp; labelData[input.id].toLowerCase().indexOf("name") != -1)) {
+                            else if ((input.name &amp;&amp; input.name.toLowerCase().indexOf("name") !== -1) ||
+                                (input.id &amp;&amp; input.id.toLowerCase().indexOf("name") !== -1) ||
+                                (input.id &amp;&amp; labelData[input.id] &amp;&amp; labelData[input.id].toLowerCase().indexOf("name") !== -1)) {
                                 if (!userdata.name) {
                                     userdata.name = "";
                                 }
@@ -1354,10 +1379,12 @@
             //record user info, if any
             if (hasUserInfo) {
                 log("Gathered user data", userdata);
-                if (useCustom)
+                if (useCustom) {
                     Countly.user_details({ custom: userdata });
-                else
+                }
+                else {
                     Countly.user_details(userdata);
+                }
             }
         }
 
@@ -1370,21 +1397,27 @@
     * @param {Object=} custom - Custom keys to collected from Facebook, key will be used to store as key in custom user properties and value as key in Facebook graph object. For example, {"tz":"timezone"} will collect Facebook's timezone property, if it is available and store it in custom user's property under "tz" key. If you want to get value from some sub object properties, then use dot as delimiter, for example, {"location":"location.name"} will collect data from Facebook's {"location":{"name":"MyLocation"}} object and store it in user's custom property "location" key
     **/
     Countly.collect_from_facebook = function (custom) {
+        /* globals FB */
         if (FB &amp;&amp; FB.api) {
             FB.api("/me", function (resp) {
                 var data = {};
-                if (resp.name)
+                if (resp.name) {
                     data.name = resp.name;
-                if (resp.email)
+                }
+                if (resp.email) {
                     data.email = resp.email;
-                if (resp.gender == "male")
+                }
+                if (resp.gender === "male") {
                     data.gender = "M";
-                else if (resp.gender == "female")
+                }
+                else if (resp.gender === "female") {
                     data.gender = "F";
+                }
                 if (resp.birthday) {
                     var byear = resp.birthday.split("/").pop();
-                    if (byear &amp;&amp; byear.length == 4)
+                    if (byear &amp;&amp; byear.length === 4) {
                         data.byear = byear;
+                    }
                 }
                 if (resp.work &amp;&amp; resp.work[0] &amp;&amp; resp.work[0].employer &amp;&amp; resp.work[0].employer.name) {
                     data.organization = resp.work[0].employer.name;
@@ -1397,11 +1430,13 @@
                         var get = resp;
                         for (var j = 0; j &lt; parts.length; j++) {
                             get = get[parts[j]];
-                            if (typeof get === "undefined")
+                            if (typeof get === "undefined") {
                                 break;
+                            }
                         }
-                        if (typeof get !== "undefined")
+                        if (typeof get !== "undefined") {
                             data.custom[i] = get;
+                        }
                     }
                 }
                 Countly.user_details(data);
@@ -1428,8 +1463,9 @@
         if (Countly.ignore_bots &amp;&amp; searchBotRE.test(navigator.userAgent)) {
             Countly.ignore_visitor = true;
         }
-        if (!Countly.ignore_visitor &amp;&amp; !hasPulse)
+        if (!Countly.ignore_visitor &amp;&amp; !hasPulse) {
             heartBeat();
+        }
     };
 
     /**
@@ -1462,8 +1498,9 @@
     //insert request to queue
     function toRequestQueue(request) {
         //ignore bots
-        if (Countly.ignore_visitor)
+        if (Countly.ignore_visitor) {
             return;
+        }
 
         if (!Countly.app_key || !Countly.device_id) {
             log("app_key or device_id is missing");
@@ -1476,14 +1513,17 @@
         request.sdk_version = SDK_VERSION;
 
         if (Countly.check_consent("location")) {
-            if (Countly.country_code)
+            if (Countly.country_code) {
                 request.country_code = Countly.country_code;
+            }
 
-            if (Countly.city)
+            if (Countly.city) {
                 request.city = Countly.city;
+            }
 
-            if (Countly.ip_address !== null)
+            if (Countly.ip_address !== null) {
                 request.ip_address = Countly.ip_address;
+            }
         }
         else {
             request.location = "";
@@ -1495,8 +1535,9 @@
         request.hour = date.getHours();
         request.dow = date.getDay();
 
-        if (requestQueue.length > queueSize)
+        if (requestQueue.length > queueSize) {
             requestQueue.shift();
+        }
 
         requestQueue.push(request);
         store("cly_queue", requestQueue, true);
@@ -1514,8 +1555,9 @@
         var i = 0;
         if (typeof Countly.onload !== "undefined" &amp;&amp; Countly.onload.length > 0) {
             for (i = 0; i &lt; Countly.onload.length; i++) {
-                if (typeof Countly.onload[i] === "function")
+                if (typeof Countly.onload[i] === "function") {
                     Countly.onload[i]();
+                }
             }
             Countly.onload = [];
         }
@@ -1531,12 +1573,14 @@
                     req();
                 }
                 else if (req.constructor === Array &amp;&amp; req.length > 0) {
-                    if (typeof Countly[req[0]] !== "undefined")
+                    if (typeof Countly[req[0]] !== "undefined") {
                         Countly[req[0]].apply(null, req.slice(1));
+                    }
                     else {
                         var userdata = req[0].replace("userData.", "");
-                        if (typeof Countly.userData[userdata] !== "undefined")
+                        if (typeof Countly.userData[userdata] !== "undefined") {
                             Countly.userData[userdata].apply(null, req.slice(1));
+                        }
                     }
                 }
             }
@@ -1603,7 +1647,7 @@
         var uuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
             var r = (d + Math.random() * 16) % 16 | 0;
             d = Math.floor(d / 16);
-            return (c == "x" ? r : (r &amp; 0x3 | 0x8)).toString(16);
+            return (c === "x" ? r : (r &amp; 0x3 | 0x8)).toString(16);
         });
         return uuid;
     }
@@ -1647,13 +1691,14 @@
 
         //getting locale
         var locale = navigator.language || navigator.browserLanguage || navigator.systemLanguage || navigator.userLanguage;
-        if (typeof locale !== "undefined")
+        if (typeof locale !== "undefined") {
             metrics._locale = locale;
+        }
 
         if (typeof document.referrer !== "undefined" &amp;&amp; document.referrer.length) {
             var matches = urlParseRE.exec(document.referrer);
             //do not report referrers of current website
-            if (matches &amp;&amp; matches[11] &amp;&amp; matches[11] != window.location.hostname) {
+            if (matches &amp;&amp; matches[11] &amp;&amp; matches[11] !== window.location.hostname) {
                 var ignoring = false;
                 if (ignoreReferrers &amp;&amp; ignoreReferrers.length) {
                     for (var k = 0; k &lt; ignoreReferrers.length; k++) {
@@ -1665,11 +1710,12 @@
                                 break;
                             }
                         }
-                        catch (ex) { }
+                        catch (ex) { log("Problem with regex", ignoreReferrers[k]); }
                     }
                 }
-                if (!ignoring)
+                if (!ignoring) {
                     metrics._store = document.referrer;
+                }
             }
         }
 
@@ -1680,8 +1726,9 @@
     //log stuff
     function log() {
         if (Countly.debug &amp;&amp; typeof console !== "undefined") {
-            if (arguments[1] &amp;&amp; typeof arguments[1] == "object")
+            if (arguments[1] &amp;&amp; typeof arguments[1] == "object") {
                 arguments[1] = JSON.stringify(arguments[1]);
+            }
             console.log(Array.prototype.slice.call(arguments).join("\n"));
         }
     }
@@ -1694,10 +1741,12 @@
     //get unique timestamp in miliseconds
     function getMsTimestamp() {
         var ts = new Date().getTime();
-        if (lastMsTs >= ts)
+        if (lastMsTs >= ts) {
             lastMsTs++;
-        else
+        }
+        else {
             lastMsTs = ts;
+        }
         return lastMsTs;
     }
 
@@ -1706,19 +1755,25 @@
             segments = segments || crashSegments;
             var error = "";
             if (typeof err === "object") {
-                if (typeof err.stack !== "undefined")
+                if (typeof err.stack !== "undefined") {
                     error = err.stack;
+                }
                 else {
-                    if (typeof err.name !== "undefined")
+                    if (typeof err.name !== "undefined") {
                         error += err.name + ":";
-                    if (typeof err.message !== "undefined")
+                    }
+                    if (typeof err.message !== "undefined") {
                         error += err.message + "\n";
-                    if (typeof err.fileName !== "undefined")
+                    }
+                    if (typeof err.fileName !== "undefined") {
                         error += "in " + err.fileName + "\n";
-                    if (typeof err.lineNumber !== "undefined")
+                    }
+                    if (typeof err.lineNumber !== "undefined") {
                         error += "on " + err.lineNumber;
-                    if (typeof err.columnNumber !== "undefined")
+                    }
+                    if (typeof err.columnNumber !== "undefined") {
                         error += ":" + err.columnNumber;
+                    }
                 }
             }
             else {
@@ -1731,30 +1786,35 @@
             ob._not_os_specific = true;
 
             var battery = navigator.battery || navigator.webkitBattery || navigator.mozBattery || navigator.msBattery;
-            if (battery)
+            if (battery) {
                 ob._bat = Math.floor(battery.level * 100);
+            }
 
-            if (typeof navigator.onLine !== "undefined")
+            if (typeof navigator.onLine !== "undefined") {
                 ob._online = (navigator.onLine) ? true : false;
+            }
 
             ob._background = (document.hasFocus()) ? false : true;
 
-            if (crashLogs.length > 0)
+            if (crashLogs.length > 0) {
                 ob._logs = crashLogs.join("\n");
+            }
+            
             crashLogs = [];
             ob._nonfatal = nonfatal;
 
             ob._view = (window.location.pathname || "") + (window.location.search || "") + (window.location.hash || "");
 
-            if (typeof segments !== "undefined")
+            if (typeof segments !== "undefined") {
                 ob._custom = segments;
+            }
 
             try {
                 var canvas = document.createElement("canvas");
                 var gl = canvas.getContext("experimental-webgl");
                 ob._opengl = gl.getParameter(gl.VERSION);
             }
-            catch (ex) { }
+            catch (ex) {}
 
             toRequestQueue({ crash: JSON.stringify(ob) });
         }
@@ -1768,13 +1828,16 @@
 
             var data = prepareParams(params);
             var method = "GET";
-            if (data.length >= 2000)
+            if (data.length >= 2000) {
                 method = "POST";
-            else if (Countly.force_post)
+            }
+            else if (Countly.force_post) {
                 method = "POST";
+            }
 
-            if (method === "GET")
+            if (method === "GET") {
                 xhr.open("GET", Countly.url + apiPath + "?" + data, true);
+            }
             else {
                 xhr.open("POST", Countly.url + apiPath, true);
                 xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -1789,10 +1852,12 @@
                     if (typeof callback === "function") { callback(true, params); }
                 }
             };
-            if (method == "GET")
+            if (method === "GET") {
                 xhr.send();
-            else
+            }
+            else {
                 xhr.send(data);
+            }
         } catch (e) {
             // fallback
             log("Failed XML HTTP request", e);
@@ -1811,7 +1876,7 @@
 
     //removing trailing slashes
     function stripTrailingSlash(str) {
-        if (str.substr(str.length - 1) == "/") {
+        if (str.substr(str.length - 1) === "/") {
             return str.substr(0, str.length - 1);
         }
         return str;
@@ -1823,23 +1888,26 @@
         var prop;
         for (var i = 0; i &lt; props.length; i++) {
             prop = props[i];
-            if (typeof orig[prop] !== "undefined")
+            if (typeof orig[prop] !== "undefined") {
                 ob[prop] = orig[prop];
+            }
         }
         return ob;
     }
 
     //get closest parent matching nodeName
-    if (!Element.prototype.closest) Element.prototype.closest = function (nodeName) {
-        var el = this;
-        nodeName = nodeName.toUpperCase();
-        while (el) {
-            if (el.nodeName.toUpperCase() == nodeName) {
-                return el;
+    if (!Element.prototype.closest) {
+        Element.prototype.closest = function (nodeName) {
+            var el = this;
+            nodeName = nodeName.toUpperCase();
+            while (el) {
+                if (el.nodeName.toUpperCase() === nodeName) {
+                    return el;
+                }
+                el = el.parentElement;
             }
-            el = el.parentElement;
-        }
-    };
+        };
+    }
 
     //add event
     var add_event = function (element, type, listener) {
@@ -1886,6 +1954,7 @@
             Math.max(D.body.clientHeight, D.documentElement.clientHeight)
         );
     }
+    
     function getDocWidth() {
         var D = document;
         return Math.max(
@@ -1982,7 +2051,7 @@
             try {
                 data = JSON.parse(data);
             }
-            catch (e) { }
+            catch (e) { data = null; }
 
             return data;
 
@@ -2021,8 +2090,12 @@
             var ca = document.cookie.split(";");
             for (var i = 0, max = ca.length; i &lt; max; i++) {
                 var c = ca[i];
-                while (c.charAt(0) === " ") c = c.substring(1, c.length);
-                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+                while (c.charAt(0) === " ") {
+                    c = c.substring(1, c.length);
+                }
+                if (c.indexOf(nameEQ) === 0) {
+                    return c.substring(nameEQ.length, c.length);
+                }
             }
             return null;
         }
@@ -2067,7 +2140,7 @@
             log("setting up loader");
             var css = "#cly-loader {height: 4px; width: 100%; position: absolute; z-index: 99999; overflow: hidden; background-color: #fff; top:0px; left:0px;}" +
                 "#cly-loader:before{display: block; position: absolute; content: ''; left: -200px; width: 200px; height: 4px; background-color: #2EB52B; animation: cly-loading 2s linear infinite;}" +
-                '@keyframes cly-loading { from {left: -200px; width: 30%;} 50% {width: 30%;} 70% {width: 70%;} 80% { left: 50%;} 95% {left: 120%;} to {left: 100%;}}',
+                "@keyframes cly-loading { from {left: -200px; width: 30%;} 50% {width: 30%;} 70% {width: 70%;} 80% { left: 50%;} 95% {left: 120%;} to {left: 100%;}}",
                 head = document.head || document.getElementsByTagName("head")[0],
                 style = document.createElement("style");
             style.type = "text/css";
