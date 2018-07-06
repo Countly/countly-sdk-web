@@ -120,7 +120,7 @@
             
         <p class="code-caption">SDK integration</p>
     
-    <pre class="prettyprint"><code>&lt;script type='text/javascript'>
+    <pre class="prettyprint"><code>&lt;script type="text/javascript">
   
 //some default pre init
 var Countly = Countly || {};
@@ -136,19 +136,19 @@ Countly.url = "https://yourdomain.com";
 
 //start pushing function calls to queue
 //track sessions automatically
-Countly.q.push(['track_sessions']);
+Countly.q.push(["track_sessions"]);
   
 //track sessions automatically
-Countly.q.push(['track_pageview']);
+Countly.q.push(["track_pageview"]);
   
 //load countly script asynchronously
 (function() {
- var cly = document.createElement('script'); cly.type = 'text/javascript'; 
+ var cly = document.createElement("script"); cly.type = "text/javascript"; 
  cly.async = true;
  //enter url of script here
- cly.src = 'https://cdn.jsdelivr.net/countly-sdk-web/latest/countly.min.js';
+ cly.src = "https://cdn.jsdelivr.net/countly-sdk-web/latest/countly.min.js";
  cly.onload = function(){Countly.init()};
- var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(cly, s);
+ var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(cly, s);
 })();
 &lt;/script></code></pre>
 
