@@ -25,6 +25,7 @@
     <![endif]-->
     <link type="text/css" rel="stylesheet" href="styles/prettify.css">
     <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 
@@ -1479,7 +1480,7 @@
     */
     Countly.show_feedback_popup = function(id) {
         // define xhr object
-        sendXmlHttpRequest(Countly.url+ '/o/feedback/widget', {app_key:Countly.app_key, widget_id:id}, function(err, params, responseText){
+        sendXmlHttpRequest(Countly.url+ '/o/feedback/widget', {widget_id:id}, function(err, params, responseText){
             if(err){
                 log("Error occurred", err);
             }
@@ -1508,7 +1509,7 @@
         if (enableWidgets.length > 0) {
             document.body.innerHTML += '&lt;div id="cfbg">&lt;/div>';
 
-            sendXmlHttpRequest(Countly.url + '/o/feedback/multiple-widgets-by-id', {app_key:Countly.app_key, widgets:JSON.stringify(params.widgets)}, function(err, params, responseText){
+            sendXmlHttpRequest(Countly.url + '/o/feedback/multiple-widgets-by-id', {widgets:JSON.stringify(params.widgets)}, function(err, params, responseText){
                 if(err){
                     log("Errors occurred:", err);
                 }
