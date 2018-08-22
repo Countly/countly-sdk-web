@@ -30,7 +30,7 @@
   "dependencies": {},
   "devDependencies": {
     "casperjs": "*",
-    "docdash": "git://github.com/ar2rsawseen/docdash.git",
+    "docdash": "1.0.0",
     "jsdoc": "*",
     "jshint": "*",
     "webpack": "^4.10.1",
