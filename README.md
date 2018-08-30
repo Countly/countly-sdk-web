@@ -34,7 +34,7 @@ or
 
 Countly web SDK is available on CDNJS. Use either
 
-[https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/18.4.0/countly.min.js](https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/18.4.0/countly.min.js)
+[https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/18.8.0/countly.min.js](https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/18.8.0/countly.min.js)
 
 or
 
