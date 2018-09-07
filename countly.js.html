@@ -110,7 +110,7 @@
     "use strict";
     /** @lends Countly */
     Countly = Countly || {};
-    var SDK_VERSION = "18.08";
+    var SDK_VERSION = "18.08.2";
     var SDK_NAME = "javascript_native_web";
 
     var inited = false,
@@ -2209,7 +2209,10 @@
             try {
                 data = JSON.parse(data);
             }
-            catch (e) { data = null; }
+            catch (e) {
+                //it means data is not json, 
+                //dont do anything
+            }
 
             return data;
 
