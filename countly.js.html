@@ -1496,20 +1496,20 @@
     
     /**
     * Show feedback popup by passed widget ids array
-    * @param {object=} configuration - required - includes "widgets" property as string array of widgets
-    * example configuration: {"widgets":["5b21581b967c4850a7818617"]}
+    * @param {object=} configuration - required - includes "popups" property as string array of widgets ("widgets" for old versions)
+    * example configuration: {"popups":["5b21581b967c4850a7818617"]}
     **/
     Countly.enable_feedback = function(params){
         // inject feedback styles
         loadCSS(Countly.url + '/star-rating/stylesheets/countly-feedback-web.css');
         // get enable widgets by app_key
         // define xhr object
-        var enableWidgets = params.widgets;
+        var enableWidgets = params.popups || params.widgets;
 
         if (enableWidgets.length > 0) {
             document.body.innerHTML += '&lt;div id="cfbg">&lt;/div>';
 
-            sendXmlHttpRequest(Countly.url + '/o/feedback/multiple-widgets-by-id', {widgets:JSON.stringify(params.widgets)}, function(err, params, responseText){
+            sendXmlHttpRequest(Countly.url + '/o/feedback/multiple-widgets-by-id', {widgets:JSON.stringify(enableWidgets)}, function(err, params, responseText){
                 if(err){
                     log("Errors occurred:", err);
                 }
