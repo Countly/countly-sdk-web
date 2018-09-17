@@ -1,23 +1,45 @@
 <html>
-<head>
-<script type="text/javascript" src="../lib/countly.js"></script>
-<script type='text/javascript'>
-//some default pre init
-var Countly = Countly || {};
-Countly.q = Countly.q || [];
-//provide countly initialization parameters
-Countly.app_key = "YOUR_APP_KEY";
-Countly.url = "https://try.count.ly"; //your server goes here
-Countly.debug = false;
-// hold eventQueue values when placed into requestQueue
-Countly.test_mode = true;
-</script>
-</head>
-<body>
-<script>
-    Countly._internals.add_cly_events({"key":"send_message"});
-    Countly._internals.store('cly_queue','test_value');
-</script>
-<p><a href='http://count.ly/'>Count.ly</a> Web SDK Persistancy Test File</p>
-</body>
+    <head>
+        <script type="text/javascript">
+            //some default pre init
+			var Countly = Countly || {};
+			Countly.q = Countly.q || [];
+			//provide countly initialization parameters
+			Countly.app_key = "YOUR_APP_KEY";
+			Countly.url = "https://try.count.ly"; //your server goes here
+			Countly.debug = false;
+			// hold eventQueue values when placed into requestQueue
+			Countly.test_mode = true;
+
+			// for test: cly_token, cly_old_token
+			Countly.passed_data = {
+				"token":"TEST_TOKEN_TEST_TOKEN",
+				"purpose":"test"
+			}
+        </script>
+        <script src="../lib/countly.js" type="text/javascript">
+        </script>
+    </head>
+    <body>
+        <script>
+        	// init manually
+        	Countly.init();
+        	// for test: cly_event
+            Countly.add_event({'key':'homepage'});
+
+		    // for test: cly_ignore
+		    Countly.opt_out();
+		    Countly.opt_in();
+		    
+		    // for test: cly_queue
+		    Countly.begin_session();
+		    Countly.session_duration(100);
+		    Countly.end_session();
+			Countly.remove_consent('views');
+
+			// for test: cly_cmp_id, cly_cmp_uid
+			Countly.report_conversion('1', '2');
+		</script>
+        <p><a href="http://count.ly/">Count.ly</a>Web SDK Persistancy Test File</p>
+    </body>
 </html>
