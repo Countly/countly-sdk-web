@@ -11,8 +11,7 @@ function notEmpty(value){
 * Purpose: Be sure store() method works correctly and related variables has perceives right values from storage. 
 * Method: Load page. Define variables into storage, then reload and check variables and storage values.
 */
-casper.test.begin("Testing example_persistancy.html", 14, function(test) {
-    var tests = [];
+casper.test.begin("Testing example_persistancy.html", 31, function(test) {
     
     // Print console logs from casper
     casper.on('remote.message', function(message) {
@@ -24,6 +23,7 @@ casper.test.begin("Testing example_persistancy.html", 14, function(test) {
         // load page first time
         casper.evaluate(function() {
             window.location.search = 'cly_id=test_campaign_id&cly_uid=test_campaign_uid';
+            Countly._internals.store('cly_id','8de17dff-1074-452a-8f85-92933482b82e');
             // for test: cly_event
             Countly.add_event({'key':'homepage'});
             // for test: cly_ignore
@@ -41,7 +41,7 @@ casper.test.begin("Testing example_persistancy.html", 14, function(test) {
 
         // reload page
         this.reload(function() {
-
+            var tests = [];
             // get stored and current values of sdk variables
             var values = this.evaluate(function() {
                 var stored = {};
@@ -67,24 +67,65 @@ casper.test.begin("Testing example_persistancy.html", 14, function(test) {
                 };
             });
 
-            // these values should not be empty
-            test.assert(notEmpty(values.current.cly_id));
-            test.assert(notEmpty(values.stored.cly_id));
-            test.assert(notEmpty(values.current.cly_token));
-            test.assert(notEmpty(values.stored.cly_token));
-            test.assert(notEmpty(values.current.cly_cmp_uid));
-            test.assert(notEmpty(values.current.cly_cmp_id));
+            tests.push(function() {
+                test.assertEquals(values.current.cly_id, '8de17dff-1074-452a-8f85-92933482b82e');    
+            });
+
+            tests.push(function() {
+                test.assertEquals(values.current.cly_token, 'TOKEN_STRING');
+            });
+
+            tests.push(function() {
+                test.assertEquals(values.current.cly_cmp_uid, 'test_campaign_uid');
+            });
+
+            tests.push(function() {
+                test.assertEquals(values.current.cly_cmp_id, 'test_campaign_id');
+            });
+
+            tests.push(function() {
+                test.assertEquals(values.current.cly_ignore, false);    
+            })
             
-            // check for exist non-string values
-            test.assert(exists(values.current.cly_ignore));
-            test.assert(exists(values.stored.cly_ignore));
-            // check for equality
-            test.assertEquals(values.current.cly_id, values.stored.cly_id);
-            test.assertEquals(values.current.cly_ignore, values.stored.cly_ignore);
-            test.assertEquals(values.current.cly_cmp_uid, 'test_campaign_uid');
-            test.assertEquals(values.current.cly_cmp_id, 'test_campaign_id');
-            test.assertEquals(JSON.stringify(values.current.cly_event), JSON.stringify(values.stored.cly_event));
-            test.assertEquals(JSON.stringify(values.current.cly_queue), JSON.stringify(values.stored.cly_queue));
+            tests.push(function() {
+                var events = values.current.cly_event;
+                test.assertEquals(values.current.cly_event[0].count, 1);   
+                test.assertEquals(values.current.cly_event[0].key, 'homepage');
+                test.assert(exists(values.current.cly_event[0].dow));
+                test.assert(exists(values.current.cly_event[0].hour));
+                test.assert(exists(values.current.cly_event[0].timestamp));
+            })
+            
+            tests.push(function() {
+                var queue = values.current.cly_queue;
+                test.assertEquals(queue[0].app_key, 'YOUR_APP_KEY');
+                test.assertEquals(queue[0].begin_session, 1);
+                test.assert(exists(queue[0].device_id));
+                var q0metrics = JSON.parse(queue[0].metrics);
+                test.assertEquals(q0metrics._app_version, '0.0');
+                test.assert(exists(q0metrics._ua));
+                test.assert(exists(q0metrics._resolution));
+                test.assert(exists(q0metrics._density));
+                test.assert(exists(q0metrics._locale));
+                test.assert(exists(queue[0].sdk_name));
+                test.assert(exists(queue[0].sdk_version));
+                test.assertEquals(queue[1].app_key, 'YOUR_APP_KEY');
+                test.assert(exists(queue[1].device_id));
+                test.assert(exists(queue[1].sdk_name));
+                test.assert(exists(queue[1].sdk_version));
+                test.assertEquals(queue[1].session_duration, 100);
+                test.assertEquals(queue[2].app_key, 'YOUR_APP_KEY');
+                test.assert(exists(queue[2].device_id));
+                test.assertEquals(queue[2].end_session, 1);
+                test.assert(exists(queue[2].sdk_name));
+                test.assert(exists(queue[2].sdk_version));
+                test.assertEquals(queue[2].session_duration, 0);
+            });
+
+            for(var i = 0; i < tests.length; i++) {
+                tests[i]();
+                if (i === (tests.length - 1)) test.done();
+            }
         });
     })
     .run(function() {
@@ -92,7 +133,6 @@ casper.test.begin("Testing example_persistancy.html", 14, function(test) {
             casper.evaluate(function(){
                 localStorage.clear();
             });
-            test.done();
         }, 3000);
     });
 });
