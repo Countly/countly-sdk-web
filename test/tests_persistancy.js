@@ -23,13 +23,12 @@ casper.test.begin("Testing example_persistancy.html", 14, function(test) {
         
         // load page first time
         casper.evaluate(function() {
+            window.location.search = 'cly_id=test_campaign_id&cly_uid=test_campaign_uid';
             // for test: cly_event
             Countly.add_event({'key':'homepage'});
-
             // for test: cly_ignore
             Countly.opt_out();
             Countly.opt_in();
-            
             // for test: cly_queue
             Countly.begin_session();
             Countly.session_duration(100);
@@ -45,7 +44,6 @@ casper.test.begin("Testing example_persistancy.html", 14, function(test) {
 
             // get stored and current values of sdk variables
             var values = this.evaluate(function() {
-
                 var stored = {};
                 var current = {};
                 
@@ -77,7 +75,6 @@ casper.test.begin("Testing example_persistancy.html", 14, function(test) {
             test.assert(notEmpty(values.current.cly_cmp_uid));
             test.assert(notEmpty(values.current.cly_cmp_id));
             
-
             // check for exist non-string values
             test.assert(exists(values.current.cly_ignore));
             test.assert(exists(values.stored.cly_ignore));
@@ -86,7 +83,6 @@ casper.test.begin("Testing example_persistancy.html", 14, function(test) {
             test.assertEquals(values.current.cly_ignore, values.stored.cly_ignore);
             test.assertEquals(values.current.cly_cmp_uid, 'test_campaign_uid');
             test.assertEquals(values.current.cly_cmp_id, 'test_campaign_id');
-
             test.assertEquals(JSON.stringify(values.current.cly_event), JSON.stringify(values.stored.cly_event));
             test.assertEquals(JSON.stringify(values.current.cly_queue), JSON.stringify(values.stored.cly_queue));
         });
