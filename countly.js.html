@@ -148,6 +148,8 @@
         trackTime = true,
         startTime;
 
+    
+
     /**
      * Array with list of available features that you can require consent for
      */
@@ -210,6 +212,7 @@
             Countly.ignore_prefetch = ob.ignore_prefetch || Countly.ignore_prefetch || true;
             Countly.debug = ob.debug || Countly.debug || false;
             Countly.app_key = ob.app_key || Countly.app_key || null;
+            Countly.test_mode = Countly.test_mode || false;
             Countly.device_id = ob.device_id || Countly.device_id || getId();
             Countly.url = stripTrailingSlash(ob.url || Countly.url || "");
             Countly.app_version = ob.app_version || Countly.app_version || "0.0";
@@ -267,7 +270,6 @@
 
             if (!Countly.ignore_visitor) {
                 log("Countly initialized");
-
                 //let code waiting for us to load, know that we have loaded
                 if (Countly.onload.constructor !== Array) {
                     Countly.onload = [];
@@ -276,10 +278,12 @@
                 if (Countly.q.constructor !== Array) {
                     Countly.q = [];
                 }
+                
                 heartBeat();
                 store("cly_id", Countly.device_id);
                 var i = 0;
                 Countly.utm = Countly.utm || {"source":true, "medium":true, "campaign":true, "term":true, "content":true};
+                
                 if (location.search) {
                     var parts = location.search.substring(1).split("&amp;");
                     var utms = {};
@@ -548,7 +552,7 @@
                 //empty event queue
                 if (eventQueue.length > 0) {
                     toRequestQueue({ events: JSON.stringify(eventQueue) });
-                    eventQueue = [];
+                    eventQueue = [];    
                     store("cly_event", eventQueue);
                 }
                 //end current session
@@ -1652,7 +1656,7 @@
 
     //insert request to queue
     function toRequestQueue(request) {
-        //ignore bots
+        
         if (Countly.ignore_visitor) {
             return;
         }
@@ -1661,12 +1665,12 @@
             log("app_key or device_id is missing");
             return;
         }
-
+        
         request.app_key = Countly.app_key;
         request.device_id = Countly.device_id;
         request.sdk_name = SDK_NAME;
         request.sdk_version = SDK_VERSION;
-
+        
         if (Countly.check_consent("location")) {
             if (Countly.country_code) {
                 request.country_code = Countly.country_code;
@@ -1701,10 +1705,11 @@
     //heart beat
     function heartBeat() {
         //ignore bots
-        if (Countly.ignore_visitor) {
+        if (Countly.test_mode || Countly.ignore_visitor) {
             hasPulse = false;
             return;
         }
+
         hasPulse = true;
         notifyLoaders();
         var i = 0;
@@ -1876,6 +1881,7 @@
             if (arguments[1] &amp;&amp; typeof arguments[1] == "object") {
                 arguments[1] = JSON.stringify(arguments[1]);
             }
+            
             console.log(Array.prototype.slice.call(arguments).join("\n"));
         }
     }
@@ -2319,6 +2325,14 @@
         }
     }
 
+    function getEventQueue() {
+        return eventQueue;
+    }
+
+    function getRequestQueue() {
+        return requestQueue;
+    }
+
     //expose internal methods for pluggable code to reuse them
     Countly._internals = {
         store: store,
@@ -2350,7 +2364,9 @@
         showLoader: showLoader,
         hideLoader: hideLoader,
         add_cly_events:add_cly_events,
-        detect_device: detect_device
+        detect_device: detect_device,
+        getRequestQueue: getRequestQueue,
+        getEventQueue: getEventQueue
     };
 
     return Countly;
