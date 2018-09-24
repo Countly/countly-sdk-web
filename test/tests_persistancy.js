@@ -23,7 +23,6 @@ casper.test.begin("Testing example_persistancy.html", 31, function(test) {
         // load page first time
         casper.evaluate(function() {
             window.location.search = 'cly_id=test_campaign_id&cly_uid=test_campaign_uid';
-            Countly._internals.store('cly_id','8de17dff-1074-452a-8f85-92933482b82e');
             // for test: cly_event
             Countly.add_event({'key':'homepage'});
             // for test: cly_ignore
@@ -44,60 +43,51 @@ casper.test.begin("Testing example_persistancy.html", 31, function(test) {
             var tests = [];
             // get stored and current values of sdk variables
             var values = this.evaluate(function() {
-                var stored = {};
                 var current = {};
                 
                 // expose values 
-                stored.cly_id = Countly._internals.store('cly_id');
                 current.cly_id = Countly.device_id;
-                stored.cly_queue = Countly._internals.store('cly_queue');
                 current.cly_queue = Countly._internals.getRequestQueue();
-                stored.cly_event = Countly._internals.store('cly_event');
                 current.cly_event = Countly._internals.getEventQueue();
-                stored.cly_token = Countly._internals.store('cly_token');
                 current.cly_token = Countly._internals.getToken();
-                stored.cly_ignore = Countly._internals.store('cly_ignore');
                 current.cly_ignore = Countly.ignore_visitor;
                 current.cly_cmp_id = Countly._internals.store('cly_cmp_id');
                 current.cly_cmp_uid = Countly._internals.store('cly_cmp_uid');
                 
-                return {
-                    stored: stored,
-                    current: current
-                };
+                return current;
             });
 
             tests.push(function() {
-                test.assertEquals(values.current.cly_id, '8de17dff-1074-452a-8f85-92933482b82e');    
+                test.assertEquals(values.cly_id, '8de17dff-1074-452a-8f85-92933482b82e');    
             });
 
             tests.push(function() {
-                test.assertEquals(values.current.cly_token, 'TOKEN_STRING');
+                test.assertEquals(values.cly_token, 'TOKEN_STRING');
             });
 
             tests.push(function() {
-                test.assertEquals(values.current.cly_cmp_uid, 'test_campaign_uid');
+                test.assertEquals(values.cly_cmp_uid, 'test_campaign_uid');
             });
 
             tests.push(function() {
-                test.assertEquals(values.current.cly_cmp_id, 'test_campaign_id');
+                test.assertEquals(values.cly_cmp_id, 'test_campaign_id');
             });
 
             tests.push(function() {
-                test.assertEquals(values.current.cly_ignore, false);    
+                test.assertEquals(values.cly_ignore, false);    
             })
             
             tests.push(function() {
-                var events = values.current.cly_event;
-                test.assertEquals(values.current.cly_event[0].count, 1);   
-                test.assertEquals(values.current.cly_event[0].key, 'homepage');
-                test.assert(exists(values.current.cly_event[0].dow));
-                test.assert(exists(values.current.cly_event[0].hour));
-                test.assert(exists(values.current.cly_event[0].timestamp));
+                var events = values.cly_event;
+                test.assertEquals(values.cly_event[0].count, 1);   
+                test.assertEquals(values.cly_event[0].key, 'homepage');
+                test.assert(exists(values.cly_event[0].dow));
+                test.assert(exists(values.cly_event[0].hour));
+                test.assert(exists(values.cly_event[0].timestamp));
             })
             
             tests.push(function() {
-                var queue = values.current.cly_queue;
+                var queue = values.cly_queue;
                 test.assertEquals(queue[0].app_key, 'YOUR_APP_KEY');
                 test.assertEquals(queue[0].begin_session, 1);
                 test.assert(exists(queue[0].device_id));
