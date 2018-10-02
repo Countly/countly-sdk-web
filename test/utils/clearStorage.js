@@ -9,7 +9,10 @@ module.exports = function clearStorage(domain) {
         var localStorageFilename = myDomain.replace('://', '_').replace('/', '') + '_0.localstorage';
     } else {
         var userName = system.env['USER'];
-        if(userName === "root"){
+        if(system.os.name === 'mac') {
+            var localstoragePath = '/Users/' + userName + '/Library/Application Support/Ofi Labs/PhantomJS/';
+        }
+        else if(userName === "root"){
             var localstoragePath = '/root/.local/share/Ofi Labs/PhantomJS/';
         }
         else{
