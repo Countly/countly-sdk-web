@@ -3,7 +3,7 @@ var clearStorage = require("./utils/clearStorage.js");
 function exists(value){
     return (typeof value != "undefined") ? true : false;
 }
-casper.test.begin("Testing example_helpers.html", 385, function(test) {
+casper.test.begin("Testing example_helpers_old.html", 385, function(test) {
     var tests = [];
     var cnt = 0;
     tests.push(function (message){
@@ -570,7 +570,7 @@ casper.test.begin("Testing example_helpers.html", 385, function(test) {
         tests[cnt](message.split("\n"));
         cnt++;
     });
-    casper.start(fs.workingDirectory+"/test/files/example_helpers.html", function() {
+    casper.start(fs.workingDirectory+"/test/files/example_helpers_old.html", function() {
         this.click('#track_link');
         var ob = this;
         setTimeout(function(){
