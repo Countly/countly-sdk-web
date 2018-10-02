@@ -188,9 +188,6 @@ casper.test.begin("Testing example_helpers_old.html", 385, function(test) {
         test.assertEquals(params.segmentation["input:submit-form"], "Submit");
     });
     tests.push(function (message){
-        test.assertEquals(message[0], 'Ending session');
-    });
-    tests.push(function (message){
         test.assertEquals(message[0], 'Adding event: ');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.key, "[CLY]_view");
@@ -198,6 +195,9 @@ casper.test.begin("Testing example_helpers_old.html", 385, function(test) {
         test.assert(params.dur >= 29 && params.dur <= 31);
         test.assert(exists(params.segmentation));
         test.assert(exists(params.segmentation.name));
+    });
+    tests.push(function (message){
+        test.assertEquals(message[0], 'Ending session');
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Countly initialized');

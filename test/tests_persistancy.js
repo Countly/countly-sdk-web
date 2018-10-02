@@ -12,7 +12,7 @@ function notEmpty(value){
 * Purpose: Be sure store() method works correctly and related variables has perceives right values from storage. 
 * Method: Load page. Define variables into storage, then reload and check variables and storage values.
 */
-casper.test.begin("Testing example_persistancy.html", 31, function(test) {
+casper.test.begin("Testing example_persistancy.html", 30, function(test) {
     
     // Print console logs from casper
     casper.on('remote.message', function(message) {
@@ -107,7 +107,6 @@ casper.test.begin("Testing example_persistancy.html", 31, function(test) {
                 test.assertEquals(queue[1].session_duration, 100);
                 test.assertEquals(queue[2].app_key, 'YOUR_APP_KEY');
                 test.assert(exists(queue[2].device_id));
-                test.assertEquals(queue[2].end_session, 1);
                 test.assert(exists(queue[2].sdk_name));
                 test.assert(exists(queue[2].sdk_version));
                 test.assertEquals(queue[2].session_duration, 0);

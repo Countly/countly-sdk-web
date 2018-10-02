@@ -3,7 +3,7 @@ var clearStorage = require("./utils/clearStorage.js");
 function exists(value){
     return (typeof value != "undefined") ? true : false;
 }
-casper.test.begin("Testing example_helpers.html", 385, function(test) {
+casper.test.begin("Testing example_helpers.html", 357, function(test) {
     var tests = [];
     var cnt = 0;
     tests.push(function (message){
