@@ -1,4 +1,5 @@
 var fs = require("fs");
+var clearStorage = require("./utils/clearStorage.js");
 function exists(value){
     return (typeof value != "undefined") ? true : false;
 }
@@ -675,9 +676,7 @@ casper.test.begin("Testing example_gdpr.html", 407, function(test) {
                             Countly.remove_consent(["activity","interaction","crashes"]);
                         }, {});
                         actionSuit(ob, function(){
-                            casper.evaluate(function() {
-                                localStorage.clear();
-                            }, {});
+                            clearStorage();
                             test.done();
                         });
                     });

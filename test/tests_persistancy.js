@@ -1,4 +1,5 @@
 var fs = require("fs");
+var clearStorage = require("./utils/clearStorage.js");
 function exists(value){
     return (typeof value !== "undefined") ? true : false;
 }
@@ -18,7 +19,7 @@ casper.test.begin("Testing example_persistancy.html", 31, function(test) {
         this.echo(message);
     });
 
-    casper.start(fs.workingDirectory + "/examples/example_persistancy.html", function() {
+    casper.start(fs.workingDirectory + "/test/files/example_persistancy.html", function() {
         
         // load page first time
         casper.evaluate(function() {
@@ -120,9 +121,7 @@ casper.test.begin("Testing example_persistancy.html", 31, function(test) {
     })
     .run(function() {
         setTimeout(function(){
-            casper.evaluate(function(){
-                localStorage.clear();
-            });
+            clearStorage();
         }, 3000);
     });
 });

@@ -1,4 +1,5 @@
 var fs = require("fs");
+var clearStorage = require("./utils/clearStorage.js");
 function exists(value){
     return (typeof value != "undefined") ? true : false;
 }
@@ -581,9 +582,7 @@ casper.test.begin("Testing example_helpers.html", 385, function(test) {
         }, 70000);
     }).run(function() {
         setTimeout(function(){
-            casper.evaluate(function() {
-                localStorage.clear();
-            }, {});
+            clearStorage();
             test.done();
         }, 95000);
     });
