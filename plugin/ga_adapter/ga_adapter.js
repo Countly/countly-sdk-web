@@ -43,20 +43,31 @@ Countly Adapter Library for Google Analytics
 									count:count,
 									segmentation: customSegments
 								}]);
+								if (window.cly_ga_test_mode) { 
+									window.console.log(['add_event',{ key:n, count:count, segmentation: customSegments}]);
+								}
 							}
 							// ga('send', 'pageview')
 							else if (o === 'pageview' && arguments.length === 2) {
-								if (Countly._internals.store('cly_ga:page')) Countly.q.push(['track_pageview', Countly._internals.store('cly_ga:page')]);
-								else Countly.q.push(['track_pageview']);
+								if (Countly._internals.store('cly_ga:page')) {
+									Countly.q.push(['track_pageview', Countly._internals.store('cly_ga:page')]);
+									if (window.cly_ga_test_mode) console.log(['track_pageview', Countly._internals.store('cly_ga:page')]);	
+								} 
+								else {
+									Countly.q.push(['track_pageview']);
+									if (window.cly_ga_test_mode) console.log(['track_pageview']);
+								} 
 							} 
 							// ga('send', 'pageview', 'page')
 							else if (o === 'pageview' && arguments.length >= 3 && typeof arguments[2] === "string") {
 								Countly.q.push(['track_pageview', arguments[2]]);	
+								if (window.cly_ga_test_mode) console.log(['track_pageview', arguments[2]]);
 							}
 							// ga('send', 'pageview', {'customDimension':'customValue'})
 							else if (o === 'pageview' && arguments.length >= 3 && typeof arguments[2] === "object") {
 								// we are not supported tracking pageview with custom objects for now
 								Countly.q.push(['track_pageview']);	
+								if (window.cly_ga_test_mode) console.log(['track_pageview']);
 							}
 							// ga('send', 'social', 'network', 'action', 'target')
 							else if (o === 'social') {
@@ -69,6 +80,9 @@ Countly Adapter Library for Google Analytics
 								      "target":t
 								   }
 								}]);
+								if (window.cly_ga_test_mode) {
+									console.log(['add_event', { "key":n, "count":1, "segmentation":{"category":o,"platform":u,"target":t}}]);
+								}
 							}
 							// ga('send', 'screenview', {..})
 							else if (o === 'screenview') {
@@ -84,10 +98,15 @@ Countly Adapter Library for Google Analytics
 								   "count":1, 
 								   "segmentation": customSegments
 								}]);
+
+								if (window.cly_ga_test_mode) {
+									console.log(['add_event', { "key":"Screen View", "count":1, "segmentation": customSegments}]);
+								}
 							}
 							// ga('send', 'exception', {..})
 							else if (o === 'exception') {
 								Countly.log_error(u.exDescription);
+								if (window.cly_ga_test_mode) console.log(u.exDescription);
 							}
 							// ga('send', 'timing', 'timingCategory', 'timingVar', 'timingValue', 'timingLabel')
 							else if (o === 'timing') {
@@ -99,6 +118,9 @@ Countly Adapter Library for Google Analytics
 								   "dur": t, 
 								   "segmentation": customSegments
 								}]);
+								if (window.cly_ga_test_mode) {
+									console.log(['add_event', { "key": n, "count": 1, "dur": t, "segmentation": customSegments}]);
+								}
 							}
 						} 
 						// ga('send', {hitType:.., ...})
@@ -119,6 +141,11 @@ Countly Adapter Library for Google Analytics
 										count: count,
 										segmentation: customSegments
 									}]);
+
+									if (window.cly_ga_test_mode) {
+										console.log(['add_event',{key: o.eventAction, count: count, segmentation: customSegments}]);
+									}
+
 									break;
 								// ga('send', {'hitType':'social', ..})	
 								case 'social':
@@ -131,6 +158,11 @@ Countly Adapter Library for Google Analytics
 									      "target":o.socialTarget
 									   }
 									}]);
+
+									if (window.cly_ga_test_mode) {
+										console.log(['add_event', { "key":o.socialAction, "count":1, "segmentation":{"category":o.hitType,"platform":o.socialNetwork,"target":o.socialTarget}}]);
+									}
+
 									break;
 								// ga('send', {'hitType':'timing', ..})	
 								case 'timing':
@@ -142,10 +174,17 @@ Countly Adapter Library for Google Analytics
 									      "category": o.timingCategory
 									   }
 									}]);
+
+									if (window.cly_ga_test_mode) {
+										console.log(['add_event', { "key": o.timingVar, "count": 1, "dur": o.timingValue, "segmentation": {"category": o.timingCategory}}]);
+									}
 									break;
 								// ga('send', {'hitType':'pageview', 'page':'page'})
 								case 'pageview':
 									Countly.q.push(['track_pageview', o.page]);
+									if (window.cly_ga_test_mode) {
+										console.log(['track_pageview', o.page]);
+									}
 									break;
 							}
 						}
@@ -155,9 +194,17 @@ Countly Adapter Library for Google Analytics
 						// ga('create', .., 'auto', '..')
 						if (arguments.length === 4 && arguments[2] === 'auto') {
 							Countly._internals.store('cly_ga:id', o);
+							if (window.cly_ga_test_mode) {
+								console.log(Countly._internals.store('cly_ga:id'));
+								console.log(o);
+							}
 						// ga('create', .., callback)
 						} else if (arguments.length === 3) {
 							Countly._internals.store('cly_ga:id', o);
+							if (window.cly_ga_test_mode) {
+								console.log(Countly._internals.store('cly_ga:id'));
+								console.log(o);
+							}
 						}
 						break;
 					// ga('set', '..')	
@@ -165,18 +212,32 @@ Countly Adapter Library for Google Analytics
 						// ga('set', 'page', '/login.html')
 						if (o === 'page') {
 							Countly._internals.store('cly_ga:page', u);
+							if (window.cly_ga_test_mode) {
+								console.log(Countly._internals.store('cly_ga:page'));
+								console.log(u);
+							}
 						}
 						// ga('set', 'screenname', 'High scores')
 						else if (o === 'screenname') {
-							Countly._internals.store('cly_ga:screenname');
+							Countly._internals.store('cly_ga:screenname', u);
+							if (window.cly_ga_test_mode) {
+								console.log(Countly._internals.store('cly_ga:screenname'));
+								console.log(u);
+							}
 						}
 						// ga('set', 'dimension', 'custom data')
 						else if (arguments.length === 3) {
 							Countly.q.push(['userData.set', o, u]);
+							if (window.cly_ga_test_mode) {
+								console.log(['userData.set', o, u]);
+							}
 						} 
 						// ga('set', {key:val, anotherKey: anotherVal})
 						else if (arguments.length === 2 && typeof o === 'object') {
 							Countly.q.push(['user_details', { custom: o }]);
+							if (window.cly_ga_test_mode) {
+								console.log(['user_details', { custom: o }]);
+							}
 						}
 						break;
 					// ga('ecommerce:addTransaction', {..})	
@@ -196,6 +257,11 @@ Countly Adapter Library for Google Analytics
 						   "sum":o.revenue,
 						   "segmentation": customSegments
 						}]);
+
+						if (window.cly_ga_test_mode) {
+							console.log(['add_event', { "key": c, "count":1, "sum":o.revenue,"segmentation": customSegments}]);
+						}
+
 						break;
 					// ga('ecommerce:addItem', {..})
 					case 'ecommerce:addItem':
@@ -216,6 +282,12 @@ Countly Adapter Library for Google Analytics
 						}]);
 
 						Countly._internals.store('cly_ecommerce:cart', cart);
+
+						if (window.cly_ga_test_mode) {
+							console.log(cart);
+							console.log(Countly._internals.store('cly_ecommerce:cart'));
+						}
+
 						break;
 					// ga('ecommerce:send')
 					case 'ecommerce:send': 
@@ -224,11 +296,19 @@ Countly Adapter Library for Google Analytics
 						}
 						cart = [];
 						Countly._internals.store('cly_ecommerce:cart', cart);
+
+						if (window.cly_ga_test_mode) {
+							console.log(Countly._internals.store('cly_ecommerce:cart'));							
+						}
 						break;
 					// ga('ecommerce:clear')	
 					case 'ecommerce:clear':
 						cart = [];
 						Countly._internals.store('cly_ecommerce:cart', cart);
+
+						if (window.cly_ga_test_mode) {
+							console.log(Countly._internals.store('cly_ecommerce:cart'));							
+						}
 						break;
 					default:
 						break;
