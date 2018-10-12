@@ -37,7 +37,6 @@ Countly Adapter Library for Google Analytics
 									customSegments["label"]	= t;
 									count = l;
 								}
-								console.log(arguments.length >= 6);
 								// add event by configured values
 								Countly.q.push(['add_event',{
 									key:n, 
