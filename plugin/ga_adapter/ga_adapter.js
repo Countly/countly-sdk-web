@@ -2,11 +2,11 @@
 Countly Adapter Library for Google Analytics
 */
 (function() {
-	window.CountlyGAListener = function() {
+	window.CountlyGAAdapter = function() {
 		// hold ga instance
 		var old_ga = window.ga;
 		// cart for ga:ecommerce plugin
-		var cart = Countly._internals.store('ecommerce:cart') || [];
+		var cart = Countly._internals.store('cly_ecommerce:cart') || [];
 
 		window.ga = function(c, o, u, n, t, l, y) {
 			if (typeof c === "string") {
@@ -32,11 +32,12 @@ Countly Adapter Library for Google Analytics
 									customSegments[Object.keys(arguments[4])[0]] = Object.values(arguments[4])[0];
 								}
 								// ga('send', 'event', 'category', 'action', 'label', 1)
-								else if (arguments.length === 6) {
+								else if (arguments.length >= 6) {
 									customSegments["category"] = u;
 									customSegments["label"]	= t;
 									count = l;
 								}
+								console.log(arguments.length >= 6);
 								// add event by configured values
 								Countly.q.push(['add_event',{
 									key:n, 
@@ -46,15 +47,15 @@ Countly Adapter Library for Google Analytics
 							}
 							// ga('send', 'pageview')
 							else if (o === 'pageview' && arguments.length === 2) {
-								if (Countly._internals.store('ga:page')) Countly.q.push(['track_pageview', Countly._internals.store('ga:page')]);
+								if (Countly._internals.store('cly_ga:page')) Countly.q.push(['track_pageview', Countly._internals.store('cly_ga:page')]);
 								else Countly.q.push(['track_pageview']);
 							} 
 							// ga('send', 'pageview', 'page')
-							else if (o === 'pageview' && arguments.length === 3 && typeof arguments[2] === "string") {
+							else if (o === 'pageview' && arguments.length >= 3 && typeof arguments[2] === "string") {
 								Countly.q.push(['track_pageview', arguments[2]]);	
 							}
 							// ga('send', 'pageview', {'customDimension':'customValue'})
-							else if (o === 'pageview' && arguments.length === 3 && typeof arguments[2] === "object") {
+							else if (o === 'pageview' && arguments.length >= 3 && typeof arguments[2] === "object") {
 								// we are not supported tracking pageview with custom objects for now
 								Countly.q.push(['track_pageview']);	
 							}
@@ -72,20 +73,33 @@ Countly Adapter Library for Google Analytics
 							}
 							// ga('send', 'screenview', {..})
 							else if (o === 'screenview') {
+								var customSegments = { appName: u.appName };
+								
+								if (u.screenName) customSegments.screenName = u.screenName;
+								if (u.appVersion) customSegments.appVersion = u.appVersion;
+								if (u.appInstallerId) customSegments.appInstallerId = u.appInstallerId;
+								if (Countly._internals.store('cly_ga:screenname')) customSegments.screenName = Countly._internals.store('cly_ga:screenname');
+
 								Countly.q.push(['add_event', { 
 								   "key":"Screen View",
 								   "count":1, 
-								   "segmentation":{
-								      "screenName":u.screenName,
-								      "appName":u.appName,
-								      "appVersion":u.appVersion,
-								      "appInstallerId":u.appInstallerId
-								   }
+								   "segmentation": customSegments
 								}]);
 							}
 							// ga('send', 'exception', {..})
 							else if (o === 'exception') {
 								Countly.log_error(u.exDescription);
+							}
+							// ga('send', 'timing', 'timingCategory', 'timingVar', 'timingValue', 'timingLabel')
+							else if (o === 'timing') {
+								var customSegments = {timingCategory:u};
+								if (l) customSegments.timingLabel = l;
+								Countly.q.push(['add_event', { 
+								   "key": n, 
+								   "count": 1,
+								   "dur": t, 
+								   "segmentation": customSegments
+								}]);
 							}
 						} 
 						// ga('send', {hitType:.., ...})
@@ -141,24 +155,28 @@ Countly Adapter Library for Google Analytics
 					case 'create':
 						// ga('create', .., 'auto', '..')
 						if (arguments.length === 4 && arguments[2] === 'auto') {
-							Countly._internals.store('ga:id', o);
+							Countly._internals.store('cly_ga:id', o);
 						// ga('create', .., callback)
 						} else if (arguments.length === 3) {
-							Countly._internals.store('ga:id', o);
+							Countly._internals.store('cly_ga:id', o);
 						}
 						break;
 					// ga('set', '..')	
 					case 'set':
 						// ga('set', 'page', '/login.html')
 						if (o === 'page') {
-							Countly._internals.store('ga:page', u);
+							Countly._internals.store('cly_ga:page', u);
+						}
+						// ga('set', 'screenname', 'High scores')
+						else if (o === 'screenname') {
+							Countly._internals.store('cly_ga:screenname');
 						}
 						// ga('set', 'dimension', 'custom data')
 						else if (arguments.length === 3) {
 							Countly.q.push(['userData.set', o, u]);
 						} 
 						// ga('set', {key:val, anotherKey: anotherVal})
-						else if (arguments.length === 2) {
+						else if (arguments.length === 2 && typeof o === 'object') {
 							Countly.q.push(['user_details', { custom: o }]);
 						}
 						break;
@@ -198,35 +216,35 @@ Countly Adapter Library for Google Analytics
 						   "segmentation": customSegments
 						}]);
 
-						Countly._internals.store('ecommerce:cart', cart);
+						Countly._internals.store('cly_ecommerce:cart', cart);
 						break;
 					// ga('ecommerce:send')
 					case 'ecommerce:send': 
-						for (var i = 0; i < Countly._internals.store('ecommerce:cart').length; i++) {
-							Countly.q.push(Countly._internals.store('ecommerce:cart')[i]);
+						for (var i = 0; i < cart.length; i++) {
+							Countly.q.push(cart[i]);
 						}
 						cart = [];
-						Countly._internals.store('ecommerce:cart', cart);
+						Countly._internals.store('cly_ecommerce:cart', cart);
 						break;
 					// ga('ecommerce:clear')	
 					case 'ecommerce:clear':
 						cart = [];
-						Countly._internals.store('ecommerce:cart', cart);
+						Countly._internals.store('cly_ecommerce:cart', cart);
 						break;
 					default:
 						break;
 				}	
 			}
-			// apply this to ga instance 
-			return old_ga.apply(this, arguments);
+			// time to work for real ga instance
+			return old_ga.apply(null, arguments);
 		}
 		// check variable for gaAdapter is loaded?
 		window.ga._signature = 1;
 	}
 	setTimeout(function check() {
-		if(!ga._signature) return CountlyGAListener();
+		if(!ga._signature) return CountlyGAAdapter();
 		else {
-			if (window['ga-disable-'+ Countly._internals.store('ga:id')]) Countly.ignore_visitor = true;
+			if (window['ga-disable-'+ Countly._internals.store('cly_ga:id')]) Countly.ignore_visitor = true;
 		}
 		setTimeout(check, 125);
 	}, 125);
