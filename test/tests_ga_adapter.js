@@ -1,31 +1,3 @@
-/*
-cases should be wrapped
-- ga('send', 'event', 'category', 'action')
-- ga('send', 'event', 'category', 'action', 'label')
-- ga('send', 'event', 'category', 'action', {'metric':'value'})
-- ga('send', 'event', 'category', 'action', 'label', 1)
-- ga('send', 'pageview')
-- ga('send', 'pageview', 'page')
-- ga('send', 'pageview', {'customDimension':'customValue'})
-- ga('send', 'social', 'network', 'action', 'target')
-- ga('send', 'screenview', {'appName':'appName', ..})
-- ga('send', 'exception', {'..'})
-- ga('send', {'hitType':'event'})
-- ga('send', {'hitType':'social'})
-- ga('send', {'hitType':'timing'})
-- ga('send', 'timing', '..')
-- ga('send', {'hitType':'pageview'})
-- ga('create', '..', 'auto', '..')
-- ga('create', '..', callback)
-- ga('set', 'page', '/login.html')
-- ga('set', 'dimension', 'custom data')
-- ga('set', {key:val, anotherKey:anotherVal})
-- ga('ecommerce:addTransaction')
-- ga('ecommerce:addItem')
-- ga('ecommerce:send')
-- ga('ecommerce:clear')
-*/
-
 var fs = require("fs");
 var clearStorage = require("./utils/clearStorage.js");
 function exists(value){
