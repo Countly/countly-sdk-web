@@ -2,6 +2,7 @@
 Countly Adapter Library for Google Analytics
 */
 (function() {
+	window.cly_ga_test_logs = [];
 	window.CountlyGAAdapter = function() {
 		// hold ga instance
 		var old_ga = window.ga;
@@ -14,7 +15,7 @@ Countly Adapter Library for Google Analytics
 					case 'send':
 						if (typeof o === 'string') {
 							// ga('send', 'event', ..)
-							if (o == 'event') {
+							if (o === 'event') {
 								var customSegments = {};
 								var count = 1;
 								// ga('send', 'event', 'category', 'action')
@@ -29,7 +30,9 @@ Countly Adapter Library for Google Analytics
 								// ga('send', 'event', 'category', 'action', {metric:value})
 								else if (arguments.length === 5 && typeof arguments[4] === "object") {
 									customSegments["category"] = u;
-									customSegments[Object.keys(arguments[4])[0]] = Object.values(arguments[4])[0];
+									for (var i = 0; i < Object.keys(arguments[4]).length; i++) {
+										customSegments[Object.keys(arguments[4])[i]] = Object.values(arguments[4])[i];	
+									}
 								}
 								// ga('send', 'event', 'category', 'action', 'label', 1)
 								else if (arguments.length >= 6) {
@@ -44,30 +47,30 @@ Countly Adapter Library for Google Analytics
 									segmentation: customSegments
 								}]);
 								if (window.cly_ga_test_mode) { 
-									window.console.log(['add_event',{ key:n, count:count, segmentation: customSegments}]);
+									window.cly_ga_test_logs.push(['add_event',{ key:n, count:count, segmentation: customSegments}]);
 								}
 							}
 							// ga('send', 'pageview')
 							else if (o === 'pageview' && arguments.length === 2) {
 								if (Countly._internals.store('cly_ga:page')) {
 									Countly.q.push(['track_pageview', Countly._internals.store('cly_ga:page')]);
-									if (window.cly_ga_test_mode) console.log(['track_pageview', Countly._internals.store('cly_ga:page')]);	
+									if (window.cly_ga_test_mode) window.cly_ga_test_logs.push(['track_pageview', Countly._internals.store('cly_ga:page')]);	
 								} 
 								else {
 									Countly.q.push(['track_pageview']);
-									if (window.cly_ga_test_mode) console.log(['track_pageview']);
+									if (window.cly_ga_test_mode) window.cly_ga_test_logs.push(['track_pageview']);
 								} 
 							} 
 							// ga('send', 'pageview', 'page')
 							else if (o === 'pageview' && arguments.length >= 3 && typeof arguments[2] === "string") {
 								Countly.q.push(['track_pageview', arguments[2]]);	
-								if (window.cly_ga_test_mode) console.log(['track_pageview', arguments[2]]);
+								if (window.cly_ga_test_mode) window.cly_ga_test_logs.push(['track_pageview', arguments[2]]);
 							}
 							// ga('send', 'pageview', {'customDimension':'customValue'})
 							else if (o === 'pageview' && arguments.length >= 3 && typeof arguments[2] === "object") {
 								// we are not supported tracking pageview with custom objects for now
 								Countly.q.push(['track_pageview']);	
-								if (window.cly_ga_test_mode) console.log(['track_pageview']);
+								if (window.cly_ga_test_mode) window.cly_ga_test_logs.push(['track_pageview']);
 							}
 							// ga('send', 'social', 'network', 'action', 'target')
 							else if (o === 'social') {
@@ -81,7 +84,7 @@ Countly Adapter Library for Google Analytics
 								   }
 								}]);
 								if (window.cly_ga_test_mode) {
-									console.log(['add_event', { "key":n, "count":1, "segmentation":{"category":o,"platform":u,"target":t}}]);
+									window.cly_ga_test_logs.push(['add_event', { "key":n, "count":1, "segmentation":{"category":o,"platform":u,"target":t}}]);
 								}
 							}
 							// ga('send', 'screenview', {..})
@@ -100,18 +103,18 @@ Countly Adapter Library for Google Analytics
 								}]);
 
 								if (window.cly_ga_test_mode) {
-									console.log(['add_event', { "key":"Screen View", "count":1, "segmentation": customSegments}]);
+									window.cly_ga_test_logs.push(['add_event', { "key":"Screen View", "count":1, "segmentation": customSegments}]);
 								}
 							}
 							// ga('send', 'exception', {..})
 							else if (o === 'exception') {
 								Countly.log_error(u.exDescription);
-								if (window.cly_ga_test_mode) console.log(u.exDescription);
+								if (window.cly_ga_test_mode) window.cly_ga_test_logs.push(u.exDescription);
 							}
 							// ga('send', 'timing', 'timingCategory', 'timingVar', 'timingValue', 'timingLabel')
 							else if (o === 'timing') {
-								var customSegments = {timingCategory:u};
-								if (l) customSegments.timingLabel = l;
+								var customSegments = {category:u};
+								if (l) customSegments.label = l;
 								Countly.q.push(['add_event', { 
 								   "key": n, 
 								   "count": 1,
@@ -119,7 +122,7 @@ Countly Adapter Library for Google Analytics
 								   "segmentation": customSegments
 								}]);
 								if (window.cly_ga_test_mode) {
-									console.log(['add_event', { "key": n, "count": 1, "dur": t, "segmentation": customSegments}]);
+									window.cly_ga_test_logs.push(['add_event', { "key": n, "count": 1, "dur": t, "segmentation": customSegments}]);
 								}
 							}
 						} 
@@ -143,7 +146,7 @@ Countly Adapter Library for Google Analytics
 									}]);
 
 									if (window.cly_ga_test_mode) {
-										console.log(['add_event',{key: o.eventAction, count: count, segmentation: customSegments}]);
+										window.cly_ga_test_logs.push(['add_event',{key: o.eventAction, count: count, segmentation: customSegments}]);
 									}
 
 									break;
@@ -160,7 +163,7 @@ Countly Adapter Library for Google Analytics
 									}]);
 
 									if (window.cly_ga_test_mode) {
-										console.log(['add_event', { "key":o.socialAction, "count":1, "segmentation":{"category":o.hitType,"platform":o.socialNetwork,"target":o.socialTarget}}]);
+										window.cly_ga_test_logs.push(['add_event', { "key":o.socialAction, "count":1, "segmentation":{"category":o.hitType,"platform":o.socialNetwork,"target":o.socialTarget}}]);
 									}
 
 									break;
@@ -176,14 +179,14 @@ Countly Adapter Library for Google Analytics
 									}]);
 
 									if (window.cly_ga_test_mode) {
-										console.log(['add_event', { "key": o.timingVar, "count": 1, "dur": o.timingValue, "segmentation": {"category": o.timingCategory}}]);
+										window.cly_ga_test_logs.push(['add_event', { "key": o.timingVar, "count": 1, "dur": o.timingValue, "segmentation": {"category": o.timingCategory}}]);
 									}
 									break;
 								// ga('send', {'hitType':'pageview', 'page':'page'})
 								case 'pageview':
 									Countly.q.push(['track_pageview', o.page]);
 									if (window.cly_ga_test_mode) {
-										console.log(['track_pageview', o.page]);
+										window.cly_ga_test_logs.push(['track_pageview', o.page]);
 									}
 									break;
 							}
@@ -195,15 +198,13 @@ Countly Adapter Library for Google Analytics
 						if (arguments.length === 4 && arguments[2] === 'auto') {
 							Countly._internals.store('cly_ga:id', o);
 							if (window.cly_ga_test_mode) {
-								console.log(Countly._internals.store('cly_ga:id'));
-								console.log(o);
+								window.cly_ga_test_logs.push({'stored':Countly._internals.store('cly_ga:id'), 'value':o});
 							}
 						// ga('create', .., callback)
 						} else if (arguments.length === 3) {
 							Countly._internals.store('cly_ga:id', o);
 							if (window.cly_ga_test_mode) {
-								console.log(Countly._internals.store('cly_ga:id'));
-								console.log(o);
+								window.cly_ga_test_logs.push({'stored':Countly._internals.store('cly_ga:id'), 'value':o});
 							}
 						}
 						break;
@@ -212,31 +213,26 @@ Countly Adapter Library for Google Analytics
 						// ga('set', 'page', '/login.html')
 						if (o === 'page') {
 							Countly._internals.store('cly_ga:page', u);
-							if (window.cly_ga_test_mode) {
-								console.log(Countly._internals.store('cly_ga:page'));
-								console.log(u);
-							}
 						}
 						// ga('set', 'screenname', 'High scores')
 						else if (o === 'screenname') {
 							Countly._internals.store('cly_ga:screenname', u);
 							if (window.cly_ga_test_mode) {
-								console.log(Countly._internals.store('cly_ga:screenname'));
-								console.log(u);
+								window.cly_ga_test_logs.push({'stored':Countly._internals.store('cly_ga:screenname'),'value':u});
 							}
 						}
 						// ga('set', 'dimension', 'custom data')
 						else if (arguments.length === 3) {
 							Countly.q.push(['userData.set', o, u]);
 							if (window.cly_ga_test_mode) {
-								console.log(['userData.set', o, u]);
+								window.cly_ga_test_logs.push(['userData.set', o, u]);
 							}
 						} 
 						// ga('set', {key:val, anotherKey: anotherVal})
 						else if (arguments.length === 2 && typeof o === 'object') {
 							Countly.q.push(['user_details', { custom: o }]);
 							if (window.cly_ga_test_mode) {
-								console.log(['user_details', { custom: o }]);
+								window.cly_ga_test_logs.push(['user_details', { custom: o }]);
 							}
 						}
 						break;
@@ -259,7 +255,7 @@ Countly Adapter Library for Google Analytics
 						}]);
 
 						if (window.cly_ga_test_mode) {
-							console.log(['add_event', { "key": c, "count":1, "sum":o.revenue,"segmentation": customSegments}]);
+							window.cly_ga_test_logs.push(['add_event', { "key": c, "count":1, "sum":o.revenue,"segmentation": customSegments}]);
 						}
 
 						break;
@@ -283,22 +279,24 @@ Countly Adapter Library for Google Analytics
 
 						Countly._internals.store('cly_ecommerce:cart', cart);
 
-						if (window.cly_ga_test_mode) {
-							console.log(cart);
-							console.log(Countly._internals.store('cly_ecommerce:cart'));
+						if (window.cly_ga_test_mode){
+							window.cly_ga_test_logs.push(['add_event', { "key":c, "count":o.quantity,"sum":o.price,"segmentation": customSegments}]);
 						}
 
 						break;
 					// ga('ecommerce:send')
-					case 'ecommerce:send': 
+					case 'ecommerce:send':
+						if (window.cly_ga_test_mode) {
+							var firstLength = cart.length;
+						}
 						for (var i = 0; i < cart.length; i++) {
 							Countly.q.push(cart[i]);
 						}
 						cart = [];
 						Countly._internals.store('cly_ecommerce:cart', cart);
 
-						if (window.cly_ga_test_mode) {
-							console.log(Countly._internals.store('cly_ecommerce:cart'));							
+						if (window.cly_ga_test_mode){
+							window.cly_ga_test_logs.push({first:firstLength, last: cart.length});
 						}
 						break;
 					// ga('ecommerce:clear')	
@@ -306,8 +304,8 @@ Countly Adapter Library for Google Analytics
 						cart = [];
 						Countly._internals.store('cly_ecommerce:cart', cart);
 
-						if (window.cly_ga_test_mode) {
-							console.log(Countly._internals.store('cly_ecommerce:cart'));							
+						if (window.cly_ga_test_mode){
+							window.cly_ga_test_logs.push(Countly._internals.store('cly_ecommerce:cart'));							
 						}
 						break;
 					default:
