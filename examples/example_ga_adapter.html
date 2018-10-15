@@ -1,0 +1,172 @@
+<html>
+<head>
+<script type='text/javascript'>
+//some default pre init
+var Countly = Countly || {};
+Countly.q = Countly.q || [];
+Countly.onload = Countly.onload || [];
+//provide countly initialization parameters
+Countly.app_key = "YOUR_APP_KEY";
+Countly.url = "https://try.count.ly"; //your server goes here
+window.cly_ga_test_mode = true;
+Countly.test_logs = [];
+//start pushing function calls to queue
+//track sessions automatically
+
+
+//load countly script asynchronously
+(function() {
+	var cly = document.createElement('script'); cly.type = 'text/javascript'; 
+	cly.async = true;
+	//enter url of script here
+	cly.src = '../lib/countly.min.js';
+	cly.onload = function(){Countly.init()};
+	var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(cly, s);
+})();
+</script>
+<script src="../plugin/ga_adapter/ga_adapter.js"></script>
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+	Countly.onload.push(function() {
+	    CountlyGAAdapter();
+	    // call create call with ga id
+        ga('create', 'UA-56295140-3', 'auto');
+
+        // call create with function
+        ga('create', 'UA-56295140-3', function() {
+        	return true;
+        });
+
+        // send pageview
+        ga('send', 'pageview');
+
+        // send pageview with page field
+        ga('send', 'pageview', 'test-page.html');
+
+        // send pageview with custom dimension
+        ga('send', 'pageview', {customDimension:'customValue'});
+
+        // send social
+        ga('send', 'social', 'network', 'action', 'target');
+
+        // send screenview
+        ga('send', 'screenview', {'appName':'application1'});
+
+        // send exception
+        ga('send', 'exception', {exDescription:'errorDescription', exFatal:false});
+
+        // send event with hitType object, with label and value
+        ga('send', {hitType:'event', eventCategory: 'category', eventAction:'action', eventLabel: 'label', eventValue:2 });
+
+        // send event with hitType object, without value with label
+        ga('send', {hitType:'event', eventCategory: 'category', eventAction:'action', eventLabel: 'label'});
+
+        // send event with hitType object, without label and with value
+        ga('send', {hitType:'event', eventCategory: 'category', eventAction:'action', eventValue:2});
+
+        // send event with hitType object, without label and value
+        ga('send', {hitType:'event', eventCategory: 'category', eventAction:'action'});
+
+        // send social with hitType object
+        ga('send', {hitType:'social', socialNetwork: 'network', socialAction: 'like', socialTarget: 'target'});
+
+        // send timing with hitType object
+        ga('send', {hitType:'timing', timingCategory: 'category', timingVar: 'load', timingValue: 3549});
+
+        // send timing without hitType object
+        ga('send', 'timing', 'category', 'load', 3549);
+
+        // send timing without hitType object with label
+        ga('send', 'timing', 'category', 'load', 3549, 'timinglabel');
+
+        // send pageview with hitType object
+        ga('send', {hitType:'pageview', page: 'page.html'});
+
+        // set page
+        ga('set', 'page', 'randompage.html');
+
+        // send pageview after set page
+        ga('send', 'pageview');
+
+        // set custom data
+        ga('set', 'dimension', 'customdimension');
+
+        // set custom data as object
+        ga('set', {'key':'value', 'anotherKey':'anotherValue'});
+
+        // add ecommerce transaction without currency
+        ga('ecommerce:addTransaction', {
+			'id': '1234',                     // Transaction ID. Required.
+			'affiliation': 'Acme Clothing',   // Affiliation or store name.
+			'revenue': '11.99',               // Grand Total.
+			'shipping': '5',                  // Shipping.
+			'tax': '1.29'                     // Tax.
+		});
+
+        // add ecommerce transcation with currency
+		ga('ecommerce:addTransaction', {
+			'id': '1234',
+			'affiliation': 'Acme Clothing',
+			'revenue': '11.99',
+			'shipping': '5',
+			'tax': '1.29',
+			'currency': 'EUR'  // local currency code.
+		});
+
+		// add item without currency
+		ga('ecommerce:addItem', {
+			'id': '1234',                     // Transaction ID. Required.
+			'name': 'Fluffy Pink Bunnies',    // Product name. Required.
+			'sku': 'DD23444',                 // SKU/code.
+			'category': 'Party Toys',         // Category or variation.
+			'price': '11.99',                 // Unit price.
+			'quantity': '5'                   // Quantity.
+		});
+
+		// add item with currency
+		ga('ecommerce:addItem', {
+			'id': '1234',
+			'name': 'Fluffy Pink Bunnies',
+			'sku': 'DD23444',
+			'category': 'Party Toys',
+			'price': '11.99',
+			'quantity': '5',
+			'currency': 'GBP' // local currency code.
+		});
+
+		// clear ecommerce cart
+		ga('ecommerce:clear');
+
+		// add item with currency again
+		ga('ecommerce:addItem', {
+			'id': '1234',
+			'name': 'Fluffy Pink Bunnies',
+			'sku': 'DD23444',
+			'category': 'Party Toys',
+			'price': '11.99',
+			'quantity': '5',
+			'currency': 'GBP' // local currency code.
+		});
+
+		// send ecommerce cart
+		ga('ecommerce:send');
+
+		// send event without label, without value
+        ga('send', 'event', 'category', 'action');
+
+        // send event without value, with label
+		ga('send', 'event', 'category', 'action', 'label');
+
+		// send event with label and value
+		ga('send', 'event', 'category', 'action', 'label', 3);
+		
+	});
+</script>
+</head>
+<body>
+</body>
+</html>
