@@ -59,13 +59,13 @@ Countly.q.push(['track_pageview']);
 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
+// add this line into your google analytics snippet
+CountlyGAAdapter();
 
-Countly.onload.push(function() {
-    CountlyGAAdapter();
-    
-    ga('create', 'UA-56295140-3', 'auto');
-    ga('send', 'pageview');
-})
+ga('create', 'UA-56295140-3', 'auto');
+ga('send','event','category','action','label');
+ga('send','pageview','page.html');
+
 </script>
 ```
 
