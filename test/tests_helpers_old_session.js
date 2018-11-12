@@ -3,7 +3,7 @@ var clearStorage = require("./utils/clearStorage.js");
 function exists(value){
     return (typeof value != "undefined") ? true : false;
 }
-casper.test.begin("Testing example_helpers.html", 357, function(test) {
+casper.test.begin("Testing example_helpers_old.html", 385, function(test) {
     var tests = [];
     var cnt = 0;
     tests.push(function (message){
@@ -197,7 +197,7 @@ casper.test.begin("Testing example_helpers.html", 357, function(test) {
         test.assert(exists(params.segmentation.name));
     });
     tests.push(function (message){
-        test.assertEquals(message[0], 'Session extended');
+        test.assertEquals(message[0], 'Ending session');
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Countly initialized');
@@ -205,6 +205,7 @@ casper.test.begin("Testing example_helpers.html", 357, function(test) {
     tests.push(function (message){
         test.assertEquals(message[0], 'Processing request');
         var params = JSON.parse(message[1]);
+        test.assertEquals(params.end_session, 1);
         test.assert(params.session_duration >= 29 && params.session_duration <= 31);
         test.assertEquals(params.app_key, "YOUR_APP_KEY");
         test.assert(exists(params.device_id));
@@ -214,6 +215,16 @@ casper.test.begin("Testing example_helpers.html", 357, function(test) {
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Sending XML HTTP request');
+    });
+    tests.push(function (message){
+        test.assertEquals(message[0], 'Session started');
+    });
+    tests.push(function (message){
+        test.assertEquals(message[0], 'Got metrics');
+        var params = JSON.parse(message[1]);
+        test.assertEquals(params._app_version, '0.0');
+        test.assertEquals(params._resolution, '1024x768');
+        test.assertEquals(params._locale, 'en-US');
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Adding event: ');
@@ -226,6 +237,7 @@ casper.test.begin("Testing example_helpers.html", 357, function(test) {
     tests.push(function (message){
         test.assertEquals(message[0], 'Request Finished');
         var params = JSON.parse(message[1]);
+        test.assertEquals(params.end_session, 1);
         test.assert(params.session_duration >= 29 && params.session_duration <= 31);
         test.assertEquals(params.app_key, "YOUR_APP_KEY");
         test.assert(exists(params.device_id));
@@ -311,6 +323,38 @@ casper.test.begin("Testing example_helpers.html", 357, function(test) {
         test.assert(params.events[2].dur >= 29 && params.events[2].dur <= 31);
         test.assert(exists(params.events[2].segmentation));
         test.assert(exists(params.events[2].segmentation.name));
+    });
+    tests.push(function (message){
+        test.assertEquals(message[0], 'Processing request');
+        var params = JSON.parse(message[1]);
+        test.assertEquals(params.begin_session, 1);
+        test.assertEquals(params.app_key, "YOUR_APP_KEY");
+        test.assert(exists(params.device_id));
+        test.assert(exists(params.timestamp));
+        test.assert(exists(params.hour));
+        test.assert(exists(params.dow));
+        params.metrics = JSON.parse(params.metrics);
+        test.assertEquals(params.metrics._app_version, '0.0');
+        test.assertEquals(params.metrics._resolution, '1024x768');
+        test.assertEquals(params.metrics._locale, 'en-US');
+    });
+    tests.push(function (message){
+        test.assertEquals(message[0], 'Sending XML HTTP request');
+    });
+    tests.push(function (message){
+        test.assertEquals(message[0], 'Request Finished');
+        var params = JSON.parse(message[1]);
+        test.assertEquals(params.begin_session, 1);
+        test.assertEquals(params.app_key, "YOUR_APP_KEY");
+        test.assert(exists(params.device_id));
+        test.assert(exists(params.timestamp));
+        test.assert(exists(params.hour));
+        test.assert(exists(params.dow));
+        
+        params.metrics = JSON.parse(params.metrics);
+        test.assertEquals(params.metrics._app_version, '0.0');
+        test.assertEquals(params.metrics._resolution, '1024x768');
+        test.assertEquals(params.metrics._locale, 'en-US');
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Processing request');
@@ -526,7 +570,7 @@ casper.test.begin("Testing example_helpers.html", 357, function(test) {
         tests[cnt](message.split("\n"));
         cnt++;
     });
-    casper.start(fs.workingDirectory+"/examples/example_helpers.html", function() {
+    casper.start(fs.workingDirectory+"/test/files/example_helpers_old.html", function() {
         this.click('#track_link');
         var ob = this;
         setTimeout(function(){

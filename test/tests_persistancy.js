@@ -1,4 +1,5 @@
 var fs = require("fs");
+var clearStorage = require("./utils/clearStorage.js");
 function exists(value){
     return (typeof value !== "undefined") ? true : false;
 }
@@ -11,14 +12,14 @@ function notEmpty(value){
 * Purpose: Be sure store() method works correctly and related variables has perceives right values from storage. 
 * Method: Load page. Define variables into storage, then reload and check variables and storage values.
 */
-casper.test.begin("Testing example_persistancy.html", 31, function(test) {
+casper.test.begin("Testing example_persistancy.html", 30, function(test) {
     
     // Print console logs from casper
     casper.on('remote.message', function(message) {
         this.echo(message);
     });
 
-    casper.start(fs.workingDirectory + "/examples/example_persistancy.html", function() {
+    casper.start(fs.workingDirectory + "/test/files/example_persistancy.html", function() {
         
         // load page first time
         casper.evaluate(function() {
@@ -106,7 +107,6 @@ casper.test.begin("Testing example_persistancy.html", 31, function(test) {
                 test.assertEquals(queue[1].session_duration, 100);
                 test.assertEquals(queue[2].app_key, 'YOUR_APP_KEY');
                 test.assert(exists(queue[2].device_id));
-                test.assertEquals(queue[2].end_session, 1);
                 test.assert(exists(queue[2].sdk_name));
                 test.assert(exists(queue[2].sdk_version));
                 test.assertEquals(queue[2].session_duration, 0);
@@ -120,9 +120,7 @@ casper.test.begin("Testing example_persistancy.html", 31, function(test) {
     })
     .run(function() {
         setTimeout(function(){
-            casper.evaluate(function(){
-                localStorage.clear();
-            });
+            clearStorage();
         }, 3000);
     });
 });

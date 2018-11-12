@@ -17,6 +17,7 @@ script:
 - casperjs test test/tests_sync.js
 - casperjs test test/tests_async.js
 - casperjs test test/tests_helpers.js
+- casperjs test test/tests_helpers_old_session.js
 - casperjs test test/tests_gdpr.js
 - casperjs test test/tests_persistancy.js
 after_success:
