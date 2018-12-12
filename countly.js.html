@@ -231,10 +231,10 @@
             Countly.onload = Countly.onload || [];
             Countly.ignore_visitor = getConfig("ignore_visitor", ob, false);
             Countly.require_consent = getConfig("require_consent", ob, false);
-            if (ob.ignore_referrers &amp;&amp; ob.ignore_referrers.constructor === Array) {
+            if (ob.ignore_referrers &amp;&amp; Array.isArray( ob.ignore_referrers ) ) {
                 ignoreReferrers = ob.ignore_referrers;
             }
-            else if (Countly.ignore_referrers &amp;&amp; Countly.ignore_referrers.constructor === Array) {
+            else if (Countly.ignore_referrers &amp;&amp; Array.isArray( Countly.ignore_referrers ) ) {
                 ignoreReferrers = Countly.ignore_referrers;
             }
 
@@ -349,7 +349,7 @@
                     if (typeof features[i] === "string") {
                         consents[i] = { features: [features[i]] };
                     }
-                    else if (features[i] &amp;&amp; features[i].constructor === Array &amp;&amp; features[i].length) {
+                    else if (features[i] &amp;&amp; Array.isArray( features[i] ) &amp;&amp; features[i].length) {
                         consents[i] = { features: features[i] };
                     }
                     else {
@@ -406,7 +406,7 @@
     */
     Countly.add_consent = function (feature) {
         log("Adding consent for " + feature);
-        if (feature.constructor === Array) {
+        if ( Array.isArray( feature ) ) {
             for (var i = 0; i &lt; feature.length; i++) {
                 Countly.add_consent(feature[i]);
             }
@@ -454,7 +454,7 @@
     */
     Countly.remove_consent = function (feature) {
         log("Removing consent for " + feature);
-        if (feature.constructor === Array) {
+        if ( Array.isArray( feature ) ) {
             for (var i = 0; i &lt; feature.length; i++) {
                 Countly.remove_consent(feature[i]);
             }
@@ -1038,7 +1038,7 @@
     Countly.track_pageview = function (page, ignoreList) {
         reportViewDuration();
         //we got ignoreList first
-        if (page &amp;&amp; page.constructor === Array) {
+        if (page &amp;&amp; Array.isArray( page ) ) {
             ignoreList = page;
             page = null;
         }
@@ -1750,7 +1750,7 @@
                 if (typeof req === "function") {
                     req();
                 }
-                else if (req.constructor === Array &amp;&amp; req.length > 0) {
+                else if ( Array.isArray( req ) &amp;&amp; req.length > 0) {
                     if (typeof Countly[req[0]] !== "undefined") {
                         Countly[req[0]].apply(null, req.slice(1));
                     }
