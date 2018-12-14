@@ -5,6 +5,7 @@ Countly Adapter Library for Google Analytics
 (function () {
     // logs array for tests
     window.cly_ga_test_logs = [];
+    Countly.onload = Countly.onload || [];
     // adapter function
     window.CountlyGAAdapter = function () {
         // hold ga instance
@@ -25,7 +26,6 @@ Countly Adapter Library for Google Analytics
             gaCountlyArray.push(arguments);
         };
 
-        // when countly initialized
         Countly.onload.push(function () {
             // cart for ga:ecommerce plugin
             var cart = Countly._internals.store('cly_ecommerce:cart') || [];
@@ -400,7 +400,7 @@ Countly Adapter Library for Google Analytics
                 ga_countly.apply(window, args);
             }
         });
-
+            
         // check variable for gaAdapter is loaded?
         setTimeout(function check() {
             if (window.ga._signature) return setTimeout(check, 125);
