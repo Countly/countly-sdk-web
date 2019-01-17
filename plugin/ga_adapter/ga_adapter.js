@@ -30,16 +30,17 @@ Countly Adapter Library for Google Analytics
             // cart for ga:ecommerce plugin
             var cart = Countly._internals.store('cly_ecommerce:cart') || [];
             // override ga_countly and map request to countly
-            ga_countly = function (c, o, u, n, t, l, y) {
+            ga_countly = function (c, o, u, n, t, l/*, y*/) {
                 if (typeof c === "string") {
+                    var customSegments, i, count;
                     switch (c) {
                         case 'send':
                             if (typeof o === 'string') {
                                 // ga('send', 'event', ..)
                                 if (o === 'event') {
 
-                                    var customSegments = {};
-                                    var count = 1;
+                                    customSegments = {};
+                                    count = 1;
                                     // ga('send', 'event', 'category', 'action')
                                     if (arguments.length === 4) {
                                         customSegments["category"] = u;
@@ -52,7 +53,7 @@ Countly Adapter Library for Google Analytics
                                     // ga('send', 'event', 'category', 'action', {metric:value})
                                     else if (arguments.length === 5 && typeof arguments[4] === "object") {
                                         customSegments["category"] = u;
-                                        for (var i = 0; i < Object.keys(arguments[4]).length; i++) {
+                                        for (i = 0; i < Object.keys(arguments[4]).length; i++) {
                                             customSegments[Object.keys(arguments[4])[i]] = Object.values(arguments[4])[i];
                                         }
                                     }
@@ -123,7 +124,7 @@ Countly Adapter Library for Google Analytics
                                 }
                                 // ga('send', 'screenview', {..})
                                 else if (o === 'screenview') {
-                                    var customSegments = {appName: u.appName};
+                                    customSegments = {appName: u.appName};
 
                                     if (u.screenName) customSegments.screenName = u.screenName;
                                     if (u.appVersion) customSegments.appVersion = u.appVersion;
@@ -151,7 +152,7 @@ Countly Adapter Library for Google Analytics
                                 }
                                 // ga('send', 'timing', 'timingCategory', 'timingVar', 'timingValue', 'timingLabel')
                                 else if (o === 'timing') {
-                                    var customSegments = {category: u};
+                                    customSegments = {category: u};
                                     if (l) customSegments.label = l;
                                     Countly.q.push(['add_event', {
                                         "key": n,
@@ -174,10 +175,10 @@ Countly Adapter Library for Google Analytics
                                 switch (o.hitType) {
                                     // ga('send', {'hitType':'event', ..})
                                     case 'event':
-                                        var customSegments = {
+                                        customSegments = {
                                             'category': o.eventCategory
                                         }
-                                        var count = 1;
+                                        count = 1;
 
                                         if (o.eventLabel) customSegments["label"] = o.eventLabel;
                                         if (o.eventValue) count = o.eventValue;
@@ -309,7 +310,7 @@ Countly Adapter Library for Google Analytics
                             break;
                         // ga('ecommerce:addTransaction', {..})
                         case 'ecommerce:addTransaction':
-                            var customSegments = {
+                            customSegments = {
                                 "id": o.id,
                                 "affiliation": o.affiliation,
                                 "shipping": o.shipping,
@@ -337,7 +338,7 @@ Countly Adapter Library for Google Analytics
                             break;
                         // ga('ecommerce:addItem', {..})
                         case 'ecommerce:addItem':
-                            var customSegments = {
+                            customSegments = {
                                 "id": o.id,
                                 "name": o.name,
                                 "sku": o.sku,
@@ -370,7 +371,7 @@ Countly Adapter Library for Google Analytics
                             if (window.cly_ga_test_mode) {
                                 var firstLength = cart.length;
                             }
-                            for (var i = 0; i < cart.length; i++) {
+                            for (i = 0; i < cart.length; i++) {
                                 Countly.q.push(cart[i]);
                             }
                             cart = [];

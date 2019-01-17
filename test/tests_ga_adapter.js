@@ -1,11 +1,5 @@
 var fs = require("fs");
 var clearStorage = require("./utils/clearStorage.js");
-function exists(value){
-    return (typeof value !== "undefined") ? true : false;
-}
-function notEmpty(value){
-    return (value.length > 0) ? true : false;
-}
 
 casper.test.begin("Testing example_ga_adapter.html", 127, function(test) {
     var tests = [];

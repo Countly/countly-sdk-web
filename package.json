@@ -10,7 +10,9 @@
   },
   "scripts": {
     "docs": "node_modules/.bin/jsdoc lib/countly.js README.md -c jsdoc_conf.json -d docs",
-    "build": "webpack"
+    "build": "webpack",
+    "pretest": "eslint .",
+    "test": "casperjs test test/tests_*.js"
   },
   "repository": {
     "type": "git",
@@ -30,11 +32,11 @@
   "dependencies": {},
   "devDependencies": {
     "casperjs": "*",
-    "docdash": "1.0.0",
+    "docdash": "*",
+    "eslint": "*",
     "jsdoc": "*",
-    "jshint": "*",
-    "webpack": "^4.10.1",
-    "webpack-cli": "^2.1.4"
+    "webpack": "^4.28.4",
+    "webpack-cli": "^2.1.5"
   },
   "npmName": "countly-sdk-web",
   "npmFileMap": [

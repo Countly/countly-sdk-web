@@ -3,9 +3,6 @@ var clearStorage = require("./utils/clearStorage.js");
 function exists(value){
     return (typeof value !== "undefined") ? true : false;
 }
-function notEmpty(value){
-    return (value.length > 0) ? true : false;
-}
 
 /*
 * Web SDK Persistancy Test
@@ -79,7 +76,6 @@ casper.test.begin("Testing example_persistancy.html", 30, function(test) {
             })
             
             tests.push(function() {
-                var events = values.cly_event;
                 test.assertEquals(values.cly_event[0].count, 1);   
                 test.assertEquals(values.cly_event[0].key, 'homepage');
                 test.assert(exists(values.cly_event[0].dow));

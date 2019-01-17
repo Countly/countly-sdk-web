@@ -29,7 +29,6 @@ casper.test.begin("Testing example_gdpr.html", 407, function(test) {
     tests.push(function (message){
         test.assertEquals(message[0], 'Request Finished');
         var params = JSON.parse(message[1]);
-        var params = JSON.parse(message[1]);
         test.assertEquals(params.app_key, "YOUR_APP_KEY");
         test.assert(exists(params.device_id));
         test.assert(exists(params.timestamp));
@@ -626,7 +625,6 @@ casper.test.begin("Testing example_gdpr.html", 407, function(test) {
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Request Finished');
-        var params = JSON.parse(message[1]);
         var params = JSON.parse(message[1]);
         test.assertEquals(params.app_key, "YOUR_APP_KEY");
         test.assert(exists(params.device_id));

@@ -8,18 +8,6 @@ branches:
 env:
   global:
   - secure: ONfNUHKLNXeG+mqPucbNhXnw7VRmpYKJDXLxyyO1ZxyoSZLytDH9QD3xXLLKwfqVP1DfEAI26xwipGAZejvaXB5Td+a4Q+b3B0Wx0q3kYSh+oQL/CK16HrJkeAbe68hXIYTdRMzQkbwTgDlRbmJiMoNOS6tos6H5dq7V/j5ND60=
-before_script:
-- npm install
-- npm install -g casperjs
-- npm install -g jshint
-script:
-- jshint lib/countly.js
-- casperjs test test/tests_sync.js
-- casperjs test test/tests_async.js
-- casperjs test test/tests_helpers.js
-- casperjs test test/tests_helpers_old_session.js
-- casperjs test test/tests_gdpr.js
-- casperjs test test/tests_persistancy.js
 after_success:
 - cd $TRAVIS_BUILD_DIR
 - chmod +x generateDocs.sh
