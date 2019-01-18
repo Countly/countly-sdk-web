@@ -2,7 +2,7 @@ var fs = require("fs");
 function exists(value){
     return (typeof value != "undefined") ? true : false;
 }
-casper.test.begin("Testing example_helpers_old.html", 393, function(test) {
+casper.test.begin("Testing example_helpers_old.html", 387, function(test) {
     var tests = [];
     var cnt = 0;
     tests.push(function (message){
@@ -47,8 +47,6 @@ casper.test.begin("Testing example_helpers_old.html", 393, function(test) {
         test.assert(exists(params.segmentation.href));
         test.assert(exists(params.segmentation.text));
         test.assert(exists(params.segmentation.id));
-        test.assert(exists(params.segmentation.x));
-        test.assert(exists(params.segmentation.y));
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Processing request');
@@ -115,8 +113,6 @@ casper.test.begin("Testing example_helpers_old.html", 393, function(test) {
         test.assert(exists(params.events[2].segmentation.href));
         test.assert(exists(params.events[2].segmentation.text));
         test.assert(exists(params.events[2].segmentation.id));
-        test.assert(exists(params.events[2].segmentation.x));
-        test.assert(exists(params.events[2].segmentation.y));
         
     });
     tests.push(function (message){
@@ -154,8 +150,6 @@ casper.test.begin("Testing example_helpers_old.html", 393, function(test) {
         test.assert(exists(params.events[2].segmentation.href));
         test.assert(exists(params.events[2].segmentation.text));
         test.assert(exists(params.events[2].segmentation.id));
-        test.assert(exists(params.events[2].segmentation.x));
-        test.assert(exists(params.events[2].segmentation.y));
     });
     
     tests.push(function (message){

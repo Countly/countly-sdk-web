@@ -2,7 +2,7 @@ var fs = require("fs");
 function exists(value){
     return (typeof value != "undefined") ? true : false;
 }
-casper.test.begin("Testing example_gdpr.html", 407, function(test) {
+casper.test.begin("Testing example_gdpr.html", 401, function(test) {
     var tests = [];
     var cnt = 0;
     tests.push(function (message){
@@ -122,8 +122,6 @@ casper.test.begin("Testing example_gdpr.html", 407, function(test) {
         test.assert(exists(params.segmentation.href));
         test.assert(exists(params.segmentation.text));
         test.assert(exists(params.segmentation.id));
-        test.assert(exists(params.segmentation.x));
-        test.assert(exists(params.segmentation.y));
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Processing request');
@@ -158,8 +156,6 @@ casper.test.begin("Testing example_gdpr.html", 407, function(test) {
         test.assert(exists(params.events[1].segmentation.href));
         test.assert(exists(params.events[1].segmentation.text));
         test.assert(exists(params.events[1].segmentation.id));
-        test.assert(exists(params.events[1].segmentation.x));
-        test.assert(exists(params.events[1].segmentation.y));
         
     });
     tests.push(function (message){
@@ -197,8 +193,6 @@ casper.test.begin("Testing example_gdpr.html", 407, function(test) {
         test.assert(exists(params.events[1].segmentation.href));
         test.assert(exists(params.events[1].segmentation.text));
         test.assert(exists(params.events[1].segmentation.id));
-        test.assert(exists(params.events[1].segmentation.x));
-        test.assert(exists(params.events[1].segmentation.y));
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Adding event: ');
