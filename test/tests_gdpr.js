@@ -637,9 +637,9 @@ casper.test.begin("Testing example_gdpr.html", 407, function(test) {
         test.assertEquals(params.consent.events, false);
         test.assertEquals(params.consent.views, false);
     });
-    
+    casper.removeAllListeners('remote.message');
     casper.on('remote.message', function(message) {
-        this.echo(message);
+        casper.echo(message);
         tests[cnt](message.split("\n"));
         cnt++;
     });
@@ -674,7 +674,10 @@ casper.test.begin("Testing example_gdpr.html", 407, function(test) {
                             Countly.remove_consent(["activity","interaction","crashes"]);
                         }, {});
                         actionSuit(ob, function(){
-                            clearStorage();
+                            casper.clear();
+                            casper.clearCache();
+                            casper.clearMemoryCache();
+                            casper.open(fs.workingDirectory+"/test/files/clear.html", function() {});
                             test.done();
                         });
                     });

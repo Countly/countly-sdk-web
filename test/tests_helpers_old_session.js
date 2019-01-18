@@ -3,7 +3,7 @@ var clearStorage = require("./utils/clearStorage.js");
 function exists(value){
     return (typeof value != "undefined") ? true : false;
 }
-casper.test.begin("Testing example_helpers_old.html", 385, function(test) {
+casper.test.begin("Testing example_helpers_old.html", 393, function(test) {
     var tests = [];
     var cnt = 0;
     tests.push(function (message){
@@ -565,6 +565,20 @@ casper.test.begin("Testing example_helpers_old.html", 385, function(test) {
         test.assert(exists(params.hour));
         test.assert(exists(params.dow));
     });
+    tests.push(function (message){
+        test.assertEquals(message[0], 'Adding event: ');
+        var params = JSON.parse(message[1]);
+        test.assertEquals(params.key, "[CLY]_view");
+        test.assertEquals(params.dur, 65);
+        test.assert(exists(params.segmentation));
+        test.assert(exists(params.segmentation.name));
+        test.assert(!exists(params.segmentation.visit));
+        test.assertEquals(params.count, 1);
+    });
+    tests.push(function (message){
+        test.assertEquals(message[0], 'Ending session');
+    });
+    casper.removeAllListeners('remote.message');
     casper.on('remote.message', function(message) {
         this.echo(message);
         tests[cnt](message.split("\n"));
@@ -582,7 +596,10 @@ casper.test.begin("Testing example_helpers_old.html", 385, function(test) {
         }, 70000);
     }).run(function() {
         setTimeout(function(){
-            clearStorage();
+            casper.clear();
+            casper.clearCache();
+            casper.clearMemoryCache();
+            casper.open(fs.workingDirectory+"/test/files/clear.html", function() {});
             test.done();
         }, 95000);
     });

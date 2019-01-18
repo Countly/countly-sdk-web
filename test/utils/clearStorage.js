@@ -22,11 +22,6 @@ module.exports = function clearStorage(domain) {
     }
     
     if(fs.exists(localstoragePath + localStorageFilename)) {
-        fs.remove(localstoragePath + localStorageFilename, function(err) {
-            if (err) {
-                casper.echo(err);
-            }
-            casper.echo("File deleted successfully!");
-        });
+        fs.remove(localstoragePath + localStorageFilename, function(){});
     }
 }

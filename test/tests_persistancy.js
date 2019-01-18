@@ -12,6 +12,7 @@ function exists(value){
 casper.test.begin("Testing example_persistancy.html", 30, function(test) {
     
     // Print console logs from casper
+    casper.removeAllListeners('remote.message');
     casper.on('remote.message', function(message) {
         this.echo(message);
     });
@@ -110,13 +111,16 @@ casper.test.begin("Testing example_persistancy.html", 30, function(test) {
 
             for(var i = 0; i < tests.length; i++) {
                 tests[i]();
-                if (i === (tests.length - 1)) test.done();
             }
         });
     })
     .run(function() {
         setTimeout(function(){
-            clearStorage();
+            casper.clear();
+            casper.clearCache();
+            casper.clearMemoryCache();
+            casper.open(fs.workingDirectory+"/test/files/clear.html", function() {});
+            test.done();
         }, 3000);
     });
 });
