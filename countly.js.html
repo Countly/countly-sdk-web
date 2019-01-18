@@ -36,7 +36,7 @@
 
 <label for="nav-trigger" class="overlay"></label>
 
-<nav>
+<nav >
     
     <input type="text" id="nav-search" placeholder="Search" />
     
@@ -100,11 +100,11 @@
  */
 (function (root, factory) {
     if(typeof define === "function" &amp;&amp; define.amd) {
-      define([], function(){ return factory(root.Countly);});
+        define([], function(){ return factory(root.Countly);});
     } else if(typeof module === "object" &amp;&amp; module.exports) {
-      module.exports = factory(root.Countly);
+        module.exports = factory(root.Countly);
     } else {
-      root.Countly = factory(root.Countly);
+        root.Countly = factory(root.Countly);
     }
 }(typeof window !== "undefined" ? window : this, function (Countly) {
     "use strict";
@@ -342,9 +342,7 @@
     */
     Countly.group_features = function (features) {
         if (features) {
-            var ob;
             for (var i in features) {
-                ob = {};
                 if (!consents[i]) {
                     if (typeof features[i] === "string") {
                         consents[i] = { features: [features[i]] };
@@ -778,7 +776,7 @@
         * @param {string|number} value - value to store under provided property
         **/
         set_once: function (key, value) {
-            change_custom_property(key, 1, "$setOnce");
+            change_custom_property(key, value, "$setOnce");
         },
         /**
         * Increment value under the key of this user's custom properties by one
@@ -890,7 +888,9 @@
                         f = f.caller;
                     }
                     error += stack.join("\n");
-                } catch (ex) { }
+                } catch (ex) { 
+                    //silent error
+                }
                 recordError(error, false);
             }
         };
@@ -1060,7 +1060,8 @@
         var segments = {
             "name": page,
             "visit": 1,
-            "domain": window.location.hostname
+            "domain": window.location.hostname,
+            "view": window.location.pathname
         };
 
         if (typeof document.referrer !== "undefined" &amp;&amp; document.referrer.length) {
@@ -1141,11 +1142,11 @@
         var shouldProcess = true;
         var scrollY = 0;
 
-        function processScroll(event) {
+        function processScroll() {
             scrollY = Math.max(scrollY, window.scrollY, document.body.scrollTop, document.documentElement.scrollTop);
         }
 
-        function processScrollView(e) {
+        function processScrollView() {
             if (shouldProcess) {
                 shouldProcess = false;
                 var height = getDocHeight();
@@ -1907,7 +1908,7 @@
             if (arguments[1] &amp;&amp; typeof arguments[1] == "object") {
                 arguments[1] = JSON.stringify(arguments[1]);
             }
-            
+            // eslint-disable-next-line no-console
             console.log(Array.prototype.slice.call(arguments).join("\n"));
         }
     }
@@ -2001,7 +2002,9 @@
                 var gl = canvas.getContext("experimental-webgl");
                 ob._opengl = gl.getParameter(gl.VERSION);
             }
-            catch (ex) {}
+            catch (ex) {
+                //silent error
+            }
 
             toRequestQueue({ crash: JSON.stringify(ob) });
         }
@@ -2011,7 +2014,7 @@
     function sendXmlHttpRequest(url, params, callback) {
         try {
             log("Sending XML HTTP request");
-            var xhr = window.XMLHttpRequest ? new window.XMLHttpRequest() : window.ActiveXObject ? new ActiveXObject("Microsoft.XMLHTTP") : null;
+            var xhr = window.XMLHttpRequest ? new window.XMLHttpRequest() : window.ActiveXObject ? new window.ActiveXObject("Microsoft.XMLHTTP") : null;
             params = params || {};
             var data = prepareParams(params);
             var method = "GET";
