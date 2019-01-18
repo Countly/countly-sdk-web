@@ -1,5 +1,4 @@
 var fs = require("fs");
-var clearStorage = require("./utils/clearStorage.js");
 
 casper.test.begin("Testing example_ga_adapter.html", 127, function(test) {
     var tests = [];
@@ -7,7 +6,7 @@ casper.test.begin("Testing example_ga_adapter.html", 127, function(test) {
         setTimeout(function(){
             var test_logs = casper.evaluate(function() {
                 return window.cly_ga_test_logs;
-            })
+            });
     
             // test create with ga-id
             tests.push(function(){
@@ -26,9 +25,9 @@ casper.test.begin("Testing example_ga_adapter.html", 127, function(test) {
     
             // test pageview with passed page parameter
             tests.push(function(){
-            test.assertEquals(test_logs[3][0], "track_pageview");
-            test.assertEquals(test_logs[3][1], "test-page.html");
-            })
+                test.assertEquals(test_logs[3][0], "track_pageview");
+                test.assertEquals(test_logs[3][1], "test-page.html");
+            });
     
             // test pageview with custom dimension
             tests.push(function(){
@@ -152,77 +151,77 @@ casper.test.begin("Testing example_ga_adapter.html", 127, function(test) {
     
             // test set custom data as object
             tests.push(function(){
-            test.assertEquals(test_logs[19][0], "user_details");
-            test.assertEquals(test_logs[19][1].custom.key, "value");
-            test.assertEquals(test_logs[19][1].custom.anotherKey, "anotherValue");
+                test.assertEquals(test_logs[19][0], "user_details");
+                test.assertEquals(test_logs[19][1].custom.key, "value");
+                test.assertEquals(test_logs[19][1].custom.anotherKey, "anotherValue");
             });
     
             // test add transaction 
             tests.push(function(){
-            test.assertEquals(test_logs[20][0], "add_event");
-            test.assertEquals(test_logs[20][1].count, 1);
-            test.assertEquals(test_logs[20][1].key, "ecommerce:addTransaction");
-            test.assertEquals(test_logs[20][1].segmentation.affiliation, "Acme Clothing");
-            test.assertEquals(test_logs[20][1].segmentation.id, "1234");
-            test.assertEquals(test_logs[20][1].segmentation.shipping, "5");
-            test.assertEquals(test_logs[20][1].segmentation.tax, "1.29");
-            test.assertEquals(test_logs[20][1].sum, "11.99");
+                test.assertEquals(test_logs[20][0], "add_event");
+                test.assertEquals(test_logs[20][1].count, 1);
+                test.assertEquals(test_logs[20][1].key, "ecommerce:addTransaction");
+                test.assertEquals(test_logs[20][1].segmentation.affiliation, "Acme Clothing");
+                test.assertEquals(test_logs[20][1].segmentation.id, "1234");
+                test.assertEquals(test_logs[20][1].segmentation.shipping, "5");
+                test.assertEquals(test_logs[20][1].segmentation.tax, "1.29");
+                test.assertEquals(test_logs[20][1].sum, "11.99");
             });
     
             // test add transaction with currency
             tests.push(function(){
-            test.assertEquals(test_logs[21][0], "add_event");
-            test.assertEquals(test_logs[21][1].count, 1);
-            test.assertEquals(test_logs[21][1].key, "ecommerce:addTransaction");
-            test.assertEquals(test_logs[21][1].segmentation.affiliation, "Acme Clothing");
-            test.assertEquals(test_logs[21][1].segmentation.id, "1234");
-            test.assertEquals(test_logs[21][1].segmentation.shipping, "5");
-            test.assertEquals(test_logs[21][1].segmentation.tax, "1.29");
-            test.assertEquals(test_logs[21][1].sum, "11.99");
-            test.assertEquals(test_logs[21][1].segmentation.currency, "EUR");
+                test.assertEquals(test_logs[21][0], "add_event");
+                test.assertEquals(test_logs[21][1].count, 1);
+                test.assertEquals(test_logs[21][1].key, "ecommerce:addTransaction");
+                test.assertEquals(test_logs[21][1].segmentation.affiliation, "Acme Clothing");
+                test.assertEquals(test_logs[21][1].segmentation.id, "1234");
+                test.assertEquals(test_logs[21][1].segmentation.shipping, "5");
+                test.assertEquals(test_logs[21][1].segmentation.tax, "1.29");
+                test.assertEquals(test_logs[21][1].sum, "11.99");
+                test.assertEquals(test_logs[21][1].segmentation.currency, "EUR");
             });
     
             // test add item without currency
             tests.push(function(){
-            test.assertEquals(test_logs[22][0], "add_event");
-            test.assertEquals(test_logs[22][1].count, "5");
-            test.assertEquals(test_logs[22][1].key, "ecommerce:addItem");
-            test.assertEquals(test_logs[22][1].segmentation.category, "Party Toys");
-            test.assertEquals(test_logs[22][1].segmentation.id, "1234");
-            test.assertEquals(test_logs[22][1].segmentation.name, "Fluffy Pink Bunnies");
-            test.assertEquals(test_logs[22][1].segmentation.sku, "DD23444");
-            test.assertEquals(test_logs[22][1].sum, "11.99");
+                test.assertEquals(test_logs[22][0], "add_event");
+                test.assertEquals(test_logs[22][1].count, "5");
+                test.assertEquals(test_logs[22][1].key, "ecommerce:addItem");
+                test.assertEquals(test_logs[22][1].segmentation.category, "Party Toys");
+                test.assertEquals(test_logs[22][1].segmentation.id, "1234");
+                test.assertEquals(test_logs[22][1].segmentation.name, "Fluffy Pink Bunnies");
+                test.assertEquals(test_logs[22][1].segmentation.sku, "DD23444");
+                test.assertEquals(test_logs[22][1].sum, "11.99");
             });
     
             // test add item without currency
             tests.push(function(){
-            test.assertEquals(test_logs[23][0], "add_event");
-            test.assertEquals(test_logs[23][1].count, "5");
-            test.assertEquals(test_logs[23][1].key, "ecommerce:addItem");
-            test.assertEquals(test_logs[23][1].segmentation.category, "Party Toys");
-            test.assertEquals(test_logs[23][1].segmentation.id, "1234");
-            test.assertEquals(test_logs[23][1].segmentation.name, "Fluffy Pink Bunnies");
-            test.assertEquals(test_logs[23][1].segmentation.sku, "DD23444");
-            test.assertEquals(test_logs[23][1].sum, "11.99");
-            test.assertEquals(test_logs[23][1].segmentation.currency, "GBP");
+                test.assertEquals(test_logs[23][0], "add_event");
+                test.assertEquals(test_logs[23][1].count, "5");
+                test.assertEquals(test_logs[23][1].key, "ecommerce:addItem");
+                test.assertEquals(test_logs[23][1].segmentation.category, "Party Toys");
+                test.assertEquals(test_logs[23][1].segmentation.id, "1234");
+                test.assertEquals(test_logs[23][1].segmentation.name, "Fluffy Pink Bunnies");
+                test.assertEquals(test_logs[23][1].segmentation.sku, "DD23444");
+                test.assertEquals(test_logs[23][1].sum, "11.99");
+                test.assertEquals(test_logs[23][1].segmentation.currency, "GBP");
             });
     
             // test ecommerce:clear
             tests.push(function(){
-            test.assertEquals(test_logs[24].length, 0);
+                test.assertEquals(test_logs[24].length, 0);
             });
     
             // test add item without currency
             tests.push(function(){
-            test.assertEquals(test_logs[25][0], "add_event");
-            test.assertEquals(test_logs[25][1].count, "5");
-            test.assertEquals(test_logs[25][1].key, "ecommerce:addItem");
-            test.assertEquals(test_logs[25][1].segmentation.category, "Party Toys");
-            test.assertEquals(test_logs[25][1].segmentation.id, "1234");
-            test.assertEquals(test_logs[25][1].segmentation.name, "Fluffy Pink Bunnies");
-            test.assertEquals(test_logs[25][1].segmentation.sku, "DD23444");
-            test.assertEquals(test_logs[25][1].sum, "11.99");
-            test.assertEquals(test_logs[25][1].segmentation.currency, "GBP");
+                test.assertEquals(test_logs[25][0], "add_event");
+                test.assertEquals(test_logs[25][1].count, "5");
+                test.assertEquals(test_logs[25][1].key, "ecommerce:addItem");
+                test.assertEquals(test_logs[25][1].segmentation.category, "Party Toys");
+                test.assertEquals(test_logs[25][1].segmentation.id, "1234");
+                test.assertEquals(test_logs[25][1].segmentation.name, "Fluffy Pink Bunnies");
+                test.assertEquals(test_logs[25][1].segmentation.sku, "DD23444");
+                test.assertEquals(test_logs[25][1].sum, "11.99");
+                test.assertEquals(test_logs[25][1].segmentation.currency, "GBP");
             });
     
             // test ecommerce:send 
@@ -262,13 +261,13 @@ casper.test.begin("Testing example_ga_adapter.html", 127, function(test) {
             }
         },1000);
     })
-    .run(function() {
-        setTimeout(function(){
-            casper.clear();
-            casper.clearCache();
-            casper.clearMemoryCache();
-            casper.open(fs.workingDirectory+"/test/files/clear.html", function() {});
-            test.done();
-        }, 3000);
-    });
+        .run(function() {
+            setTimeout(function(){
+                casper.clear();
+                casper.clearCache();
+                casper.clearMemoryCache();
+                casper.open(fs.workingDirectory+"/test/files/clear.html", function() {});
+                test.done();
+            }, 3000);
+        });
 });

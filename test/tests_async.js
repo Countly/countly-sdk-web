@@ -1,5 +1,4 @@
 var fs = require("fs");
-var clearStorage = require("./utils/clearStorage.js");
 function exists(value){
     return (typeof value != "undefined") ? true : false;
 }
@@ -25,7 +24,7 @@ casper.test.begin("Testing example_async.html", 117, function(test) {
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Processing queued call');
-        var params = JSON.parse(message[1])
+        var params = JSON.parse(message[1]);
         test.assertEquals(params[0], "track_pageview");
     });
     tests.push(function (message){
@@ -104,7 +103,7 @@ casper.test.begin("Testing example_async.html", 117, function(test) {
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Processing queued call');
-        var params = JSON.parse(message[1])
+        var params = JSON.parse(message[1]);
         test.assertEquals(params[0], "add_event");
         test.assertEquals(params[1].key, "buttonClick");
         test.assert(exists(params[1].segmentation));
@@ -200,7 +199,7 @@ casper.test.begin("Testing example_async.html", 117, function(test) {
     casper.start(fs.workingDirectory+"/examples/example_async.html", function() {
         var self = this;
         setTimeout(function(){
-           self.click('input'); 
+            self.click('input'); 
         }, 1000);
     }).run(function() {
         setTimeout(function(){

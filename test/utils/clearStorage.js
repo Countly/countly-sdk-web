@@ -24,4 +24,4 @@ module.exports = function clearStorage(domain) {
     if(fs.exists(localstoragePath + localStorageFilename)) {
         fs.remove(localstoragePath + localStorageFilename, function(){});
     }
-}
+};

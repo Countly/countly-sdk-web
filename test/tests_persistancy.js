@@ -1,5 +1,4 @@
 var fs = require("fs");
-var clearStorage = require("./utils/clearStorage.js");
 function exists(value){
     return (typeof value !== "undefined") ? true : false;
 }
@@ -74,7 +73,7 @@ casper.test.begin("Testing example_persistancy.html", 30, function(test) {
 
             tests.push(function() {
                 test.assertEquals(values.cly_ignore, false);    
-            })
+            });
             
             tests.push(function() {
                 test.assertEquals(values.cly_event[0].count, 1);   
@@ -82,7 +81,7 @@ casper.test.begin("Testing example_persistancy.html", 30, function(test) {
                 test.assert(exists(values.cly_event[0].dow));
                 test.assert(exists(values.cly_event[0].hour));
                 test.assert(exists(values.cly_event[0].timestamp));
-            })
+            });
             
             tests.push(function() {
                 var queue = values.cly_queue;
@@ -114,13 +113,13 @@ casper.test.begin("Testing example_persistancy.html", 30, function(test) {
             }
         });
     })
-    .run(function() {
-        setTimeout(function(){
-            casper.clear();
-            casper.clearCache();
-            casper.clearMemoryCache();
-            casper.open(fs.workingDirectory+"/test/files/clear.html", function() {});
-            test.done();
-        }, 3000);
-    });
+        .run(function() {
+            setTimeout(function(){
+                casper.clear();
+                casper.clearCache();
+                casper.clearMemoryCache();
+                casper.open(fs.workingDirectory+"/test/files/clear.html", function() {});
+                test.done();
+            }, 3000);
+        });
 });

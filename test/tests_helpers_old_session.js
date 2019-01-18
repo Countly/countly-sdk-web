@@ -1,5 +1,4 @@
 var fs = require("fs");
-var clearStorage = require("./utils/clearStorage.js");
 function exists(value){
     return (typeof value != "undefined") ? true : false;
 }
