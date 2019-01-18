@@ -420,4 +420,4 @@ Countly Adapter Library for Google Analytics
             };
         }, 125);
     };
-})();
+}());
