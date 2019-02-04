@@ -1042,7 +1042,14 @@
             ignoreList = page;
             page = null;
         }
-        page = page || window.location.pathname;
+        if (!page) {
+            if (Countly.getViewName) {
+                page = Countly.getViewName();
+            }
+            else {
+                page = window.location.pathname;
+            }
+        }
         if (ignoreList &amp;&amp; ignoreList.length) {
             for (var i = 0; i &lt; ignoreList.length; i++) {
                 try {
@@ -1061,7 +1068,7 @@
             "name": page,
             "visit": 1,
             "domain": window.location.hostname,
-            "view": window.location.pathname
+            "view": (Countly.getViewUrl) ? Countly.getViewUrl() : window.location.pathname
         };
 
         if (typeof document.referrer !== "undefined" &amp;&amp; document.referrer.length) {
@@ -1121,7 +1128,7 @@
                                 "width": width,
                                 "height": height,
                                 "domain": window.location.hostname,
-                                "view": window.location.pathname
+                                "view": (Countly.getViewUrl) ? Countly.getViewUrl() : window.location.pathname
                             }
                         });
                     }
@@ -1163,7 +1170,7 @@
                             "width": width,
                             "height": height,
                             "domain": window.location.hostname,
-                            "view": window.location.pathname
+                            "view": (Countly.getViewUrl) ? Countly.getViewUrl() : window.location.pathname
                         }
                     });
                 }
@@ -1198,7 +1205,7 @@
                             "href": elem.href,
                             "text": elem.innerText,
                             "id": elem.id,
-                            "view": window.location.pathname
+                            "view": (Countly.getViewUrl) ? Countly.getViewUrl() : window.location.pathname
                         }
                     });
                 }
@@ -1226,7 +1233,7 @@
                 "name": form.name,
                 "action": form.action,
                 "method": form.method,
-                "view": window.location.pathname
+                "view": (Countly.getViewUrl) ? Countly.getViewUrl() : window.location.pathname
             };
 
             //get input values
