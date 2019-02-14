@@ -1,0 +1,38 @@
+<html>
+<head>
+<input type="button" onclick="reloadConfig()" value="Reload Config">
+<input type="button" onclick="getConfig()" value="Get Config">
+<input type="button" onclick="getConfig('test')" value="Get config for key Test">
+<p><a href='http://count.ly/'>Count.ly</a></p>
+<!--Countly script-->
+<script type='text/javascript' src='../lib/countly.js'></script>
+<script type='text/javascript'>
+
+//initializing countly with params and remote config
+Countly.init({
+	app_key: "YOUR_APP_KEY",
+	url: "https://try.count.ly", //your server goes here
+	debug:true,
+    remote_config: function(err, configs){
+        //handle initial remote configs here
+        console.log(err, configs);
+    }
+})
+</script>
+</head>
+<body>
+<script type='text/javascript'>
+//reload configs
+function reloadConfig(ob){
+	Countly.fetch_remote_config(function(err, config){
+        alert(JSON.stringify(config));
+    });
+}
+
+//get config
+function getConfig(key){
+	alert(JSON.stringify(Countly.get_remote_config(key)));
+}
+</script>
+</body>
+</html>
