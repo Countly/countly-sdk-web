@@ -1,6 +1,6 @@
 {
   "name": "countly-sdk-web",
-  "version": "18.11.0",
+  "version": "19.2.0",
   "description": "Countly Web SDK",
   "main": "lib/countly.js",
   "moduleType": "globals",
