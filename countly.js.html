@@ -1638,11 +1638,16 @@
                         var target_devices = widgets[i].target_devices;
                         var currentDevice = detect_device.device;
                         if (target_devices[currentDevice]) {
-                            var pages = widgets[i].target_pages;
-                            for (var k = 0; k &lt; pages.length; k++) {
-                                widgets[i].hide_sticker = widgets[i].hide_sticker === "true" ? true : false;
-                                if (pages[k] === window.location.pathname &amp;&amp; !widgets[i].hide_sticker) {
-                                    processWidget(widgets[i], true);
+                            if (widgets[i].target_page === "all" &amp;&amp; !widgets[i].hide_sticker) {
+                                processWidget(widgets[i], true);
+                            } else {
+                                var pages = widgets[i].target_pages;
+                                for (var k = 0; k &lt; pages.length; k++) {
+                                    widgets[i].hide_sticker = widgets[i].hide_sticker === "true" ? true : false;
+                                    if (pages[k] === window.location.pathname &amp;&amp; !widgets[i].hide_sticker) {
+                                        processWidget(widgets[i], true);
+                                        break;
+                                    }
                                 }
                             }
                         }
