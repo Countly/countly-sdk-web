@@ -1623,7 +1623,7 @@
         var enableWidgets = params.popups || params.widgets;
 
         if (enableWidgets.length > 0) {
-            document.body.innerHTML += '&lt;div id="cfbg">&lt;/div>';
+            document.body.insertAdjacentHTML('beforeend', '&lt;div id="cfbg">&lt;/div>');
 
             sendXmlHttpRequest(Countly.url + '/o/feedback/multiple-widgets-by-id', {widgets:JSON.stringify(enableWidgets)}, function(err, params, responseText){
                 if(err){
