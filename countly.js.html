@@ -194,6 +194,7 @@
      * @param {boolean} [conf.use_session_cookie=true] - Use cookie to track session
      * @param {number} [conf.session_cookie_timeout=30] - How long till cookie session should expire in minutes
      * @param {boolean|function} [conf.remote_config=false] - Enable automatic remote config fetching, provide callback function to be notified when fetching done
+     * @param {string=} [conf.namespace=""] - Have separate namespace of of persistant data
      * @example
      * Countly.init({
      *   //provide your app key that you retrieved from Countly dashboard
@@ -204,13 +205,14 @@
      */
     Countly.init = function (ob) {
         if (!inited) {
+            ob = ob || {};
+            Countly.namespace = getConfig("namespace", ob, "");
             startTime = getTimestamp();
             inited = true;
             requestQueue = store("cly_queue") || [];
             timedEvents = {};
             eventQueue = store("cly_event") || [];
             remoteConfigs = store("cly_remote_configs") || {};
-            ob = ob || {};
             beatInterval = getConfig("interval", ob, beatInterval);
             queueSize = getConfig("queue_size", ob, queueSize);
             failTimeoutAmount = getConfig("fail_timeout", ob, failTimeoutAmount);
@@ -2297,7 +2299,7 @@
     function hasAnyProperties(ob) {
         if (ob) {
             for (var prop in ob) {
-                if(ob.hasOwnProperty(prop))
+                if(Object.prototype.hasOwnProperty.call(ob, prop))
                 {return true;}
             }
         }
@@ -2321,6 +2323,8 @@
     */
 
     var store = function store(key, value, storageOnly) {
+        //apply namespace
+        key = Countly.namespace + key;
         storageOnly = storageOnly || false;
         var lsSupport = false,
             data;
