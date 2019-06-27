@@ -2,7 +2,6 @@
 /*
 Countly Adapter Library for Google Analytics
 */
-/*global Countly*/
 (function () {
     // logs array for tests
     window.cly_ga_test_logs = [];
