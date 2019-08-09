@@ -146,6 +146,7 @@
         readyToProcess = true,
         platform,
         hasPulse = false,
+        offlineMode = false,
         syncConsents = {},
         lastParams = {},
         urlParseRE = /^(((([^:\/#\?]+:)?(?:(\/\/)((?:(([^:@\/#\?]+)(?:\:([^:@\/#\?]+))?)@)?(([^:\/#\?\]\[]+|\[[^\/\]@#?]+\])(?:\:([0-9]+))?))?)?)?((\/?(?:[^\/\?#]+\/+)*)([^\?#]*)))?(\?[^#]+)?)(#.*)?/,
@@ -215,6 +216,7 @@
             remoteConfigs = store("cly_remote_configs") || {};
             beatInterval = getConfig("interval", ob, beatInterval);
             queueSize = getConfig("queue_size", ob, queueSize);
+            offlineMode = getConfig("offline_mode", ob, offlineMode);
             failTimeoutAmount = getConfig("fail_timeout", ob, failTimeoutAmount);
             inactivityTime = getConfig("inactivity_time", ob, inactivityTime);
             sessionUpdate = getConfig("session_update", ob, sessionUpdate);
@@ -226,7 +228,12 @@
             Countly.debug = getConfig("debug", ob, false);
             Countly.app_key = getConfig("app_key", ob, null);
             Countly.test_mode = getConfig("test_mode", ob, false);
-            Countly.device_id = getConfig("device_id", ob, getId());
+            if (!offlineMode) {
+                Countly.device_id = getConfig("device_id", ob, getId());
+            }
+            else if (!Countly.device_id) {
+                Countly.device_id = "[CLY]_temp_id";
+            }
             Countly.url = stripTrailingSlash(getConfig("url", ob, ""));
             Countly.app_version = getConfig("app_version", ob, "0.0");
             Countly.country_code = getConfig("country_code", ob, null);
@@ -293,8 +300,6 @@
                     Countly.q = [];
                 }
                 
-                heartBeat();
-                store("cly_id", Countly.device_id);
                 var i = 0;
                 Countly.utm = Countly.utm || {"source":true, "medium":true, "campaign":true, "term":true, "content":true};
                 
@@ -309,6 +314,9 @@
                         }
                         else if (nv[0] === "cly_uid") {
                             store("cly_cmp_uid", nv[1]);
+                        }
+                        else if (nv[0] === "cly_device_id") {
+                            Countly.device_id = nv[1];
                         }
                         else if((nv[0]+"").indexOf("utm_") === 0 &amp;&amp; Countly.utm[nv[0].replace("utm_", "")]){
                             utms[nv[0].replace("utm_", "")] = nv[1];
@@ -327,6 +335,13 @@
                         Countly.userData.save();
                     }
                 }
+                
+                if (!offlineMode) {
+                    if (Countly.device_id !== store("cly_id")) {
+                        store("cly_id", Countly.device_id);
+                    }
+                }
+                heartBeat();
 
                 notifyLoaders();
                 
@@ -503,6 +518,38 @@
                 syncConsents = {};
             }
         }, 1000);
+    };
+    
+    Countly.enable_offline_mode = function(){
+        offlineMode = true;
+        Countly.device_id = "[CLY]_temp_id";
+    };
+    
+    Countly.disable_offline_mode = function(device_id){
+        offlineMode = false;
+        if (device_id &amp;&amp; Countly.device_id !== device_id) {
+            Countly.device_id = device_id;
+            store("cly_id", Countly.device_id);
+            log("Changing id");
+        }
+        else {
+            Countly.device_id = getId();
+            if (Countly.device_id !== store("cly_id")) {
+                store("cly_id", Countly.device_id);
+            }
+        }
+        var needResync = false;
+        if (requestQueue.length > 0) {
+            for (var i = 0; i &lt; requestQueue.length; i++) {
+                if (requestQueue[i].device_id === "[CLY]_temp_id") {
+                    requestQueue[i].device_id = Countly.device_id;
+                    needResync = true;
+                }
+            }
+        }
+        if (needResync) {
+            store("cly_queue", requestQueue, true);
+        }
     };
 
     /**
@@ -1594,19 +1641,23 @@
     * @param {string} id - id value of related feedback widget, you can get this value by click "Copy ID" button in row menu at "Feedback widgets" screen
     */
     Countly.show_feedback_popup = function(id) {
-        // define xhr object
-        sendXmlHttpRequest(Countly.url+ '/o/feedback/widget', {widget_id:id}, function(err, params, responseText){
-            if(err){
-                log("Error occurred", err);
-            }
-            try {
-                // widget object
-                var currentWidget = JSON.parse(responseText);     
-                processWidget(currentWidget, false);   
-            } catch (JSONParseError) {
-                log("JSON parse failed: " + JSONParseError);
-            }
-        });
+        if (offlineMode) {
+            log("Cannot show feedback popup in offline mode");
+        }
+        else {
+            sendXmlHttpRequest(Countly.url+ '/o/feedback/widget', {widget_id:id}, function(err, params, responseText){
+                if(err){
+                    log("Error occurred", err);
+                }
+                try {
+                    // widget object
+                    var currentWidget = JSON.parse(responseText);     
+                    processWidget(currentWidget, false);   
+                } catch (JSONParseError) {
+                    log("JSON parse failed: " + JSONParseError);
+                }
+            });
+        }
     };
     
     /**
@@ -1615,53 +1666,58 @@
     * example configuration: {"popups":["5b21581b967c4850a7818617"]}
     **/
     Countly.enable_feedback = function(params){
-        // inject feedback styles
-        loadCSS(Countly.url + '/star-rating/stylesheets/countly-feedback-web.css');
-        // get enable widgets by app_key
-        // define xhr object
-        var enableWidgets = params.popups || params.widgets;
-
-        if (enableWidgets.length > 0) {
-            document.body.insertAdjacentHTML('beforeend', '&lt;div id="cfbg">&lt;/div>');
-
-            sendXmlHttpRequest(Countly.url + '/o/feedback/multiple-widgets-by-id', {widgets:JSON.stringify(enableWidgets)}, function(err, params, responseText){
-                if(err){
-                    log("Errors occurred:", err);
-                }
-                try {
-                    // widgets array
-                    var widgets = JSON.parse(responseText);    
-                    for (var i = 0; i &lt; widgets.length; i++) {
-                        if (widgets[i].is_active === "true") {
-                            var target_devices = widgets[i].target_devices;
-                            var currentDevice = detect_device.device;
-                            // device match check
-                            if (target_devices[currentDevice]) {
-                                // is hide sticker option selected?
-                                widgets[i].hide_sticker = widgets[i].hide_sticker === "true" ? true : false;
-                                // is target_page option provided as "All"?
-                                if (widgets[i].target_page === "all" &amp;&amp; !widgets[i].hide_sticker) {
-                                    processWidget(widgets[i], true);
-                                }
-                                // is target_page option provided as "selected"?
-                                else {
-                                    var pages = widgets[i].target_pages;
-                                    for (var k = 0; k &lt; pages.length; k++) {
-                                        if (pages[k] === window.location.pathname &amp;&amp; !widgets[i].hide_sticker) {
-                                            processWidget(widgets[i], true);
-                                        }
-                                    }    
+        if (offlineMode) {
+            log("Cannot enable feedback in offline mode");
+        }
+        else {
+            // inject feedback styles
+            loadCSS(Countly.url + '/star-rating/stylesheets/countly-feedback-web.css');
+            // get enable widgets by app_key
+            // define xhr object
+            var enableWidgets = params.popups || params.widgets;
+    
+            if (enableWidgets.length > 0) {
+                document.body.insertAdjacentHTML('beforeend', '&lt;div id="cfbg">&lt;/div>');
+    
+                sendXmlHttpRequest(Countly.url + '/o/feedback/multiple-widgets-by-id', {widgets:JSON.stringify(enableWidgets)}, function(err, params, responseText){
+                    if(err){
+                        log("Errors occurred:", err);
+                    }
+                    try {
+                        // widgets array
+                        var widgets = JSON.parse(responseText);    
+                        for (var i = 0; i &lt; widgets.length; i++) {
+                            if (widgets[i].is_active === "true") {
+                                var target_devices = widgets[i].target_devices;
+                                var currentDevice = detect_device.device;
+                                // device match check
+                                if (target_devices[currentDevice]) {
+                                    // is hide sticker option selected?
+                                    widgets[i].hide_sticker = widgets[i].hide_sticker === "true" ? true : false;
+                                    // is target_page option provided as "All"?
+                                    if (widgets[i].target_page === "all" &amp;&amp; !widgets[i].hide_sticker) {
+                                        processWidget(widgets[i], true);
+                                    }
+                                    // is target_page option provided as "selected"?
+                                    else {
+                                        var pages = widgets[i].target_pages;
+                                        for (var k = 0; k &lt; pages.length; k++) {
+                                            if (pages[k] === window.location.pathname &amp;&amp; !widgets[i].hide_sticker) {
+                                                processWidget(widgets[i], true);
+                                            }
+                                        }    
+                                    }
                                 }
                             }
-                        }
-                    }   
-                    
-                } catch (JSONParseError) {
-                    log("JSON parse error: " + JSONParseError);
-                }
-            });
-        } else {
-            log("You should provide at least one widget id as param. Read documentation for more detail. https://resources.count.ly/plugins/feedback");
+                        }   
+                        
+                    } catch (JSONParseError) {
+                        log("JSON parse error: " + JSONParseError);
+                    }
+                });
+            } else {
+                log("You should provide at least one widget id as param. Read documentation for more detail. https://resources.count.ly/plugins/feedback");
+            }
         }
     };
     
@@ -1843,6 +1899,8 @@
 
     //heart beat
     function heartBeat() {
+        notifyLoaders();
+        
         //ignore bots
         if (Countly.test_mode || Countly.ignore_visitor) {
             hasPulse = false;
@@ -1850,7 +1908,6 @@
         }
 
         hasPulse = true;
-        notifyLoaders();
         var i = 0;
         //process queue
         if (typeof Countly.q !== "undefined" &amp;&amp; Countly.q.length > 0) {
@@ -1900,7 +1957,7 @@
         }
 
         //process request queue with event queue
-        if (requestQueue.length > 0 &amp;&amp; readyToProcess &amp;&amp; getTimestamp() > failTimeout) {
+        if (!offlineMode &amp;&amp; requestQueue.length > 0 &amp;&amp; readyToProcess &amp;&amp; getTimestamp() > failTimeout) {
             readyToProcess = false;
             var params = requestQueue.shift();
             //check if any consent to sync
@@ -1913,6 +1970,7 @@
                 syncConsents = {};
             }
             log("Processing request", params);
+            store("cly_queue", requestQueue, true);
             sendXmlHttpRequest(Countly.url + apiPath, params, function(err, params){
                 log("Request Finished", params, err);
                 if (err) {
@@ -1941,6 +1999,10 @@
             return (c === "x" ? r : (r &amp; 0x3 | 0x8)).toString(16);
         });
         return uuid;
+    }
+    
+    function isUUID() {
+        return /[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-4[0-9a-fA-F]{3}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}/.test(Countly.device_id);
     }
 
     //get metrics of the browser
@@ -2407,6 +2469,32 @@
             return null;
         }
     };
+    
+    window.addEventListener('storage', function(e) {
+        var key = (e.key + "").replace(Countly.namespace, "");
+        
+        switch(key) {
+        //queue of requests
+        case "cly_queue":
+            requestQueue = Countly.deserialize(e.newValue);
+            break;
+            //queue of events
+        case "cly_event":
+            eventQueue = Countly.deserialize(e.newValue);
+            break;
+        case "cly_remote_configs":
+            remoteConfigs = Countly.deserialize(e.newValue);
+            break;
+        case "cly_ignore":
+            Countly.ignore_visitor = Countly.deserialize(e.newValue);
+            break;
+        case "cly_id":
+            Countly.device_id = Countly.deserialize(e.newValue);
+            break;
+        default:
+                // do nothing
+        }
+    });
 
     //load external js files
     function loadFile(tag, attr, type, src, data, callback) {
@@ -2539,6 +2627,7 @@
         log: log,
         getMetrics: getMetrics,
         generateUUID: generateUUID,
+        isUUID: isUUID,
         getId: getId,
         heartBeat: heartBeat,
         toRequestQueue: toRequestQueue,
