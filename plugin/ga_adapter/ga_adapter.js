@@ -1,4 +1,5 @@
 "use strict";
+/*global Countly */
 /*
 Countly Adapter Library for Google Analytics
 */

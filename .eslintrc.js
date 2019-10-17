@@ -4,9 +4,6 @@ module.exports = {
         "amd": true,
         "commonjs": true
     },
-    "globals": {
-        "Countly": true
-    },
     "extends": "eslint:recommended",
     "parserOptions": {
         "ecmaVersion": 5

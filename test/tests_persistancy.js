@@ -1,3 +1,4 @@
+/*global Countly */
 var fs = require("fs");
 function exists(value){
     return (typeof value !== "undefined") ? true : false;
