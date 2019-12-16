@@ -1980,7 +1980,7 @@
         //process request queue with event queue
         if (!offlineMode &amp;&amp; requestQueue.length > 0 &amp;&amp; readyToProcess &amp;&amp; getTimestamp() > failTimeout) {
             readyToProcess = false;
-            var params = requestQueue.shift();
+            var params = requestQueue[0];
             //check if any consent to sync
             if (hasAnyProperties(syncConsents)) {
                 if (consentTimer) {
@@ -1995,8 +1995,11 @@
             sendXmlHttpRequest(Countly.url + apiPath, params, function(err, params){
                 log("Request Finished", params, err);
                 if (err) {
-                    requestQueue.unshift(params);
                     failTimeout = getTimestamp() + failTimeoutAmount;
+                }
+                else {
+                    //remove first item from queue
+                    requestQueue.shift();
                 }
                 store("cly_queue", requestQueue, true);
                 readyToProcess = true;
@@ -2492,24 +2495,24 @@
     };
     
     window.addEventListener('storage', function(e) {
-        var key = (e.key + "").replace(Countly.namespace, "");
+        var key = e.key + "";
         
         switch(key) {
         //queue of requests
-        case "cly_queue":
+        case Countly.namespace + "cly_queue":
             requestQueue = Countly.deserialize(e.newValue);
             break;
             //queue of events
-        case "cly_event":
+        case Countly.namespace + "cly_event":
             eventQueue = Countly.deserialize(e.newValue);
             break;
-        case "cly_remote_configs":
+        case Countly.namespace + "cly_remote_configs":
             remoteConfigs = Countly.deserialize(e.newValue);
             break;
-        case "cly_ignore":
+        case Countly.namespace + "cly_ignore":
             Countly.ignore_visitor = Countly.deserialize(e.newValue);
             break;
-        case "cly_id":
+        case Countly.namespace + "cly_id":
             Countly.device_id = Countly.deserialize(e.newValue);
             break;
         default:
