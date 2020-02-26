@@ -8,7 +8,7 @@ With the help of [Javascript SDK](http://github.com/countly/countly-sdk-web), Co
 
 There are two parts of Countly: the server that collects and analyzes data, and an SDK (mobile, web or desktop) that sends this data. This repository includes Countly Community Edition (server side). For more information other versions (e.g Enterprise Edition), see [comparison of different Countly editions](https://count.ly/compare)
 
-This repository includes the Countly Web SDK. For more information about this SDK, [Countly SDK for Web](http://resources.count.ly/v1.0/docs/countly-sdk-for-web) integration guide at [Countly Resources](http://resources.count.ly) or [Countly Web SDK Documentation](http://countly.github.io/countly-sdk-web/)
+This repository includes the Countly Web SDK. For more information about this SDK, [Countly SDK for Web](http://resources.count.ly/v1.0/docs/countly-sdk-for-web) integration guide at [Countly Resources](http://resources.count.ly) or [Countly Web SDK Documentation](https://countly.github.io/countly-sdk-web/)
 
 * **Slack user?** [Join our community](http://slack.count.ly) to ask questions and get answers!
 * **Questions?** [Ask in our Community forum](http://community.count.ly)
