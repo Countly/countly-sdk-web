@@ -1,24 +1,24 @@
 # Countly Web SDK 
-[![Build Status](https://api.travis-ci.org/Countly/countly-sdk-web.png)](https://travis-ci.org/Countly/countly-sdk-web) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/031d2021b8334af3ac8d2462500bd1aa)](https://www.codacy.com/app/ar2rsawseen/countly-sdk-web?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Countly/countly-sdk-web&amp;utm_campaign=Badge_Grade) [![npm version](https://badge.fury.io/js/countly-sdk-web.svg)](https://badge.fury.io/js/countly-sdk-web) [![Inline docs](http://inch-ci.org/github/Countly/countly-sdk-web.svg?branch=master)](http://inch-ci.org/github/Countly/countly-sdk-web) [![](https://data.jsdelivr.com/v1/package/npm/countly-sdk-web/badge)](https://www.jsdelivr.com/package/npm/countly-sdk-web)
+[![Build Status](https://api.travis-ci.org/Countly/countly-sdk-web.png)](https://travis-ci.org/Countly/countly-sdk-web) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/031d2021b8334af3ac8d2462500bd1aa)](https://www.codacy.com/app/ar2rsawseen/countly-sdk-web?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Countly/countly-sdk-web&amp;utm_campaign=Badge_Grade) [![npm version](https://badge.fury.io/js/countly-sdk-web.svg)](https://badge.fury.io/js/countly-sdk-web) [![Inline docs](https://inch-ci.org/github/Countly/countly-sdk-web.svg?branch=master)](https://inch-ci.org/github/Countly/countly-sdk-web) [![](https://data.jsdelivr.com/v1/package/npm/countly-sdk-web/badge)](https://www.jsdelivr.com/package/npm/countly-sdk-web)
 
 ## What's Countly?
-[Countly](http://count.ly) is an innovative, real-time, open source mobile & [web analytics](http://count.ly/web-analytics), [rich push notifications](http://count.ly/push-notifications) and [crash reporting](http://count.ly/crash-reports) platform powering more than 2500 web sites and 14000 mobile applications as of 2017 Q3. It collects data from mobile phones, tablets, Apple Watch and other internet-connected devices, and visualizes this information to analyze application usage and end-user behavior. 
+[Countly](https://count.ly) is an innovative, real-time, open source mobile & [web analytics](https://count.ly/web-analytics), [rich push notifications](https://count.ly/push-notifications) and [crash reporting](https://count.ly/crash-reports) platform powering more than 2500 web sites and 14000 mobile applications as of 2017 Q3. It collects data from mobile phones, tablets, Apple Watch and other internet-connected devices, and visualizes this information to analyze application usage and end-user behavior. 
 
-With the help of [Javascript SDK](http://github.com/countly/countly-sdk-web), Countly is a web analytics platform with features on par with mobile SDKs. For more information about web analytics capabilities, [see this link](http://count.ly/web-analytics).
+With the help of [Javascript SDK](https://github.com/countly/countly-sdk-web), Countly is a web analytics platform with features on par with mobile SDKs. For more information about web analytics capabilities, [see this link](https://count.ly/web-analytics).
 
 There are two parts of Countly: the server that collects and analyzes data, and an SDK (mobile, web or desktop) that sends this data. This repository includes Countly Community Edition (server side). For more information other versions (e.g Enterprise Edition), see [comparison of different Countly editions](https://count.ly/compare)
 
-This repository includes the Countly Web SDK. For more information about this SDK, [Countly SDK for Web](http://resources.count.ly/v1.0/docs/countly-sdk-for-web) integration guide at [Countly Resources](http://resources.count.ly) or [Countly Web SDK Documentation](https://countly.github.io/countly-sdk-web/)
+This repository includes the Countly Web SDK. For more information about this SDK, [Countly SDK for Web](https://resources.count.ly/v1.0/docs/countly-sdk-for-web) integration guide at [Countly Resources](https://resources.count.ly) or [Countly Web SDK Documentation](https://countly.github.io/countly-sdk-web/)
 
-* **Slack user?** [Join our community](http://slack.count.ly) to ask questions and get answers!
-* **Questions?** [Ask in our Community forum](http://community.count.ly)
+* **Slack user?** [Join our community](https://slack.count.ly) to ask questions and get answers!
+* **Questions?** [Ask in our Community forum](https://community.count.ly)
 
 ## Implementing Countly SDK in your web pages
 
 There are 3 ways to get Countly SDK.
 
 ### 1. Available with Countly server
-Since Countly server 16.02, Countly Web SDK is available in your Countly server installation in `countly/frontend/express/public/sdk/web/countly.min.js` which should be available through URL as `http://yourserver.com/sdk/web/countly.min.js`
+Since Countly server 16.02, Countly Web SDK is available in your Countly server installation in `countly/frontend/express/public/sdk/web/countly.min.js` which should be available through URL as `https://yourserver.com/sdk/web/countly.min.js`
 
 ### 2. Installation using package managers
 
@@ -42,11 +42,11 @@ or
 
 ## How to use Countly Web SDK?
 
-Link to the script and call helper methods based on what you want to track: sessions, views, clicks, custom events, user data, etc. More information is available at [http://resources.count.ly/docs/countly-sdk-for-web](http://resources.count.ly/docs/countly-sdk-for-web)
+Link to the script and call helper methods based on what you want to track: sessions, views, clicks, custom events, user data, etc. More information is available at [https://resources.count.ly/docs/countly-sdk-for-web](https://resources.count.ly/docs/countly-sdk-for-web)
 
 ![Using Countly web SDK in your web page](https://count.ly/github/countly-web-sdk.png)
 
-Countly Web SDK has JSDoc3 compatible comments and you can generate documentation by running `npm run-script docs` or access online version at [http://countly.github.io/countly-sdk-web/](http://countly.github.io/countly-sdk-web/)
+Countly Web SDK has JSDoc3 compatible comments and you can generate documentation by running `npm run-script docs` or access online version at [https://countly.github.io/countly-sdk-web/](https://countly.github.io/countly-sdk-web/)
 
 ## Security
 
@@ -68,7 +68,7 @@ There are also other Countly SDK repositories below:
 
 ## How can I help you with your efforts?
 
-Glad you asked. We need ideas, feedbacks and constructive comments. All your suggestions will be taken care with upmost importance. We are on [Twitter](http://twitter.com/gocountly) and [Facebook](http://www.facebook.com/Countly) if you would like to keep up with our fast progress!
+Glad you asked. We need ideas, feedbacks and constructive comments. All your suggestions will be taken care with upmost importance. We are on [Twitter](https://twitter.com/gocountly) and [Facebook](https://www.facebook.com/Countly) if you would like to keep up with our fast progress!
 
 ## Badges
 
@@ -84,7 +84,6 @@ If you like Countly, [why not use one of our badges](https://count.ly/brand-asse
 
 ## Support
 
-For a public community support page, visit [http://community.count.ly](http://community.count.ly "Countly Community Forum").
+For a public community support page, visit [https://community.count.ly](https://community.count.ly "Countly Community Forum").
 
 [![NPM](https://nodei.co/npm/countly-sdk-web.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/countly-sdk-web/)
-
