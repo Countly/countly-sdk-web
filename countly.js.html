@@ -2191,7 +2191,7 @@
             
             ob._nonfatal = nonfatal;
 
-            ob._view = (window.location.pathname || "") + (window.location.search || "") + (window.location.hash || "");
+            ob._view = Countly.getViewName();
 
             if (typeof segments !== "undefined") {
                 ob._custom = segments;
@@ -2678,7 +2678,8 @@
     };
 
     return Countly;
-}));</code></pre>
+}));
+</code></pre>
         </article>
     </section>
 
