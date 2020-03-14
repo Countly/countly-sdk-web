@@ -1174,8 +1174,9 @@
     * Track page views user visits
     * @param {string=} page - optional name of the page, by default uses current url path
     * @param {array=} ignoreList - optional array of strings or regexes to test for the url/view name to ignore and not report
+    * @param {object=} viewSegments - optional key value object with segments to report with the view
     **/
-    Countly.track_pageview = function (page, ignoreList) {
+    Countly.track_pageview = function (page, ignoreList, viewSegments) {
         reportViewDuration();
         //we got ignoreList first
         if (page &amp;&amp; Array.isArray( page ) ) {
@@ -1213,6 +1214,14 @@
                 segments.start = 1;
             }
         }
+        
+        if (viewSegments) {
+            for (var key in viewSegments) {
+                if (typeof segments[key] === "undefined") {
+                    segments[key] = viewSegments[key];
+                }
+            }
+        }
 
         //track pageview
         if (Countly.check_consent("views")) {
@@ -1231,8 +1240,8 @@
     * @param {string=} page - optional name of the page, by default uses current url path
     * @param {array=} ignoreList - optional array of strings or regexes to test for the url/view name to ignore and not report
     **/
-    Countly.track_view = function (page, ignoreList) {
-        Countly.track_pageview(page, ignoreList);
+    Countly.track_view = function (page, ignoreList, segments) {
+        Countly.track_pageview(page, ignoreList, segments);
     };
 
     /**
