@@ -4,7 +4,7 @@
 Countly APM based on Boomerang JS
 */
 (function () {
-    Countly = Countly || {};
+    Countly = Countly || {}; // eslint-disable-line no-global-assign
     Countly.onload = Countly.onload || [];
     /**
      *  Enables tracking performance through boomerang.js
@@ -106,9 +106,9 @@ Countly APM based on Boomerang JS
                 // IE 6, 7, 8 we use onPropertyChange and look for propertyName === "onBoomerangLoaded"
                 else if (document.attachEvent) {
                     document.attachEvent("onpropertychange", function(e) {
-                        if (!e) {e = event};
+                        if (!e) {e = event;}
                         if (e.propertyName === "onBoomerangLoaded") {
-                            initBoomerang(e.detail.BOOMR)
+                            initBoomerang(e.detail.BOOMR);
                         }
                     });
                 }
