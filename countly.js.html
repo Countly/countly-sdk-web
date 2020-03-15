@@ -1679,12 +1679,6 @@
     **/
     Countly.report_feedback = function (feedback) {
         if (Countly.check_consent("star-rating")) {
-            var props = ["widget_id", "contactMe", "platform", "app_version", "rating", "email", "comment"];
-            var event = {
-                key: "[CLY]_star_rating",
-                count: 1,
-                segmentation: {}
-            };
             if (!feedback.widget_id) {
                 log("Feedback must contain widget_id property");
                 return;
@@ -1694,9 +1688,13 @@
                 return;
             }
             if (Countly.check_consent("events")) {
-                for (var i = 0; i &lt; props.length; i++) {
-                    event.segmentation[props[i]] = feedback[props[i]];
-                }
+                var props = ["widget_id", "contactMe", "platform", "app_version", "rating", "email", "comment"];
+                var event = {
+                    key: "[CLY]_star_rating",
+                    count: 1,
+                    segmentation: {}
+                };
+                event.segmentation = getProperties(feedback, props);
                 if (!event.segmentation.app_version) {
                     event.segmentation.app_version = Countly.metrics._app_version || Countly.app_version;
                 }
