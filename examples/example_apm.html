@@ -1,0 +1,39 @@
+<html>
+<head>
+<!--Countly script-->
+<script type='text/javascript' src='../lib/countly.js'></script>
+<script type='text/javascript' src='../plugin/boomerang/countly_boomerang.js'></script>
+<script type='text/javascript' src="../plugin/boomerang/boomerang-1.0.0.js"></script>
+<script type='text/javascript'>
+
+//initializing countly with params
+Countly.init({
+	app_key: "YOUR_APP_KEY",
+	url: "https://try.count.ly", //your server goes here
+	debug:true
+})
+Countly.track_sessions();
+
+//Calling APM plugin method
+Countly.track_performance({
+    instrument_xhr: true,
+    captureXhrRequestResponse: true,
+    AutoXHR: {
+        alwaysSendXhr: true,
+        monitorFetch: true,
+        captureXhrRequestResponse: true
+    },
+    Continuity: {
+        enabled: true,
+        monitorLongTasks: true,
+        monitorPageBusy: true,
+        monitorFrameRate: true,
+        monitorInteractions: true,
+        afterOnload: true
+    }
+});
+</script>
+</head>
+<body>
+</body>
+</html>
