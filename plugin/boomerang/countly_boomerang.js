@@ -8,6 +8,7 @@ Countly APM based on Boomerang JS
     Countly.onload = Countly.onload || [];
     /**
      *  Enables tracking performance through boomerang.js
+     *  @memberof Countly
      *  @param {object} config - Boomerang js configuration
      */
     Countly.track_performance = function (config) {
