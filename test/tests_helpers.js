@@ -2,11 +2,19 @@ var fs = require("fs");
 function exists(value){
     return (typeof value != "undefined") ? true : false;
 }
-casper.test.begin("Testing example_helpers.html", 360, function(test) {
+casper.test.begin("Testing example_helpers.html", 386, function(test) {
     var tests = [];
     var cnt = 0;
     tests.push(function (message){
         test.assertEquals(message[0], 'Countly initialized');
+    });
+    tests.push(function (message){
+        test.assertEquals(message[0], 'Adding event: ');
+        var params = JSON.parse(message[1]);
+        test.assertEquals(params.key, "[CLY]_orientation");
+        test.assert(exists(params.segmentation));
+        test.assertEquals(params.segmentation.mode, "landscape");
+        test.assertEquals(params.count, 1);
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Session started');
@@ -91,28 +99,33 @@ casper.test.begin("Testing example_helpers.html", 360, function(test) {
         test.assert(exists(params.dow));
         
         params.events = JSON.parse(params.events);
-        test.assertEquals(params.events.length, 3);
+        test.assertEquals(params.events.length, 4);
         
-        test.assertEquals(params.events[0].key, '[CLY]_view');
+        test.assertEquals(params.events[0].key, '[CLY]_orientation');
         test.assert(exists(params.events[0].segmentation));
-        test.assert(exists(params.events[0].segmentation.name));
+        test.assertEquals(params.events[0].segmentation.mode, "landscape");
         test.assertEquals(params.events[0].count, 1);
         
-        test.assertEquals(params.events[1].key, "[CLY]_action");
-        test.assertEquals(params.events[1].count, 1);
+        test.assertEquals(params.events[1].key, '[CLY]_view');
         test.assert(exists(params.events[1].segmentation));
-        test.assertEquals(params.events[1].segmentation.type, "click");
-        test.assert(exists(params.events[1].segmentation.x));
-        test.assert(exists(params.events[1].segmentation.y));
-        test.assert(exists(params.events[1].segmentation.width));
-        test.assert(exists(params.events[1].segmentation.height));
+        test.assert(exists(params.events[1].segmentation.name));
+        test.assertEquals(params.events[1].count, 1);
         
-        test.assertEquals(params.events[2].key, "linkClick");
+        test.assertEquals(params.events[2].key, "[CLY]_action");
         test.assertEquals(params.events[2].count, 1);
         test.assert(exists(params.events[2].segmentation));
-        test.assert(exists(params.events[2].segmentation.href));
-        test.assert(exists(params.events[2].segmentation.text));
-        test.assert(exists(params.events[2].segmentation.id));
+        test.assertEquals(params.events[2].segmentation.type, "click");
+        test.assert(exists(params.events[2].segmentation.x));
+        test.assert(exists(params.events[2].segmentation.y));
+        test.assert(exists(params.events[2].segmentation.width));
+        test.assert(exists(params.events[2].segmentation.height));
+        
+        test.assertEquals(params.events[3].key, "linkClick");
+        test.assertEquals(params.events[3].count, 1);
+        test.assert(exists(params.events[3].segmentation));
+        test.assert(exists(params.events[3].segmentation.href));
+        test.assert(exists(params.events[3].segmentation.text));
+        test.assert(exists(params.events[3].segmentation.id));
         
     });
     tests.push(function (message){
@@ -128,28 +141,33 @@ casper.test.begin("Testing example_helpers.html", 360, function(test) {
         test.assert(exists(params.dow));
         
         params.events = JSON.parse(params.events);
-        test.assertEquals(params.events.length, 3);
+        test.assertEquals(params.events.length, 4);
         
-        test.assertEquals(params.events[0].key, '[CLY]_view');
+        test.assertEquals(params.events[0].key, '[CLY]_orientation');
         test.assert(exists(params.events[0].segmentation));
-        test.assert(exists(params.events[0].segmentation.name));
+        test.assertEquals(params.events[0].segmentation.mode, "landscape");
         test.assertEquals(params.events[0].count, 1);
         
-        test.assertEquals(params.events[1].key, "[CLY]_action");
-        test.assertEquals(params.events[1].count, 1);
+        test.assertEquals(params.events[1].key, '[CLY]_view');
         test.assert(exists(params.events[1].segmentation));
-        test.assertEquals(params.events[1].segmentation.type, "click");
-        test.assert(exists(params.events[1].segmentation.x));
-        test.assert(exists(params.events[1].segmentation.y));
-        test.assert(exists(params.events[1].segmentation.width));
-        test.assert(exists(params.events[1].segmentation.height));
+        test.assert(exists(params.events[1].segmentation.name));
+        test.assertEquals(params.events[1].count, 1);
         
-        test.assertEquals(params.events[2].key, "linkClick");
+        test.assertEquals(params.events[2].key, "[CLY]_action");
         test.assertEquals(params.events[2].count, 1);
         test.assert(exists(params.events[2].segmentation));
-        test.assert(exists(params.events[2].segmentation.href));
-        test.assert(exists(params.events[2].segmentation.text));
-        test.assert(exists(params.events[2].segmentation.id));
+        test.assertEquals(params.events[2].segmentation.type, "click");
+        test.assert(exists(params.events[2].segmentation.x));
+        test.assert(exists(params.events[2].segmentation.y));
+        test.assert(exists(params.events[2].segmentation.width));
+        test.assert(exists(params.events[2].segmentation.height));
+        
+        test.assertEquals(params.events[3].key, "linkClick");
+        test.assertEquals(params.events[3].count, 1);
+        test.assert(exists(params.events[3].segmentation));
+        test.assert(exists(params.events[3].segmentation.href));
+        test.assert(exists(params.events[3].segmentation.text));
+        test.assert(exists(params.events[3].segmentation.id));
     });
     
     tests.push(function (message){
@@ -211,6 +229,14 @@ casper.test.begin("Testing example_helpers.html", 360, function(test) {
     tests.push(function (message){
         test.assertEquals(message[0], 'Adding event: ');
         var params = JSON.parse(message[1]);
+        test.assertEquals(params.key, "[CLY]_orientation");
+        test.assert(exists(params.segmentation));
+        test.assertEquals(params.segmentation.mode, "landscape");
+        test.assertEquals(params.count, 1);
+    });
+    tests.push(function (message){
+        test.assertEquals(message[0], 'Adding event: ');
+        var params = JSON.parse(message[1]);
         test.assertEquals(params.key, "[CLY]_view");
         test.assertEquals(params.count, 1);
         test.assert(exists(params.segmentation));
@@ -315,10 +341,16 @@ casper.test.begin("Testing example_helpers.html", 360, function(test) {
         test.assert(exists(params.dow));
         
         params.events = JSON.parse(params.events);
-        test.assertEquals(params.events[0].key, '[CLY]_view');
+        
+        test.assertEquals(params.events[0].key, '[CLY]_orientation');
         test.assert(exists(params.events[0].segmentation));
-        test.assert(exists(params.events[0].segmentation.name));
+        test.assertEquals(params.events[0].segmentation.mode, "landscape");
         test.assertEquals(params.events[0].count, 1);
+        
+        test.assertEquals(params.events[1].key, '[CLY]_view');
+        test.assert(exists(params.events[1].segmentation));
+        test.assert(exists(params.events[1].segmentation.name));
+        test.assertEquals(params.events[1].count, 1);
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Sending XML HTTP request');
@@ -333,10 +365,15 @@ casper.test.begin("Testing example_helpers.html", 360, function(test) {
         test.assert(exists(params.dow));
         
         params.events = JSON.parse(params.events);
-        test.assertEquals(params.events[0].key, '[CLY]_view');
+        test.assertEquals(params.events[0].key, '[CLY]_orientation');
         test.assert(exists(params.events[0].segmentation));
-        test.assert(exists(params.events[0].segmentation.name));
+        test.assertEquals(params.events[0].segmentation.mode, "landscape");
         test.assertEquals(params.events[0].count, 1);
+        
+        test.assertEquals(params.events[1].key, '[CLY]_view');
+        test.assert(exists(params.events[1].segmentation));
+        test.assert(exists(params.events[1].segmentation.name));
+        test.assertEquals(params.events[1].count, 1);
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Got metrics');
@@ -518,7 +555,7 @@ casper.test.begin("Testing example_helpers.html", 360, function(test) {
         test.assertEquals(message[0], 'Adding event: ');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.key, "[CLY]_view");
-        test.assertEquals(params.dur, 65);
+        test.assert(params.dur >= 64 && params.dur <= 66);
         test.assert(exists(params.segmentation));
         test.assert(exists(params.segmentation.name));
         test.assert(!exists(params.segmentation.visit));
@@ -526,7 +563,7 @@ casper.test.begin("Testing example_helpers.html", 360, function(test) {
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Session extended');
-        test.assertEquals(message[1], '4');
+        test.assert(message[1] >= 3 && message[1] <= 4);
     });
     casper.removeAllListeners('remote.message');
     casper.on('remote.message', function(message) {

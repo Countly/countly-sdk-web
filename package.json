@@ -1,6 +1,6 @@
 {
   "name": "countly-sdk-web",
-  "version": "19.8.0",
+  "version": "20.4.0",
   "description": "Countly Web SDK",
   "main": "lib/countly.js",
   "directories": {
@@ -36,7 +36,7 @@
     "eslint": "*",
     "jsdoc": "*",
     "webpack": "^4.28.4",
-    "webpack-cli": "^2.1.5"
+    "webpack-cli": "^3.3.11"
   },
   "npmName": "countly-sdk-web",
   "npmFileMap": [
