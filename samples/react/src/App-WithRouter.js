@@ -27,6 +27,9 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    //Exposing Countly to the DOM as a global variable
+    //Usecase - Heatmaps
+    window.Countly = Countly;
     Countly.init({
       app_key: '499456c1e9ce464e30e29904b2c760c8d09ec814',
       url: 'https://prikshit.count.ly',
