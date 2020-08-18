@@ -13,8 +13,8 @@ const Location = (props) => {
     //Usecase - Heatmaps
     window.Countly = Countly;
     Countly.init({
-      app_key: '499456c1e9ce464e30e29904b2c760c8d09ec814',
-      url: 'https://prikshit.count.ly',
+      app_key: 'YOUR_APP_KEY',
+      url: 'YOUR_SERVER_URL',
       session_update: 10,
       use_session_cookie: true,
       debug: false,
@@ -22,7 +22,7 @@ const Location = (props) => {
       namespace: "react-demo",
       inactivity_time: 1,
       offline_mode: false,
-      // device_id: "pts-demo-id" //Set only if you want dont want to use countly generated device_id
+      // device_id: "cly-device-demo-id" //Set only if you want dont want to use countly generated device_id
     });
 
     //Since Countly is loaded and available, you can use synchronus or asynchronus calls, does not matter

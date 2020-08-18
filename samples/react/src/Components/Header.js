@@ -33,7 +33,7 @@ const Header = (props) => {
         localStorage.removeItem("clydemo-user");
 
         //Change user's device on logout - He is now an anonymous user
-        Countly.q.push(['change_id', "pts-demo-id"]);
+        Countly.q.push(['change_id', "cly-device-demo-id"]);
         props.setLoginState(false);
         history.push("/");
     }
