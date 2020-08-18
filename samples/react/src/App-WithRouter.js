@@ -79,7 +79,7 @@ class App extends React.Component {
 
   render () {
     return (
-      <Router>
+      <Router basename={`${process.env.PUBLIC_URL}`}>
         <Location>
           <Header loginState={this.state.loginState} setLoginState={(state) => this.setLoginState(state)}/>
           <Switch>
