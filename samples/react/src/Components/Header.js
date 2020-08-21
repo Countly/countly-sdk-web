@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
     Link,
     useHistory
@@ -11,18 +11,6 @@ import './styles.css';
 const Header = (props) => {
     let loginState = props.loginState;
     let history = useHistory();
-
-    useEffect(() => {
-        /**
-         * This hook should placed in a component that able to detect all history changes
-         * In this app, header can detect all history changes because part of all pages.
-         * If your app doesn't have a component like header which rendering on all pages, 
-         * you should call this hook on App.js
-         */
-        return history.listen(() => {
-            Countly.initializeFeedbackPopups();
-        });
-    }, [history])
 
     const onSignIn = () => {
         let login = window.confirm("Do you want to login ?");

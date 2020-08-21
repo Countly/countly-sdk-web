@@ -51,7 +51,8 @@ const Location = (props) => {
             }
         }
     }
-
+    
+    Countly.q.push(['enable_feedback', {'widgets': ['widget-id-1','widget-id-2']}]);
     Countly.q.push(['track_sessions']);
     Countly.q.push(['track_scrolls']);
     Countly.q.push(['track_clicks']);
@@ -63,6 +64,8 @@ const Location = (props) => {
     //Check if pathname is not changing dont track the view
     //So that you dont end up tracking the same view again and again
     Countly.q.push(['track_pageview', location.pathname]);
+    // Initialize feedback popup by current page/pathname
+    Countly.initializeFeedbackPopups();
   }, [location]);
 
   return (
