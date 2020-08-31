@@ -319,7 +319,7 @@ BOOMR_check_doc_domain();
 				}
 			}
 			catch (e) {
-
+				
 			}
 		}
 
@@ -1315,7 +1315,7 @@ BOOMR_check_doc_domain();
 				var value, nameval, savedval, c, exp;
 
 				if (!name || !BOOMR.session.domain || typeof subcookies === "undefined") {
-
+					
 
 					BOOMR.addVar("nocookie", 1);
 					return false;
@@ -1410,7 +1410,7 @@ BOOMR_check_doc_domain();
 				}
 
 				if (typeof cookie !== "string") {
-
+					
 					return null;
 				}
 
@@ -1825,7 +1825,7 @@ BOOMR_check_doc_domain();
 				if (w.Zone && typeof w.Zone.__symbol__ === "function") {
 					zs = w.Zone.__symbol__("MutationObserver");
 					if (zs && typeof zs === "string" && w.hasOwnProperty(zs) && typeof w[zs] === "function") {
-
+						
 						MO = w[zs];
 					}
 				}
@@ -2044,7 +2044,7 @@ BOOMR_check_doc_domain();
 					return JSON.stringify(value);
 				}
 				// not supported
-
+				
 				return "";
 			},
 
@@ -2399,7 +2399,7 @@ BOOMR_check_doc_domain();
 			if (!this.pageId) {
 				// generate a random page ID for this page's lifetime
 				this.pageId = BOOMR.utils.generateId(8);
-
+				
 			}
 
 			if (config.primary && impl.handlers_attached) {
@@ -2539,7 +2539,7 @@ BOOMR_check_doc_domain();
 
 						// record the last time each visibility state occurred
 						BOOMR.lastVisibilityEvent[visState] = BOOMR.now();
-
+						
 
 						// if we transitioned from prerender to hidden or visible, fire the prerender_to_visible event
 						if (impl.lastVisibilityState === "prerender" &&
@@ -3343,7 +3343,7 @@ BOOMR_check_doc_domain();
 
 					if (typeof this.plugins[plugin].readyToSend === "function" &&
 					    this.plugins[plugin].readyToSend() === false) {
-
+						
 						return false;
 					}
 				}
@@ -3371,7 +3371,7 @@ BOOMR_check_doc_domain();
 
 			// wait until all plugins are ready to send
 			if (!BOOMR.readyToSend()) {
-
+				
 
 				// try again later
 				setTimeout(function() {
@@ -3407,7 +3407,7 @@ BOOMR_check_doc_domain();
 
 			if (typeof name === "object") {
 				if (!name.url) {
-
+					
 					return;
 				}
 
@@ -3581,7 +3581,7 @@ BOOMR_check_doc_domain();
 
 			impl.beaconQueued = false;
 
-
+			
 
 			// At this point someone is ready to send the beacon.  We send
 			// the beacon only if all plugins have finished doing what they
@@ -3592,7 +3592,7 @@ BOOMR_check_doc_domain();
 						continue;
 					}
 					if (!this.plugins[k].is_complete(impl.vars)) {
-
+						
 						return false;
 					}
 				}
@@ -3600,7 +3600,7 @@ BOOMR_check_doc_domain();
 
 			// Sanity test that the browser is still available (and not shutting down)
 			if (!window || !window.Image || !window.navigator || !BOOMR.window) {
-
+				
 				return false;
 			}
 
@@ -3729,7 +3729,7 @@ BOOMR_check_doc_domain();
 
 			// Stop at this point if we are rate limited
 			if (BOOMR.session.rate_limited) {
-
+				
 				return false;
 			}
 
@@ -3762,19 +3762,19 @@ BOOMR_check_doc_domain();
 			var urlFirst = [], urlLast = [], params, paramsJoined,
 			    url, img, useImg = true, xhr, ret;
 
-
+			
 
 			// Use the override URL if given
 			impl.beacon_url = impl.beacon_url_override || impl.beacon_url;
 
 			// Check that the beacon_url was set first
 			if (!impl.beacon_url) {
-
+				
 				return false;
 			}
 
 			if (!impl.beaconUrlAllowed(impl.beacon_url)) {
-
+				
 				return false;
 			}
 
@@ -3863,7 +3863,7 @@ BOOMR_check_doc_domain();
 					img = new Image();
 				}
 				catch (e) {
-
+					
 					return false;
 				}
 
@@ -4210,7 +4210,7 @@ BOOMR_check_doc_domain();
 			 * * A path
 			 *
 			 * @example
-			 *
+			 * 
 			 * BOOMR.xhr_excludes = {
 			 *   "mysite.com": true,
 			 *   "/dashboard/": true,
@@ -4230,6 +4230,1026 @@ BOOMR_check_doc_domain();
 
 
 // end of boomerang beaconing section
+
+// Adding Resource timing decompression module
+//
+// resourcetiming-decompression.js
+//
+// Decompresses ResourceTiming data compressed via resourcetiming-compression.js.
+//
+// See http://nicj.net/compressing-resourcetiming/
+//
+// https://github.com/nicjansma/resourcetiming-compression.js
+//
+(function(window) {
+    "use strict";
+
+    // save old ResourceTimingDecompression object for noConflict()
+    var root;
+    var previousObj;
+    if (typeof window !== "undefined") {
+        root = window;
+        previousObj = root.ResourceTimingDecompression;
+    }
+
+    // model
+    var ResourceTimingDecompression = {};
+
+    //
+    // Constants / Config
+    //
+
+    /**
+     * Are hostnames in the compressed trie reversed or not
+     */
+    ResourceTimingDecompression.HOSTNAMES_REVERSED = true;
+
+    /**
+     * Initiator type map
+     */
+    ResourceTimingDecompression.INITIATOR_TYPES = {
+        /** Unknown type */
+        "other": 0,
+        /** IMG element */
+        "img": 1,
+        /** LINK element (i.e. CSS) */
+        "link": 2,
+        /** SCRIPT element */
+        "script": 3,
+        /** Resource referenced in CSS */
+        "css": 4,
+        /** XMLHttpRequest */
+        "xmlhttprequest": 5,
+        /** The root HTML page itself */
+        "html": 6,
+        /** IMAGE element inside a SVG */
+        "image": 7,
+        /** [sendBeacon]{@link https://developer.mozilla.org/en-US/docs/Web/API/Navigator/sendBeacon} */
+        "beacon": 8,
+        /** [Fetch API]{@link https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API} */
+        "fetch": 9,
+        /** An IFRAME */
+        "iframe": "a",
+        /** IE11 and Edge (some versions) send "subdocument" instead of "iframe" */
+        "subdocument": "a",
+        /** BODY element */
+        "body": "b",
+        /** INPUT element */
+        "input": "c",
+        /** FRAME element */
+        "frame": "a",
+        /** OBJECT element */
+        "object": "d",
+        /** VIDEO element */
+        "video": "e",
+        /** AUDIO element */
+        "audio": "f",
+        /** SOURCE element */
+        "source": "g",
+        /** TRACK element */
+        "track": "h",
+        /** EMBED element */
+        "embed": "i",
+        /** EventSource */
+        "eventsource": "j",
+        /** The root HTML page itself */
+        "navigation": 6
+    };
+
+    /**
+    * Dimension name map
+    */
+    ResourceTimingDecompression.DIMENSION_NAMES = {
+        "height": 0,
+        "width": 1,
+        "y": 2,
+        "x": 3,
+        "naturalHeight": 4,
+        "naturalWidth": 5
+    };
+
+    /**
+     * Script mask map
+     */
+    ResourceTimingDecompression.SCRIPT_ATTRIBUTES = {
+        "scriptAsync": 0x1,
+        "scriptDefer": 0x2,
+        "scriptBody": 0x4
+    };
+
+    /**
+     * These are the only `rel` types that might be reference-able from
+     * ResourceTiming.
+     *
+     * https://html.spec.whatwg.org/multipage/links.html#linkTypes
+     *
+     * @enum {number}
+     */
+    ResourceTimingDecompression.REL_TYPES = {
+        "prefetch": 1,
+        "preload": 2,
+        "prerender": 3,
+        "stylesheet": 4
+    };
+
+    /**
+     * Returns a map with key/value pairs reversed.
+     *
+     * @param {object} origMap Map we want to reverse.
+     *
+     * @returns {object} New map with reversed mappings.
+     */
+    ResourceTimingDecompression.getRevMap = function(origMap) {
+        var revMap = {};
+        for (var key in origMap) {
+            if (origMap.hasOwnProperty(key)) {
+                revMap[origMap[key]] = key;
+            }
+        }
+        return revMap;
+    };
+
+    /**
+     * Reverse initiator type map
+     */
+    ResourceTimingDecompression.REV_INITIATOR_TYPES = ResourceTimingDecompression.
+        getRevMap(ResourceTimingDecompression.INITIATOR_TYPES);
+
+    /**
+     * Reverse dimension name map
+     */
+    ResourceTimingDecompression.REV_DIMENSION_NAMES = ResourceTimingDecompression.
+        getRevMap(ResourceTimingDecompression.DIMENSION_NAMES);
+
+    /**
+     * Reverse script attribute map
+     */
+    ResourceTimingDecompression.REV_SCRIPT_ATTRIBUTES = ResourceTimingDecompression.
+        getRevMap(ResourceTimingDecompression.SCRIPT_ATTRIBUTES);
+
+    /**
+     * Reverse link rel attribute map
+     */
+    ResourceTimingDecompression.REV_REL_TYPES = ResourceTimingDecompression.
+        getRevMap(ResourceTimingDecompression.REL_TYPES);
+
+    // Any ResourceTiming data time that starts with this character is not a time,
+    // but something else (like dimension data)
+    ResourceTimingDecompression.SPECIAL_DATA_PREFIX = "*";
+
+    // Dimension data special type
+    ResourceTimingDecompression.SPECIAL_DATA_DIMENSION_TYPE = "0";
+    ResourceTimingDecompression.SPECIAL_DATA_DIMENSION_PREFIX = ResourceTimingDecompression.SPECIAL_DATA_PREFIX +
+        ResourceTimingDecompression.SPECIAL_DATA_DIMENSION_TYPE;
+
+    // Dimension data special type
+    ResourceTimingDecompression.SPECIAL_DATA_SIZE_TYPE = "1";
+
+    // Dimension data special type
+    ResourceTimingDecompression.SPECIAL_DATA_SCRIPT_TYPE = "2";
+
+    // Dimension data special type
+    ResourceTimingDecompression.SPECIAL_DATA_SERVERTIMING_TYPE = "3";
+
+    // Link attributes
+    ResourceTimingDecompression.SPECIAL_DATA_LINK_ATTR_TYPE = "4";
+
+    // Namespaced data
+    ResourceTimingDecompression.SPECIAL_DATA_NAMESPACED_TYPE = "5";
+
+    // Service worker type
+    ResourceTimingDecompression.SPECIAL_DATA_SERVICE_WORKER_TYPE = "6";
+
+    // Regular Expression to parse a URL
+    ResourceTimingDecompression.HOSTNAME_REGEX = /^(https?:\/\/)([^/]+)(.*)/;
+
+    //
+    // Functions
+    //
+
+    /**
+     * Returns the index of the first value in the array such that it is
+     * greater or equal to x.
+     * The search is performed using binary search and the array is assumed
+     * to be sorted in ascending order.
+     *
+     * @param {array} arr haystack
+     * @param {any} x needle
+     * @param {function} by transform function (optional)
+     *
+     * @returns {number} the desired index or arr.length if x is more than all values.
+     */
+    ResourceTimingDecompression.searchSortedFirst = function(arr, x, by) {
+        if (!arr || arr.length === 0) {
+            return -1;
+        }
+
+        function ident(a) {
+            return a;
+        }
+        by = by || ident;
+        x = by(x);
+        var min = -1;
+        var max = arr.length;
+        var m = 0;
+
+        while (min < (max - 1)) {
+            m = (min + max) >>> 1;
+            if (by(arr[m]) < x) {
+                min = m;
+            } else {
+                max = m;
+            }
+        }
+        return max;
+    };
+
+    /**
+     * Returns the index of the last value in the array such that is it less
+     * than or equal to x.
+     * The search is performed using binary search and the array is assumed
+     * to be sorted in ascending order.
+     *
+     * @param {array} arr haystack
+     * @param {any} x needle
+     * @param {function} by transform function (optional)
+     *
+     * @returns {number} the desired index or -1 if x is less than all values.
+     */
+    ResourceTimingDecompression.searchSortedLast = function(arr, x, by) {
+        if (!arr || arr.length === 0) {
+            return -1;
+        }
+
+        function ident(a) {
+            return a;
+        }
+        by = by || ident;
+        x = by(x);
+        var min = -1;
+        var max = arr.length;
+        var m = 0;
+
+        while (min < (max - 1)) {
+            m = (min + max) >>> 1;
+            if (x < by(arr[m])) {
+                max = m;
+            } else {
+                min = m;
+            }
+        }
+        return min;
+    };
+
+    /**
+     * Changes the value of ResourceTimingDecompression back to its original value, returning
+     * a reference to the ResourceTimingDecompression object.
+     *
+     * @returns {object} Original ResourceTimingDecompression object
+     */
+    ResourceTimingDecompression.noConflict = function() {
+        root.ResourceTimingDecompression = previousObj;
+        return ResourceTimingDecompression;
+    };
+
+    /**
+     * Decompresses a compressed ResourceTiming trie
+     *
+     * @param {object} rt ResourceTiming trie
+     * @param {array} st server timing entries lookup
+     * @param {string} prefix URL prefix for the current node
+     *
+     * @returns {ResourceTiming[]} ResourceTiming array
+     */
+    ResourceTimingDecompression.decompressResources = function(rt, st, prefix) {
+        var resources = [];
+
+        // Dimension data for resources.
+        var dimensionData;
+
+        prefix = prefix || "";
+
+        for (var key in rt) {
+            // skip over inherited properties
+            if (!rt.hasOwnProperty(key)) {
+                continue;
+            }
+
+            var node = rt[key];
+            var nodeKey = prefix + key;
+
+            // strip trailing pipe, which is used to designate a node that is a prefix for
+            // other nodes but has resTiming data
+            if (nodeKey.indexOf("|", nodeKey.length - 1) !== -1) {
+                nodeKey = nodeKey.substring(0, nodeKey.length - 1);
+            }
+
+            if (typeof node === "string") {
+                // add all occurences
+                var timings = node.split("|");
+
+                if (timings.length === 0) {
+                    continue;
+                }
+
+                // Make sure we reset the dimensions before each new resource.
+                dimensionData = undefined;
+
+                if (this.isDimensionData(timings[0])) {
+                    dimensionData = this.decompressDimension(timings[0]);
+
+                    // Remove the dimension data from our timings array
+                    timings = timings.splice(1);
+                }
+
+                // end-node
+                for (var i = 0; i < timings.length; i++) {
+                    var resourceData = timings[i];
+
+                    if (resourceData.length > 0 &&
+                        resourceData[0] === ResourceTimingDecompression.SPECIAL_DATA_PREFIX) {
+                        // dimensions or sizes for this resource
+                        continue;
+                    }
+
+                    // Decode resource and add dimension data to it.
+                    resources.push(
+                        this.addDimension(
+                            this.decodeCompressedResource(resourceData, nodeKey, st),
+                            dimensionData
+                        )
+                    );
+                }
+            } else {
+                // continue down
+                var nodeResources = this.decompressResources(node, st, nodeKey);
+
+                resources = resources.concat(nodeResources);
+            }
+        }
+
+        return resources;
+    };
+
+    /**
+     * Checks that the input contains dimension information.
+     *
+     * @param {string} resourceData The string we want to check.
+     *
+     * @returns {boolean} True if resourceData starts with SPECIAL_DATA_DIMENSION_PREFIX, false otherwise.
+     */
+    ResourceTimingDecompression.isDimensionData = function(resourceData) {
+        return resourceData &&
+            resourceData.substring(0, ResourceTimingDecompression.SPECIAL_DATA_DIMENSION_PREFIX.length)
+                === ResourceTimingDecompression.SPECIAL_DATA_DIMENSION_PREFIX;
+    };
+
+    /**
+     * Extract height, width, y and x from a string.
+     *
+     * @param {string} resourceData A string containing dimension data.
+     *
+     * @returns {object} Dimension data with keys defined by DIMENSION_NAMES.
+     */
+    ResourceTimingDecompression.decompressDimension = function(resourceData) {
+        var dimensions, i;
+        var dimensionData = {};
+
+        // If the string does not contain dimension information, do nothing.
+        if (!this.isDimensionData(resourceData)) {
+            return dimensionData;
+        }
+
+        // Remove special prefix
+        resourceData = resourceData.substring(ResourceTimingDecompression.SPECIAL_DATA_DIMENSION_PREFIX.length);
+
+        dimensions = resourceData.split(",");
+
+        // The data should contain at least height/width.
+        if (dimensions.length < 2) {
+            return dimensionData;
+        }
+
+        // If x is 0, and the last dimension, then it will be excluded, so initialize to 0
+        // If x & y are 0, and the last dimensions, then both will be excluded, so initialize to 0
+        dimensionData.y = 0;
+        dimensionData.x = 0;
+
+        // Base 36 decode and assign to correct keys of dimensionData.
+        for (i = 0; i < dimensions.length; i++) {
+            if (dimensions[i] === "") {
+                dimensionData[this.REV_DIMENSION_NAMES[i]] = 0;
+            } else {
+                dimensionData[this.REV_DIMENSION_NAMES[i]] = parseInt(dimensions[i], 36);
+            }
+        }
+
+        // If naturalHeight and naturalWidth are missing, then they are the same as height and width
+        if (!dimensionData.hasOwnProperty("naturalHeight")) {
+            dimensionData.naturalHeight = dimensionData.height;
+        }
+        if (!dimensionData.hasOwnProperty("naturalWidth")) {
+            dimensionData.naturalWidth = dimensionData.width;
+        }
+
+        return dimensionData;
+    };
+
+    /**
+     * Adds dimension data to the given resource.
+     *
+     * @param {object} resource The resource we want to edit.
+     * @param {object} dimensionData The dimension data we want to add.
+     *
+     * @returns {object} The resource with added dimensions.
+     */
+    ResourceTimingDecompression.addDimension = function(resource, dimensionData) {
+        // If the resource or data are not defined, do nothing.
+        if (!resource || !dimensionData) {
+            return resource;
+        }
+
+        // Add all the dimensions to our resource.
+        for (var key in this.DIMENSION_NAMES) {
+            if (this.DIMENSION_NAMES.hasOwnProperty(key) &&
+                dimensionData.hasOwnProperty(key)) {
+                resource[key] = dimensionData[key];
+            }
+        }
+
+        return resource;
+    };
+
+    /**
+     * Compute a list of cells based on the start/end times of the
+     * given array of resources.
+     * The returned list of cells is sorted in chronological order.
+     *
+     * @param {array} rts array of resource timings.
+     *
+     * @returns {array} Array of cells.
+     */
+    ResourceTimingDecompression.getSortedCells = function(rts) {
+        // We have exactly 2 events per resource (start and end).
+        // var cells = new Array(rts.length * 2);
+
+        var cells = [];
+        for (var i = 0; i < rts.length; i++) {
+            // Ignore resources with duration <= 0
+            if (rts[i].responseEnd <= rts[i].startTime) {
+                continue;
+            }
+            // Increment on resource start
+            cells.push({
+                ts: rts[i].startTime,
+                val: 1.0
+            });
+            // Decrement on resource end
+            cells.push({
+                ts: rts[i].responseEnd,
+                val: -1.0
+            });
+        }
+
+        // Sort in chronological order
+        cells.sort(function(x, y) {
+            return x.ts - y.ts;
+        });
+
+        return cells;
+    };
+
+    /**
+     * Add contributions to the array of cells.
+     *
+     * @param {array} cells array of cells that need contributions.
+     *
+     * @returns {array} Array of cells with their contributions.
+     */
+    ResourceTimingDecompression.addCellContributions = function(cells) {
+        var tot = 0.0;
+        var incr = 0.0;
+        var deleteIdx = [];
+        var currentSt = cells[0].ts;
+        var cellLen = cells.length;
+        var c = {};
+
+        for (var i = 0; i < cellLen; i++) {
+            c = cells[i];
+            // The next timestamp is the same.
+            // We don't want to have cells of duration 0, so
+            // we aggregate them.
+            if ((i < (cellLen - 1)) && (cells[i + 1].ts === c.ts)) {
+                cells[i + 1].val += c.val;
+                deleteIdx.push(i);
+                continue;
+            }
+
+            incr = c.val;
+            if (tot > 0) {
+                // divide time delta by number of active resources.
+                c.val = (c.ts - currentSt) / tot;
+            }
+
+            currentSt = c.ts;
+            tot += incr;
+        }
+
+        // Delete timestamps that don't delimit cells.
+        for (i = deleteIdx.length - 1; i >= 0; i--) {
+            cells.splice(deleteIdx[i], 1);
+        }
+
+        return cells;
+    };
+
+    /**
+     * Sum the contributions of a single resource based on an array of cells.
+     *
+     * @param {array} cells Array of cells with their contributions.
+     * @param {ResourceTiming} rt a single resource timing object.
+     *
+     * @returns {number} The total contribution for that resource.
+     */
+    ResourceTimingDecompression.sumContributions = function(cells, rt) {
+        if (!rt || typeof rt.startTime === "undefined" ||
+            typeof rt.responseEnd === "undefined") {
+
+            return 0.0;
+        }
+
+        var startTime = rt.startTime + 1;
+        var responseEnd = rt.responseEnd;
+
+        function getTs(x) {
+            return x.ts;
+        }
+
+        // Find indices of cells that were affected by our resource.
+        var low = this.searchSortedFirst(cells, { ts: startTime }, getTs);
+        var up = this.searchSortedLast(cells, { ts: responseEnd }, getTs);
+
+        var tot = 0.0;
+
+        // Sum contributions across all those cells
+        for (var i = low; i <= up; i++) {
+            tot += cells[i].val;
+        }
+
+        return tot;
+    };
+
+    /**
+     * Adds contribution scores to all resources in the array.
+     *
+     * @param {array} rts array of resource timings.
+     *
+     * @returns {array} Array of resource timings with their contributions.
+     */
+    ResourceTimingDecompression.addContribution = function(rts) {
+        if (!rts || rts.length === 0) {
+            return rts;
+        }
+
+        // Get cells in chronological order.
+        var cells = this.getSortedCells(rts);
+
+        // We need at least two cells and they need to begin
+        // with a start event. Furthermore, the last timestamp
+        // should be > 0.
+        if (cells.length < 2 ||
+            cells[0].val < 1.0 ||
+            cells[cells.length - 1].ts <= 0
+        ) {
+            return rts;
+        }
+
+        // Compute each cell's contribution.
+        this.addCellContributions(cells);
+
+        // Total load time for this batch of resources.
+        var loadTime = cells[cells.length - 1].ts;
+
+        for (var i = 0; i < rts.length; i++) {
+            // Compute the contribution of each resource.
+            // Normalize by total load time.
+            rts[i].contribution = this.sumContributions(cells, rts[i]) / loadTime;
+        }
+
+        return rts;
+    };
+
+    /**
+     * Determines the initiatorType from a lookup
+     *
+     * @param {number} index Initiator type index
+     *
+     * @returns {string} initiatorType, or "other" if not known
+     */
+    ResourceTimingDecompression.getInitiatorTypeFromIndex = function(index) {
+        if (this.REV_INITIATOR_TYPES.hasOwnProperty(index)) {
+            return this.REV_INITIATOR_TYPES[index];
+        }
+
+        return "other";
+    };
+
+    /**
+     * Decodes a compressed ResourceTiming data string
+     *
+     * @param {string} data Compressed timing data
+     * @param {string} url  URL
+     * @param {array} st server timing entries lookup
+     *
+     * @returns {ResourceTiming} ResourceTiming pseudo-object (containing all of the properties of a
+     * ResourceTiming object)
+     */
+    ResourceTimingDecompression.decodeCompressedResource = function(data, url, st) {
+        if (!data || !url) {
+            return {};
+        }
+
+        if (ResourceTimingDecompression.HOSTNAMES_REVERSED) {
+            url = ResourceTimingDecompression.reverseHostname(url);
+        }
+
+        var initiatorType = isNaN(parseInt(data[0], 10)) ? data[0] : parseInt(data[0], 10);
+        data = data.length > 1 ? data.split(ResourceTimingDecompression.SPECIAL_DATA_PREFIX) : [];
+        var timings = data.length > 0 && data[0].length > 1 ? data[0].substring(1).split(",") : [];
+        var specialData = data.length > 1 ? data.slice(1) : [];
+
+        // convert all timings from base36
+        for (var i = 0; i < timings.length; i++) {
+            if (timings[i] === "") {
+                // startTime being 0
+                timings[i] = 0;
+            } else {
+                // de-base36
+                timings[i] = parseInt(timings[i], 36);
+            }
+        }
+
+        // special case timestamps
+        var startTime = timings.length >= 1 ? timings[0] : 0;
+
+        // fetchStart is either the redirectEnd time, or startTime
+        // NOTE: This may be later modified by Service Worker special data, which has the real timestamp if needed
+        var fetchStart = timings.length < 10 ?
+            startTime :
+            this.decodeCompressedResourceTimeStamp(timings, 9, startTime);
+
+        // all others are offset from startTime
+        var res = {
+            name: url,
+            initiatorType: this.getInitiatorTypeFromIndex(initiatorType),
+            startTime: startTime,
+            redirectStart: this.decodeCompressedResourceTimeStamp(timings, 9, startTime) > 0 ? startTime : 0,
+            redirectEnd: this.decodeCompressedResourceTimeStamp(timings, 9, startTime),
+            fetchStart: fetchStart,
+            domainLookupStart: this.decodeCompressedResourceTimeStamp(timings, 8, startTime),
+            domainLookupEnd: this.decodeCompressedResourceTimeStamp(timings, 7, startTime),
+            connectStart: this.decodeCompressedResourceTimeStamp(timings, 6, startTime),
+            secureConnectionStart: this.decodeCompressedResourceTimeStamp(timings, 5, startTime),
+            connectEnd: this.decodeCompressedResourceTimeStamp(timings, 4, startTime),
+            requestStart: this.decodeCompressedResourceTimeStamp(timings, 3, startTime),
+            responseStart: this.decodeCompressedResourceTimeStamp(timings, 2, startTime),
+            responseEnd: this.decodeCompressedResourceTimeStamp(timings, 1, startTime)
+        };
+
+        res.duration = res.responseEnd > 0 ? (res.responseEnd - res.startTime) : 0;
+
+        // decompress resource size data
+        for (i = 0; i < specialData.length; i++) {
+            this.decompressSpecialData(specialData[i], res, st);
+        }
+
+        return res;
+    };
+
+    /**
+     * Decodes a timestamp from a compressed RT array
+     *
+     * @param {number[]} timings ResourceTiming timings
+     * @param {number} idx Index into array
+     * @param {number} startTime NavigationTiming The Resource's startTime
+     *
+     * @returns {number} Timestamp, or 0 if unknown or missing
+     */
+    ResourceTimingDecompression.decodeCompressedResourceTimeStamp = function(timings, idx, startTime) {
+        if (timings && timings.length >= (idx + 1)) {
+            if (timings[idx] !== 0) {
+                return timings[idx] + startTime;
+            }
+        }
+
+        return 0;
+    };
+
+    /**
+     * Decompresses script load type into the specified resource.
+     *
+     * @param {string} compressed String with a single integer.
+     * @param {ResourceTiming} resource ResourceTiming object.
+     * @returns {ResourceTiming} ResourceTiming object with decompressed script type.
+     */
+    ResourceTimingDecompression.decompressScriptType = function(compressed, resource) {
+        var data = parseInt(compressed, 10);
+
+        if (!resource) {
+            resource = {};
+        }
+
+        for (var key in this.SCRIPT_ATTRIBUTES) {
+            if (this.SCRIPT_ATTRIBUTES.hasOwnProperty(key)) {
+                resource[key] = (data & this.SCRIPT_ATTRIBUTES[key]) === this.SCRIPT_ATTRIBUTES[key];
+            }
+        }
+
+        return resource;
+    };
+
+    /**
+     * Decompresses link attributes
+     *
+     * @param {string} compressed String with a single integer.
+     * @param {ResourceTiming} resource ResourceTiming object.
+     * @returns {ResourceTiming} ResourceTiming object with decompressed link attribute type.
+     */
+    ResourceTimingDecompression.decompressLinkAttrType = function(compressed, resource) {
+        var data = parseInt(compressed, 10);
+
+        if (!resource) {
+            resource = {};
+        }
+
+        if (this.REV_REL_TYPES.hasOwnProperty(data)) {
+            resource.rel = this.REV_REL_TYPES[data];
+        }
+
+        return resource;
+    };
+
+    /**
+     * Decompresses size information back into the specified resource
+     *
+     * @param {string} compressed Compressed string
+     * @param {ResourceTiming} resource ResourceTiming object
+     * @returns {ResourceTiming} ResourceTiming object with decompressed sizes
+     */
+    ResourceTimingDecompression.decompressSize = function(compressed, resource) {
+        var split, i;
+
+        if (typeof resource === "undefined") {
+            resource = {};
+        }
+
+        split = compressed.split(",");
+
+        for (i = 0; i < split.length; i++) {
+            if (split[i] === "_") {
+                // special non-delta value
+                split[i] = 0;
+            } else {
+                // fill in missing numbers
+                if (split[i] === "") {
+                    split[i] = 0;
+                }
+
+                // convert back from Base36
+                split[i] = parseInt(split[i], 36);
+
+                if (i > 0) {
+                    // delta against first number
+                    split[i] += split[0];
+                }
+            }
+        }
+
+        // fill in missing
+        if (split.length === 1) {
+            // transferSize is a delta from encodedSize
+            split.push(split[0]);
+        }
+
+        if (split.length === 2) {
+            // decodedSize is a delta from encodedSize
+            split.push(split[0]);
+        }
+
+        // re-add attributes to the resource
+        resource.encodedBodySize = split[0];
+        resource.transferSize = split[1];
+        resource.decodedBodySize = split[2];
+
+        return resource;
+    };
+
+    /**
+     * Decompresses namespaced data back into the specified resource
+     *
+     * @param {string} compressed Compressed string
+     * @param {ResourceTiming} resource ResourceTiming object
+     * @returns {ResourceTiming} ResourceTiming object with namespaced data
+     */
+    ResourceTimingDecompression.decompressNamespacedData = function(compressed, resource) {
+        resource = resource || {};
+
+        if (typeof compressed === "string") {
+            var delimiter = ":";
+            var colon = compressed.indexOf(delimiter);
+            if (colon > 0) {
+                var key = compressed.substring(0, colon);
+                var value = compressed.substring(colon + delimiter.length);
+
+                resource._data = resource._data || {};
+                if (resource._data.hasOwnProperty(key)) {
+                    // we are adding our 2nd or nth value (n > 2) for this key
+                    if (!Array.isArray(resource._data[key])) {
+                        // we are adding our 2nd value for this key, convert to array before pushing
+                        resource._data[key] = [resource._data[key]];
+                    }
+
+                    // push it onto the array
+                    resource._data[key].push(value);
+                } else {
+                    // we are adding our 1st value for this key
+                    resource._data[key] = value;
+                }
+            }
+        }
+
+        return resource;
+    };
+
+    /**
+     * Decompresses service worker data
+     *
+     * @param {string} compressed Compressed string
+     * @param {ResourceTiming} resource ResourceTiming object
+     * @returns {ResourceTiming} ResourceTiming object with decompressed special data
+     */
+    ResourceTimingDecompression.decompressServiceWorkerData = function(compressed, resource) {
+        resource = resource || {};
+
+        if (typeof compressed === "string") {
+            var splitCompressed = compressed.split(",");
+
+            var offset = parseInt(splitCompressed[0], 36);
+            resource.workerStart = resource.startTime + offset;
+
+            // if fetchStart is set, also use that instead of the inferred startTime/redirectEnd
+            if (splitCompressed[1]) {
+                resource.fetchStart = resource.startTime + parseInt(splitCompressed[1], 36);
+            }
+        }
+
+        return resource;
+    };
+
+    /**
+     * Decompresses special data such as resource size or script type into the given resource.
+     *
+     * @param {string} compressed Compressed string
+     * @param {ResourceTiming} resource ResourceTiming object
+     * @param {array} st server timing entries lookup
+     * @returns {ResourceTiming} ResourceTiming object with decompressed special data
+     */
+    ResourceTimingDecompression.decompressSpecialData = function(compressed, resource, st) {
+        var dataType;
+
+        if (!compressed || compressed.length === 0) {
+            return resource;
+        }
+
+        dataType = compressed[0];
+
+        compressed = compressed.substring(1);
+
+        if (dataType === ResourceTimingDecompression.SPECIAL_DATA_SIZE_TYPE) {
+            resource = this.decompressSize(compressed, resource);
+        } else if (dataType === ResourceTimingDecompression.SPECIAL_DATA_SCRIPT_TYPE) {
+            resource = this.decompressScriptType(compressed, resource);
+        } else if (dataType === ResourceTimingDecompression.SPECIAL_DATA_SERVERTIMING_TYPE) {
+            resource = this.decompressServerTimingEntries(st, compressed, resource);
+        } else if (dataType === ResourceTimingDecompression.SPECIAL_DATA_LINK_ATTR_TYPE) {
+            resource = this.decompressLinkAttrType(compressed, resource);
+        } else if (dataType === ResourceTimingDecompression.SPECIAL_DATA_NAMESPACED_TYPE) {
+            resource = this.decompressNamespacedData(compressed, resource);
+        } else if (dataType === ResourceTimingDecompression.SPECIAL_DATA_SERVICE_WORKER_TYPE) {
+            resource = this.decompressServiceWorkerData(compressed, resource);
+        }
+
+        return resource;
+    };
+
+    /**
+     * Reverse the hostname portion of a URL
+     *
+     * @param {string} url a fully-qualified URL
+     * @returns {string} the input URL with the hostname portion reversed, if it can be found
+     */
+    ResourceTimingDecompression.reverseHostname = function(url) {
+        return url.replace(ResourceTimingDecompression.HOSTNAME_REGEX, function(m, p1, p2, p3) {
+            // p2 is everything after the first `://` and before the next `/`
+            // which includes `<username>:<password>@` and `:<port-number>`, if present
+            return p1 + ResourceTimingDecompression.reverseString(p2) + p3;
+        });
+    };
+
+    /**
+     * Reverse a string
+     *
+     * @param {string} i a string
+     * @returns {string} the reversed string
+     */
+    ResourceTimingDecompression.reverseString = function(i) {
+        var l = i.length, o = "";
+        while (l--) {
+            o += i[l];
+        }
+        return o;
+    };
+
+    /**
+     * Decompress a list of compressed server timing entries for a resource
+     *
+     * @param {array} lookup server timing entries lookup
+     * @param {string} compressedList server timing entries for a resource
+     * @param {ResourceTiming} resource ResourceTiming object.
+     * @returns {ResourceTiming} ResourceTiming object with decompressed server timing entries.
+     */
+    ResourceTimingDecompression.decompressServerTimingEntries = function(lookup, compressedList, resource) {
+        if (typeof resource === "undefined") {
+            resource = {};
+        }
+
+        if (lookup && compressedList) {
+            resource.serverTiming = compressedList.split(",").map(function(compressedEntry) {
+                return this.decompressServerTiming(lookup, compressedEntry);
+            }, this);
+        }
+        return resource;
+    };
+
+    /**
+     * Decompress a compressed server timing entry for a resource
+     *
+     * @param {array} lookup server timing entries lookup
+     * @param {string} key key into the lookup for one server timing entry
+     * @returns {object} server timing entry
+     */
+    ResourceTimingDecompression.decompressServerTiming = function(lookup, key) {
+        var split = key.split(":");
+        var duration = Number(split[0]);
+        var entryIndex = 0, descriptionIndex = 0;
+
+        if (split.length > 1) {
+            var identity = split[1].split(".");
+            if (identity[0] !== "") {
+                entryIndex = Number(identity[0]);
+            }
+            if (identity.length > 1) {
+                descriptionIndex = Number(identity[1]);
+            }
+        }
+
+        var name, description = "";
+        if (Array.isArray(lookup[entryIndex])) {
+            name = lookup[entryIndex][0];
+            description = lookup[entryIndex][1 + descriptionIndex] || "";
+        } else {
+            name = lookup[entryIndex];
+        }
+
+        return {
+            name: name,
+            duration: duration,
+            description: description
+        };
+    };
+
+    //
+    // Export to the appropriate location
+    //
+    if (typeof define === "function" && define.amd) {
+        //
+        // AMD / RequireJS
+        //
+        define([], function() {
+            return ResourceTimingDecompression;
+        });
+    } else if (typeof module !== "undefined" && module.exports) {
+        //
+        // Node.js
+        //
+        module.exports = ResourceTimingDecompression;
+    } else if (typeof root !== "undefined") {
+        //
+        // Browser Global
+        //
+        root.ResourceTimingDecompression = ResourceTimingDecompression;
+    }
+}(typeof window !== "undefined" ? window : undefined));
 
 /**
  * The Continuity plugin measures performance and user experience metrics beyond
@@ -4933,9 +5953,9 @@ BOOMR_check_doc_domain();
 (function() {
 	var impl;
 
+	
 
-
-
+	
 
 	if (BOOMR.plugins.Continuity) {
 		return;
@@ -5026,7 +6046,7 @@ BOOMR_check_doc_domain();
 	 * @param {string} msg Message
 	 */
 	function debug(msg) {
-
+		
 	}
 
 	/**
@@ -8234,8 +9254,8 @@ BOOMR_check_doc_domain();
 	var w,
 	    MSG_RETRY_DELAY = 250;  // postMessage retry delay in ms
 
-
-
+	
+	
 
 	if (BOOMR.plugins.IFrameDelay) {
 		return;
@@ -8308,7 +9328,7 @@ BOOMR_check_doc_domain();
 				}
 
 				if (data.msg === impl.messages.start) {
-
+					
 
 					if (impl.runningFrames[data.pid]) {
 						// already got a start message from this frame
@@ -8323,7 +9343,7 @@ BOOMR_check_doc_domain();
 					impl.runningFrames[data.pid] = 1;
 				}
 				else if (data.msg === impl.messages.done) {
-
+					
 
 					// respond to the frame
 					event.source.postMessage(JSON.stringify({"msg": impl.messages.doneACK}), event.origin);
@@ -8362,12 +9382,12 @@ BOOMR_check_doc_domain();
 				}
 
 				if (data.msg === impl.messages.startACK) {
-
+					
 					clearInterval(impl.loadingIntervalID);
 					impl.loadingIntervalID = undefined;
 				}
 				else if (data.msg === impl.messages.doneACK) {
-
+					
 					clearInterval(impl.loadedIntervalID);
 					impl.loadedIntervalID = undefined;
 				}
@@ -8453,11 +9473,11 @@ BOOMR_check_doc_domain();
 			// only run important bits if we're getting the actual configuration
 			if (this.is_supported()) {
 				if (impl.registerParent) {
-
+					
 					// listen on this window since it will be the source of postMessage calls
 					BOOMR.utils.addListener(window, "message", impl.onIFrameMessageAsChild);
 					function postStart() {
-
+						
 						w.parent.postMessage(JSON.stringify({"msg": impl.messages.start, "pid": BOOMR.pageId}), "*");
 					}
 					postStart();
@@ -8474,7 +9494,7 @@ BOOMR_check_doc_domain();
 						function postEnd() {
 							// make sure start message was sent first
 							if (!impl.loadingIntervalID) {
-
+								
 								w.parent.postMessage(JSON.stringify({"msg": impl.messages.done, "pid": BOOMR.pageId, "loadEnd": loadEnd}), "*");
 							}
 						}
@@ -8484,11 +9504,11 @@ BOOMR_check_doc_domain();
 					});
 				}
 				else if (!impl.registerParent && impl.monitoredCount && impl.monitoredCount > 0) {
-
+					
 					BOOMR.utils.addListener(w, "message", impl.onIFrameMessageAsParent);
 				}
 				else {
-
+					
 					impl.finishedCount = impl.monitoredCount = impl.runningCount = 0;
 					impl.enabled = false;
 				}
@@ -8624,7 +9644,7 @@ BOOMR_check_doc_domain();
  * Example:
  *
  * ```
- *
+ * 
  *
  * BOOMR.xhr_excludes = {
  *   "www.mydomain.com":  true,
@@ -8884,8 +9904,8 @@ BOOMR_check_doc_domain();
 	// Default resources to count as Back-End during a SPA nav
 	var SPA_RESOURCES_BACK_END = ["xmlhttprequest", "script", "fetch"];
 
-
-
+	
+	
 
 	if (BOOMR.plugins.AutoXHR) {
 		return;
@@ -9146,7 +10166,7 @@ BOOMR_check_doc_domain();
 				// if we have a pending SPA event, send an aborted load beacon before
 				// adding the new SPA event
 				if (BOOMR.utils.inArray(ev.type, BOOMR.constants.BEACON_TYPE_SPAS)) {
-
+					
 
 					// mark the end of this navigation as now
 					last_ev.resource.timing.loadEventEnd = BOOMR.now();
@@ -9247,7 +10267,7 @@ BOOMR_check_doc_domain();
 			// if this was a SPA soft nav with no URL change and did not trigger additional resources
 			// then we will not send a beacon
 			if (ev.type === "spa" && ev.total_nodes === 0 && ev.resource.url === self.lastSpaLocation) {
-
+				
 				BOOMR.fireEvent("spa_cancel");
 				this.pending_events[index] = undefined;
 				return;
@@ -9738,7 +10758,7 @@ BOOMR_check_doc_domain();
 					node.removeEventListener("error", node._bmr.listener);
 					delete node._bmr.listener;
 				}
-
+				
 			}
 
 			// no URL or javascript: or about: or data: URL, so no network activity
@@ -9831,7 +10851,7 @@ BOOMR_check_doc_domain();
 				a.href = url;
 
 				if (impl.excludeFilter(a)) {
-
+					
 					// excluded resource, so abort
 					return false;
 				}
@@ -9858,9 +10878,9 @@ BOOMR_check_doc_domain();
 				node.removeEventListener("load", listener);
 				node.removeEventListener("error", listener);
 				delete node._bmr.listener;
-
+				
 			};
-
+			
 			node._bmr.listener = listener;
 			node.addEventListener("load", listener);
 			node.addEventListener("error", listener);
@@ -9926,7 +10946,7 @@ BOOMR_check_doc_domain();
 			return -1;
 		}
 
-
+		
 
 		// increase the number of outstanding resources by one
 		current_event.nodes_to_wait++;
@@ -10246,7 +11266,7 @@ BOOMR_check_doc_domain();
 			a.href = url;
 			if (impl.excludeFilter(a)) {
 				// this fetch should be excluded from instrumentation
-
+				
 				// call the original open method
 				return BOOMR.orig_fetch.apply(w, arguments);
 			}
@@ -10559,7 +11579,7 @@ BOOMR_check_doc_domain();
 				if (impl.excludeFilter(a)) {
 					// this xhr should be excluded from instrumentation
 					excluded = true;
-
+					
 					// call the original open method
 					return orig_open.apply(req, arguments);
 				}
@@ -10820,7 +11840,7 @@ BOOMR_check_doc_domain();
 				if (typeof impl.excludeFilters[idx].cb === "function") {
 					ctx = impl.excludeFilters[idx].ctx;
 					if (impl.excludeFilters[idx].name) {
-
+						
 					}
 
 					try {
@@ -11308,8 +12328,8 @@ BOOMR_check_doc_domain();
 	    latestResource,
 	    waitingOnHardMissedComplete = false;
 
-
-
+	
+	
 
 	if (BOOMR.plugins.SPA || !BOOMR.plugins.AutoXHR) {
 		return;
@@ -11509,7 +12529,7 @@ BOOMR_check_doc_domain();
 		hook: function(hadRouteChange, options) {
 			options = options || {};
 
-
+			
 
 			// allow to set options each call in case they change
 
@@ -11550,13 +12570,13 @@ BOOMR_check_doc_domain();
 		 * @memberof BOOMR.plugins.SPA
 		 */
 		route_change: function(onComplete, routeFilterArgs) {
-
+			
 
 			var firedEvent = false;
 			var initiator = firstSpaNav && !disableHardNav ? "spa_hard" : "spa";
 
 			if (latestResource && latestResource.wait) {
-
+				
 				return;
 			}
 
@@ -11564,11 +12584,11 @@ BOOMR_check_doc_domain();
 			if (initiator === "spa" && routeFilter) {
 				try {
 					if (!routeFilter.apply(null, routeFilterArgs)) {
-
+						
 						return;
 					}
 					else {
-
+						
 					}
 				}
 				catch (e) {
@@ -11624,16 +12644,16 @@ BOOMR_check_doc_domain();
 			// if we have a routeChangeWaitFilter, make sure AutoXHR waits on the custom event
 			// for this SPA soft route
 			if (initiator === "spa" && routeChangeWaitFilter) {
-
+				
 				try {
 					if (routeChangeWaitFilter.apply(null, arguments)) {
-
+						
 						resource.wait = true;
 
 						latestResource = resource;
 					}
 					else {
-
+						
 					}
 				}
 				catch (e) {
@@ -11680,12 +12700,12 @@ BOOMR_check_doc_domain();
 		 * @memberof BOOMR.plugins.SPA
 		 */
 		wait_complete: function() {
-
+			
 			if (latestResource) {
 				latestResource.wait = false;
 
 				if (latestResource.waitComplete) {
-
+					
 					latestResource.waitComplete();
 				}
 
@@ -11718,7 +12738,7 @@ BOOMR_check_doc_domain();
 
 						waiting = mh.nodesWaitingFor(i);
 
-
+						
 
 						// note that the navigation was forced complete
 						BOOMR.addVar("spa.forced", "1", true);
@@ -11732,7 +12752,7 @@ BOOMR_check_doc_domain();
 					}
 				}
 			}
-
+			
 		},
 
 		/**
@@ -11850,7 +12870,7 @@ BOOMR_check_doc_domain();
 				return;
 			}
 
-
+			
 
 			if (impl.routeChangeInProgress) {
 				clearTimeout(impl.routeChangeInProgress);
@@ -11879,19 +12899,19 @@ BOOMR_check_doc_domain();
 		 */
 		routeChange: function(event) {
 			if (!impl.enabled) {
-
+				
 				impl.resetRouteChangeInProgress();
 			}
 			else {
 				// don't track the SPA route change until the onload (page_ready)
 				// has fired
 				if (impl.disableHardNav && !BOOMR.onloadFired()) {
-
+					
 					return;
 				}
 
 				if (!impl.routeChangeInProgress) {
-
+					
 					if (event.toUrl) {
 						impl.a.href = event.toUrl;
 						event.toUrl = impl.a.href;
@@ -11899,14 +12919,14 @@ BOOMR_check_doc_domain();
 					BOOMR.plugins.SPA.route_change(null, event);
 				}
 				else {
-
+					
 				}
 			}
 		}
 	};
 
-
-
+	
+	
 
 	// Checking for Plugins required and if already integrated
 	if (BOOMR.plugins.History ||
@@ -11949,7 +12969,7 @@ BOOMR_check_doc_domain();
 		if (typeof history.pushState === "function") {
 			history.pushState = (function(_pushState) {
 				return function(state, title, url) {
-
+					
 					impl.routeChange({type: "pushState", fromUrl: BOOMR.window.document.URL, toUrl: url});
 					return _pushState.apply(this, arguments);
 				};
@@ -11969,11 +12989,11 @@ BOOMR_check_doc_domain();
 
 					// only issue route change if a nav is not in progress or the URL is changing
 					if (!BOOMR.plugins.SPA.isSpaNavInProgress() || toUrl !== fromUrl) {
-
+						
 						impl.routeChange({type: "pushState", fromUrl: BOOMR.window.document.URL, toUrl: url});
 					}
 					else {
-
+						
 					}
 					return _replaceState.apply(this, arguments);
 				};
@@ -11985,7 +13005,7 @@ BOOMR_check_doc_domain();
 		if (typeof history.go === "function") {
 			history.go = (function(_go) {
 				return function(index) {
-
+					
 					impl.routeChange({type: "go", fromUrl: BOOMR.window.document.URL});  // spa_init url will be the url before `go` runs .. for routefilter also
 					return _go.apply(this, arguments);
 				};
@@ -11995,7 +13015,7 @@ BOOMR_check_doc_domain();
 		if (typeof history.back === "function") {
 			history.back = (function(_back) {
 				return function() {
-
+					
 					impl.routeChange({type: "back", fromUrl: BOOMR.window.document.URL});  // spa_init url will be the url before `back` runs
 					return _back.apply(this, arguments);
 				};
@@ -12005,7 +13025,7 @@ BOOMR_check_doc_domain();
 		if (typeof history.forward === "function") {
 			history.forward = (function(_forward) {
 				return function() {
-
+					
 					impl.routeChange({type: "forward", fromUrl: BOOMR.window.document.URL});  // spa_init url will be the url before `forward` runs
 					return _forward.apply(this, arguments);
 				};
@@ -12016,7 +13036,7 @@ BOOMR_check_doc_domain();
 		// hashchange events may be available even if the browser does not support the History API
 		BOOMR.window.addEventListener("hashchange", function(event) {
 			var url = (event || {}).newURL;
-
+			
 			impl.routeChange({type: "hashchange", toUrl: url});
 		});
 
@@ -12026,7 +13046,7 @@ BOOMR_check_doc_domain();
 		function aelPopstate() {
 			// popstate events may be available even if the browser does not support the History API
 			BOOMR.window.addEventListener("popstate", function(event) {
-
+				
 				impl.routeChange({type: "popstate", toUrl: BOOMR.window.document.URL});
 			});
 		}
@@ -12083,10 +13103,10 @@ BOOMR_check_doc_domain();
 		 */
 		hook: function(history, hadRouteChange, options) {
 			try {
-
+				
 			}
 			catch (e) {
-
+				
 			}
 
 			options = options || {};
@@ -12187,7 +13207,7 @@ BOOMR_check_doc_domain();
 					BOOMR.utils.pluginConfig(impl, config, _plugin_name, ["enabled"]);
 
 					if (impl.enabled) {
-
+						
 						BOOMR.plugins.History.hook(undefined, undefined, {});
 					}
 
@@ -12334,8 +13354,8 @@ BOOMR_check_doc_domain();
 	 */
 	var COOKIE_COMPRESSED_TIMESTAMPS = 0x1;
 
-
-
+	
+	
 
 	if (BOOMR.plugins.RT) {
 		return;
@@ -12527,7 +13547,7 @@ BOOMR_check_doc_domain();
 				subcookies.bcn = this.beacon_url;
 			}
 
-
+			
 			if (!BOOMR.utils.setCookie(this.cookie, subcookies, this.cookie_exp)) {
 				BOOMR.error("cannot set start cookie", "rt");
 				return false;
@@ -12629,8 +13649,8 @@ BOOMR_check_doc_domain();
 		 *
 		 */
 		maybeResetSession: function(t_done, t_start) {
-
-
+			
+			
 
 			// determine the average page session length, which is the session length over # of pages
 			var avgSessionLength = 0;
@@ -12675,8 +13695,8 @@ BOOMR_check_doc_domain();
 				});
 			}
 
-
-
+			
+			
 		},
 
 		/**
@@ -12705,7 +13725,7 @@ BOOMR_check_doc_domain();
 
 			subcookies.s = Math.max(+subcookies.ld || 0, Math.max(+subcookies.ul || 0, +subcookies.cl || 0));
 
-
+			
 
 			// If we have a start time, and either a referrer, or a clicked on URL,
 			// we check if the start time is usable.
@@ -12715,17 +13735,17 @@ BOOMR_check_doc_domain();
 				docReferrerHash = BOOMR.utils.hashString((d && d.referrer) || "");
 
 				// Either the URL of the page setting the cookie needs to match document.referrer
-
+				
 
 				// Or the start timer was no more than 15ms after a click or form submit
 				// and the URL clicked or submitted to matches the current page's URL
 				// (note the start timer may be later than click if both click and beforeunload fired
 				// on the previous page)
 				if (subcookies.cl) {
-
+					
 				}
 				if (subcookies.nu) {
-
+					
 				}
 
 				if (!this.strict_referrer ||
@@ -12780,7 +13800,7 @@ BOOMR_check_doc_domain();
 		 * Increment session length, and either session.obo or session.loadTime whichever is appropriate for this page
 		 */
 		incrementSessionDetails: function() {
-
+			
 			BOOMR.session.length++;
 
 			if (!impl.timers.t_done || isNaN(impl.timers.t_done.delta)) {
@@ -13231,7 +14251,7 @@ BOOMR_check_doc_domain();
 				impl.cached_t_start = t_start;
 			}
 
-
+			
 			return t_start;
 		},
 
@@ -13252,7 +14272,7 @@ BOOMR_check_doc_domain();
 		prerenderToVisible: function() {
 			if (impl.onloadfired &&
 			    impl.autorun) {
-
+				
 
 				// note that we transitioned from prerender on the beacon for debugging
 				BOOMR.addVar("vis.pre", "1", true);
@@ -13263,7 +14283,7 @@ BOOMR_check_doc_domain();
 		},
 
 		page_unload: function(edata) {
-
+			
 			if (!this.unloadfired) {
 				// run done on abort or on page_unload to measure session length
 				BOOMR.plugins.RT.done(edata, "unload");
@@ -13294,12 +14314,12 @@ BOOMR_check_doc_domain();
 			if (!etarget) {
 				return;
 			}
-
+			
 			while (etarget && etarget.nodeName && etarget.nodeName.toUpperCase() !== element) {
 				etarget = etarget.parentNode;
 			}
 			if (etarget && etarget.nodeName && etarget.nodeName.toUpperCase() === element) {
-
+				
 
 				// we might need to reset the session first, as updateCookie()
 				// below sets the lastActionTime
@@ -13420,7 +14440,7 @@ BOOMR_check_doc_domain();
 		 * @memberof BOOMR.plugins.RT
 		 */
 		init: function(config) {
-
+			
 			if (w !== BOOMR.window) {
 				w = BOOMR.window;
 			}
@@ -13680,7 +14700,7 @@ BOOMR_check_doc_domain();
 		 * @memberof BOOMR.plugins.RT
 		 */
 		done: function(edata, ename) {
-
+			
 
 			if (!BOOMR.plugins.RT) {
 				// something removed us
@@ -14078,8 +15098,8 @@ BOOMR_check_doc_domain();
 (function() {
 	var impl, images;
 
-
-
+	
+	
 
 	if (BOOMR.plugins.BW) {
 		return;
@@ -14189,8 +15209,8 @@ BOOMR_check_doc_domain();
 			lat_filtered = this.iqr(this.latencies.sort(this.ncmp));
 			n = lat_filtered.length;
 
-
-
+			
+			
 
 			// First we get the arithmetic mean, standard deviation and standard error
 			for (i = 0; i < n; i++) {
@@ -14260,10 +15280,10 @@ BOOMR_check_doc_domain();
 				}
 			}
 
+			
 
-
-
-
+			
+			
 
 			// First do IQR filtering since we use the median here
 			// and should use the stddev after filtering.
@@ -14276,8 +15296,8 @@ BOOMR_check_doc_domain();
 				bandwidths_corrected = bandwidths_corrected.sort(this.ncmp);
 			}
 
-
-
+			
+			
 
 			// Now get the mean & median.
 			// Also get corrected values that eliminate latency
@@ -14305,7 +15325,7 @@ BOOMR_check_doc_domain();
 				);
 
 			if (bandwidths_corrected.length < 1) {
-
+				
 				debug_info.push("l==" + bandwidths_corrected.length);
 
 				amean_corrected = amean;
@@ -14329,8 +15349,8 @@ BOOMR_check_doc_domain();
 						);
 			}
 
-
-
+			
+			
 
 			return {
 				mean: amean,
@@ -14429,7 +15449,7 @@ BOOMR_check_doc_domain();
 			// we terminate if an image timed out because that means the connection is
 			// too slow to go to the next image
 			if (i >= images.end - 1 || this.results[this.nruns - run].r[i + 1] !== undefined) {
-
+				
 				// First run is a pilot test to decide what the largest image
 				// that we can download is. All following runs only try to
 				// download this image
@@ -14758,8 +15778,8 @@ BOOMR_check_doc_domain();
  * @class BOOMR.plugins.PaintTiming
  */
 (function() {
-
-
+	
+	
 
 	if (BOOMR.plugins.PaintTiming) {
 		return;
@@ -15068,8 +16088,8 @@ BOOMR_check_doc_domain();
  * @class BOOMR.plugins.NavigationTiming
  */
 (function() {
-
-
+	
+	
 
 	if (BOOMR.plugins.NavigationTiming) {
 		return;
@@ -15552,8 +16572,8 @@ BOOMR_check_doc_domain();
 (function() {
 	var impl;
 
-
-
+	
+	
 
 	if (BOOMR.plugins.ResourceTiming) {
 		return;
@@ -17330,7 +18350,7 @@ BOOMR_check_doc_domain();
 		"saveData": "sd"
 	};
 
-
+	
 
 	if (typeof BOOMR.addVar !== "function") {
 		return;
@@ -17424,8 +18444,8 @@ BOOMR_check_doc_domain();
 (function() {
 	var w, p = {}, d, m, s, n, b, ls, ss, impl;
 
-
-
+	
+	
 
 	if (BOOMR.plugins.Memory) {
 		return;
@@ -17803,8 +18823,8 @@ BOOMR_check_doc_domain();
  * @class BOOMR.plugins.CACHE_RELOAD
  */
 (function() {
-
-
+	
+	
 
 	if (BOOMR.plugins.CACHE_RELOAD) {
 		return;
@@ -17871,7 +18891,7 @@ BOOMR_check_doc_domain();
  * @class BOOMR.utils.Compression
  */
 (function() {
-
+	
 	BOOMR.utils = BOOMR.utils || {};
 
 	if (BOOMR.utils && BOOMR.utils.Compression) {
@@ -18627,8 +19647,8 @@ BOOMR_check_doc_domain();
 (function() {
 	var impl;
 
-
-
+	
+	
 
 	if (BOOMR.plugins.Errors) {
 		return;
@@ -19885,7 +20905,7 @@ BOOMR_check_doc_domain();
 					}
 				}
 				catch (e) {
-
+					
 				}
 			}
 
@@ -19964,7 +20984,7 @@ BOOMR_check_doc_domain();
 					});
 				}
 				catch (h) {
-
+					
 				}
 			}
 
@@ -20184,8 +21204,8 @@ BOOMR_check_doc_domain();
 (function() {
 	"use strict";
 
-
-
+	
+	
 
 	if (BOOMR.plugins.TPAnalytics) {
 		return;
@@ -20601,21 +21621,20 @@ BOOMR_check_doc_domain();
 // https://github.com/nicjansma/usertiming-compression.js
 //
 (function(window) {
-	"use strict";
+    "use strict";
 
     // save old UserTimingCompression object for noConflict()
-	var root;
-	var previousObj;
-	if (typeof window !== "undefined") {
-		root = window;
-		previousObj = root.UserTimingCompression;
-	}
-	else {
-		root = {};
-	}
+    var root;
+    var previousObj;
+    if (typeof window !== "undefined") {
+        root = window;
+        previousObj = root.UserTimingCompression;
+    } else {
+        root = {};
+    }
 
     // model
-	var self, UserTimingCompression = self = {};
+    var self, UserTimingCompression = self = {};
 
     //
     // Functions
@@ -20626,10 +21645,10 @@ BOOMR_check_doc_domain();
      *
      * @returns {object} Original UserTimingCompression object
      */
-	UserTimingCompression.noConflict = function() {
-		root.UserTimingCompression = previousObj;
-		return UserTimingCompression;
-	};
+    UserTimingCompression.noConflict = function() {
+        root.UserTimingCompression = previousObj;
+        return UserTimingCompression;
+    };
 
     /**
      * Trims the timing, returning an offset from the startTime in ms
@@ -20639,21 +21658,21 @@ BOOMR_check_doc_domain();
      *
      * @returns {number} Number of ms from start time
      */
-	UserTimingCompression.trimTiming = function(time, startTime) {
-		if (typeof time !== "number") {
-			time = 0;
-		}
+    UserTimingCompression.trimTiming = function(time, startTime) {
+        if (typeof time !== "number") {
+            time = 0;
+        }
 
-		if (typeof startTime !== "number") {
-			startTime = 0;
-		}
+        if (typeof startTime !== "number") {
+            startTime = 0;
+        }
 
         // strip from microseconds to milliseconds only
-		var timeMs = Math.round(time),
-		startTimeMs = Math.round(startTime);
+        var timeMs = Math.round(time),
+            startTimeMs = Math.round(startTime);
 
-		return timeMs === 0 ? 0 : (timeMs - startTimeMs);
-	};
+        return timeMs === 0 ? 0 : (timeMs - startTimeMs);
+    };
 
     /**
      * Converts a number to base-36
@@ -20661,9 +21680,9 @@ BOOMR_check_doc_domain();
      * @param {number} n Number
      * @returns {number|string} Base-36 number, or empty string if undefined.
      */
-	UserTimingCompression.toBase36 = function(n) {
-		return (typeof n === "number") ? n.toString(36) : "";
-	};
+    UserTimingCompression.toBase36 = function(n) {
+        return (typeof n === "number") ? n.toString(36) : "";
+    };
 
     /**
      * Gets all of the UserTiming entries for a frame
@@ -20672,40 +21691,39 @@ BOOMR_check_doc_domain();
      *
      * @returns {PerformanceEntry[]} UserTiming entries
      */
-	UserTimingCompression.findUserTimingForFrame = function(frame) {
-		var entries;
+    UserTimingCompression.findUserTimingForFrame = function(frame) {
+        var entries;
 
-		if (!frame) {
-			return [];
-		}
+        if (!frame) {
+            return [];
+        }
 
-		try {
+        try {
             // Try to access location.href first to trigger any Cross-Origin
             // warnings.  There's also a bug in Chrome ~48 that might cause
             // the browser to crash if accessing X-O frame.performance.
             // https://code.google.com/p/chromium/issues/detail?id=585871
             // This variable is not otherwise used.
             /* eslint-disable no-unused-vars */
-			var frameLoc = frame.location && frame.location.href;
+            var frameLoc = frame.location && frame.location.href;
             /* eslint-enable no-unused-vars */
 
-			if (!("performance" in frame) ||
+            if (!("performance" in frame) ||
                 !frame.performance ||
                 !frame.performance.getEntriesByType) {
-				return entries;
-			}
+                return entries;
+            }
 
             // gather marks and measures for this frame
             // TODO do we need to offset startTime?
-			entries = frame.performance.getEntriesByType("mark");
-			entries = entries.concat(frame.performance.getEntriesByType("measure"));
-		}
-		catch (e) {
-			return entries;
-		}
+            entries = frame.performance.getEntriesByType("mark");
+            entries = entries.concat(frame.performance.getEntriesByType("measure"));
+        } catch (e) {
+            return entries;
+        }
 
-		return entries;
-	};
+        return entries;
+    };
 
     /**
      * Compresses UserTiming entry values
@@ -20715,106 +21733,105 @@ BOOMR_check_doc_domain();
      *
      * @returns {object} Compressed UserTiming values
      */
-	UserTimingCompression.compressUserTiming = function(entries, options) {
-		var i, e, time, latestTime = 0, entryNames = {};
+    UserTimingCompression.compressUserTiming = function(entries, options) {
+        var i, e, time, latestTime = 0, entryNames = {};
 
-		options = options || {};
+        options = options || {};
 
-		if (!entries || !entries.length) {
-			return [];
-		}
+        if (!entries || !entries.length) {
+            return [];
+        }
 
         // Gather entries into a lookup based on the name
-		for (i = 0; i < entries.length; i++) {
-			e = entries[i];
+        for (i = 0; i < entries.length; i++) {
+            e = entries[i];
 
             // add an entry in the lookup if it doesn't already exist
-			if (typeof entryNames[e.name] === "undefined") {
-				entryNames[e.name] = [];
-			}
+            if (typeof entryNames[e.name] === "undefined") {
+                entryNames[e.name] = [];
+            }
 
             // add the relevant values for each type
-			if (e.entryType === "mark") {
-				entryNames[e.name].push({
-					startTime: e.startTime
-				});
-			}
-			else if (e.entryType === "measure") {
-				entryNames[e.name].push({
-					startTime: e.startTime,
-					duration: e.duration
-				});
-			}
-		}
+            if (e.entryType === "mark") {
+                entryNames[e.name].push({
+                    startTime: e.startTime
+                });
+            } else if (e.entryType === "measure") {
+                entryNames[e.name].push({
+                    startTime: e.startTime,
+                    duration: e.duration
+                });
+            }
+        }
 
         //
         // Now, look through each named entry, compressing it's values.  The values
         // are sequential, and each startTime is offset by the previous start time.
         //
-		for (var name in entryNames) {
-			if (entryNames.hasOwnProperty(name)) {
+        for (var name in entryNames) {
+            if (entryNames.hasOwnProperty(name)) {
 
                 // if we were given a map of names, and this name doesn't exist in
                 // the map, don't process this entry
-				if (options.map && typeof options.map[name] === "undefined") {
-					continue;
-				}
+                if (options.map && typeof options.map[name] === "undefined") {
+                    continue;
+                }
 
-				var nameValues = entryNames[name];
+                var nameValues = entryNames[name];
 
                 // change to the index in the map
-				if (options.map && typeof options.map[name] !== "undefined") {
-					delete entryNames[name];
-					name = options.map[name];
-				}
+                if (options.map && typeof options.map[name] !== "undefined") {
+                    delete entryNames[name];
+                    name = options.map[name];
+                }
 
                 // keep track of the last timestamp
-				latestTime = 0;
+                latestTime = 0;
 
                 // iterate over all of this name's times
-				for (i = 0; i < nameValues.length; i++) {
+                for (i = 0; i < nameValues.length; i++) {
 
                     // the value will contain a startTime, and optionally, a duration
-					var value = nameValues[i];
+                    var value = nameValues[i];
 
                     // convert to base36, offset by the previous timestamp
-					time = self.toBase36(
+                    time = self.toBase36(
                         self.trimTiming(value.startTime, latestTime));
 
                     // we can change the value of 0 to an empty string to save a byte
-					if (time === "0") {
-						time = "";
-					}
+                    if (time === "0") {
+                        time = "";
+                    }
 
-					var finalValue = time;
+                    var finalValue = time;
 
                     // if this is a measure (with a duration), tack on "_[duration]"
-					if (typeof value.duration === "number") {
+                    if (typeof value.duration === "number") {
                         // round duration to nearest ms
-						var duration = self.toBase36(Math.round(value.duration));
+                        var duration = self.toBase36(Math.round(value.duration));
 
-						finalValue += "_";
+                        finalValue += "_";
 
                         // 0-value durations get left off
-						if (duration !== "0") {
-							finalValue += duration;
-						}
-					}
+                        if (duration !== "0") {
+                            finalValue += duration;
+                        }
+                    }
 
                     // keep track of the latest time for the next value
-					latestTime = value.startTime;
+                    latestTime = value.startTime;
 
                     // store this value back in the array
-					nameValues[i] = finalValue;
-				}
+                    nameValues[i] = finalValue;
+                }
 
                 // join
-				entryNames[name] = self.compressArray(nameValues);
-			}
-		}
+                entryNames[name] = self.compressArray(nameValues);
+            }
+        }
 
-		return entryNames;
-	};
+        return entryNames;
+    };
 
     /**
      * Converts entries to a Trie:
@@ -20832,48 +21849,45 @@ BOOMR_check_doc_domain();
      * @param {object} entries Performance entries
      * @returns {object} A trie
      */
-	UserTimingCompression.convertToTrie = function(entries) {
-		var trie = {}, name, i, value, letters, letter, cur, node;
+    UserTimingCompression.convertToTrie = function(entries) {
+        var trie = {}, name, i, value, letters, letter, cur, node;
 
-		if (!entries) {
-			return {};
-		}
+        if (!entries) {
+            return {};
+        }
 
-		for (name in entries) {
-			if (!entries.hasOwnProperty(name)) {
-				continue;
-			}
+        for (name in entries) {
+            if (!entries.hasOwnProperty(name)) {
+                continue;
+            }
 
-			value = entries[name];
-			letters = name.split("");
-			cur = trie;
+            value = entries[name];
+            letters = name.split("");
+            cur = trie;
 
-			for (i = 0; i < letters.length; i++) {
-				letter = letters[i];
-				node = cur[letter];
+            for (i = 0; i < letters.length; i++) {
+                letter = letters[i];
+                node = cur[letter];
 
-				if (typeof node === "undefined") {
+                if (typeof node === "undefined") {
                     // nothing exists yet, create either a leaf if this is the end of the word,
                     // or a branch if there are letters to go
-					cur = cur[letter] = (i === (letters.length - 1) ? value : {});
-				}
-				else if (typeof node === "string" || typeof node === "number") {
+                    cur = cur[letter] = (i === (letters.length - 1) ? value : {});
+                } else if (typeof node === "string" || typeof node === "number") {
                     // this is a leaf, but we need to go further, so convert it into a branch
-					cur = cur[letter] = { "!": node };
-				}
-				else if (i === (letters.length - 1)) {
+                    cur = cur[letter] = { "!": node };
+                } else if (i === (letters.length - 1)) {
                     // this is the end of our key, and we've hit an existing node.  Add our timings.
-					cur[letter]["!"] = value;
-				}
-				else {
+                    cur[letter]["!"] = value;
+                } else {
                     // continue onwards
-					cur = cur[letter];
-				}
-			}
-		}
+                    cur = cur[letter];
+                }
+            }
+        }
 
-		return trie;
-	};
+        return trie;
+    };
 
     /**
      * Optimize the Trie by combining branches with no leaf
@@ -20883,49 +21897,46 @@ BOOMR_check_doc_domain();
      *
      * @returns {object} Optimized Trie
      */
-	UserTimingCompression.optimizeTrie = function(cur, top) {
-		var num = 0, node, ret, topNode;
+    UserTimingCompression.optimizeTrie = function(cur, top) {
+        var num = 0, node, ret, topNode;
 
-		if (!cur) {
-			return {};
-		}
+        if (!cur) {
+            return {};
+        }
 
-		for (node in cur) {
-			if (typeof cur[node] === "object") {
+        for (node in cur) {
+            if (typeof cur[node] === "object") {
                 // optimize children
-				ret = this.optimizeTrie(cur[node], false);
-				if (ret) {
+                ret = this.optimizeTrie(cur[node], false);
+                if (ret) {
                     // swap the current leaf with compressed one
-					delete cur[node];
-					node = node + ret.name;
-					cur[node] = ret.value;
-				}
-			}
-			num++;
-		}
+                    delete cur[node];
+                    node = node + ret.name;
+                    cur[node] = ret.value;
+                }
+            }
+            num++;
+        }
 
-		if (num === 1) {
+        if (num === 1) {
             // compress single leafs
-			if (top) {
+            if (top) {
                 // top node gets special treatment so we're not left with a {node:,value:} at top
-				topNode = {};
-				topNode[node] = cur[node];
-				return topNode;
-			}
-			else {
+                topNode = {};
+                topNode[node] = cur[node];
+                return topNode;
+            } else {
                 // other nodes we return name and value separately
-				return { name: node, value: cur[node] };
-			}
-		}
-		else if (top) {
+                return { name: node, value: cur[node] };
+            }
+        } else if (top) {
             // top node with more than 1 child, return it as-is
-			return cur;
-		}
-		else {
+            return cur;
+        } else {
             // more than two nodes and not the top, we can't compress any more
-			return false;
-		}
-	};
+            return false;
+        }
+    };
 
     /**
      * Compresses an Array of values
@@ -20934,39 +21945,37 @@ BOOMR_check_doc_domain();
      *
      * @returns {string} Compressed array in string form
      */
-	UserTimingCompression.compressArray = function(entries) {
-		var dupeCount = 0, result = "";
+    UserTimingCompression.compressArray = function(entries) {
+        var dupeCount = 0, result = "";
 
-		if (!entries || entries.length === 0 || entries.constructor !== Array) {
-			return "";
-		}
+        if (!entries || entries.length === 0 || entries.constructor !== Array) {
+            return "";
+        }
 
-		for (var i = 0; i < entries.length; i++) {
-			var entry = entries[i];
+        for (var i = 0; i < entries.length; i++) {
+            var entry = entries[i];
 
-			if (i < entries.length - 1 && entry === entries[i + 1]) {
-				dupeCount++;
-			}
-			else if (dupeCount > 0) {
-				result += (result !== "" ? "." : "") + entry + "*";
-				if (dupeCount >= 2) {
-					result += (dupeCount + 1);
-				}
+            if (i < entries.length - 1 && entry === entries[i + 1]) {
+                dupeCount++;
+            } else if (dupeCount > 0) {
+                result += (result !== "" ? "." : "") + entry + "*";
+                if (dupeCount >= 2) {
+                    result += (dupeCount + 1);
+                }
 
-				dupeCount = 0;
-			}
-			else {
-				result += (result !== "" ? "." : "") + entry;
-			}
-		}
+                dupeCount = 0;
+            } else {
+                result += (result !== "" ? "." : "") + entry;
+            }
+        }
 
         // if it's just numeric, leave as a number so JSURL compresses it better
-		if (/^\d+$/.test(result)) {
-			return parseInt(result, 10);
-		}
+        if (/^\d+$/.test(result)) {
+            return parseInt(result, 10);
+        }
 
-		return result;
-	};
+        return result;
+    };
 
     /**
      * Gathers UserTiming entries and compresses the result.
@@ -20975,29 +21984,29 @@ BOOMR_check_doc_domain();
      *
      * @returns {object} Compressed UserTiming entries
      */
-	UserTimingCompression.getCompressedUserTiming = function(options) {
-		var frame, entries;
+    UserTimingCompression.getCompressedUserTiming = function(options) {
+        var frame, entries;
 
-		options = options || {};
-		frame = options.window || window;
-		entries = this.findUserTimingForFrame(frame);
+        options = options || {};
+        frame = options.window || window;
+        entries = this.findUserTimingForFrame(frame);
 
         // 'from' minimum time
-		if (options.from) {
-			entries = entries.filter(function(e) {
-				return e.startTime + e.duration >= options.from;
-			});
-		}
+        if (options.from) {
+            entries = entries.filter(function(e) {
+                return e.startTime + e.duration >= options.from;
+            });
+        }
 
         // 'to' maximum time
-		if (options.to) {
-			entries = entries.filter(function(e) {
-				return e.startTime <= options.to;
-			});
-		}
+        if (options.to) {
+            entries = entries.filter(function(e) {
+                return e.startTime <= options.to;
+            });
+        }
 
-		return self.compressUserTiming(entries, options);
-	};
+        return self.compressUserTiming(entries, options);
+    };
 
     /**
      * Optimizes compressed UserTiming data for URI transmission.
@@ -21006,32 +22015,31 @@ BOOMR_check_doc_domain();
      *
      * @returns {string} String suitable for encodeURIComponent()
      */
-	UserTimingCompression.compressForUri = function(data) {
-		if (typeof data !== "object") {
-			return "";
-		}
+    UserTimingCompression.compressForUri = function(data) {
+        if (typeof data !== "object") {
+            return "";
+        }
 
         //
         // Determine if the data is for a map, which is the most efficient
         // structure we can use.
         //
-		var isMap = false;
-		for (var name in data) {
-			if (data.hasOwnProperty(name)) {
-				if (isNaN(name)) {
-					isMap = false;
-					break;
-				}
-				else {
-					isMap = true;
-				}
-			}
-		}
+        var isMap = false;
+        for (var name in data) {
+            if (data.hasOwnProperty(name)) {
+                if (isNaN(name)) {
+                    isMap = false;
+                    break;
+                } else {
+                    isMap = true;
+                }
+            }
+        }
 
         // if we only had numbers in the map, we can flatten it more efficiently
-		if (isMap) {
-			return "1" + self.flattenMap(data);
-		}
+        if (isMap) {
+            return "1" + self.flattenMap(data);
+        }
 
         //
         // We're going to convert the data to both a Trie (JSURL-encoded),
@@ -21043,34 +22051,33 @@ BOOMR_check_doc_domain();
         // Method #1: Trie
         //
         // convert to a Trie
-		var unOptTrie = self.convertToTrie(data);
+        var unOptTrie = self.convertToTrie(data);
 
         // optimize the Trie
-		var trie = self.optimizeTrie(unOptTrie, true);
+        var trie = self.optimizeTrie(unOptTrie, true);
 
-		var trieJsURL = self.jsUrl(trie);
+        var trieJsURL = self.jsUrl(trie);
 
         //
         // Method #2: Flattened array
         //
-		var ary = self.flattenArray(data);
+        var ary = self.flattenArray(data);
 
-		if (typeof ary !== "string" || ary.length === 0) {
-			return "";
-		}
+        if (typeof ary !== "string" || ary.length === 0) {
+            return "";
+        }
 
         // encode the URI components to see which one is smaller
-		var trieEnc = encodeURIComponent(trieJsURL);
-		var aryEnc = encodeURIComponent(ary);
+        var trieEnc = encodeURIComponent(trieJsURL);
+        var aryEnc = encodeURIComponent(ary);
 
         // return the smaller one
-		if (trieEnc.length < aryEnc.length) {
-			return trieJsURL;
-		}
-		else {
-			return "0" + ary;
-		}
-	};
+        if (trieEnc.length < aryEnc.length) {
+            return trieJsURL;
+        } else {
+            return "0" + ary;
+        }
+    };
 
     /**
      * Flattens an array from key:value pairs to a string separated by ~s
@@ -21081,26 +22088,26 @@ BOOMR_check_doc_domain();
      *
      * @returns {string} String representing the array
      */
-	UserTimingCompression.flattenArray = function(data) {
-		var ary = [];
+    UserTimingCompression.flattenArray = function(data) {
+        var ary = [];
 
-		if (typeof data !== "object") {
-			return "";
-		}
+        if (typeof data !== "object") {
+            return "";
+        }
 
-		for (var name in data) {
-			if (data.hasOwnProperty(name)) {
-				var val = (data[name] + "").replace("~", "%7E");
-				name = name.replace("~", "%7E");
+        for (var name in data) {
+            if (data.hasOwnProperty(name)) {
+                var val = (data[name] + "").replace("~", "%7E");
+                name = name.replace("~", "%7E");
 
-				ary.push(name + "~" + val);
-			}
-		}
+                ary.push(name + "~" + val);
+            }
+        }
 
-		ary = ary.join("~");
+        ary = ary.join("~");
 
-		return ary;
-	};
+        return ary;
+    };
 
     /**
      * Flattens an array from numeric key:value pairs to a string separated by ~s
@@ -21111,48 +22118,48 @@ BOOMR_check_doc_domain();
      *
      * @returns {string} String representing the array
      */
-	UserTimingCompression.flattenMap = function(data) {
-		var ary = [];
+    UserTimingCompression.flattenMap = function(data) {
+        var ary = [];
 
-		if (typeof data !== "object") {
-			return "";
-		}
+        if (typeof data !== "object") {
+            return "";
+        }
 
-		for (var name in data) {
-			if (data.hasOwnProperty(name)) {
-				var nameInt = parseInt(name, 10);
-				var nameBase36 = self.toBase36(nameInt);
+        for (var name in data) {
+            if (data.hasOwnProperty(name)) {
+                var nameInt = parseInt(name, 10);
+                var nameBase36 = self.toBase36(nameInt);
 
                 // maximum index of (1331 - 36).toString(36) = "-zz"
-				if (nameInt > 1331) {
-					continue;
-				}
+                if (nameInt > 1331) {
+                    continue;
+                }
 
                 //
                 // We'll try to fit the map index in a single (base 36) character.
                 // If we can't, we'll use another character to denote (-), subtract
                 // 36 from it, and append the new base36.
                 //
-				if (nameBase36.length > 1) {
+                if (nameBase36.length > 1) {
                     // if the name is greater than 1 character, use expanded notation
-					nameBase36 = self.toBase36(nameInt - 36);
+                    nameBase36 = self.toBase36(nameInt - 36);
 
                     // ensure we fill 3 characters
-					nameBase36 = "-" + (nameBase36.length === 1 ? "0" : "") + nameBase36;
-				}
+                    nameBase36 = "-" + (nameBase36.length === 1 ? "0" : "") + nameBase36;
+                }
 
-				ary.push(nameBase36 + data[name]);
-			}
-		}
+                ary.push(nameBase36 + data[name]);
+            }
+        }
 
         // sort by map order
-		ary.sort();
+        ary.sort();
 
         // join into a string
-		ary = ary.join("~");
+        ary = ary.join("~");
 
-		return ary;
-	};
+        return ary;
+    };
 
     /**
      * Converts the structure to URL-friendly JSON
@@ -21162,7 +22169,7 @@ BOOMR_check_doc_domain();
      *
      * @returns {string} URL-friendly JSON
      */
-	UserTimingCompression.jsUrl = function(v) {
+    UserTimingCompression.jsUrl = function(v) {
         /**
          * Encodes the specified string
          *
@@ -21170,81 +22177,79 @@ BOOMR_check_doc_domain();
          *
          * @returns {string} Encoded string
          */
-		function encode(s) {
-			if (!/[^\w-.]/.test(s)) {
+        function encode(s) {
+            if (!/[^\w-.]/.test(s)) {
                 // if the string is only made up of alpha-numeric, underscore,
                 // dash or period, we can use it directly.
-				return s;
-			}
+                return s;
+            }
 
             // we need to escape other characters
-			s = s.replace(/[^\w-.]/g, function(ch) {
-				if (ch === "$") {
-					return "!";
-				}
+            s = s.replace(/[^\w-.]/g, function(ch) {
+                if (ch === "$") {
+                    return "!";
+                }
 
                 // use the character code for this one
-				ch = ch.charCodeAt(0);
+                ch = ch.charCodeAt(0);
 
-				if (ch < 0x100) {
+                if (ch < 0x100) {
                     // if less than 256, use "*[2-char code]"
-					return "*" + ("00" + ch.toString(16)).slice(-2);
-				}
-				else {
+                    return "*" + ("00" + ch.toString(16)).slice(-2);
+                } else {
                     // use "**[4-char code]"
-					return "**" + ("0000" + ch.toString(16)).slice(-4);
-				}
-			});
+                    return "**" + ("0000" + ch.toString(16)).slice(-4);
+                }
+            });
 
-			return s;
-		}
+            return s;
+        }
 
-		switch (typeof v) {
-		case "number":
+        switch (typeof v) {
+            case "number":
                 // for finite numbers, return "~[number]"
-			return isFinite(v) ? "~" + v : "~null";
+                return isFinite(v) ? "~" + v : "~null";
 
-		case "string":
+            case "string":
                 // "~'[encoded string]"
-			return "~'" + encode(v);
+                return "~'" + encode(v);
 
-		case "boolean":
+            case "boolean":
                 // "~true" or "~false"
-			return "~" + v;
+                return "~" + v;
 
-		case "object":
-			if (!v) {
-				return "~null";
-			}
+            case "object":
+                if (!v) {
+                    return "~null";
+                }
 
-			if (Array.isArray(v)) {
+                if (Array.isArray(v)) {
                     // an array "~([array])"
-				return "~(" + (v.map(function(elt) {
-					return self.jsUrl(elt) || "~null";
-				}).join("") || "~") + ")";
-			}
-			else {
-				return "~(" + Object.keys(v).map(function(key) {
-					var val = self.jsUrl(v[key]);
+                    return "~(" + (v.map(function(elt) {
+                        return self.jsUrl(elt) || "~null";
+                    }).join("") || "~") + ")";
+                } else {
+                    return "~(" + Object.keys(v).map(function(key) {
+                        var val = self.jsUrl(v[key]);
                         // skip undefined and functions
-					return val && (encode(key) + val);
-				}).filter(function(str) {
-					return str;
-				}).sort().join("~") + ")";
-			}
+                        return val && (encode(key) + val);
+                    }).filter(function(str) {
+                        return str;
+                    }).sort().join("~") + ")";
+                }
 
-		default:
+            default:
                 // function, undefined
-			return undefined;
-		}
-	};
+                return undefined;
+        }
+    };
 
-	if (typeof root !== "undefined") {
+    if (typeof root !== "undefined") {
         //
         // Browser Global
         //
-		root.UserTimingCompression = UserTimingCompression; // eslint-disable-line no-undef, no-underscore-dangle
-	}
+        root.UserTimingCompression = UserTimingCompression; // eslint-disable-line no-undef, no-underscore-dangle
+    }
 
 }(typeof window !== "undefined" ? window : undefined));
 
@@ -21322,8 +22327,8 @@ BOOMR_check_doc_domain();
  * @class BOOMR.plugins.UserTiming
  */
 (function() {
-
-
+	
+	
 
 	if (BOOMR.plugins.UserTiming) {
 		return;
@@ -21606,7 +22611,7 @@ BOOMR_check_doc_domain();
  * @class BOOMR_mq
  */
 (function() {
-
+	
 
 	/**
 	 * Process a single `BOOMR_mq` entry.
@@ -21712,8 +22717,8 @@ BOOMR_check_doc_domain();
  */
 
 (function() {
-
-
+	
+	
 	if (BOOMR.plugins.Early) {
 		return;
 	}
@@ -21783,7 +22788,7 @@ BOOMR_check_doc_domain();
 			        BOOMR.hasBrowserOnloadFired())) ||
 			    // for SPA, only send on spa hard and soft events
 			    (this.singlePageApp && !BOOMR.utils.inArray(ename, BOOMR.constants.BEACON_TYPE_SPAS))) {
-
+				
 				return;
 			}
 
@@ -21801,7 +22806,7 @@ BOOMR_check_doc_domain();
 			BOOMR.fireEvent("before_early_beacon", edata);
 
 			// send it!
-
+			
 			BOOMR.sendBeacon();
 		}
 	};
