@@ -65,7 +65,7 @@ const Location = (props) => {
     //So that you dont end up tracking the same view again and again
     Countly.q.push(['track_pageview', location.pathname]);
     // Initialize feedback popup by current page/pathname
-    Countly.initializeFeedbackPopups();
+    Countly.q.push(['initialize_feedback_popup']);
   }, [location]);
 
   return (
