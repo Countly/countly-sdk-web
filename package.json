@@ -36,7 +36,7 @@
     "eslint": "*",
     "jsdoc": "*",
     "webpack": "^4.28.4",
-    "webpack-cli": "^3.3.11"
+    "webpack-cli": "^4.0.0"
   },
   "npmName": "countly-sdk-web",
   "npmFileMap": [
