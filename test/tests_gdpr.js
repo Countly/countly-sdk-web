@@ -683,6 +683,7 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
                             casper.clear();
                             casper.clearCache();
                             casper.clearMemoryCache();
+                            casper.removeAllListeners('remote.message');
                             casper.open(fs.workingDirectory+"/test/files/clear.html", function() {});
                             test.done();
                         });

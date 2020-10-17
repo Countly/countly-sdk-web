@@ -222,6 +222,7 @@ casper.test.begin("Testing example_async.html", 130, function(test) {
             casper.clear();
             casper.clearCache();
             casper.clearMemoryCache();
+            casper.removeAllListeners('remote.message');
             casper.open(fs.workingDirectory+"/test/files/clear.html", function() {});
             test.done();
         }, 80000);
