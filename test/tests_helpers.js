@@ -241,19 +241,6 @@ casper.test.begin("Testing example_helpers.html", 388, function(test) {
         test.assertEquals(message[0], 'Session extended');
     });
     tests.push(function (message){
-        test.assertEquals(message[0], 'Processing request');
-        var params = JSON.parse(message[1]);
-        test.assert(params.session_duration >= 29 && params.session_duration <= 31);
-        test.assertEquals(params.app_key, "YOUR_APP_KEY");
-        test.assert(exists(params.device_id));
-        test.assert(exists(params.timestamp));
-        test.assert(exists(params.hour));
-        test.assert(exists(params.dow));
-    });
-    tests.push(function (message){
-        test.assertEquals(message[0], 'Sending XML HTTP request');
-    });
-    tests.push(function (message){
         test.assertEquals(message[0], 'Countly initialized');
     });
     tests.push(function (message){
@@ -271,6 +258,19 @@ casper.test.begin("Testing example_helpers.html", 388, function(test) {
         test.assertEquals(params.count, 1);
         test.assert(exists(params.segmentation));
         test.assert(exists(params.segmentation.name));
+    });
+    tests.push(function (message){
+        test.assertEquals(message[0], 'Processing request');
+        var params = JSON.parse(message[1]);
+        test.assert(params.session_duration >= 29 && params.session_duration <= 31);
+        test.assertEquals(params.app_key, "YOUR_APP_KEY");
+        test.assert(exists(params.device_id));
+        test.assert(exists(params.timestamp));
+        test.assert(exists(params.hour));
+        test.assert(exists(params.dow));
+    });
+    tests.push(function (message){
+        test.assertEquals(message[0], 'Sending XML HTTP request');
     });
     tests.push(function (message){
         test.assertEquals(message[0], 'Request Finished');
