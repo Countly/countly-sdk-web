@@ -7,7 +7,12 @@ Countly APM based on Boomerang JS
     Countly = Countly || {}; // eslint-disable-line no-global-assign
     Countly.onload = Countly.onload || [];
     if (typeof CountlyClass === "undefined") {
-        return Countly.onload.push(cly_load_track_performance);
+        return Countly.onload.push(function(){
+            cly_load_track_performance();
+            if (!Countly.track_performance) {
+                Countly.track_performance = Countly.i[Countly.app_key].track_performance;
+            }
+        });
     }
     /**
      *  Enables tracking performance through boomerang.js
