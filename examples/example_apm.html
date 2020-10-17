@@ -16,21 +16,33 @@ Countly.track_sessions();
 
 //Calling APM plugin method
 Countly.track_performance({
-    instrument_xhr: true,
-    captureXhrRequestResponse: true,
-    AutoXHR: {
-        alwaysSendXhr: true,
-        monitorFetch: true,
-        captureXhrRequestResponse: true
-    },
-    Continuity: {
-        enabled: true,
-        monitorLongTasks: true,
-        monitorPageBusy: true,
-        monitorFrameRate: true,
-        monitorInteractions: true,
-        afterOnload: true
-    }
+    RT:{
+		enabled: true
+	},
+	instrument_xhr: true,
+	AutoXHR: {
+		enabled: true,
+		alwaysSendXhr: true,
+		monitorFetch: true,
+		captureXhrRequestResponse: true
+	},
+	Continuity: {
+		enabled: true,
+		monitorLongTasks: true,
+		monitorPageBusy: true,
+		monitorFrameRate: true,
+		monitorInteractions: true,
+		afterOnload: true
+	},
+	NavigationTiming: {
+		enabled: true
+	},
+	ResourceTiming: {
+		enabled: true,
+		clearOnBeacon: true,
+		urlLimit: 2000,
+		splitAtPath: true
+	}
 });
 </script>
 </head>

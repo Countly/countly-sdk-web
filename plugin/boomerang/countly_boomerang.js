@@ -2,6 +2,7 @@
 /*global Countly, CountlyClass */
 /*
 Countly APM based on Boomerang JS
+Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
 */
 (function cly_load_track_performance() {
     Countly = Countly || {}; // eslint-disable-line no-global-assign
@@ -19,7 +20,6 @@ Countly APM based on Boomerang JS
      *  @memberof Countly
      *  @param {object} config - Boomerang js configuration
      */
-
     CountlyClass.prototype.track_performance = function (config) {
         var self = this;
         config = config || {};
@@ -55,30 +55,48 @@ Countly APM based on Boomerang JS
                         }
                     }
                     else if (beaconData["http.initiator"] && ["xhr", "spa", "spa_hard"].indexOf(beaconData["http.initiator"]) !== -1) {
-                        var headers = beaconData["http.hdr"] || {};
+                        var responseTime, responsePayloadSize, requestPayloadSize, responseCode;
+                        responseTime = beaconData.t_resp;
+                        //t_resp - Time taken from the user initiating the request to the first byte of the response. - Added by RT
+                        responseCode = (typeof beaconData["http.errno"] !== "undefined") ? beaconData["http.errno"] : 200;
+
+                        try {
+                            var restiming = JSON.parse(beaconData["restiming"]);
+                            var ResourceTimingDecompression = window.ResourceTimingDecompression;
+                            if(ResourceTimingDecompression && restiming) {
+                                //restiming contains information regarging all the resources that are loaded in any
+                                //spa, spa_hard or xhr requests.
+                                //xhr requests should ideally have only one entry in the array which is the one for
+                                //which the beacon is being sent.
+                                //But for spa_hard requests it can contain multiple entries, one for each resource
+                                //that is loaded in the application. Example - all images, scripts etc.
+                                //ResourceTimingDecompression is not included in the official boomerang library.
+                                ResourceTimingDecompression.HOSTNAMES_REVERSED = false;
+                                var decompressedData = ResourceTimingDecompression.decompressResources(restiming);
+                                var currentBeacon = decompressedData.filter(function(resource) {
+                                    return resource.name === beaconData.u;
+                                });
+
+                                if(currentBeacon.length) {
+                                    responsePayloadSize = currentBeacon[0].decodedBodySize;
+                                    responseTime = currentBeacon[0].duration ? currentBeacon[0].duration : responseTime;
+                                    //duration - Returns the difference between the resource's responseEnd timestamp and its startTime timestamp - ResourceTiming API
+                                }
+                            }
+                        }
+                        catch(e) {
+                            self._internals.log("Error while using resource timing data decompression", config);
+                        }
+
                         trace.type = "network";
                         trace.apm_metrics = {
-                            response_time: beaconData.t_done,
-                            response_payload_size: beaconData["nt_dec_size"],
-                            request_payload_size: headers["Content-Size"],
-                            response_code: (typeof beaconData["http.errno"] !== "undefined") ? beaconData["http.errno"] : 200
+                            response_time: responseTime,
+                            response_payload_size: responsePayloadSize,
+                            request_payload_size: requestPayloadSize,
+                            response_code: responseCode
                         };
                     }
-                    else if (beaconData["http.initiator"] === "interaction") {
-                        trace.apm_metrics = {};
-                        var hasData = false;
-                        if (typeof beaconData["c.f.l"] !== "undefined") {
-                            trace.apm_metrics.slow_rendering_frames = beaconData["c.f.l"];
-                            hasData = true;
-                        }
-                        if (typeof beaconData["c.b"] !== "undefined") {
-                            trace.apm_metrics.frozen_frames = beaconData["c.b"];
-                            hasData = true;
-                        }
-                        if (hasData) {
-                            trace.type = "device";
-                        }
-                    }
+
                     if (trace.type) {
                         trace.name = (beaconData.u + "").split("//").pop().split("?")[0];
                         trace.stz = beaconData["rt.tstart"];
@@ -86,15 +104,15 @@ Countly APM based on Boomerang JS
                         self.report_trace(trace);
                     }
                 });
+
                 BOOMR.xhr_excludes = BOOMR.xhr_excludes || {};
                 BOOMR.xhr_excludes[self.url.split("//").pop()] = true;
-                //config.beacon_url = config.beacon_url || Countly.url;
                 if (typeof config.beacon_disable_sendbeacon === "undefined") {
                     config.beacon_disable_sendbeacon = true;
                 }
                 BOOMR.init(config);
                 BOOMR.t_end = new Date().getTime();
-                self.BOOMR = BOOMR;
+                Countly.BOOMR = BOOMR;
                 initedBoomr = true;
                 self._internals.log("Boomerang initiated:", config);
             }
