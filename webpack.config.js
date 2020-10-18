@@ -5,8 +5,8 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'lib'),
         filename: 'countly.pack.js',
-        library : 'Countly',
-        libraryTarget : 'umd'
+        library: 'Countly',
+        libraryTarget: 'umd'
     }
 };
 

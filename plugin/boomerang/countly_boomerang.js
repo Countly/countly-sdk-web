@@ -8,7 +8,7 @@ Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
     Countly = Countly || {}; // eslint-disable-line no-global-assign
     Countly.onload = Countly.onload || [];
     if (typeof CountlyClass === "undefined") {
-        return Countly.onload.push(function(){
+        return Countly.onload.push(function() {
             cly_load_track_performance();
             if (!Countly.track_performance) {
                 Countly.track_performance = Countly.i[Countly.app_key].track_performance;
@@ -20,35 +20,39 @@ Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
      *  @memberof Countly
      *  @param {object} config - Boomerang js configuration
      */
-    CountlyClass.prototype.track_performance = function (config) {
+    CountlyClass.prototype.track_performance = function(config) {
         var self = this;
         config = config || {};
         var initedBoomr = false;
-        function initBoomerang(BOOMR){
+        /**
+         *  Initialize Boomerang
+         *  @param {Object} BOOMR - Boomerang object
+         */
+        function initBoomerang(BOOMR) {
             if (BOOMR && !initedBoomr) {
                 BOOMR.subscribe("before_beacon", function(beaconData) {
                     self._internals.log("BOOMR", "before_beacon", JSON.stringify(beaconData, null, 2));
                     var trace = {};
-                    if (beaconData["rt.start"] !== "manual" && !beaconData["http.initiator"] && beaconData["rt.quit"] !== ""){
+                    if (beaconData["rt.start"] !== "manual" && !beaconData["http.initiator"] && beaconData["rt.quit"] !== "") {
                         trace.type = "device";
                         trace.apm_metrics = {};
                         if (typeof beaconData["pt.fp"] !== "undefined") {
                             trace.apm_metrics.first_paint = beaconData["pt.fp"];
                         }
-                        else if (typeof beaconData["nt_first_paint"] !== "undefined") {
-                            trace.apm_metrics.first_paint = beaconData["nt_first_paint"] - beaconData["rt.tstart"];
+                        else if (typeof beaconData.nt_first_paint !== "undefined") {
+                            trace.apm_metrics.first_paint = beaconData.nt_first_paint - beaconData["rt.tstart"];
                         }
                         if (typeof beaconData["pt.fcp"] !== "undefined") {
                             trace.apm_metrics.first_contentful_paint = beaconData["pt.fcp"];
                         }
-                        if (typeof beaconData["nt_domint"] !== "undefined") {
-                            trace.apm_metrics.dom_interactive = beaconData["nt_domint"] - beaconData["rt.tstart"];
+                        if (typeof beaconData.nt_domint !== "undefined") {
+                            trace.apm_metrics.dom_interactive = beaconData.nt_domint - beaconData["rt.tstart"];
                         }
-                        if (typeof beaconData["nt_domcontloaded_st"] !== "undefined" && typeof beaconData["nt_domcontloaded_end"] !== "undefined") {
-                            trace.apm_metrics.dom_content_loaded_event_end = beaconData["nt_domcontloaded_end"] - beaconData["nt_domcontloaded_st"];
+                        if (typeof beaconData.nt_domcontloaded_st !== "undefined" && typeof beaconData.nt_domcontloaded_end !== "undefined") {
+                            trace.apm_metrics.dom_content_loaded_event_end = beaconData.nt_domcontloaded_end - beaconData.nt_domcontloaded_st;
                         }
-                        if (typeof beaconData["nt_load_st"] !== "undefined" && typeof beaconData["nt_load_end"] !== "undefined") {
-                            trace.apm_metrics.load_event_end = beaconData["nt_load_end"] - beaconData["nt_load_st"];
+                        if (typeof beaconData.nt_load_st !== "undefined" && typeof beaconData.nt_load_end !== "undefined") {
+                            trace.apm_metrics.load_event_end = beaconData.nt_load_end - beaconData.nt_load_st;
                         }
                         if (typeof beaconData["c.fid"] !== "undefined") {
                             trace.apm_metrics.first_input_delay = beaconData["c.fid"];
@@ -61,9 +65,9 @@ Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
                         responseCode = (typeof beaconData["http.errno"] !== "undefined") ? beaconData["http.errno"] : 200;
 
                         try {
-                            var restiming = JSON.parse(beaconData["restiming"]);
+                            var restiming = JSON.parse(beaconData.restiming);
                             var ResourceTimingDecompression = window.ResourceTimingDecompression;
-                            if(ResourceTimingDecompression && restiming) {
+                            if (ResourceTimingDecompression && restiming) {
                                 //restiming contains information regarging all the resources that are loaded in any
                                 //spa, spa_hard or xhr requests.
                                 //xhr requests should ideally have only one entry in the array which is the one for
@@ -77,14 +81,14 @@ Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
                                     return resource.name === beaconData.u;
                                 });
 
-                                if(currentBeacon.length) {
+                                if (currentBeacon.length) {
                                     responsePayloadSize = currentBeacon[0].decodedBodySize;
                                     responseTime = currentBeacon[0].duration ? currentBeacon[0].duration : responseTime;
                                     //duration - Returns the difference between the resource's responseEnd timestamp and its startTime timestamp - ResourceTiming API
                                 }
                             }
                         }
-                        catch(e) {
+                        catch (e) {
                             self._internals.log("Error while using resource timing data decompression", config);
                         }
 
@@ -134,7 +138,9 @@ Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
             // IE 6, 7, 8 we use onPropertyChange and look for propertyName === "onBoomerangLoaded"
             else if (document.attachEvent) {
                 document.attachEvent("onpropertychange", function(e) {
-                    if (!e) {e = event;}
+                    if (!e) {
+                        e = event;
+                    }
                     if (e.propertyName === "onBoomerangLoaded") {
                         initBoomerang(e.detail.BOOMR);
                     }

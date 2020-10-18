@@ -1,29 +1,30 @@
+/* global casper*/
 var fs = require("fs");
-function exists(value){
-    return (typeof value != "undefined") ? true : false;
+function exists(value) {
+    return (typeof value !== "undefined") ? true : false;
 }
 casper.test.begin("Testing example_multiple_instances.html", 51, function(test) {
     var tests = [];
     var cnt = 0;
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Countly initialized');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Adding event: ');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.key, "first_app");
         test.assertEquals(params.count, 1);
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], '[YOUR_APP_KEY2] Countly initialized');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], '[YOUR_APP_KEY2] Adding event: ');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.key, "second_app");
         test.assertEquals(params.count, 1);
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Processing queued call');
         var params = JSON.parse(message[1]);
         test.assertEquals(params[0], "init");
@@ -31,23 +32,23 @@ casper.test.begin("Testing example_multiple_instances.html", 51, function(test) 
         test.assertEquals(params[1].url, "https://try.count.ly");
         test.assertEquals(params[1].debug, true);
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], '[YOUR_APP_KEY3] Countly initialized');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Processing queued call');
         var params = JSON.parse(message[1]);
         test.assertEquals(params[0], "YOUR_APP_KEY3");
         test.assertEquals(params[1], "add_event");
         test.assertEquals(params[2].key, "third_app");
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], '[YOUR_APP_KEY3] Adding event: ');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.key, "third_app");
         test.assertEquals(params.count, 1);
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Processing request');
         var params = JSON.parse(message[1]);
 
@@ -56,17 +57,17 @@ casper.test.begin("Testing example_multiple_instances.html", 51, function(test) 
         test.assert(exists(params.timestamp));
         test.assert(exists(params.hour));
         test.assert(exists(params.dow));
-        
+
         params.events = JSON.parse(params.events);
         test.assertEquals(params.events.length, 1);
-        
+
         test.assertEquals(params.events[0].key, 'first_app');
         test.assertEquals(params.events[0].count, 1);
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Sending XML HTTP request');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], '[YOUR_APP_KEY2] Processing request');
         var params = JSON.parse(message[1]);
 
@@ -75,17 +76,17 @@ casper.test.begin("Testing example_multiple_instances.html", 51, function(test) 
         test.assert(exists(params.timestamp));
         test.assert(exists(params.hour));
         test.assert(exists(params.dow));
-        
+
         params.events = JSON.parse(params.events);
         test.assertEquals(params.events.length, 1);
-        
+
         test.assertEquals(params.events[0].key, 'second_app');
         test.assertEquals(params.events[0].count, 1);
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], '[YOUR_APP_KEY2] Sending XML HTTP request');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], '[YOUR_APP_KEY3] Processing request');
         var params = JSON.parse(message[1]);
 
@@ -94,14 +95,14 @@ casper.test.begin("Testing example_multiple_instances.html", 51, function(test) 
         test.assert(exists(params.timestamp));
         test.assert(exists(params.hour));
         test.assert(exists(params.dow));
-        
+
         params.events = JSON.parse(params.events);
         test.assertEquals(params.events.length, 1);
-        
+
         test.assertEquals(params.events[0].key, 'third_app');
         test.assertEquals(params.events[0].count, 1);
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], '[YOUR_APP_KEY3] Sending XML HTTP request');
     });
     casper.removeAllListeners('remote.message');
@@ -112,14 +113,14 @@ casper.test.begin("Testing example_multiple_instances.html", 51, function(test) 
             cnt++;
         }
     });
-    casper.start(fs.workingDirectory+"/examples/example_multiple_instances.html", function() {
+    casper.start(fs.workingDirectory + "/examples/example_multiple_instances.html", function() {
     }).run(function() {
-        setTimeout(function(){
+        setTimeout(function() {
             casper.clear();
             casper.clearCache();
             casper.clearMemoryCache();
             casper.removeAllListeners('remote.message');
-            casper.open(fs.workingDirectory+"/test/files/clear.html", function() {});
+            casper.open(fs.workingDirectory + "/test/files/clear.html", function() {});
             test.done();
         }, 1000);
     });
