@@ -1,5 +1,5 @@
 "use strict";
-/*global Countly, CountlyClass */
+/*global Countly */
 /*
 Countly APM based on Boomerang JS
 Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
@@ -7,7 +7,7 @@ Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
 (function cly_load_track_performance() {
     Countly = Countly || {}; // eslint-disable-line no-global-assign
     Countly.onload = Countly.onload || [];
-    if (typeof CountlyClass === "undefined") {
+    if (typeof Countly.CountlyClass === "undefined") {
         return Countly.onload.push(function() {
             cly_load_track_performance();
             if (!Countly.track_performance) {
@@ -20,7 +20,7 @@ Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
      *  @memberof Countly
      *  @param {object} config - Boomerang js configuration
      */
-    CountlyClass.prototype.track_performance = function(config) {
+    Countly.CountlyClass.prototype.track_performance = function(config) {
         var self = this;
         config = config || {};
         var initedBoomr = false;
