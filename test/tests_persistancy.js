@@ -1,6 +1,6 @@
-/*global Countly */
+/*global Countly, casper */
 var fs = require("fs");
-function exists(value){
+function exists(value) {
     return (typeof value !== "undefined") ? true : false;
 }
 
@@ -10,7 +10,7 @@ function exists(value){
 * Method: Load page. Define variables into storage, then reload and check variables and storage values.
 */
 casper.test.begin("Testing example_persistancy.html", 30, function(test) {
-    
+
     // Print console logs from casper
     casper.removeAllListeners('remote.message');
     casper.on('remote.message', function(message) {
@@ -18,12 +18,12 @@ casper.test.begin("Testing example_persistancy.html", 30, function(test) {
     });
 
     casper.start(fs.workingDirectory + "/test/files/example_persistancy.html", function() {
-        
+
         // load page first time
         casper.evaluate(function() {
             window.location.search = 'cly_id=test_campaign_id&cly_uid=test_campaign_uid';
             // for test: cly_event
-            Countly.add_event({'key':'homepage'});
+            Countly.add_event({'key': 'homepage'});
             // for test: cly_ignore
             Countly.opt_out();
             Countly.opt_in();
@@ -43,7 +43,7 @@ casper.test.begin("Testing example_persistancy.html", 30, function(test) {
             // get stored and current values of sdk variables
             var values = this.evaluate(function() {
                 var current = {};
-                
+
                 // expose values 
                 current.cly_id = Countly.device_id;
                 current.cly_queue = Countly._internals.getRequestQueue();
@@ -52,12 +52,12 @@ casper.test.begin("Testing example_persistancy.html", 30, function(test) {
                 current.cly_ignore = Countly.ignore_visitor;
                 current.cly_cmp_id = Countly._internals.store('cly_cmp_id');
                 current.cly_cmp_uid = Countly._internals.store('cly_cmp_uid');
-                
+
                 return current;
             });
 
             tests.push(function() {
-                test.assertEquals(values.cly_id, '8de17dff-1074-452a-8f85-92933482b82e');    
+                test.assertEquals(values.cly_id, '8de17dff-1074-452a-8f85-92933482b82e');
             });
 
             tests.push(function() {
@@ -73,17 +73,17 @@ casper.test.begin("Testing example_persistancy.html", 30, function(test) {
             });
 
             tests.push(function() {
-                test.assertEquals(values.cly_ignore, false);    
+                test.assertEquals(values.cly_ignore, false);
             });
-            
+
             tests.push(function() {
-                test.assertEquals(values.cly_event[0].count, 1);   
+                test.assertEquals(values.cly_event[0].count, 1);
                 test.assertEquals(values.cly_event[0].key, 'homepage');
                 test.assert(exists(values.cly_event[0].dow));
                 test.assert(exists(values.cly_event[0].hour));
                 test.assert(exists(values.cly_event[0].timestamp));
             });
-            
+
             tests.push(function() {
                 var queue = values.cly_queue;
                 test.assertEquals(queue[0].app_key, 'YOUR_APP_KEY');
@@ -109,17 +109,18 @@ casper.test.begin("Testing example_persistancy.html", 30, function(test) {
                 test.assertEquals(queue[2].session_duration, 0);
             });
 
-            for(var i = 0; i < tests.length; i++) {
+            for (var i = 0; i < tests.length; i++) {
                 tests[i]();
             }
         });
     })
         .run(function() {
-            setTimeout(function(){
+            setTimeout(function() {
                 casper.clear();
                 casper.clearCache();
                 casper.clearMemoryCache();
-                casper.open(fs.workingDirectory+"/test/files/clear.html", function() {});
+                casper.removeAllListeners('remote.message');
+                casper.open(fs.workingDirectory + "/test/files/clear.html", function() {});
                 test.done();
             }, 3000);
         });

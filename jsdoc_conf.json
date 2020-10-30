@@ -27,7 +27,7 @@
     },
     "docdash": {
         "static": true,
-        "sort": false,
+        "sort": true,
         "disqus": "countly-documentation",
 		"openGraph": {
 			"title": "Countly Web SDK Documentation",
@@ -42,7 +42,20 @@
 			"keyword": "countly, web, sdk, jsdoc, doc, documentation"
 		},
         "search": true,
-        "collapse": false,
+        "collapse": true,
+        "typedefs": true,
+        "removeQuotes": "all",
+        "menu":{
+            "Countly":{
+                "href":"https://count.ly/"
+            },
+            "Web SDK Docs":{
+                "href":"https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-"
+            },
+            "Github Repository":{
+                "href":"https://github.com/Countly/countly-sdk-web"
+            }
+        },
         "scripts": ["https://stats.count.ly/sdk/countly-docs.js"]
     }
 }

@@ -1,18 +1,18 @@
-/*global Countly */
+/*global Countly, casper*/
 var fs = require("fs");
-function exists(value){
-    return (typeof value != "undefined") ? true : false;
+function exists(value) {
+    return (typeof value !== "undefined") ? true : false;
 }
 casper.test.begin("Testing example_gdpr.html", 414, function(test) {
     var tests = [];
     var cnt = 0;
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Countly initialized');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Adding consent for crashes');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Processing request');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.app_key, "YOUR_APP_KEY");
@@ -23,10 +23,10 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         params.consent = JSON.parse(params.consent);
         test.assertEquals(params.consent.crashes, true);
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Sending XML HTTP request');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Request Finished');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.app_key, "YOUR_APP_KEY");
@@ -37,14 +37,14 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         params.consent = JSON.parse(params.consent);
         test.assertEquals(params.consent.crashes, true);
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Got metrics');
         var params = JSON.parse(message[1]);
         test.assertEquals(params._app_version, '0.0');
         test.assertEquals(params._resolution, '1024x768');
         test.assertEquals(params._locale, 'en-US');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Processing request');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.app_key, "YOUR_APP_KEY");
@@ -52,7 +52,7 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assert(exists(params.timestamp));
         test.assert(exists(params.hour));
         test.assert(exists(params.dow));
-        
+
         params.crash = JSON.parse(params.crash);
         test.assertEquals(params.crash._resolution, '1024x768');
         test.assertEquals(params.crash._app_version, '0.0');
@@ -64,10 +64,10 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assertEquals(params.crash._custom.jquery, "1.10");
         test.assertEquals(params.crash._custom.jqueryui, "1.10");
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Sending XML HTTP request');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Request Finished');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.app_key, "YOUR_APP_KEY");
@@ -75,7 +75,7 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assert(exists(params.timestamp));
         test.assert(exists(params.hour));
         test.assert(exists(params.dow));
-        
+
         params.crash = JSON.parse(params.crash);
         test.assertEquals(params.crash._resolution, '1024x768');
         test.assertEquals(params.crash._app_version, '0.0');
@@ -87,22 +87,22 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assertEquals(params.crash._custom.jquery, "1.10");
         test.assertEquals(params.crash._custom.jqueryui, "1.10");
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Adding consent for interaction');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Adding consent for scrolls,clicks,forms');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Adding consent for scrolls');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Adding consent for clicks');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Adding consent for forms');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Adding event: ');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.key, "[CLY]_action");
@@ -114,7 +114,7 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assert(exists(params.segmentation.width));
         test.assert(exists(params.segmentation.height));
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Adding event: ');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.key, "linkClick");
@@ -124,7 +124,7 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assert(exists(params.segmentation.text));
         test.assert(exists(params.segmentation.id));
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Processing request');
         var params = JSON.parse(message[1]);
 
@@ -133,15 +133,15 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assert(exists(params.timestamp));
         test.assert(exists(params.hour));
         test.assert(exists(params.dow));
-        
+
         params.consent = JSON.parse(params.consent);
         test.assertEquals(params.consent.scrolls, true);
         test.assertEquals(params.consent.clicks, true);
         test.assertEquals(params.consent.forms, true);
-        
+
         params.events = JSON.parse(params.events);
         test.assertEquals(params.events.length, 2);
-        
+
         test.assertEquals(params.events[0].key, "[CLY]_action");
         test.assertEquals(params.events[0].count, 1);
         test.assert(exists(params.events[0].segmentation));
@@ -150,19 +150,19 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assert(exists(params.events[0].segmentation.y));
         test.assert(exists(params.events[0].segmentation.width));
         test.assert(exists(params.events[0].segmentation.height));
-        
+
         test.assertEquals(params.events[1].key, "linkClick");
         test.assertEquals(params.events[1].count, 1);
         test.assert(exists(params.events[1].segmentation));
         test.assert(exists(params.events[1].segmentation.href));
         test.assert(exists(params.events[1].segmentation.text));
         test.assert(exists(params.events[1].segmentation.id));
-        
+
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Sending XML HTTP request');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Request Finished');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.app_key, "YOUR_APP_KEY");
@@ -170,15 +170,15 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assert(exists(params.timestamp));
         test.assert(exists(params.hour));
         test.assert(exists(params.dow));
-        
+
         params.consent = JSON.parse(params.consent);
         test.assertEquals(params.consent.scrolls, true);
         test.assertEquals(params.consent.clicks, true);
         test.assertEquals(params.consent.forms, true);
-        
+
         params.events = JSON.parse(params.events);
         test.assertEquals(params.events.length, 2);
-        
+
         test.assertEquals(params.events[0].key, "[CLY]_action");
         test.assertEquals(params.events[0].count, 1);
         test.assert(exists(params.events[0].segmentation));
@@ -187,7 +187,7 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assert(exists(params.events[0].segmentation.y));
         test.assert(exists(params.events[0].segmentation.width));
         test.assert(exists(params.events[0].segmentation.height));
-        
+
         test.assertEquals(params.events[1].key, "linkClick");
         test.assertEquals(params.events[1].count, 1);
         test.assert(exists(params.events[1].segmentation));
@@ -195,7 +195,7 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assert(exists(params.events[1].segmentation.text));
         test.assert(exists(params.events[1].segmentation.id));
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Adding event: ');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.key, "[CLY]_action");
@@ -207,7 +207,7 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assert(exists(params.segmentation.width));
         test.assert(exists(params.segmentation.height));
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Adding event: ');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.key, "formSubmit");
@@ -222,7 +222,7 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assertEquals(params.segmentation["input:select-one"], "option1");
         test.assertEquals(params.segmentation["input:submit-form"], "Submit");
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Processing request');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.app_key, "YOUR_APP_KEY");
@@ -230,10 +230,10 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assert(exists(params.timestamp));
         test.assert(exists(params.hour));
         test.assert(exists(params.dow));
-        
+
         params.events = JSON.parse(params.events);
         test.assertEquals(params.events.length, 2);
-        
+
         test.assertEquals(params.events[0].key, "[CLY]_action");
         test.assertEquals(params.events[0].count, 1);
         test.assert(exists(params.events[0].segmentation));
@@ -242,7 +242,7 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assert(exists(params.events[0].segmentation.y));
         test.assert(exists(params.events[0].segmentation.width));
         test.assert(exists(params.events[0].segmentation.height));
-        
+
         test.assertEquals(params.events[1].key, 'formSubmit');
         test.assert(exists(params.events[1].segmentation));
         test.assertEquals(params.events[1].segmentation.id, "");
@@ -254,10 +254,10 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assertEquals(params.events[1].segmentation["input:select-one"], "option1");
         test.assertEquals(params.events[1].segmentation["input:submit-form"], "Submit");
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Sending XML HTTP request');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Request Finished');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.app_key, "YOUR_APP_KEY");
@@ -265,10 +265,10 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assert(exists(params.timestamp));
         test.assert(exists(params.hour));
         test.assert(exists(params.dow));
-        
+
         params.events = JSON.parse(params.events);
         test.assertEquals(params.events.length, 2);
-        
+
         test.assertEquals(params.events[0].key, "[CLY]_action");
         test.assertEquals(params.events[0].count, 1);
         test.assert(exists(params.events[0].segmentation));
@@ -277,7 +277,7 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assert(exists(params.events[0].segmentation.y));
         test.assert(exists(params.events[0].segmentation.width));
         test.assert(exists(params.events[0].segmentation.height));
-        
+
         test.assertEquals(params.events[1].key, 'formSubmit');
         test.assert(exists(params.events[1].segmentation));
         test.assertEquals(params.events[1].segmentation.id, "");
@@ -289,14 +289,14 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assertEquals(params.events[1].segmentation["input:select-one"], "option1");
         test.assertEquals(params.events[1].segmentation["input:submit-form"], "Submit");
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Got metrics');
         var params = JSON.parse(message[1]);
         test.assertEquals(params._app_version, '0.0');
         test.assertEquals(params._resolution, '1024x768');
         test.assertEquals(params._locale, 'en-US');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Adding event: ');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.key, "[CLY]_action");
@@ -308,7 +308,7 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assert(exists(params.segmentation.width));
         test.assert(exists(params.segmentation.height));
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Processing request');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.app_key, "YOUR_APP_KEY");
@@ -316,7 +316,7 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assert(exists(params.timestamp));
         test.assert(exists(params.hour));
         test.assert(exists(params.dow));
-        
+
         params.crash = JSON.parse(params.crash);
         test.assertEquals(params.crash._resolution, '1024x768');
         test.assertEquals(params.crash._app_version, '0.0');
@@ -328,10 +328,10 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assertEquals(params.crash._custom.jquery, "1.10");
         test.assertEquals(params.crash._custom.jqueryui, "1.10");
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Sending XML HTTP request');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Request Finished');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.app_key, "YOUR_APP_KEY");
@@ -339,7 +339,7 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assert(exists(params.timestamp));
         test.assert(exists(params.hour));
         test.assert(exists(params.dow));
-        
+
         params.crash = JSON.parse(params.crash);
         test.assertEquals(params.crash._resolution, '1024x768');
         test.assertEquals(params.crash._app_version, '0.0');
@@ -351,7 +351,7 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assertEquals(params.crash._custom.jquery, "1.10");
         test.assertEquals(params.crash._custom.jqueryui, "1.10");
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Processing request');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.app_key, "YOUR_APP_KEY");
@@ -359,10 +359,10 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assert(exists(params.timestamp));
         test.assert(exists(params.hour));
         test.assert(exists(params.dow));
-        
+
         params.events = JSON.parse(params.events);
         test.assertEquals(params.events.length, 1);
-        
+
         test.assertEquals(params.events[0].key, "[CLY]_action");
         test.assertEquals(params.events[0].count, 1);
         test.assert(exists(params.events[0].segmentation));
@@ -372,10 +372,10 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assert(exists(params.events[0].segmentation.width));
         test.assert(exists(params.events[0].segmentation.height));
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Sending XML HTTP request');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Request Finished');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.app_key, "YOUR_APP_KEY");
@@ -383,10 +383,10 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assert(exists(params.timestamp));
         test.assert(exists(params.hour));
         test.assert(exists(params.dow));
-        
+
         params.events = JSON.parse(params.events);
         test.assertEquals(params.events.length, 1);
-        
+
         test.assertEquals(params.events[0].key, "[CLY]_action");
         test.assertEquals(params.events[0].count, 1);
         test.assert(exists(params.events[0].segmentation));
@@ -396,37 +396,37 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assert(exists(params.events[0].segmentation.width));
         test.assert(exists(params.events[0].segmentation.height));
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Removing consent for interaction');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Removing consent for scrolls,clicks,forms');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Removing consent for scrolls');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Removing consent for clicks');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Removing consent for forms');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Adding consent for activity');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Adding consent for sessions,events,views');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Adding consent for sessions');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Adding consent for events');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Adding consent for views');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Adding event: ');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.key, "[CLY]_orientation");
@@ -434,17 +434,17 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assertEquals(params.segmentation.mode, "landscape");
         test.assertEquals(params.count, 1);
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Session started');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Got metrics');
         var params = JSON.parse(message[1]);
         test.assertEquals(params._app_version, '0.0');
         test.assertEquals(params._resolution, '1024x768');
         test.assertEquals(params._locale, 'en-US');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Adding event: ');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.key, "[CLY]_view");
@@ -452,7 +452,7 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assert(exists(params.segmentation));
         test.assert(exists(params.segmentation.name));
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Processing request');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.begin_session, 1);
@@ -466,10 +466,10 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assertEquals(params.metrics._resolution, '1024x768');
         test.assertEquals(params.metrics._locale, 'en-US');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Sending XML HTTP request');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Request Finished');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.begin_session, 1);
@@ -478,13 +478,13 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assert(exists(params.timestamp));
         test.assert(exists(params.hour));
         test.assert(exists(params.dow));
-        
+
         params.metrics = JSON.parse(params.metrics);
         test.assertEquals(params.metrics._app_version, '0.0');
         test.assertEquals(params.metrics._resolution, '1024x768');
         test.assertEquals(params.metrics._locale, 'en-US');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Processing request');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.app_key, "YOUR_APP_KEY");
@@ -492,7 +492,7 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assert(exists(params.timestamp));
         test.assert(exists(params.hour));
         test.assert(exists(params.dow));
-        
+
         params.events = JSON.parse(params.events);
         test.assertEquals(params.events[0].key, '[CLY]_orientation');
         test.assert(exists(params.events[0].segmentation));
@@ -504,10 +504,10 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assert(exists(params.events[1].segmentation.visit));
         test.assertEquals(params.events[1].count, 1);
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Sending XML HTTP request');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Request Finished');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.app_key, "YOUR_APP_KEY");
@@ -526,14 +526,14 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assert(exists(params.events[1].segmentation.visit));
         test.assertEquals(params.events[1].count, 1);
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Got metrics');
         var params = JSON.parse(message[1]);
         test.assertEquals(params._app_version, '0.0');
         test.assertEquals(params._resolution, '1024x768');
         test.assertEquals(params._locale, 'en-US');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Processing request');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.app_key, "YOUR_APP_KEY");
@@ -541,7 +541,7 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assert(exists(params.timestamp));
         test.assert(exists(params.hour));
         test.assert(exists(params.dow));
-        
+
         params.crash = JSON.parse(params.crash);
         test.assertEquals(params.crash._resolution, '1024x768');
         test.assertEquals(params.crash._app_version, '0.0');
@@ -553,10 +553,10 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assertEquals(params.crash._custom.jquery, "1.10");
         test.assertEquals(params.crash._custom.jqueryui, "1.10");
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Sending XML HTTP request');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Request Finished');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.app_key, "YOUR_APP_KEY");
@@ -564,7 +564,7 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assert(exists(params.timestamp));
         test.assert(exists(params.hour));
         test.assert(exists(params.dow));
-        
+
         params.crash = JSON.parse(params.crash);
         test.assertEquals(params.crash._resolution, '1024x768');
         test.assertEquals(params.crash._app_version, '0.0');
@@ -576,43 +576,43 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assertEquals(params.crash._custom.jquery, "1.10");
         test.assertEquals(params.crash._custom.jqueryui, "1.10");
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Removing consent for activity,interaction,crashes');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Removing consent for activity');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Removing consent for sessions,events,views');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Removing consent for sessions');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Removing consent for events');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Removing consent for views');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Removing consent for interaction');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Removing consent for scrolls,clicks,forms');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Removing consent for scrolls');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Removing consent for clicks');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Removing consent for forms');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Removing consent for crashes');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Processing request');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.app_key, "YOUR_APP_KEY");
@@ -626,10 +626,10 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         test.assertEquals(params.consent.events, false);
         test.assertEquals(params.consent.views, false);
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Sending XML HTTP request');
     });
-    tests.push(function (message){
+    tests.push(function(message) {
         test.assertEquals(message[0], 'Request Finished');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.app_key, "YOUR_APP_KEY");
@@ -649,41 +649,42 @@ casper.test.begin("Testing example_gdpr.html", 414, function(test) {
         tests[cnt](message.split("\n"));
         cnt++;
     });
-    
-    function actionSuit(ob, callback){
+
+    function actionSuit(ob, callback) {
         ob.click('#track_link');
-        setTimeout(function(){
+        setTimeout(function() {
             ob.click('#submit-form');
         }, 5000);
-        setTimeout(function(){
+        setTimeout(function() {
             ob.click('#unhandled_error');
             setTimeout(callback, 5000);
         }, 10000);
     }
-    casper.start(fs.workingDirectory+"/examples/example_gdpr.html", function() {
+    casper.start(fs.workingDirectory + "/examples/example_gdpr.html", function() {
         var ob = this;
-        actionSuit(ob, function(){
+        actionSuit(ob, function() {
             casper.evaluate(function() {
                 Countly.add_consent("crashes");
             }, {});
-            actionSuit(ob, function(){
+            actionSuit(ob, function() {
                 casper.evaluate(function() {
                     Countly.add_consent("interaction");
                 }, {});
-                actionSuit(ob, function(){
+                actionSuit(ob, function() {
                     casper.evaluate(function() {
                         Countly.remove_consent("interaction");
                         Countly.add_consent("activity");
                     }, {});
-                    actionSuit(ob, function(){
+                    actionSuit(ob, function() {
                         casper.evaluate(function() {
-                            Countly.remove_consent(["activity","interaction","crashes"]);
+                            Countly.remove_consent(["activity", "interaction", "crashes"]);
                         }, {});
-                        actionSuit(ob, function(){
+                        actionSuit(ob, function() {
                             casper.clear();
                             casper.clearCache();
                             casper.clearMemoryCache();
-                            casper.open(fs.workingDirectory+"/test/files/clear.html", function() {});
+                            casper.removeAllListeners('remote.message');
+                            casper.open(fs.workingDirectory + "/test/files/clear.html", function() {});
                             test.done();
                         });
                     });

@@ -1,0 +1,52 @@
+<html>
+<head>
+<p><a href='http://count.ly/'>Count.ly</a></p>
+<!--Countly script-->
+<script type='text/javascript' src='../lib/countly.js'></script>
+<script type='text/javascript'>
+Countly = Countly || {};
+Countly.q = Countly.q || [];
+
+
+
+//initializing first instance, which will be global Countly
+Countly.init({
+	app_key: "YOUR_APP_KEY1",
+	url: "https://try.count.ly", //your server goes here
+	debug:true
+})
+//report event to first app
+Countly.add_event({
+	key:"first_app"
+});
+
+
+
+//initialize second instance for another app synchronously
+var Countly2 = Countly.init({
+	app_key: "YOUR_APP_KEY2", //must have different APP key
+	url: "https://try.count.ly", //your server goes here
+	debug:true
+});
+//report event to second app
+Countly2.add_event({
+	key:"second_app"
+});
+
+
+
+//initialize third instance for another app assynchronously
+Countly.q.push(["init", {
+	app_key: "YOUR_APP_KEY3", //must have different APP key
+	url: "https://try.count.ly", //your server goes here
+	debug:true
+}])
+//report event to third app asynchronously by passing app key as first arg
+Countly.q.push(["YOUR_APP_KEY3", "add_event", {
+	key:"third_app"
+}]);
+</script>
+</head>
+<body>
+</body>
+</html>
