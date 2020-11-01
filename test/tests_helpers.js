@@ -3,7 +3,7 @@ var fs = require("fs");
 function exists(value) {
     return (typeof value !== "undefined") ? true : false;
 }
-casper.test.begin("Testing example_helpers.html", 388, function(test) {
+casper.test.begin("Testing example_helpers.html", 382, function(test) {
     var tests = [];
     var cnt = 0;
     tests.push(function(message) {
@@ -220,9 +220,7 @@ casper.test.begin("Testing example_helpers.html", 388, function(test) {
         test.assertEquals(params.key, "formSubmit");
         test.assertEquals(params.count, 1);
         test.assert(exists(params.segmentation));
-        test.assertEquals(params.segmentation.id, "");
         test.assertEquals(params.segmentation.name, "comments");
-        test.assertEquals(params.segmentation.action, "");
         test.assertEquals(params.segmentation.method, "post");
         test.assertEquals(params.segmentation["input:message"], "Message Name");
         test.assertEquals(params.segmentation["input:textarea"], "Message");
@@ -306,9 +304,7 @@ casper.test.begin("Testing example_helpers.html", 388, function(test) {
 
         test.assertEquals(params.events[1].key, 'formSubmit');
         test.assert(exists(params.events[1].segmentation));
-        test.assertEquals(params.events[1].segmentation.id, "");
         test.assertEquals(params.events[1].segmentation.name, "comments");
-        test.assertEquals(params.events[1].segmentation.action, "");
         test.assertEquals(params.events[1].segmentation.method, "post");
         test.assertEquals(params.events[1].segmentation["input:message"], "Message Name");
         test.assertEquals(params.events[1].segmentation["input:textarea"], "Message");
@@ -357,9 +353,7 @@ casper.test.begin("Testing example_helpers.html", 388, function(test) {
 
         test.assertEquals(params.events[1].key, 'formSubmit');
         test.assert(exists(params.events[1].segmentation));
-        test.assertEquals(params.events[1].segmentation.id, "");
         test.assertEquals(params.events[1].segmentation.name, "comments");
-        test.assertEquals(params.events[1].segmentation.action, "");
         test.assertEquals(params.events[1].segmentation.method, "post");
         test.assertEquals(params.events[1].segmentation["input:message"], "Message Name");
         test.assertEquals(params.events[1].segmentation["input:textarea"], "Message");
