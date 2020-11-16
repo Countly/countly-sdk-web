@@ -1,0 +1,22 @@
+{
+  "name": "countly-sdk-web-sample-app",
+  "version": "1.0.0",
+  "description": "A sample web app to try Countly SDK features",
+  "author": "Countly <hello@count.ly> (https://count.ly/)",
+  "license": "MIT",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.3",
+    "@babel/preset-env": "^7.12.1",
+    "@webpack-cli/init": "^1.0.2",
+    "babel-loader": "^8.1.0",
+    "babel-plugin-syntax-dynamic-import": "^6.18.0",
+    "terser-webpack-plugin": "^5.0.0",
+    "webpack": "^5.1.3",
+    "webpack-cli": "^4.1.0"
+  }
+}
