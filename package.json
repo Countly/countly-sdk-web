@@ -35,7 +35,7 @@
     "docdash": "*",
     "eslint": "*",
     "jsdoc": "*",
-    "webpack": "^4.28.4",
+    "webpack": "^5.5.0",
     "webpack-cli": "^4.2.0"
   },
   "npmName": "countly-sdk-web",
