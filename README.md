@@ -1,14 +1,9 @@
 # Countly Web SDK 
 [![Build Status](https://api.travis-ci.org/Countly/countly-sdk-web.png?branch=master)](https://travis-ci.org/Countly/countly-sdk-web) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/031d2021b8334af3ac8d2462500bd1aa)](https://www.codacy.com/app/ar2rsawseen/countly-sdk-web?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Countly/countly-sdk-web&amp;utm_campaign=Badge_Grade) [![npm version](https://badge.fury.io/js/countly-sdk-web.svg)](https://badge.fury.io/js/countly-sdk-web) [![Inline docs](https://inch-ci.org/github/Countly/countly-sdk-web.svg?branch=master)](https://inch-ci.org/github/Countly/countly-sdk-web) [![](https://data.jsdelivr.com/v1/package/npm/countly-sdk-web/badge)](https://www.jsdelivr.com/package/npm/countly-sdk-web)
 
-## What's Countly?
-[Countly](https://count.ly) is an innovative, real-time, open source mobile & [web analytics](https://count.ly/web-analytics), [rich push notifications](https://count.ly/push-notifications) and [crash reporting](https://count.ly/crash-reports) platform powering more than 2500 web sites and 14000 mobile applications as of 2017 Q3. It collects data from mobile phones, tablets, Apple Watch and other internet-connected devices, and visualizes this information to analyze application usage and end-user behavior. 
-
-With the help of [Web SDK](https://github.com/countly/countly-sdk-web), Countly is a web analytics platform with features on par with mobile SDKs. For more information about web analytics capabilities, [see this link](https://count.ly/web-analytics).
-
-There are two parts of Countly: the server that collects and analyzes data, and an SDK (mobile, web or desktop) that sends this data. This repository includes Countly Community Edition (server side). For more information other versions (e.g Enterprise Edition), see [comparison of different Countly editions](https://count.ly/compare)
-
-This repository includes the Countly Web SDK. For more information about this SDK, [Countly SDK for Web](https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-) integration guide at [Countly Resources](https://support.count.ly/hc/en-us) or [Countly Web SDK Documentation](https://countly.github.io/countly-sdk-web/)
+## What is Countly?
+[Countly](http://count.ly) is a product analytics solution and innovation enabler that helps teams track product performance and customer journey and behavior across [mobile](https://count.ly/mobile-analytics), [web](http://count.ly/web-analytics), and [desktop](https://count.ly/desktop-analytics) applications. [Ensuring privacy by design](https://count.ly/your-data-your-rules), Countly allows you to innovate and enhance your products to provide personalized and customized customer experiences, and meet key business and revenue goals.
+Track, measure, and take action - all without leaving Countly.
 
 * **Slack user?** [Join our community](https://slack.count.ly) to ask questions and get answers!
 * **Questions?** [Ask in our Community forum](https://support.count.ly/hc/en-us/community/topics)
