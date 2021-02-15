@@ -228,6 +228,9 @@ casper.test.begin("Testing example_helpers_old.html", 409, function(test) {
         test.assertEquals(params.segmentation["input:submit-form"], "Submit");
     });
     tests.push(function(message) {
+        if (message[0] === "Processing request" || message[0] === "Sending XML HTTP request") {
+            return true;
+        }
         test.assertEquals(message[0], 'Adding event: ');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.key, "[CLY]_view");
@@ -240,6 +243,9 @@ casper.test.begin("Testing example_helpers_old.html", 409, function(test) {
         test.assertEquals(message[0], 'Ending session');
     });
     tests.push(function(message) {
+        if (message[0] === "Failed Server XML HTTP request" || message[0] === "Request Finished") {
+            return true;
+        }
         test.assertEquals(message[0], 'Countly initialized');
     });
     tests.push(function(message) {
@@ -612,8 +618,9 @@ casper.test.begin("Testing example_helpers_old.html", 409, function(test) {
     casper.removeAllListeners('remote.message');
     casper.on('remote.message', function(message) {
         this.echo(message);
-        tests[cnt](message.split("\n"));
-        cnt++;
+        if (!tests[cnt](message.split("\n"))) {
+            cnt++;
+        }
     });
     casper.start(fs.workingDirectory + "/test/files/example_helpers_old.html", function() {
         var ob = this;
