@@ -3,7 +3,7 @@ var fs = require("fs");
 function exists(value) {
     return (typeof value !== "undefined") ? true : false;
 }
-casper.test.begin("Testing example_multiple_instances.html", 51, function(test) {
+casper.test.begin("Testing example_multiple_instances.html", 48, function(test) {
     var tests = [];
     var cnt = 0;
     tests.push(function(message) {
@@ -65,9 +65,6 @@ casper.test.begin("Testing example_multiple_instances.html", 51, function(test) 
         test.assertEquals(params.events[0].count, 1);
     });
     tests.push(function(message) {
-        test.assertEquals(message[0], 'Sending XML HTTP request');
-    });
-    tests.push(function(message) {
         test.assertEquals(message[0], '[YOUR_APP_KEY2] Processing request');
         var params = JSON.parse(message[1]);
 
@@ -82,9 +79,6 @@ casper.test.begin("Testing example_multiple_instances.html", 51, function(test) 
 
         test.assertEquals(params.events[0].key, 'second_app');
         test.assertEquals(params.events[0].count, 1);
-    });
-    tests.push(function(message) {
-        test.assertEquals(message[0], '[YOUR_APP_KEY2] Sending XML HTTP request');
     });
     tests.push(function(message) {
         test.assertEquals(message[0], '[YOUR_APP_KEY3] Processing request');
@@ -102,15 +96,14 @@ casper.test.begin("Testing example_multiple_instances.html", 51, function(test) 
         test.assertEquals(params.events[0].key, 'third_app');
         test.assertEquals(params.events[0].count, 1);
     });
-    tests.push(function(message) {
-        test.assertEquals(message[0], '[YOUR_APP_KEY3] Sending XML HTTP request');
-    });
     casper.removeAllListeners('remote.message');
+    var ignore = ["Sending XML HTTP request", "Request Finished", "Failed Server XML HTTP request"];
     casper.on('remote.message', function(message) {
         this.echo(message);
-        if (tests[cnt]) {
-            tests[cnt](message.split("\n"));
-            cnt++;
+        if (ignore.indexOf(message.split("\n")[0].split("]").pop().trim()) === -1) {
+            if (!tests[cnt](message.split("\n"))) {
+                cnt++;
+            }
         }
     });
     casper.start(fs.workingDirectory + "/examples/example_multiple_instances.html", function() {
