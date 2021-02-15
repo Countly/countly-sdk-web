@@ -277,6 +277,9 @@ casper.test.begin("Testing example_helpers_old.html", 409, function(test) {
     tests.push(function(message) {
         test.assertEquals(message[0], 'Processing request');
         var params = JSON.parse(message[1]);
+        if (!params.end_session) {
+            return true;
+        }
         test.assertEquals(params.end_session, 1);
         test.assert(params.session_duration >= 29 && params.session_duration <= 31);
         test.assertEquals(params.app_key, "YOUR_APP_KEY");

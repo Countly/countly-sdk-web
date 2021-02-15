@@ -165,7 +165,7 @@ casper.test.begin("Testing example_sync.html", 121, function(test) {
     tests.push(function(message) {
         test.assertEquals(message[0], 'Processing request');
         var params = JSON.parse(message[1]);
-        test.assertEquals(params.session_duration, 61);
+        test.assert(params.session_duration >= 59 && params.session_duration <= 61);
         test.assertEquals(params.app_key, "YOUR_APP_KEY");
         test.assert(exists(params.device_id));
         test.assert(exists(params.timestamp));
@@ -178,7 +178,7 @@ casper.test.begin("Testing example_sync.html", 121, function(test) {
     tests.push(function(message) {
         test.assertEquals(message[0], 'Request Finished');
         var params = JSON.parse(message[1]);
-        test.assertEquals(params.session_duration, 61);
+        test.assert(params.session_duration >= 59 && params.session_duration <= 61);
         test.assertEquals(params.app_key, "YOUR_APP_KEY");
         test.assert(exists(params.device_id));
         test.assert(exists(params.timestamp));
@@ -189,7 +189,7 @@ casper.test.begin("Testing example_sync.html", 121, function(test) {
         test.assertEquals(message[0], 'Adding event: ');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.key, "[CLY]_view");
-        test.assertEquals(params.dur, 80);
+        test.assert(params.dur >= 79 && params.dur <= 81);
         test.assert(exists(params.segmentation));
         test.assert(exists(params.segmentation.name));
         test.assert(!exists(params.segmentation.visit));
