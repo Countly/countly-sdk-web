@@ -407,7 +407,7 @@ casper.test.begin("Testing example_helpers_old.html", 250, function(test) {
         setTimeout(function() {
             ob.click('#unhandled_error');
             ob.click('#handled_error');
-        }, 70000);
+        }, 60000);
     }).run(function() {
         setTimeout(function() {
             casper.clear();
