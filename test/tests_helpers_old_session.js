@@ -235,41 +235,68 @@ casper.test.begin("Testing example_helpers_old.html", 250, function(test) {
         test.assert(exists(params.dow));
 
         params.events = JSON.parse(params.events);
-        test.assertEquals(params.events.length, 5);
+        if (params.events.length === 5) {
+            test.assertEquals(params.events.length, 5);
 
-        test.assertEquals(params.events[0].key, "[CLY]_action");
-        test.assertEquals(params.events[0].count, 1);
-        test.assert(exists(params.events[0].segmentation));
-        test.assertEquals(params.events[0].segmentation.type, "click");
-        test.assert(exists(params.events[0].segmentation.x));
-        test.assert(exists(params.events[0].segmentation.y));
-        test.assert(exists(params.events[0].segmentation.width));
-        test.assert(exists(params.events[0].segmentation.height));
+            test.assertEquals(params.events[0].key, "[CLY]_action");
+            test.assertEquals(params.events[0].count, 1);
+            test.assert(exists(params.events[0].segmentation));
+            test.assertEquals(params.events[0].segmentation.type, "click");
+            test.assert(exists(params.events[0].segmentation.x));
+            test.assert(exists(params.events[0].segmentation.y));
+            test.assert(exists(params.events[0].segmentation.width));
+            test.assert(exists(params.events[0].segmentation.height));
 
-        test.assertEquals(params.events[1].key, 'formSubmit');
-        test.assert(exists(params.events[1].segmentation));
-        test.assertEquals(params.events[1].segmentation.name, "comments");
-        test.assertEquals(params.events[1].segmentation.method, "post");
-        test.assertEquals(params.events[1].segmentation["input:message"], "Message Name");
-        test.assertEquals(params.events[1].segmentation["input:textarea"], "Message");
-        test.assertEquals(params.events[1].segmentation["input:select-one"], "option1");
-        test.assertEquals(params.events[1].segmentation["input:submit-form"], "Submit");
+            test.assertEquals(params.events[1].key, 'formSubmit');
+            test.assert(exists(params.events[1].segmentation));
+            test.assertEquals(params.events[1].segmentation.name, "comments");
+            test.assertEquals(params.events[1].segmentation.method, "post");
+            test.assertEquals(params.events[1].segmentation["input:message"], "Message Name");
+            test.assertEquals(params.events[1].segmentation["input:textarea"], "Message");
+            test.assertEquals(params.events[1].segmentation["input:select-one"], "option1");
+            test.assertEquals(params.events[1].segmentation["input:submit-form"], "Submit");
 
-        test.assertEquals(params.events[2].key, "[CLY]_view");
-        test.assertEquals(params.events[2].count, 1);
-        test.assert(params.events[2].dur >= 29 && params.events[2].dur <= 31);
-        test.assert(exists(params.events[2].segmentation));
-        test.assert(exists(params.events[2].segmentation.name));
+            test.assertEquals(params.events[2].key, "[CLY]_view");
+            test.assertEquals(params.events[2].count, 1);
+            test.assert(params.events[2].dur >= 29 && params.events[2].dur <= 31);
+            test.assert(exists(params.events[2].segmentation));
+            test.assert(exists(params.events[2].segmentation.name));
 
-        test.assertEquals(params.events[3].key, '[CLY]_orientation');
-        test.assert(exists(params.events[3].segmentation));
-        test.assertEquals(params.events[3].segmentation.mode, "landscape");
-        test.assertEquals(params.events[3].count, 1);
+            test.assertEquals(params.events[3].key, '[CLY]_orientation');
+            test.assert(exists(params.events[3].segmentation));
+            test.assertEquals(params.events[3].segmentation.mode, "landscape");
+            test.assertEquals(params.events[3].count, 1);
 
-        test.assertEquals(params.events[4].key, '[CLY]_view');
-        test.assert(exists(params.events[4].segmentation));
-        test.assert(exists(params.events[4].segmentation.name));
-        test.assertEquals(params.events[4].count, 1);
+            test.assertEquals(params.events[4].key, '[CLY]_view');
+            test.assert(exists(params.events[4].segmentation));
+            test.assert(exists(params.events[4].segmentation.name));
+            test.assertEquals(params.events[4].count, 1);
+        }
+        else {
+            test.assertEquals(params.events[0].key, "[CLY]_action");
+            test.assertEquals(params.events[0].count, 1);
+            test.assert(exists(params.events[0].segmentation));
+            test.assertEquals(params.events[0].segmentation.type, "click");
+            test.assert(exists(params.events[0].segmentation.x));
+            test.assert(exists(params.events[0].segmentation.y));
+            test.assert(exists(params.events[0].segmentation.width));
+            test.assert(exists(params.events[0].segmentation.height));
+
+            test.assertEquals(params.events[1].key, 'formSubmit');
+            test.assert(exists(params.events[1].segmentation));
+            test.assertEquals(params.events[1].segmentation.name, "comments");
+            test.assertEquals(params.events[1].segmentation.method, "post");
+            test.assertEquals(params.events[1].segmentation["input:message"], "Message Name");
+            test.assertEquals(params.events[1].segmentation["input:textarea"], "Message");
+            test.assertEquals(params.events[1].segmentation["input:select-one"], "option1");
+            test.assertEquals(params.events[1].segmentation["input:submit-form"], "Submit");
+
+            test.assertEquals(params.events[2].key, "[CLY]_view");
+            test.assertEquals(params.events[2].count, 1);
+            test.assert(params.events[2].dur >= 29 && params.events[2].dur <= 31);
+            test.assert(exists(params.events[2].segmentation));
+            test.assert(exists(params.events[2].segmentation.name));
+        }
     });
 
     tests.push(function(message) {

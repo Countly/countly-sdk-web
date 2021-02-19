@@ -141,6 +141,9 @@ casper.test.begin("Testing example_helpers.html", 235, function(test) {
     });
 
     tests.push(function(message) {
+        if (message[0] === "Processing request") {
+            return true;
+        }
         test.assertEquals(message[0], 'Adding event: ');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.key, "formSubmit");
@@ -154,6 +157,9 @@ casper.test.begin("Testing example_helpers.html", 235, function(test) {
         test.assertEquals(params.segmentation["input:submit-form"], "Submit");
     });
     tests.push(function(message) {
+        if (message[0] === "Processing request") {
+            return true;
+        }
         test.assertEquals(message[0], 'Adding event: ');
         var params = JSON.parse(message[1]);
         test.assertEquals(params.key, "[CLY]_view");
@@ -163,9 +169,15 @@ casper.test.begin("Testing example_helpers.html", 235, function(test) {
         test.assert(exists(params.segmentation.name));
     });
     tests.push(function(message) {
+        if (message[0] === "Processing request") {
+            return true;
+        }
         test.assertEquals(message[0], 'Session extended');
     });
     tests.push(function(message) {
+        if (message[0] === "Processing request") {
+            return true;
+        }
         test.assertEquals(message[0], 'Countly initialized');
     });
     tests.push(function(message) {

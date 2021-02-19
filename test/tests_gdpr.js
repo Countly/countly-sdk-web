@@ -411,7 +411,7 @@ casper.test.begin("Testing example_gdpr.html", 240, function(test) {
         setTimeout(function() {
             ob.click('#unhandled_error');
             setTimeout(callback, 5000);
-        }, 10000);
+        }, 15000);
     }
     casper.start(fs.workingDirectory + "/examples/example_gdpr.html", function() {
         var ob = this;
