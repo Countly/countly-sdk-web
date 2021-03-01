@@ -40,7 +40,43 @@ or
 
 Link to the script and call helper methods based on what you want to track: sessions, views, clicks, custom events, user data, etc. More information is available at [https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-](https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-)
 
-![Using Countly web SDK in your web page](https://count.ly/github/countly-web-sdk.png)
+    <script type='text/javascript'>
+    // Some default pre init
+    var Countly = Countly || {};
+    Countly.q = Countly.q || [];
+
+    // Provide your app key that you retrieved from Countly dashboard
+    Countly.app_key = "YOUR_APP_KEY";
+
+    // Provide your server IP or name. Use try.count.ly or us-try.count.ly 
+    // or asia-try.count.ly for EE trial server.
+    // If you use your own server, make sure you have https enabled if you use
+    // https below.
+    Countly.url = "https://yourdomain.com"; 
+
+    // Start pushing function calls to queue
+    // Track sessions automatically (recommended)
+    Countly.q.push(['track_sessions']);
+
+    //track web page views automatically (recommended)
+    Countly.q.push(['track_pageview']);
+
+    // Uncomment the following line to track web heatmaps (Enterprise Edition)
+    // Countly.q.push(['track_clicks']);
+
+    // Uncomment the following line to track web scrollmaps (Enterprise Edition)
+    // Countly.q.push(['track_scrolls']);
+
+    // Load Countly script asynchronously
+    (function() {
+        var cly = document.createElement('script'); cly.type = 'text/javascript'; 
+        cly.async = true;
+        // Enter url of script here (see below for other option)
+        cly.src = 'https://cdn.jsdelivr.net/npm/countly-sdk-web@latest/lib/countly.min.js'; // Use any of the 3 methods to get Countly Web Analytics SDK here
+        cly.onload = function(){Countly.init()};
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(cly, s);
+    })();
+    </script>
 
 Countly Web SDK has JSDoc3 compatible comments and you can generate documentation by running `npm run-script docs` or access online version at [https://countly.github.io/countly-sdk-web/](https://countly.github.io/countly-sdk-web/)
 
