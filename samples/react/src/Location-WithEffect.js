@@ -3,7 +3,7 @@ import {
   useLocation
 } from "react-router-dom";
 
-import Countly from 'countly-sdk-web';
+let Countly = window.Countly;
 
 const Location = (props) => {
   const location = useLocation();

@@ -3,7 +3,7 @@ import {
   withRouter
 } from "react-router-dom";
 
-import Countly from 'countly-sdk-web';
+let Countly = window.Countly;
 
 class Location extends React.Component {
     componentDidUpdate(prevProps) {

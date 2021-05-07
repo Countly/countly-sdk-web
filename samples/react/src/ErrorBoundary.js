@@ -1,5 +1,6 @@
 import React from "react";
-import Countly from "countly-sdk-web";
+
+let Countly = window.Countly;
 
 // Error boundaries only apply to errors that happen during rendering.
 // So errors originating anywhere else will not trigger this mechanism.

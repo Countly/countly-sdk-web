@@ -5,8 +5,9 @@ import {
 } from "react-router-dom";
 
 import Users from './Users';
-import Countly from 'countly-sdk-web';
 import './styles.css';
+
+let Countly = window.Countly;
 
 const Header = (props) => {
     let loginState = props.loginState;

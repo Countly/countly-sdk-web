@@ -3,11 +3,9 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App-WithEffect';
 import * as serviceWorker from './serviceWorker';
-import Countly from 'countly-sdk-web';
 
-//Exposing Countly to the DOM as a global variable
-//Usecase - Heatmaps
-window.Countly = Countly;
+let Countly = window.Countly;
+
 Countly.init({
     app_key: 'YOUR_APP_KEY',
     url: 'YOUR_SERVER_URL',
@@ -23,7 +21,7 @@ Countly.init({
 
 //Since Countly is loaded and available, you can use synchronus or asynchronus calls, does not matter
 Countly.q.push(['group_features', {
-    activity: ["sessions", "events", "views", "location"],
+    activity: ["sessions", "events", "views", "location", "apm"],
     interaction: ["scrolls", "clicks", "crashes"],
     whereabouts: ["users"]
 }]);
@@ -54,6 +52,38 @@ Countly.q.push(['track_scrolls']);
 Countly.q.push(['track_clicks']);
 Countly.q.push(['track_links']);
 Countly.q.push(["track_errors"]);
+Countly.q.push([
+    "track_performance",
+    {
+        RT: {
+            enabled: true
+        },
+        instrument_xhr: true,
+        AutoXHR: {
+            enabled: true,
+            alwaysSendXhr: true,
+            monitorFetch: true,
+            captureXhrRequestResponse: true
+        },
+        Continuity: {
+            enabled: true,
+            monitorLongTasks: true,
+            monitorPageBusy: true,
+            monitorFrameRate: true,
+            monitorInteractions: true,
+            afterOnload: true
+        },
+        NavigationTiming: {
+            enabled: true
+        },
+        ResourceTiming: {
+            enabled: true,
+            clearOnBeacon: true,
+            urlLimit: 2000,
+            splitAtPath: true
+        }
+    }
+]);
 
 ReactDOM.render(
   <React.StrictMode>

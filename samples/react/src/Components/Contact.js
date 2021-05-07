@@ -1,6 +1,7 @@
-import React from 'react';
-import Countly from 'countly-sdk-web';
+import React, {useEffect} from 'react';
 import countlyImage from './countly.jpg';
+
+let Countly = window.Countly;
 
 function Contact() {
     const emailUsClick = () => {
@@ -10,6 +11,14 @@ function Contact() {
         }]);
         alert("Email us event triggered");
     }
+
+    useEffect(() => {
+        fetch("https://google.com").then((res) => {
+            setTimeout(() => {
+                throw new Error("Dummy error from contact");
+            }, 3000);
+        });
+    }, []);
 
     return (
         <div className="contact">
