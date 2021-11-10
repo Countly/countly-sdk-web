@@ -1,3 +1,13 @@
+## 21.11
+- !! Consent change !! Feedback widgets now require 'feedback' consent or 'star-rating' consent exclusively according to their type instead of both:
+    - `present_feedback_widget` needs 'feedback' consent only
+    - `get_available_feedback_widgets` needs 'feedback' consent only
+    - `enable_feedback` needs 'star-rating' consent only
+    - `show_feedback_popup` needs 'star-rating' consent only
+    - `initialize_feedback_popups` needs 'star-rating' consent only
+    - `report_feedback` needs 'star-rating' consent only
+- Increased the default max event batch size to 100.
+
 ## 20.11.3
 - Surveys ie bugfix for the undefined origin
 - Remove unload handlers
