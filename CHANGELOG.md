@@ -1,3 +1,6 @@
+## 21.11
+- Orientation tracking is now enabled by default. Can be turned off during init.
+
 ## 20.11.3
 - Surveys ie bugfix for the undefined origin
 - Remove unload handlers
