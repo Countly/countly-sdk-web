@@ -1,4 +1,12 @@
 ## 21.11
+- !! Consent change !! Rating and Feedback widgets now require 'star-rating' or 'feedback' consent exclusively, according to their type, instead of both:
+    - `present_feedback_widget` needs 'feedback' consent only
+    - `get_available_feedback_widgets` needs 'feedback' consent only
+    - `enable_feedback` needs 'star-rating' consent only
+    - `show_feedback_popup` needs 'star-rating' consent only
+    - `initialize_feedback_popups` needs 'star-rating' consent only
+    - `report_feedback` needs 'star-rating' consent only
+- Increased the default max event batch size to 100.
 - Fixed a bug where users were able to enter an invalid device ID
 
 ## 20.11.3
