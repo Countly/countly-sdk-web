@@ -1,3 +1,6 @@
+## 21.11
+- Device ID can now be changed when no consent is given
+
 ## 20.11.3
 - Surveys ie bugfix for the undefined origin
 - Remove unload handlers
