@@ -1,3 +1,6 @@
+## 21.11
+- Fixed a bug where users were able to enter an invalid device ID
+
 ## 20.11.3
 - Surveys ie bugfix for the undefined origin
 - Remove unload handlers
