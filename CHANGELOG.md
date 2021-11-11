@@ -7,8 +7,8 @@
     - `initialize_feedback_popups` needs 'star-rating' consent only
     - `report_feedback` needs 'star-rating' consent only
 - Increased the default max event batch size to 100.
+- Automatic orientation tracking is now enabled by default. It can be turned off during init.
 - Device ID can now be changed when no consent is given
-
 
 ## 20.11.3
 - Surveys ie bugfix for the undefined origin
