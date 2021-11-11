@@ -1,5 +1,15 @@
 ## 21.11
+- !! Consent change !! Rating and Feedback widgets now require 'star-rating' or 'feedback' consent exclusively, according to their type, instead of both:
+    - `present_feedback_widget` needs 'feedback' consent only
+    - `get_available_feedback_widgets` needs 'feedback' consent only
+    - `enable_feedback` needs 'star-rating' consent only
+    - `show_feedback_popup` needs 'star-rating' consent only
+    - `initialize_feedback_popups` needs 'star-rating' consent only
+    - `report_feedback` needs 'star-rating' consent only
 - Fixed a bug where users were able to enter an invalid device ID
+- Increased the default max event batch size to 100.
+- Automatic orientation tracking is now enabled by default. It can be turned off during init.
+- Device ID can now be changed when no consent is given
 
 ## 20.11.3
 - Surveys ie bugfix for the undefined origin
