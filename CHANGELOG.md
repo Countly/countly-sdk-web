@@ -8,6 +8,7 @@
     - `report_feedback` needs 'star-rating' consent only
 - ! Minor breaking change ! 'change_id' will now not accept invalid device ID values. It will now reject null, undefined, values that are not of the type string and empty string values.
 - Increased the default max event batch size to 100.
+- !! Major breaking change !! Enabling offline mode or changing device ID without merging will now clear the current consent. Consent has to be given again after performing this action.
 - Automatic orientation tracking is now enabled by default. It can be turned off during init.
 - Device ID can now be changed when no consent is given
 
