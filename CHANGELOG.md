@@ -13,6 +13,7 @@
 - Deprecating `initialize_feedback_popups`, now it redirects to `initializeRatingWidgets`
 - Deprecating `enable_feedback`, now it redirects to `enableRatingWidgets`
 - Deprecating `report_conversion`, now it redirects to `recordDirectAttribution`
+- When recording internal events with 'add_event', the respective feature consent will now be checked instead of the 'events' consent. 
 - Increased the default max event batch size to 100.
 - Automatic orientation tracking is now enabled by default. It can be turned off during init.
 - Device ID can now be changed when no consent is given
