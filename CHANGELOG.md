@@ -8,7 +8,7 @@
     - `report_feedback` needs 'star-rating' consent only
 - !! Major breaking change !! Enabling offline mode or changing device ID without merging will now clear the current consent. Consent has to be given again after performing this action.
 - ! Minor breaking change ! 'change_id' will now not accept invalid device ID values. It will now reject null, undefined, values that are not of the type string and empty string values.
-- Multiple values now have a default limit adjustable at initialization:
+- ! Minor breaking change ! Multiple values now have a default limit adjustable at initialization:
     - Maximum size of all string keys is now 128 characters by default.
     - Maximum size of all values in key-value pairs is now 256 characters by default.
     - Maximum amount of segmentation in one event is mow 30 key-value pairs by default.
