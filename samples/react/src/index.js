@@ -48,7 +48,7 @@ if (typeof(localStorage) !== "undefined") {
     }
 }
 
-Countly.q.push(['enable_feedback', {'widgets': ['widget-id-1','widget-id-2']}]);
+Countly.q.push(['enableRatingWidgets', {'widgets': ['widget-id-1','widget-id-2']}]);
 Countly.q.push(['track_sessions']);
 Countly.q.push(['track_scrolls']);
 Countly.q.push(['track_clicks']);

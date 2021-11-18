@@ -8,6 +8,11 @@
     - `report_feedback` needs 'star-rating' consent only
 - !! Major breaking change !! Enabling offline mode or changing device ID without merging will now clear the current consent. Consent has to be given again after performing this action.
 - ! Minor breaking change ! 'change_id' will now not accept invalid device ID values. It will now reject null, undefined, values that are not of the type string and empty string values.
+- Deprecating `report_feedback`, now it redirects to `recordRatingWidgetWithID`
+- Deprecating `show_feedback_popup`, now it redirects to `presentRatingWidgetWithID`
+- Deprecating `initialize_feedback_popups`, now it redirects to `initializeRatingWidgets`
+- Deprecating `enable_feedback`, now it redirects to `enableRatingWidgets`
+- Deprecating `report_conversion`, now it redirects to `recordDirectAttribution`
 - When recording internal events with 'add_event', the respective feature consent will now be checked instead of the 'events' consent. 
 - Increased the default max event batch size to 100.
 - Automatic orientation tracking is now enabled by default. It can be turned off during init.
