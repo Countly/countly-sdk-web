@@ -13,8 +13,8 @@ const Location = (props) => {
     //Check if pathname is not changing dont track the view
     //So that you dont end up tracking the same view again and again
     Countly.q.push(['track_pageview', location.pathname]);
-    // Initialize feedback popup by current page/pathname
-    Countly.q.push(['initialize_feedback_popups']);
+    // Initialize rating widget popup by current page/pathname
+    Countly.q.push(['initializeRatingWidgets']);
   }, [location]);
 
   return (

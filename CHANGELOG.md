@@ -15,6 +15,11 @@
     - Maximum amount of breadcrumbs that can be recorded at once is now 100 by default.
     - Maximum stack trace lines per thread is now 30 by default.
     - Maximum stack trace line length is now 200 by default. 
+- Deprecating `report_feedback`, now it redirects to `recordRatingWidgetWithID`
+- Deprecating `show_feedback_popup`, now it redirects to `presentRatingWidgetWithID`
+- Deprecating `initialize_feedback_popups`, now it redirects to `initializeRatingWidgets`
+- Deprecating `enable_feedback`, now it redirects to `enableRatingWidgets`
+- Deprecating `report_conversion`, now it redirects to `recordDirectAttribution`
 - When recording internal events with 'add_event', the respective feature consent will now be checked instead of the 'events' consent. 
 - Increased the default max event batch size to 100.
 - Automatic orientation tracking is now enabled by default. It can be turned off during init.
