@@ -1,0 +1,78 @@
+<html>
+  <head>
+    <!--Countly script-->
+    <script type="text/javascript" src="../lib/countly.js"></script>
+    <script type="text/javascript">
+      //initializing Countly with params and passing require_consent config as true
+      Countly.init({
+        app_key: "21cf5a730c3152bf1cb0d1ace048e25ac9d66b90",
+        url: "https://master.count.ly", //your server goes here
+        debug: true, //to read the logs
+        max_key_length: 10, //set maximum key length here
+        max_value_size: 6, //set maximum value length here
+        max_segmentation_values: 4, //set maximum segmentation number here
+        max_breadcrumb_count: 1, //set maximum number of logs that will be stored before erasing old ones
+        max_stack_trace_lines_per_thread: 4, //set maximum number of lines for stack trace
+        max_stack_trace_line_length: 5, //set maximum length of a line for stack trace
+        require_consent: true, //this true means consent is required
+      });
+
+      //(optionally) provide custom feature tree if needed
+      Countly.group_features({
+        activity: ["sessions", "events", "views"],
+      });
+
+      //we can call all the helper methods we want, they won't record until consent is provided for specific features
+      Countly.track_sessions();
+      //we can check event key, value lengths and segmentation numbers with view event logs
+      Countly.track_pageview();
+
+
+      //Consent Management logic should be implemented and controlled by developer
+      //this is just a simply example of what logic it could have
+      if (typeof localStorage !== "undefined") {
+        var consents = localStorage.getItem("consents");
+        //checking if user already provided consent
+        if (consents) {
+          //we already have array with consents from previous visit, let's just pass them to Countly
+          Countly.add_consent(JSON.parse(consents));
+        } else {
+          //user have not yet provided us a consent
+          //we need to display popup and ask user to give consent for specific features we want to track
+          //for example purposes, we will wait till user clicks "Give Consent" button
+          //to allow consent for "activity", "crashes"
+        }
+      } else {
+        // Sorry! No Web Storage support..
+        // we can fallback to cookie
+      }
+
+      //first give consent for features to work
+      function giveConsent() {
+        //give consent to necessary features
+        var response = ["activity", "crashes"];
+        Countly.add_consent(response);
+        localStorage.setItem("consents", JSON.stringify(response));
+      }
+      //then you can test stack trace related limits here
+      function recordError() {
+        //create new error object with stack key
+        var error = {"stack":"Enter your\n error here\n separated\n with newlines\n"};
+        Countly.recordError(error, true);
+        
+      }
+      //you can add logs and check breadcrumb limits here
+      function addLog(){
+          //add new log into crashLogs
+          var log = "Enter your log here";
+          Countly.add_log(log);
+      }
+    </script>
+  </head>
+  <body>
+    <p><a href="http://count.ly/">Count.ly</a></p>
+    <p><button onclick="giveConsent()">Give Consent</button></p>
+    <p><button onclick="recordError()">Record Error</button></p>
+    <p><button onclick="addLog()">Add Log</button></p>
+  </body>
+</html>
