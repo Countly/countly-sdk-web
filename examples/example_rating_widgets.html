@@ -39,14 +39,17 @@ if (typeof(localStorage) !== "undefined") {
     // we can fallback to cookie
 }
 
-
+//To enable the rating widgets first click the give consent button. After this the widget must be automatically visible.
+//Use Pop Widget to to popup the widget manually without clicking on the widget
+//Use Multiple Widgets to display multiple widgets
+//Press Enable Widget to return back to the original widget
 
 function giveConsent(){
     //give consent for rating widgets to work
     var response = ["star-rating"];
     Countly.add_consent(response);
     //show rating widget directly
-    Countly.enableRatingWidgets({'popups':['YOUR_WIDGET_ID']}); //example: {'popups':['12asd15fsgf546516a5sdf']}
+    Countly.enableRatingWidgets({'popups':['YOUR_WIDGET_ID']}); //example: {'popups':['12asd15fsgf546516a5sdf']} //You can comment this off if you want to enable the widgets manually by clicking Enable Widget
     localStorage.setItem("consents", JSON.stringify(response));
 }
 
