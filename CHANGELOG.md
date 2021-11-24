@@ -8,7 +8,7 @@
     - `report_feedback` needs 'star-rating' consent only
 - !! Major breaking change !! Enabling offline mode or changing device ID without merging will now clear the current consent. Consent has to be given again after performing this action.
 - ! Minor breaking change ! 'change_id' will now not accept invalid device ID values. It will now reject null, undefined, values that are not of the type string and empty string values.
-- Bug Fix - Fixed a bug where sessions were restarting even browser was out of focus
+- Bug Fix - Fixed a bug where duration counter/timer was not paused even when the browser was out of focus
 - Deprecating `report_feedback`, now it redirects to `recordRatingWidgetWithID`
 - Deprecating `show_feedback_popup`, now it redirects to `presentRatingWidgetWithID`
 - Deprecating `initialize_feedback_popups`, now it redirects to `initializeRatingWidgets`
