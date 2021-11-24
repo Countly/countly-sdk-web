@@ -1,4 +1,4 @@
-## 21.11
+## 21.11.0
 - !! Major breaking change !! Rating and Feedback widgets now require 'star-rating' or 'feedback' consent exclusively, according to their type, instead of both:
     - `present_feedback_widget` needs 'feedback' consent only
     - `get_available_feedback_widgets` needs 'feedback' consent only
