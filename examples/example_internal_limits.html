@@ -8,12 +8,12 @@
         app_key: "YOUR_APP_KEY_HERE",
         url: "https://try.count.ly", //your server goes here
         debug: true, //to read the logs
-        max_key_length: 10, //set maximum key length here
-        max_value_size: 5, //set maximum value length here
+        max_key_length: 9, //set maximum key length here
+        max_value_size: 6, //set maximum value length here
         max_segmentation_values: 5, //set maximum segmentation number here
         max_breadcrumb_count: 5, //set maximum number of logs that will be stored before erasing old ones
         max_stack_trace_lines_per_thread: 5, //set maximum number of lines for stack trace
-        max_stack_trace_line_length: 5, //set maximum length of a line for stack trace
+        max_stack_trace_line_length: 10, //set maximum length of a line for stack trace
         require_consent: true, //this true means consent is required
       });
 
@@ -55,9 +55,9 @@
       }
       //then you can test stack trace related limits here (line length and line per line)
       function recordError() {
-        //create new error object with stack key
+        //create new error object with stack key (a lorem ipsum given as an example)
         var error = {
-          stack: "Enter your\n error here\n separated\n with newlines\n",
+          stack: "Lorem ipsum dolor sit amet,\n consectetur adipiscing elit, sed do eiusmod tempor\n incididunt ut labore et dolore magna\n aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n Duis aute irure dolor in reprehenderit in voluptate\n velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia\n deserunt mollit anim id\n est laborum.",
         };
         Countly.recordError(error, true);
       }
@@ -71,33 +71,41 @@
       //add user details
       function addUserDetails() {
         Countly.user_details({
-          name: "Arturs Sosins",
-          username: "ar2rsawseen",
+          name: "Osvaldo Genovesi",
+          username: "valdovaldo66",
           email: "test@test.com",
           organization: "Countly",
-          phone: "+37112345678",
+          phone: "+48117345679",
           //Web URL pointing to user picture
           picture:
-            "https://pbs.twimg.com/profile_images/1442562237/012_n_400x400.jpg",
+            "https://jooinn.com/images/sliced-apple-5.jpg",
           gender: "M",
-          byear: 1987, //birth year
+          byear: 1951, //birth year
           custom: {
-            key1: "value1",
-            key2: "value2",
+            "key1234567890": "Value100",
+            "key2345678901": "Value200",
+            "key3456789012": "Value300",
+            "key4567890123": "Value400",
+            "key5678901234": "Value500",
+            "key6789012345": "Value600",
+            "key7890123456": "Value700",
+            "key8901234567": "Value800",
+            "key9012345678": "Value900",
+            "key0123456789": "Value000",
           },
         });
       }
       //modify user data
       function set() {
-        Countly.userData.set("name", "Boba Fett"); //set custom property
+        Countly.userData.set("name of a character", "Boba Fett the second"); //set custom property
         Countly.userData.save();
       }
       function setOnce() {
-        Countly.userData.set_once("galaxy", "B48FF"); //set custom property only if property does not exist
+        Countly.userData.set_once("A galaxy far far away", "Called B48FF"); //set custom property only if property does not exist
         Countly.userData.save();
       }
       function incrementBig() {
-        Countly.userData.increment_by("byear", 10); //increment value in key by provided value
+        Countly.userData.increment_by("byear", 1234567890123456789); //increment value in key by provided value
         Countly.userData.save();
       }
       function increment() {
@@ -105,27 +113,27 @@
         Countly.userData.save();
       }
       function multiply() {
-        Countly.userData.multiply("byear", 2); //multiply value in key by provided value
+        Countly.userData.multiply("byear", 1234567890123456789); //multiply value in key by provided value
         Countly.userData.save();
       }
       function max() {
-        Countly.userData.max("byear", 1); //save max value between current and provided
+        Countly.userData.max("byear", 1234567890123456789); //save max value between current and provided
         Countly.userData.save();
       }
       function min() {
-        Countly.userData.min("byear", 5); //save min value between current and provided
+        Countly.userData.min("byear", 1234567890123456789); //save min value between current and provided
         Countly.userData.save();
       }
       function push() {
-        Countly.userData.push("gender", "F"); //add value to key as array element
+        Countly.userData.push("gender", "Fernando Valdez II"); //add value to key as array element
         Countly.userData.save();
       }
       function pushU() {
-        Countly.userData.push_unique("gender", "F"); //add value to key as array element, but only store unique values in array
+        Countly.userData.push_unique("gender", "Fernando Valdez III"); //add value to key as array element, but only store unique values in array
         Countly.userData.save();
       }
       function pull() {
-        Countly.userData.pull("gender", "F"); //remove value from array under property with key as name
+        Countly.userData.pull("gender",  "Fernando Valdez III"); //remove value from array under property with key as name
         Countly.userData.save();
       }
       //add custom event
@@ -134,8 +142,16 @@
           key: "Enter your key here",
           count: 1,
           segmentation: {
-            "key1": "Value1",
-            "key2 ": "Value2",
+            "key1234567890": "Value100",
+            "key2345678901": "Value200",
+            "key3456789012": "Value300",
+            "key4567890123": "Value400",
+            "key5678901234": "Value500",
+            "key6789012345": "Value600",
+            "key7890123456": "Value700",
+            "key8901234567": "Value800",
+            "key9012345678": "Value900",
+            "key0123456789": "Value000",
           },
         });
       }
