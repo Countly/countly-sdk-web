@@ -15,6 +15,7 @@
     - Maximum amount of breadcrumbs that can be recorded at once is now 100 by default.
     - Maximum stack trace lines per thread is now 30 by default.
     - Maximum stack trace line length is now 200 by default. 
+- Bug Fix - Fixed a bug where duration counter/timer was not paused even when the browser was out of focus
 - Deprecating `report_feedback`, now it redirects to `recordRatingWidgetWithID`
 - Deprecating `show_feedback_popup`, now it redirects to `presentRatingWidgetWithID`
 - Deprecating `initialize_feedback_popups`, now it redirects to `initializeRatingWidgets`
