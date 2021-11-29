@@ -1,4 +1,4 @@
-## 21.11
+## 21.11.0
 - !! Major breaking change !! Rating and Feedback widgets now require 'star-rating' or 'feedback' consent exclusively, according to their type, instead of both:
     - `present_feedback_widget` needs 'feedback' consent only
     - `get_available_feedback_widgets` needs 'feedback' consent only
@@ -8,6 +8,13 @@
     - `report_feedback` needs 'star-rating' consent only
 - !! Major breaking change !! Enabling offline mode or changing device ID without merging will now clear the current consent. Consent has to be given again after performing this action.
 - ! Minor breaking change ! 'change_id' will now not accept invalid device ID values. It will now reject null, undefined, values that are not of the type string and empty string values.
+- ! Minor breaking change ! Multiple values now have a default limit adjustable at initialization:
+    - Maximum size of all string keys is now 128 characters by default.
+    - Maximum size of all values in key-value pairs is now 256 characters by default.
+    - Maximum amount of segmentation in one event is mow 30 key-value pairs by default.
+    - Maximum amount of breadcrumbs that can be recorded at once is now 100 by default.
+    - Maximum stack trace lines per thread is now 30 by default.
+    - Maximum stack trace line length is now 200 by default. 
 - Bug Fix - Fixed a bug where duration counter/timer was not paused even when the browser was out of focus
 - Deprecating `report_feedback`, now it redirects to `recordRatingWidgetWithID`
 - Deprecating `show_feedback_popup`, now it redirects to `presentRatingWidgetWithID`

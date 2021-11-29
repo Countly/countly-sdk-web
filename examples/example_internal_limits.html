@@ -1,0 +1,184 @@
+<html>
+  <head>
+    <!--Countly script-->
+    <script type="text/javascript" src="../lib/countly.js"></script>
+    <script type="text/javascript">
+      //initializing Countly with params and passing require_consent config as true
+      Countly.init({
+        app_key: "YOUR_APP_KEY_HERE",
+        url: "https://try.count.ly", //your server goes here
+        debug: true, //to read the logs
+        max_key_length: 9, //set maximum key length here
+        max_value_size: 6, //set maximum value length here
+        max_segmentation_values: 5, //set maximum segmentation number here
+        max_breadcrumb_count: 5, //set maximum number of logs that will be stored before erasing old ones
+        max_stack_trace_lines_per_thread: 5, //set maximum number of lines for stack trace
+        max_stack_trace_line_length: 10, //set maximum length of a line for stack trace
+        require_consent: true, //this true means consent is required
+      });
+
+      //(optionally) provide custom feature tree if needed
+      Countly.group_features({
+        activity: ["sessions", "events", "views"],
+      });
+
+      //we can call all the helper methods we want, they won't record until consent is provided for specific features
+      Countly.track_sessions();
+      //we can check event key, value lengths and segmentation numbers with view event logs here too
+      Countly.track_pageview();
+
+      //Consent Management logic should be implemented and controlled by developer
+      //this is just a simply example of what logic it could have
+      if (typeof localStorage !== "undefined") {
+        var consents = localStorage.getItem("consents");
+        //checking if user already provided consent
+        if (consents) {
+          //we already have array with consents from previous visit, let's just pass them to Countly
+          Countly.add_consent(JSON.parse(consents));
+        } else {
+          //user have not yet provided us a consent
+          //we need to display popup and ask user to give consent for specific features we want to track
+          //for example purposes, we will wait till user clicks "Give Consent" button
+          //to allow consent for "activity", "crashes"
+        }
+      } else {
+        // Sorry! No Web Storage support..
+        // we can fallback to cookie
+      }
+
+      //first give consent for features to work
+      function giveConsent() {
+        //give consent to necessary features
+        var response = ["activity", "crashes", "users"];
+        Countly.add_consent(response);
+        localStorage.setItem("consents", JSON.stringify(response));
+      }
+      //then you can test stack trace related limits here (line length and line per line)
+      function recordError() {
+        //create new error object with stack key (a lorem ipsum given as an example)
+        var error = {
+          stack: "Lorem ipsum dolor sit amet,\n consectetur adipiscing elit, sed do eiusmod tempor\n incididunt ut labore et dolore magna\n aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n Duis aute irure dolor in reprehenderit in voluptate\n velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia\n deserunt mollit anim id\n est laborum.",
+        };
+        Countly.recordError(error, true);
+      }
+      //you can add logs and check breadcrumb limits here (present crashLogs limit at a time)
+      function addLog() {
+        //add new log into crashLogs
+        var log = "Enter your log here";
+        Countly.add_log(log);
+      }
+
+      //add user details
+      function addUserDetails() {
+        Countly.user_details({
+          name: "Osvaldo Genovesi",
+          username: "valdovaldo66",
+          email: "test@test.com",
+          organization: "Countly",
+          phone: "+48117345679",
+          //Web URL pointing to user picture
+          picture:
+            "https://jooinn.com/images/sliced-apple-5.jpg",
+          gender: "M",
+          byear: 1951, //birth year
+          custom: {
+            "key1234567890": "Value100",
+            "key2345678901": "Value200",
+            "key3456789012": "Value300",
+            "key4567890123": "Value400",
+            "key5678901234": "Value500",
+            "key6789012345": "Value600",
+            "key7890123456": "Value700",
+            "key8901234567": "Value800",
+            "key9012345678": "Value900",
+            "key0123456789": "Value000",
+          },
+        });
+      }
+      //modify user data
+      function set() {
+        Countly.userData.set("name of a character", "Boba Fett the second"); //set custom property
+        Countly.userData.save();
+      }
+      function setOnce() {
+        Countly.userData.set_once("A galaxy far far away", "Called B48FF"); //set custom property only if property does not exist
+        Countly.userData.save();
+      }
+      function incrementBig() {
+        Countly.userData.increment_by("byear", 1234567890123456789); //increment value in key by provided value
+        Countly.userData.save();
+      }
+      function increment() {
+        Countly.userData.increment_by("byear"); //increment value in key by one
+        Countly.userData.save();
+      }
+      function multiply() {
+        Countly.userData.multiply("byear", 1234567890123456789); //multiply value in key by provided value
+        Countly.userData.save();
+      }
+      function max() {
+        Countly.userData.max("byear", 1234567890123456789); //save max value between current and provided
+        Countly.userData.save();
+      }
+      function min() {
+        Countly.userData.min("byear", 1234567890123456789); //save min value between current and provided
+        Countly.userData.save();
+      }
+      function push() {
+        Countly.userData.push("gender", "Fernando Valdez II"); //add value to key as array element
+        Countly.userData.save();
+      }
+      function pushU() {
+        Countly.userData.push_unique("gender", "Fernando Valdez III"); //add value to key as array element, but only store unique values in array
+        Countly.userData.save();
+      }
+      function pull() {
+        Countly.userData.pull("gender",  "Fernando Valdez III"); //remove value from array under property with key as name
+        Countly.userData.save();
+      }
+      //add custom event
+      function add() {
+        Countly.add_event({
+          key: "Enter your key here",
+          count: 1,
+          segmentation: {
+            "key1234567890": "Value100",
+            "key2345678901": "Value200",
+            "key3456789012": "Value300",
+            "key4567890123": "Value400",
+            "key5678901234": "Value500",
+            "key6789012345": "Value600",
+            "key7890123456": "Value700",
+            "key8901234567": "Value800",
+            "key9012345678": "Value900",
+            "key0123456789": "Value000",
+          },
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <p><a href="http://count.ly/">Count.ly</a></p>
+    <h3>Give Consent First</h3>
+
+    <p><button onclick="giveConsent()">Give Consent</button></p>
+    <h3>Check Stack Trace Limits</h3>
+
+    <p><button onclick="recordError()">Record Error</button></p>
+    <h3>Check Breadcrumb Limits</h3>
+    <p><button onclick="addLog()">Add Log</button></p>
+    <h3>Check Key/Value/Segmentation Limits</h3>
+    <p><button onclick="addUserDetails()">Add User Details</button></p>
+    <p><button onclick="set()">Set User Details</button></p>
+    <p><button onclick="setOnce()">Set Once User Details</button></p>
+    <p><button onclick="incrementBig()">Increment User Details</button></p>
+    <p><button onclick="increment()">Increment By One User Details</button></p>
+    <p><button onclick="multiply()">Multiply User Details</button></p>
+    <p><button onclick="max()">Max User Details</button></p>
+    <p><button onclick="min()">Min User Details</button></p>
+    <p><button onclick="push()">Push User Details</button></p>
+    <p><button onclick="pushU()">Push Unique User Details</button></p>
+    <p><button onclick="pull()">Pull User Details</button></p>
+    <p><button onclick="add()">Add Custom Event</button></p>
+  </body>
+</html>
