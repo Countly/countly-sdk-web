@@ -28,7 +28,7 @@ cd repo
 ##### Configure git.
 # Set the push default to simple i.e. push only the current branch.
 git config --global push.default simple
-# Pretend to be an user called Travis CI.
+# Pretend to be an user called Tracey.
 git config user.name "Github Actions"
 git config user.email "actions@github.com"
 
@@ -61,7 +61,7 @@ if [ -f "index.html" ]; then
     # stayed the same and will only update the changed files.
     git add --all
 
-    # Commit the added files with a title and description containing the Travis CI
+    # Commit the added files with a title and description containing the Github
     # build number and the GitHub commit reference that issued this build.
     git commit -m "Deploy code docs to GitHub Pages build: ${GITHUB_RUN_ID}" -m "Commit: ${GITHUB_SHA}"
 
