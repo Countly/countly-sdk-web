@@ -1,3 +1,7 @@
+## 21.11.1
+- Fixed feedback widget bug related to the 'close events' origin check
+- Logs are now rearranged to include log levels
+
 ## 21.11.0
 - !! Major breaking change !! Rating and Feedback widgets now require 'star-rating' or 'feedback' consent exclusively, according to their type, instead of both:
     - `present_feedback_widget` needs 'feedback' consent only
