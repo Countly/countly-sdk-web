@@ -54,7 +54,7 @@
         Countly.q = Countly.q || [];
         //Countly config
         Countly.app_key = 'YOUR_APP_KEY';
-        Countly.url = 'https://ui.count.ly';
+        Countly.url = 'https://try.count.ly';
         Countly.session_update = 10; //Time interval for session extend
         Countly.use_session_cookie = false; //if false, begin_session on every app open, be it in new tab
         Countly.debug = true;
@@ -180,29 +180,26 @@
         <h1 id="welcome-user" style="text-transform: capitalize;">Welcome</h1>
         <br />
         <div id="subscription">
-            <button id="subscription-button" style="color: #000000; border: none; padding: 20px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 20px; background-color: #bed3da;">
+            <button id="subscription-button" style="color: #000000; border: none; padding: 20px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
 				Get started
 			</button>
-            <button id="nps" style="color: #000; border: none; padding: 20px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 20px; background-color: #bed3da;">
-				NPS
+            <button id="nps" style="color: #000; border: none; padding: 20px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+				Show NPS
 			</button>
-            <button id="survey" style="color: #000; border: none; padding: 20px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 20px; background-color: #bed3da;">
-				Survey
+            <button id="survey" style="color: #000; border: none; padding: 20px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+				Show Survey
 			</button>
-            <button id="rating" style="color: #000; border: none; padding: 20px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 20px; background-color: #bed3da;">
-				Rating
+            <button id="rating" style="color: #000; border: none; padding: 20px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+				Show Rating Widget
 			</button>
-            <button id="random" style="color: #000; border: none; padding: 20px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 20px; background-color: #bed3da;">
-				Random
+            <button id="random" style="color: #000; border: none; padding: 20px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+				Show Random Widget
 			</button>
-            <button id="rating-enable" style="color: #000; border: none; padding: 20px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 20px; background-color: #bed3da;">
-				Rating ID
+            <button id="rating-enable" style="color: #000; border: none; padding: 20px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+				Show Old Rating Widget
 			</button>
-            <button id="rating-pop" style="color: #000; border: none; padding: 20px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 20px; background-color: #bed3da;">
-				Rating Popup
-			</button>
-            <button id="rating-multi" style="color: #000; border: none; padding: 20px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 20px; background-color: #bed3da;">
-				Rating Multi
+            <button id="rating-multi" style="color: #000; border: none; padding: 20px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+				Show Old Rating Widget (Multi)
 			</button>
         </div>
         <br />
@@ -297,7 +294,7 @@
             "name": "Harry",
             "username": "harry",
             "email": "harry@cly.com",
-            "organization": "Aventure",
+            "organization": "Adventure",
             "phone": "+919882102018",
             "gender": "M",
             "byear": "2005"
@@ -327,8 +324,6 @@
                 }]);
             }
         });
-        //rating widget IDs
-        var ratingWidgets = ['widget_ID', 'another_widget_ID'];
         //fetch nps widgets
         $("#nps").on("click", function() {
             Countly.q.push(["get_available_feedback_widgets", allWidgetsCallbackNPS]);
@@ -347,17 +342,25 @@
         });
         //display a rating widget with ID
         $("#rating-enable").on("click", function() {
-            Countly.enableRatingWidgets({
-                'popups': [ratingWidgets[0]]
-            });
-        });
-        //popup a rating widget with ID
-        $("#rating-pop").on("click", function() {
-            Countly.presentRatingWidgetWithID(ratingWidgets[1]);
+            let id = prompt("Please enter widget ID");
+            if (!id) {
+                return;
+            } else {
+                Countly.enableRatingWidgets({
+                    'popups': [id]
+                });
+            }
         });
         //display multiple rating widgets with IDs
         $("#rating-multi").on("click", function() {
-            Countly.initializeRatingWidgets(ratingWidgets);
+            let ids = prompt("Please enter widget IDs separated with commas");
+            if (!ids) {
+                return;
+            } else {
+                //trim whitespace
+                const idArray = ids.split(',').map(a=>a.trim());
+                Countly.initializeRatingWidgets(idArray);
+            }
         });
         //log in logic here
         $("#user-state").on("click", function() {
