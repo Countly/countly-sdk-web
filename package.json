@@ -11,8 +11,9 @@
   "scripts": {
     "docs": "node_modules/.bin/jsdoc lib/countly.js README.md -c jsdoc_conf.json -d docs",
     "build": "webpack",
-    "pretest": "eslint .",
-    "test": "casperjs test test/tests_*.js"
+    "cypress:open": "cypress open",
+    "pretest": "eslint --ignore-path .eslintignore .",
+    "test": "./node_modules/.bin/cypress run"
   },
   "repository": {
     "type": "git",
@@ -32,8 +33,11 @@
   "dependencies": {},
   "devDependencies": {
     "casperjs": "*",
+    "cypress": "*",
+    "cypress-localstorage-commands": "^1.6.1",
     "docdash": "*",
     "eslint": "*",
+    "eslint-plugin-cypress": "^2.12.1",
     "jsdoc": "*",
     "webpack": "^5.24.1",
     "webpack-cli": "^4.2.0"
