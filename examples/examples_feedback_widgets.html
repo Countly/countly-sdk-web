@@ -49,10 +49,8 @@ function giveConsent(){
 }
 
 function enable(){
-//change type value with nps or survey depending on your need, and provide the widget ID from the specific dashboard
-var feedbackObject = {type: "npsOrsurvey", _id: "widgetIdFromDashboard"};
 //Fetch user's NPS and Survey feedbacks from the server
-Countly.get_available_feedback_widgets(feedbackWidgetsCallback(feedbackObject, null));
+Countly.get_available_feedback_widgets(feedbackWidgetsCallback);
 }
 
 //Surveys feedback callback function
