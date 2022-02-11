@@ -21,7 +21,7 @@ describe('Views tests ', () => {
     });
     it('Checks if recording timed page views with same name works', () => {
         cy.clearLocalStorage();
-        Countly.halt();
+        // Countly.halt();
         cy.wait(50).then(()=>{
             initMain();
             Countly.track_view(pageNameOne);
@@ -36,7 +36,7 @@ describe('Views tests ', () => {
     });
     it('Checks if recording timed page views with different name works', () => {
         cy.clearLocalStorage();
-        Countly.halt();
+        // Countly.halt();
         cy.wait(50).then(()=>{
             initMain();
             Countly.track_view(pageNameOne);

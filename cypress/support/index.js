@@ -15,8 +15,11 @@
 
 // Import commands.js using ES2015 syntax:
 import './commands'
+import '../../lib/countly'
 import 'cypress-localstorage-commands';
-
+Cypress.on('uncaught:exception', (err, runnable) => {
+	debugger
+})
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
