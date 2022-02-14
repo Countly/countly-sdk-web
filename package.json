@@ -33,6 +33,8 @@
   "devDependencies": {
     "casperjs": "*",
     "docdash": "*",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.1",
     "eslint": "*",
     "jsdoc": "*",
     "webpack": "^5.24.1",
