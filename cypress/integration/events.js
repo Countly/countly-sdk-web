@@ -34,16 +34,33 @@ const timedEventObj = {
 
 describe('Events tests ', () => {
     it('Checks if adding events works', () => {
+        // halt countly if it was initiated before
+        if (Countly.device_id !== undefined) {
+            Countly.halt();
+        }
         initMain();
         Countly.add_event(eventObj);
-        cy.check_event(eventObj);
+        cy.wait(50).then(()=>{
+            cy.fetch_local_event_queue().then((e)=>{
+                let queue = JSON.parse(e);
+                cy.check_event(queue[0], eventObj);
+            });
+        });
     });
     it('Checks if timed events works', () => {
+        Countly.halt();
         initMain();
+        // start the timer
         Countly.start_event("timed");
+        // wait for a while
         cy.wait(4000).then(()=>{
+            // end the event and check duration
             Countly.end_event(timedEventObj);
-            cy.check_event(timedEventObj, 4);
+            cy.fetch_local_event_queue().then((e)=>{
+                let queue = JSON.parse(e);
+                cy.check_event(queue[0], timedEventObj, 4);
+            });
+
         });
     });
 });

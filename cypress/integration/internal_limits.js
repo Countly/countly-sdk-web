@@ -70,58 +70,100 @@ const userDetail = {
     },
 };
 
+const customProperties = {
+    set: ["name of a character", "Bertrand Arthur William Russell"],
+    set_once: ["A galaxy far far away", "Called B48FF"],
+    increment_by: ["byear", 123456789012345],
+    multiply: ["byear", 2345678901234567],
+    max: ["byear", 3456789012345678],
+    min: ["byear", 4567890123456789],
+    push: ["gender", "II Fernando Valdez"],
+    push_unique: ["gender", "III Fernando Valdez"],
+    pull: ["gender", "III Fernando Valdez"],
+};
+
 describe('Internal limit tests ', () => {
     it('Checks if custom event limits works', () => {
-        if (Countly.device_id !== undefined) {
-            Countly.halt();
-        }
-        initMain();
-        cy.wait(100).then(()=>{
+        cy.clearLocalStorage().then(()=>{
+            if (Countly.device_id !== undefined) {
+                Countly.halt();
+            }
+            initMain();
             Countly.add_event(customEvent);
-            cy.check_custom_event_limit(customEvent, limits);
+            cy.wait(150).then(()=>{
+                cy.fetch_local_event_queue().then((e)=>{
+                    let queue = JSON.parse(e);
+                    cy.check_custom_event_limit(queue[0], customEvent, limits);
+                });
+            });
         });
     });
     it('Checks if view event limits works', () => {
-        Countly.halt();
-        cy.wait(2000).then(()=>{
+        cy.clearLocalStorage().then(()=>{
+            Countly.halt();
             initMain();
             Countly.track_pageview(viewName);
-            cy.check_view_event_limit(viewName, limits);
+            cy.wait(100).then(()=>{
+                cy.fetch_local_event_queue().then((e)=>{
+                    let queue = JSON.parse(e);
+                    cy.check_view_event_limit(queue[0], viewName, limits);
+                });
+            });
         });
     });
     it('Checks if view event limits works', () => {
-        Countly.halt();
-        initMain();
-        Countly.add_log(bread.one);
-        Countly.add_log(bread.two);
-        Countly.add_log(bread.three);
-        Countly.add_log(bread.four);
-        Countly.add_log(bread.five);
-        Countly.add_log(bread.six);
-        Countly.add_log(bread.seven);
-        Countly.log_error(error);
-        cy.check_error_limit(limits);
+        cy.clearLocalStorage().then(()=>{
+            Countly.halt();
+            initMain();
+            Countly.add_log(bread.one);
+            Countly.add_log(bread.two);
+            Countly.add_log(bread.three);
+            Countly.add_log(bread.four);
+            Countly.add_log(bread.five);
+            Countly.add_log(bread.six);
+            Countly.add_log(bread.seven);
+            Countly.log_error(error);
+            cy.wait(150).then(()=>{
+                cy.fetch_local_request_queue().then((e)=>{
+                    let queue = JSON.parse(e);
+                    cy.check_error_limit(queue[0], limits);
+                });
+            });
+        });
     });
     it('Checks if user detail limits works', () => {
-        Countly.halt();
-        initMain();
-        Countly.user_details(userDetail);
-        cy.check_user_details(userDetail, limits);
+        cy.clearLocalStorage().then(()=>{
+            Countly.halt();
+            initMain();
+            Countly.user_details(userDetail);
+            cy.wait(100).then(()=>{
+                cy.fetch_local_request_queue().then((e)=>{
+                    let queue = JSON.parse(e);
+                    cy.check_user_details(queue[0], userDetail, limits);
+                });
+            });
+        });
     });
     it('Checks if custom property limits works', () => {
-        Countly.halt();
-        initMain();
-        Countly.userData.set("name of a character", "Bertrand Arthur William Russell"); // set custom property
-        Countly.userData.set_once("A galaxy far far away", "Called B48FF"); // set custom property only if property does not exist
-        Countly.userData.increment_by("byear", 123456789012345); // increment value in key by provided value
-        Countly.userData.multiply("byear", 2345678901234567); // multiply value in key by provided value
-        Countly.userData.max("byear", 3456789012345678); // save max value between current and provided
-        Countly.userData.min("byear", 4567890123456789); // save min value between current and provided
-        Countly.userData.push("gender", "II Fernando Valdez"); // add value to key as array element
-        Countly.userData.push_unique("gender", "III Fernando Valdez"); // add value to key as array element, but only store unique values in array
-        Countly.userData.pull("gender", "III Fernando Valdez"); // remove value from array under property with key as name
-        Countly.userData.save();
-        cy.check_user_details(userDetail, limits);
+        cy.clearLocalStorage().then(()=>{
+            Countly.halt();
+            initMain();
+            Countly.userData.set(customProperties.set[0], customProperties.set[1]); // set custom property
+            Countly.userData.set_once(customProperties.set_once[0], customProperties.set_once[1]); // set custom property only if property does not exist
+            Countly.userData.increment_by(customProperties.increment_by[0], customProperties.increment_by[1]); // increment value in key by provided value
+            Countly.userData.multiply(customProperties.multiply[0], customProperties.multiply[1]); // multiply value in key by provided value
+            Countly.userData.max(customProperties.max[0], customProperties.max[1]); // save max value between current and provided
+            Countly.userData.min(customProperties.min[0], customProperties.min[1]); // save min value between current and provided
+            Countly.userData.push(customProperties.push[0], customProperties.push[1]); // add value to key as array element
+            Countly.userData.push_unique(customProperties.push_unique[0], customProperties.push_unique[1]); // add value to key as array element, but only store unique values in array
+            Countly.userData.pull(customProperties.pull[0], customProperties.pull[1]); // remove value from array under property with key as name
+            Countly.userData.save();
+            cy.wait(100).then(()=>{
+                cy.fetch_local_request_queue().then((e)=>{
+                    let queue = JSON.parse(e);
+                    cy.check_custom_properties(queue[0], customProperties, limits);
+                });
+            });
+        });
     });
 });
-
