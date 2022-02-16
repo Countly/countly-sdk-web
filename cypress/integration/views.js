@@ -32,7 +32,7 @@ describe('Views tests ', () => {
     });
     it('Checks if recording timed page views with same name works', () => {
         Countly.halt();
-        cy.wait(50);
+        cy.wait(150);
         cy.clearLocalStorage().then(()=>{
             initMain();
             Countly.track_view(pageNameOne);
