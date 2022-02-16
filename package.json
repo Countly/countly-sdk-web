@@ -36,6 +36,8 @@
     "cypress": "*",
     "cypress-localstorage-commands": "^1.6.1",
     "docdash": "*",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.1",
     "eslint": "*",
     "eslint-plugin-cypress": "^2.12.1",
     "jsdoc": "*",

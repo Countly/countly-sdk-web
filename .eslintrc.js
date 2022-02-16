@@ -1,199 +1,225 @@
 module.exports = {
-    "env": {
-        "browser": true,
-        "amd": true,
-        "commonjs": true
+    env: {
+        browser: true,
+        amd: true,
+        commonjs: true,
     },
-    "extends": "eslint:recommended",
-    "parserOptions": {
-        "ecmaVersion": 6
+    extends: ["airbnb-base"],
+    parserOptions: {
+        ecmaVersion: 6,
     },
-    "rules": {
+    rules: {
+        "prefer-arrow-callback": "off",
+        "prefer-destructuring": "off",
+        "comma-dangle": "off",
+        "no-restricted-globals": "off",
+        "no-restricted-properties": "off",
+        //
+        "no-unused-vars": "warn",
+        "no-var": "off",
+        "func-names": "off",
+        "consistent-return": "off",
+        "prefer-rest-params": "off",
+        radix: "off",
+        "prefer-spread": "off",
+        "no-plusplus": "off",
+        camelcase: "off",
+        "no-use-before-define": "off",
+        "no-lonely-if": "off",
+        "no-restricted-syntax": "off",
+        "vars-on-top": "off",
+        "no-param-reassign": "off",
+        "max-len": "off",
+        "guard-for-in": "off",
+        "no-underscore-dangle": "off",
+        "no-bitwise": "off",
+        "no-mixed-operators": "off",
+        "object-shorthand": "off",
         "block-spacing": [
             "error",
-            "always"
+            "always",
         ],
         "brace-style": [
             "error",
-            "stroustrup"
+            "stroustrup",
         ],
         "comma-spacing": [
             "error",
             {
-                "before": false,
-                "after": true
-            }
+                before: false,
+                after: true,
+            },
         ],
         "comma-style": [
             "error",
-            "last"
+            "last",
         ],
         "computed-property-spacing": [
             "error",
-            "never"
+            "never",
         ],
-        "curly": [
+        curly: [
             "error",
-            "all"
+            "all",
         ],
         "eol-last": "off",
         "func-call-spacing": [
             "error",
-            "never"
+            "never",
         ],
-        "indent": [
+        indent: [
             "error",
-            4
+            4,
         ],
         "key-spacing": [
             "error",
             {
-                "beforeColon": false,
-                "afterColon": true
-            }
+                beforeColon: false,
+                afterColon: true,
+            },
         ],
         "keyword-spacing": [
             "error",
             {
-                "before": true,
-                "after": true
-            }
+                before: true,
+                after: true,
+            },
         ],
         "lines-between-class-members": [
             "error",
-            "always"
+            "always",
         ],
         "no-multi-spaces": [
-            "error"
+            "error",
         ],
         "no-trailing-spaces": [
             "error",
             {
-                "ignoreComments": true
-            }
+                ignoreComments: true,
+            },
         ],
         "no-whitespace-before-property": [
-            "error"
+            "error",
         ],
         "object-curly-newline": [
             "error",
             {
-                "multiline": true,
-                "consistent": true
-            }
+                multiline: true,
+                consistent: true,
+            },
         ],
         "object-property-newline": [
             "error",
             {
-                "allowAllPropertiesOnSameLine": true
-            }
+                allowAllPropertiesOnSameLine: true,
+            },
         ],
-        "semi": [
+        semi: [
             "error",
-            "always"
+            "always",
         ],
         "semi-style": [
             "error",
-            "last"
+            "last",
         ],
         "space-before-blocks": [
             "error",
-            "always"
+            "always",
         ],
         "space-before-function-paren": [
             "error",
-            "never"
+            "never",
         ],
         "space-in-parens": [
             "error",
-            "never"
+            "never",
         ],
         "space-infix-ops": [
-            "error"
+            "error",
         ],
         "space-unary-ops": [
             "error",
             {
-                "words": true,
-                "nonwords": false
-            }
+                words: true,
+                nonwords: false,
+            },
         ],
         "switch-colon-spacing": [
-            "error"
+            "error",
         ],
         "unicode-bom": [
             "error",
-            "never"
+            "never",
         ],
         "linebreak-style": [
             "error",
-            "unix"
+            "unix",
         ],
         "no-useless-escape": "off",
-        "quotes": "off",
+        quotes: "off",
         "valid-jsdoc": [
             "error",
             {
-                "requireReturn": false
-            }
+                requireReturn: false,
+            },
         ],
         "require-jsdoc": [
             "error",
             {
-                "require": {
-                    "FunctionDeclaration": true,
-                    "MethodDefinition": true,
-                    "ClassDeclaration": true,
-                    "ArrowFunctionExpression": true,
-                    "FunctionExpression": false
-                }
-            }
+                require: {
+                    FunctionDeclaration: true,
+                    MethodDefinition: true,
+                    ClassDeclaration: true,
+                    ArrowFunctionExpression: true,
+                    FunctionExpression: false,
+                },
+            },
         ],
         "no-console": [
-            "error"
+            "error",
         ],
         "dot-notation": [
-            "error"
-        ],
-        "eqeqeq": [
             "error",
-            "always"
+        ],
+        eqeqeq: [
+            "error",
+            "always",
         ],
         "no-alert": [
-            "error"
+            "error",
         ],
         "no-caller": [
-            "error"
+            "error",
         ],
         "no-eval": [
-            "error"
+            "error",
         ],
         "no-extend-native": [
-            "error"
+            "error",
         ],
         "no-iterator": [
-            "error"
+            "error",
         ],
         "no-loop-func": [
-            "error"
+            "error",
         ],
         "no-shadow": [
-            "error"
-        ]
+            "error",
+        ],
     },
-    "overrides": [
+    overrides: [
         {
-            "files": [
+            files: [
                 "test/**/*.js",
-                "webpack.config.js"
+                "webpack.config.js",
             ],
-            "env": {
-                "es6": true,
-                "node": true
+            env: {
+                es6: true,
+                node: true,
             },
             rules: {
                 "require-jsdoc": "off",
-            }
-        }
-    ]
+            },
+        },
+    ],
 };
