@@ -43,24 +43,27 @@ describe('Events tests ', () => {
         cy.wait(50).then(()=>{
             cy.fetch_local_event_queue().then((e)=>{
                 let queue = JSON.parse(e);
+                expect(queue.length).to.equal(1);
                 cy.check_event(queue[0], eventObj);
             });
         });
     });
     it('Checks if timed events works', () => {
         Countly.halt();
-        initMain();
-        // start the timer
-        Countly.start_event("timed");
-        // wait for a while
-        cy.wait(4000).then(()=>{
-            // end the event and check duration
-            Countly.end_event(timedEventObj);
-            cy.fetch_local_event_queue().then((e)=>{
-                let queue = JSON.parse(e);
-                cy.check_event(queue[0], timedEventObj, 4);
+        cy.clearLocalStorage().then(()=>{
+            initMain();
+            // start the timer
+            Countly.start_event("timed");
+            // wait for a while
+            cy.wait(4000).then(()=>{
+                // end the event and check duration
+                Countly.end_event(timedEventObj);
+                cy.fetch_local_event_queue().then((e)=>{
+                    let queue = JSON.parse(e);
+                    expect(queue.length).to.equal(1);
+                    cy.check_event(queue[0], timedEventObj, 4);
+                });
             });
-
         });
     });
 });

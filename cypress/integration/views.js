@@ -49,7 +49,7 @@ describe('Views tests ', () => {
         cy.clearLocalStorage().then(()=>{
             initMain();
             Countly.track_view(pageNameOne);
-            cy.wait(4000).then(()=>{
+            cy.wait(4150).then(()=>{
                 Countly.track_view(pageNameTwo);
                 cy.fetch_local_event_queue().then((e)=>{
                     let queue = JSON.parse(e);

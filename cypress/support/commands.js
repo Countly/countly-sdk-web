@@ -77,7 +77,6 @@ Cypress.Commands.add('check_session', (queue, duration, isSessionEnd) => {
  * @param {Number} duration - timed event duration to validate
  */
 Cypress.Commands.add('check_event', (queue, eventObject, duration) => {
-    cy.fixture('variables').then((ob) => {
                 expect(queue.key).to.equal(eventObject.key);
                 if (eventObject.count === undefined) {
                     expect(queue.count).to.equal(1);
@@ -99,7 +98,6 @@ Cypress.Commands.add('check_event', (queue, eventObject, duration) => {
                     }
                 }
                 cy.check_commons(queue);
-    });
 })
 
 
