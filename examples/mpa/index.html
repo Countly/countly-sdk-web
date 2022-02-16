@@ -13,8 +13,15 @@
     <script src="./boomerang/boomerang-1.0.0.js"></script>
     <!-- <script src="./boomerang/countly_boomerang.js"></script> -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!-- Page styling here -->
     <style>
+        :root {
+            --tag-size: 12px;
+            --tag-height: 2px;
+            --tag-width: 80%;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -103,6 +110,10 @@
             float: right;
 
         }
+
+        #mormons {
+            display: none;
+        }
         
         #header p {
             padding: 20px;
@@ -116,11 +127,16 @@
         }
 
         #new-ratings {
-            width: 80%;
+            width: max-content;
             border: 1px solid #AC777F;
             padding:0.5rem;
-            width: max-content;
         }        
+        #galactic-conquest {
+            display: flex;
+            gap: 5px;
+            align-items: stretch;
+            flex-wrap: wrap;
+        } 
 
         #old-ratings {
             width: 80%;
@@ -129,12 +145,26 @@
             width: max-content;
         }      
 
+
         #miscellaneous-buttons {
             width: 80%;
             border: 1px solid #AC777F;
             padding:0.5rem;
             width: max-content;
         }      
+
+        .mormon-father {
+        background-color: #AC777F;
+        border: none;
+        color: white;
+        padding: 5px;
+        font-size: 19px;
+        cursor: pointer;
+        }
+
+        .mormon-father:hover {
+        background-color: #755056;
+        }
 
         input {
             padding: 8px;
@@ -163,14 +193,14 @@
         Countly.offline_mode = false;
         Countly.force_post = false;
         //Example usage of remote config to fetch remote configurations 
-        Countly.remote_config = function(err, rc) {
-            if (err) {
-                return;
-            }
-            console.log(rc);
-            //DO SOMETHING
-            //...
-        };
+        // Countly.remote_config = function(err, rc) {
+        //     if (err) {
+        //         return;
+        //     }
+        //     console.log(rc);
+        //     //DO SOMETHING
+        //     //...
+        // };
         //(optionally) provide custom feature tree if needed
         Countly.q.push(['group_features', {
             activity: ["sessions", "events", "views", "location", "remote-config", "apm"],
@@ -178,20 +208,22 @@
             whereabouts: ["users", "forms"]
         }]);
         //handling consent here
-        if (typeof(localStorage) !== "undefined") {
+        if (typeof (localStorage) !== "undefined") {
             //check if consent is stored
             var consents = localStorage.getItem("consents");
 
             if (consents) {
                 Countly.q.push(['add_consent', JSON.parse(consents)]);
-            } else {
+            }
+    else {
                 //prompt user for consent
                 var consent = confirm("We are going to track you. Do you give your consent ?");
                 consents = ["activity", "interaction", "whereabouts"];
                 if (consent) {
                     Countly.q.push(['add_consent', consents]);
                     localStorage.setItem("consents", JSON.stringify(consents));
-                } else {
+                }
+        else {
                     Countly.q.push(['remove_consent', consents]);
                     localStorage.removeItem("consents");
                 }
@@ -295,48 +327,62 @@
     <center>
         <h1 id="welcome-user" style="text-transform: capitalize;">Welcome</h1>
         <br />
-    <div id="buttons">
-        <div id="new-ratings">
-            <!-- <button id="subscription-button" style="color: #000000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
-				Get started (send events)
-			</button> -->
-            <div style="padding-bottom: 6px;">
-                <label for="tags">Tags</label>
-                <input id="tags-m8" value="" style="overflow-y: scroll; width: 70%; height: 12px; scroll-behavior: auto; background-color: rgb(187, 187, 187);" type="text" name="tags" readonly/>
+        <div id="buttons">
+            <div id="new-ratings">
+                <div style="text-align: right;padding-right: 5%;" id="mormons">
+                    <div style="padding-bottom: 6px;">
+                        <label for="tags" style="font-size: var(--tag-size);">Tags</label>
+                        <input id="tags-m8" value="" style="font-size: var(--tag-size);overflow-y: scroll; width: var(--tag-width); height: var(--tag-height); scroll-behavior: auto; background-color: rgb(187, 187, 187);" type="text" name="tags" readonly/>
+                    </div>
+                    <div style="padding-bottom: 6px;">
+                        <label for="name"style="font-size: var(--tag-size);">Name</label>
+                        <input id="name-m8" value="" style="font-size: var(--tag-size);overflow-y: scroll; width:var(--tag-width); height: var(--tag-height); scroll-behavior: auto; background-color: rgb(187, 187, 187);" type="text" name="name" readonly/>
+                    </div>    
+                    <div style="padding-bottom: 6px;">
+                        <label for="show-policy"style="font-size: var(--tag-size);">Show Policy</label>
+                        <input id="show-policy-m8" value="" style="font-size: var(--tag-size);overflow-y: scroll; width: var(--tag-width); height: var(--tag-height); scroll-behavior: auto; background-color: rgb(187, 187, 187);" type="text" name="show-policy" readonly/>
+                    </div>
+                    <div style="padding-bottom: 6px;">
+                        <label for="widget-id"style="font-size: var(--tag-size);">ID</label>
+                        <input id="widget-id-m8" value="" style="font-size: var(--tag-size);overflow-y: scroll; width: var(--tag-width); height: var(--tag-height); scroll-behavior: auto; background-color: rgb(187, 187, 187);" type="text" name="widget-id" readonly/>
+                    </div>
+                </div>
+                <div id="galactic-conquest">
+                    <button class="mormon-father" style="border-radius: 2px;border: none; padding: 5px;"><i class="fa fa-arrows-v" aria-hidden="true"></i></button>
+                    <button id="nps" style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+                        Show NPS
+                    </button>
+                    <button id="survey" style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+                        Show Survey
+                    </button>
+                    <button id="rating" style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+                        Show Rating Widget
+                    </button>
+                    <button id="random" style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+                        Show Random Feedback Widget
+                    </button>
+                </div>
             </div>
-            <button id="nps" style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
-				Show NPS
-			</button>
-            <button id="survey" style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
-				Show Survey
-			</button>
-            <button id="rating" style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
-				Show Rating Widget
-			</button>
-            <button id="random" style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
-				Show Random Feedback Widget
-			</button>
+            <div id="old-ratings">
+                <button id="rating-enable" style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+                    Show Old Rating Widget
+                </button>
+                <button id="rating-multi" style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+                    Show Old Rating Widget (Multi)
+                </button>
+            </div>
+            <div id="miscellaneous-buttons">
+                <button id="call-remote-config" style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+                    Fetch Remote Config (Header Color)
+                </button>
+                <button id="send-custom-event" style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+                    Send Custom Event
+                </button>
+                <button id="change-device-id" style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+                    Change Device ID
+                </button>
+            </div>
         </div>
-        <div id="old-ratings">
-            <button id="rating-enable" style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
-				Show Old Rating Widget
-			</button>
-            <button id="rating-multi" style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
-				Show Old Rating Widget (Multi)
-			</button>
-        </div>
-        <div id="miscellaneous-buttons">
-            <button id="call-remote-config" style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
-				Fetch Remote Config (Header Color)
-			</button>
-            <button id="send-custom-event" style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
-				Send Custom Event
-			</button>
-            <button id="change-device-id" style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
-				Change Device ID
-			</button>
-        </div>
-    </div>
         <br />
         <div id="mynewform">
             <form id="mynewform-form">
@@ -345,9 +391,7 @@
             </form>
         </div>
         <!-- Some empty elements to append feedback widgets -->
-        <div id="itsi"></div>
-        <div class="pts"></div>
-        <div class="pts"></div>
+        <ol id="nullMen"></ol>
     </center>
 
     <script>
@@ -461,6 +505,9 @@
         });
         const tagManagerText = "No feedback widget requested yet";
         document.getElementById("tags-m8").value = tagManagerText;
+        document.getElementById("name-m8").value = tagManagerText;
+        document.getElementById("show-policy-m8").value = tagManagerText;
+        document.getElementById("widget-id-m8").value = tagManagerText;
         //Accept button for change ID form
         $("#accept-btn").on("click", function() {
             let merge = document.getElementById("merge-checkbox").checked;  
@@ -498,7 +545,9 @@
         });
          //fetch random feedback widgets
          $("#random").on("click", function() {
-            Countly.q.push(["get_available_feedback_widgets", allWidgetsCallbackRandom]);
+            const callbacks = [allWidgetsCallbackNPS,allWidgetsCallbackSurvey, allWidgetsCallbackRating];
+            var widget = getRandomNumber(0, callbacks.length-1);
+            Countly.q.push(["get_available_feedback_widgets", callbacks[widget]]);
         });
         //display a rating widget with ID
         $("#rating-enable").on("click", function() {
@@ -529,7 +578,7 @@
                     return;
                 }
                 console.log(remoteConfigs);
-                if (remoteConfigs.header_background_color) {
+                if (remoteConfigs.header_background_color !== undefined) {
                     $("#header").css({'background-color': remoteConfigs.header_background_color});
                 }
             });
@@ -589,7 +638,7 @@
 
             setTimeout(function() {
                 location.reload();
-            }, 1000)
+            }, 1000);
         });
 		var loginState = localStorage.getItem("ptsdemo-login-state");
 		if(loginState) {
@@ -626,9 +675,12 @@
             }]);
         }
         //tag manager
-        function evaluateFeedbackWidgetTags(widget) {
+        function evaluateFeedbackWidgetProperties(widget) {
             const tags = widget.tg;
-            if (tags !== 'undefined' && tags !== 'null' && Array.isArray(tags)) {
+            const name = widget.name;
+            const policy = widget.showPolicy;
+            const id = widget._id;
+            if (tags !== undefined && tags !== null && Array.isArray(tags)) {
                 if (tags.length === 0) {
                     document.getElementById("tags-m8").value = '[No tags returned for this widget]';
                 } else {
@@ -640,19 +692,67 @@
                 document.getElementById("tags-m8").value = "Tags are not returned for this widget";
                 document.getElementById("tags-m8").style.backgroundColor = '#DE1903';
             }
+            if (!id) {
+                document.getElementById("widget-id-m8").value = "No ID returned returned for this widget";
+                document.getElementById("widget-id-m8").style.backgroundColor = '#DE1903';
+            } 
+            else {
+                document.getElementById("widget-id-m8").value = id;
+                document.getElementById("widget-id-m8").style.backgroundColor = '#93BD2C';
+            }
+            if (!name) {
+                document.getElementById("name-m8").value = "No name returned returned for this widget";
+                document.getElementById("name-m8").style.backgroundColor = '#DE1903';
+            } 
+            else {
+                document.getElementById("name-m8").value = name;
+                document.getElementById("name-m8").style.backgroundColor = '#93BD2C';
+            }
+            if (!policy) {
+                document.getElementById("show-policy-m8").value = "No showPolicy returned returned for this widget";
+                document.getElementById("show-policy-m8").style.backgroundColor = '#DE1903';
+            } 
+            else {
+                document.getElementById("show-policy-m8").value = policy;
+                document.getElementById("show-policy-m8").style.backgroundColor = '#93BD2C';
+            }
+
         }
         function getRandomNumber(min, max) {
             return parseInt(Math.random() * (max - min) + min);
         }
-        //callback to choose an nps widget from the fetched widget list, widget is the index of the desired widget in the widget list
-        function allWidgetsCallbackRandom(feedbacks, err) {
-            if (err) {
-                return console.log("error ", err);
-             }
-            //random widget to fetch
-            var widget = getRandomNumber(0, feedbacks.length);
-            Countly.present_feedback_widget(feedbacks[widget], "", "pts");
-            evaluateFeedbackWidgetTags(feedbacks[widget]);
+        $(".mormon-father").on("click", function() {
+            var current = document.getElementById("mormons").style.display;
+            if (current === 'none' ) {
+                document.getElementById("mormons").style.display = "block";
+            } 
+            else {
+                document.getElementById("mormons").style.display = "none";
+            }
+        });
+        function deleteOldFeedbackWidget(widget, type) {
+            const id = widget._id;
+            try {
+                var anchor = document.getElementById(`csbg`);
+                var wrapper = document.getElementsByClassName('countly-ratings-wrapper')[0];
+                var overlay = document.getElementsByClassName('countly-ratings-overlay')[0];
+                var iframeR = document.getElementById('countly-ratings-iframe');
+                var iframeS = document.getElementById('countly-surveys-iframe');
+                if(anchor&&wrapper) {
+                    iframeR.remove();
+                    overlay.remove();
+                    wrapper.nextSibling.remove();
+                    wrapper.remove();
+                    anchor.remove();
+                } else {
+                    anchor.style.zIndex = 5;
+                    iframeS.remove();
+                    anchor.nextSibling.remove();
+                    anchor.remove();
+                }
+            } catch (error) {
+                console.log(error);
+            }
         }
         //callback to choose an nps widget from the fetched widget list, widget is the index of the desired widget in the widget list
         function allWidgetsCallbackNPS(feedbacks, err) {
@@ -663,8 +763,11 @@
             var i = 0;
             while(i < feedbacks.length) {
                 if (feedbacks[i].type === 'nps') {
-                    Countly.present_feedback_widget(feedbacks[i], "", "pts");
-                    evaluateFeedbackWidgetTags(feedbacks[i]);
+                    deleteOldFeedbackWidget(feedbacks[i], 'nps');
+                    setTimeout(() => {
+                        Countly.present_feedback_widget(feedbacks[i], "", "");
+                        evaluateFeedbackWidgetProperties(feedbacks[i]);
+                    }, 250);
                     break;
                 }
                 i++;
@@ -679,9 +782,11 @@
             var i = 0;
             while(i < feedbacks.length) {
                 if (feedbacks[i].type === 'survey') {
-                    widget = i;
-                    Countly.present_feedback_widget(feedbacks[i], "itsi", "");
-                    evaluateFeedbackWidgetTags(feedbacks[i]);
+                    deleteOldFeedbackWidget(feedbacks[i], 'survey');
+                    setTimeout(() => {
+                        Countly.present_feedback_widget(feedbacks[i], "", "");
+                        evaluateFeedbackWidgetProperties(feedbacks[i]);
+                    }, 250);
                     break;
                 }
                 i++;
@@ -698,11 +803,14 @@
             var i = 0;
             while(i < feedbacks.length) {
                 if (feedbacks[i].type === 'rating') {
-                    Countly.present_feedback_widget(feedbacks[i], "", "pts");
-                    evaluateFeedbackWidgetTags(feedbacks[i]);
+                    deleteOldFeedbackWidget(feedbacks[i], 'rating');
+                    setTimeout(() => {
+                        Countly.present_feedback_widget(feedbacks[i], "", "");
+                        evaluateFeedbackWidgetProperties(feedbacks[i]);
+                    }, 250);
                     break;
                 }
-                i++;
+            i++;
             }
         }
     </script>
