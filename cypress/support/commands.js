@@ -152,7 +152,7 @@ Cypress.Commands.add('check_user_details', (details, userDetails, limits) => {
                         let keyList = Object.keys(userDetails.custom).map(e=> e.substring(0, limits.key));
                         //check segments are truncated
                         expect(truncatedKeyLen).to.be.within(0, limits.segment);
-                        for (var key in userDetails.custom) {
+                        for (let key in userDetails.custom) {
                             expect(queue.custom[key]).to.equal(userDetails.custom[key].substring(0, limits.value));
                             //check keys truncated
                             expect(keyList).to.include(key);
@@ -169,7 +169,7 @@ Cypress.Commands.add('check_user_details', (details, userDetails, limits) => {
                     expect(queue.gender).to.equal(userDetails.gender);
                     expect(queue.byear).to.equal(userDetails.byear);
                     if (userDetails.custom !== undefined) {
-                        for (var key in userDetails.custom) {
+                        for (let key in userDetails.custom) {
                             expect(queue.custom[key]).to.equal(userDetails.custom[key]);
                         }
                     }
@@ -255,12 +255,12 @@ Cypress.Commands.add('check_error_limit', (queue, limits) => {
                 expect(crash._opengl).to.be.exist;
                 expect(crash._logs).to.be.exist;
                 const err = crash._error.split('\n');
-                for (var i=0, len=err.length; i<len;i++) {
+                for (let i=0, len=err.length; i<len;i++) {
                     expect(err[i].length).to.be.within(0, limits.line_length);
                     expect(err.length).to.be.within(0, limits.line_thread);
                 }
                 const log = crash._logs.split('\n');
-                for (var i=0, len=log.length; i<len;i++) {
+                for (let i=0, len=log.length; i<len;i++) {
                     expect(log[i].length).to.be.within(0, limits.line_length);
                     expect(log.length).to.be.within(0, limits.line_thread);
                 }
