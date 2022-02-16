@@ -93,6 +93,7 @@ describe('Internal limit tests ', () => {
             cy.wait(150).then(()=>{
                 cy.fetch_local_event_queue().then((e)=>{
                     let queue = JSON.parse(e);
+                    expect(queue.length).to.equal(1);
                     cy.check_custom_event_limit(queue[0], customEvent, limits);
                 });
             });
@@ -106,6 +107,7 @@ describe('Internal limit tests ', () => {
             cy.wait(100).then(()=>{
                 cy.fetch_local_event_queue().then((e)=>{
                     let queue = JSON.parse(e);
+                    expect(queue.length).to.equal(1);
                     cy.check_view_event_limit(queue[0], viewName, limits);
                 });
             });
@@ -126,6 +128,7 @@ describe('Internal limit tests ', () => {
             cy.wait(150).then(()=>{
                 cy.fetch_local_request_queue().then((e)=>{
                     let queue = JSON.parse(e);
+                    expect(queue.length).to.equal(1);
                     cy.check_error_limit(queue[0], limits);
                 });
             });
@@ -139,6 +142,7 @@ describe('Internal limit tests ', () => {
             cy.wait(100).then(()=>{
                 cy.fetch_local_request_queue().then((e)=>{
                     let queue = JSON.parse(e);
+                    expect(queue.length).to.equal(1);
                     cy.check_user_details(queue[0], userDetail, limits);
                 });
             });
@@ -161,6 +165,7 @@ describe('Internal limit tests ', () => {
             cy.wait(100).then(()=>{
                 cy.fetch_local_request_queue().then((e)=>{
                     let queue = JSON.parse(e);
+                    expect(queue.length).to.equal(1);
                     cy.check_custom_properties(queue[0], customProperties, limits);
                 });
             });

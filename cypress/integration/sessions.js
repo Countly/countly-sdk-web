@@ -38,25 +38,29 @@ describe('Session tests ', () => {
     it('Checks if session start, extension and ending works', () => {
         // halt countly
         Countly.halt();
-        // initialize countly
-        initMain();
-        //begin session
-        Countly.begin_session();
-        // wait for session extension
-        cy.wait(4500).then(()=>{
-            // end the session
-            Countly.end_session(10, true);
-            // get the JSON string from local storage
-            cy.fetch_local_request_queue().then((e)=>{
-                cy.log(e);
-                // parse the JSON string from local storage, it should be an array either empty or filled with objects
-                var queue = JSON.parse(e);
-                // first object of the queue should be about begin session
-                cy.check_session(queue[0]);
-                // third object of the queue should be about session extension, also input the expected duration
-                cy.check_session(queue[2], 4);
-                // fourth object of the queue should be about end session, input the parameters that were used during the end session call
-                cy.check_session(queue[3], 10, true);
+        cy.clearLocalStorage().then(()=>{
+
+            // initialize countly
+            initMain();
+            //begin session
+            Countly.begin_session();
+            // wait for session extension
+            cy.wait(4500).then(()=>{
+                // end the session
+                Countly.end_session(10, true);
+                // get the JSON string from local storage
+                cy.fetch_local_request_queue().then((e)=>{
+                    // parse the JSON string from local storage, it should be an array either empty or filled with objects
+                    var queue = JSON.parse(e);
+                    // 3 sessions and 1 orientation
+                    expect(queue.length).to.equal(4);
+                    // first object of the queue should be about begin session
+                    cy.check_session(queue[0]);
+                    // third object of the queue should be about session extension, also input the expected duration
+                    cy.check_session(queue[2], 4);
+                    // fourth object of the queue should be about end session, input the parameters that were used during the end session call
+                    cy.check_session(queue[3], 10, true);
+                });
             });
         });
     });

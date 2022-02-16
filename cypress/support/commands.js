@@ -116,7 +116,7 @@ Cypress.Commands.add('check_view_event', (queue, name, duration) => {
                     expect(queue.segmentation.domain).to.be.ok;
                     expect(queue.segmentation.start).to.be.ok;
                 } else {
-                    expect(queue.dur).to.equal(duration);
+                    expect(queue.dur).to.be.within(duration, duration+1);
                 }
                 expect(queue.segmentation.name).to.equal(name);
                 cy.check_commons(queue);

@@ -6,7 +6,8 @@ function initMain() {
     Countly.init({
         app_key: "YOUR_APP_KEY",
         url: "https://try.count.ly",
-        max_events: -1
+        max_events: -1,
+        tests: true
     });
 }
 
@@ -24,12 +25,14 @@ describe('Views tests ', () => {
             Countly.track_view(pageNameOne);
             cy.fetch_local_event_queue().then((e)=>{
                 let queue = JSON.parse(e);
+                expect(queue.length).to.equal(1);
                 cy.check_view_event(queue[0], pageNameOne);
             });
         });
     });
     it('Checks if recording timed page views with same name works', () => {
         Countly.halt();
+        cy.wait(50);
         cy.clearLocalStorage().then(()=>{
             initMain();
             Countly.track_view(pageNameOne);
@@ -37,9 +40,9 @@ describe('Views tests ', () => {
                 Countly.track_view(pageNameOne);
                 cy.fetch_local_event_queue().then((e)=>{
                     let queue = JSON.parse(e);
-                    cy.check_view_event(queue[0], pageNameOne);
-                    cy.check_view_event(queue[1], pageNameOne, 4);
-                    cy.check_view_event(queue[2], pageNameOne);
+                    expect(queue.length).to.equal(2);
+                    cy.check_view_event(queue[0], pageNameOne, 4);
+                    cy.check_view_event(queue[1], pageNameOne);
                 });
             });
         });
@@ -49,12 +52,13 @@ describe('Views tests ', () => {
         cy.clearLocalStorage().then(()=>{
             initMain();
             Countly.track_view(pageNameOne);
-            cy.wait(4150).then(()=>{
+            cy.wait(5000).then(()=>{
                 Countly.track_view(pageNameTwo);
                 cy.fetch_local_event_queue().then((e)=>{
                     let queue = JSON.parse(e);
+                    expect(queue.length).to.equal(3);
                     cy.check_view_event(queue[0], pageNameOne);
-                    cy.check_view_event(queue[1], pageNameOne, 4);
+                    cy.check_view_event(queue[1], pageNameOne, 5);
                     cy.check_view_event(queue[2], pageNameTwo);
                 });
             });

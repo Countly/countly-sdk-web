@@ -37,6 +37,7 @@ describe('User details tests ', () => {
                 Countly.user_details(userDetailObj);
                 cy.fetch_local_request_queue().then((e)=>{
                     let queue = JSON.parse(e);
+                    expect(queue.length).to.equal(1);
                     cy.check_user_details(queue[0], userDetailObj);
                 });
             });
