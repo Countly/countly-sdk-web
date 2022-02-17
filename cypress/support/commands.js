@@ -1,32 +1,5 @@
-// ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-
+var Countly = require('../../lib/countly');
 import './index'
-
-
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 /**
  * Checks a queue object for valid timestamp, hour and dow values
@@ -301,7 +274,9 @@ Cypress.Commands.add('check_error_limit', (queue, limits) => {
  */
 Cypress.Commands.add('fetch_local_request_queue', () => {
     cy.fixture('variables').then((ob) => {
+        cy.wait(ob.sWait).then(()=>{
         cy.getLocalStorage(`${ob.appKey}/cly_queue`)
+        })
     });
 })
 
@@ -310,6 +285,25 @@ Cypress.Commands.add('fetch_local_request_queue', () => {
  */
 Cypress.Commands.add('fetch_local_event_queue', () => {
     cy.fixture('variables').then((ob) => {
-        cy.getLocalStorage(`${ob.appKey}/cly_event`)
+        cy.wait(ob.sWait).then(()=>{
+            cy.getLocalStorage(`${ob.appKey}/cly_event`)
+        })
+    });
+})
+
+/**
+ * clears local storage and resets Countly
+ */
+ Cypress.Commands.add('haltAndClearStorage', () => {
+     console.log("======================]]]]",Countly.device_id);
+    if (Countly.i !== undefined) {
+     console.log("[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[");
+        Countly.halt();
+        console.log(Countly.device_id);
+    }
+    cy.fixture('variables').then((ob) => {
+        cy.wait(ob.sWait).then(()=>{
+            cy.clearLocalStorage();
+        })
     });
 })

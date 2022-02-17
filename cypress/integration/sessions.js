@@ -1,4 +1,3 @@
-/* eslint-disable cypress/no-unnecessary-waiting */
 /* eslint-disable require-jsdoc */
 var Countly = require("../../lib/countly");
 
@@ -10,51 +9,48 @@ function initMain() {
         tests: true
     });
 }
-const dummyQueue = [{"begin_session": 1, "metrics": "{\"_app_version\":\"0.0\",\"_ua\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:96.0) Gecko/20100101 Firefox/96.0\",\"_resolution\":\"1568x882\",\"_density\":1.2244897959183674,\"_locale\":\"en-US\"}", "app_key": "YOUR_APP_KEY", "device_id": "55669b9b-f9d7-4ed5-bc77-ec5ebb65ddd8", "sdk_name": "javascript_native_web", "sdk_version": "21.11.0", "timestamp": 1644909864950, "hour": 10, "dow": 2}, {"events": "[{\"key\":\"[CLY]_orientation\",\"count\":1,\"segmentation\":{\"mode\":\"portrait\"},\"timestamp\":1644909864949,\"hour\":10,\"dow\":2}]", "app_key": "YOUR_APP_KEY", "device_id": "55669b9b-f9d7-4ed5-bc77-ec5ebb65ddd8", "sdk_name": "javascript_native_web", "sdk_version": "21.11.0", "timestamp": 1644909864958, "hour": 10, "dow": 2}, {"session_duration": 4, "app_key": "YOUR_APP_KEY", "device_id": "55669b9b-f9d7-4ed5-bc77-ec5ebb65ddd8", "sdk_name": "javascript_native_web", "sdk_version": "21.11.0", "timestamp": 1644909868015, "hour": 10, "dow": 2}, {"end_session": 1, "session_duration": 10, "app_key": "YOUR_APP_KEY", "device_id": "55669b9b-f9d7-4ed5-bc77-ec5ebb65ddd8", "sdk_name": "javascript_native_web", "sdk_version": "21.11.0", "timestamp": 1644909869459, "hour": 10, "dow": 2}];
+const dummyQueue = [{ begin_session: 1, metrics: "{\"_app_version\":\"0.0\",\"_ua\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:96.0) Gecko/20100101 Firefox/96.0\",\"_resolution\":\"1568x882\",\"_density\":1.2244897959183674,\"_locale\":\"en-US\"}", app_key: "YOUR_APP_KEY", device_id: "55669b9b-f9d7-4ed5-bc77-ec5ebb65ddd8", sdk_name: "javascript_native_web", sdk_version: "21.11.0", timestamp: 1644909864950, hour: 10, dow: 2 }, { events: "[{\"key\":\"[CLY]_orientation\",\"count\":1,\"segmentation\":{\"mode\":\"portrait\"},\"timestamp\":1644909864949,\"hour\":10,\"dow\":2}]", app_key: "YOUR_APP_KEY", device_id: "55669b9b-f9d7-4ed5-bc77-ec5ebb65ddd8", sdk_name: "javascript_native_web", sdk_version: "21.11.0", timestamp: 1644909864958, hour: 10, dow: 2 }, { session_duration: 4, app_key: "YOUR_APP_KEY", device_id: "55669b9b-f9d7-4ed5-bc77-ec5ebb65ddd8", sdk_name: "javascript_native_web", sdk_version: "21.11.0", timestamp: 1644909868015, hour: 10, dow: 2 }, { end_session: 1, session_duration: 10, app_key: "YOUR_APP_KEY", device_id: "55669b9b-f9d7-4ed5-bc77-ec5ebb65ddd8", sdk_name: "javascript_native_web", sdk_version: "21.11.0", timestamp: 1644909869459, hour: 10, dow: 2 }];
 
 describe('Session tests ', () => {
     it('Checks if session start, extension and ending works with a dummy queue', () => {
-        // halt countly if it was initiated before
-        if (Countly.device_id !== undefined) {
-            Countly.halt();
-        }
+        cy.haltAndClearStorage();
         // initialize countly
         initMain();
-        //begin session
+        // begin session
         Countly.begin_session();
         // wait for session extension
-        cy.wait(4500).then(()=>{
+        cy.fixture('variables').then((ob) => {
+            cy.wait(ob.mWait).then(() => {
             // end the session
-            Countly.end_session(10, true);
-            var queue = dummyQueue;
-            // first object of the queue should be about begin session
-            cy.check_session(queue[0]);
-            // third object of the queue should be about session extension, also input the expected duration
-            cy.check_session(queue[2], 4);
-            // fourth object of the queue should be about end session, input the parameters that were used during the end session call
-            cy.check_session(queue[3], 10, true);
+                Countly.end_session(10, true);
+                var queue = dummyQueue;
+                // first object of the queue should be about begin session
+                cy.check_session(queue[0]);
+                // third object of the queue should be about session extension, also input the expected duration
+                cy.check_session(queue[2], 4);
+                // fourth object of the queue should be about end session, input the parameters that were used during the end session call
+                cy.check_session(queue[3], 10, true);
+            });
         });
     });
     it('Checks if session start, extension and ending works', () => {
-        // halt countly
-        Countly.halt();
-        cy.clearLocalStorage().then(()=>{
-
-            // initialize countly
-            initMain();
-            //begin session
-            Countly.begin_session();
-            // wait for session extension
-            cy.wait(4500).then(()=>{
+        cy.haltAndClearStorage();
+        // initialize countly
+        initMain();
+        // begin session
+        Countly.begin_session();
+        // wait for session extension
+        cy.fixture('variables').then((ob) => {
+            cy.wait(ob.mWait).then(() => {
                 // end the session
                 Countly.end_session(10, true);
                 // get the JSON string from local storage
-                cy.fetch_local_request_queue().then((e)=>{
+                cy.fetch_local_request_queue().then((e) => {
                     // parse the JSON string from local storage, it should be an array either empty or filled with objects
                     var queue = JSON.parse(e);
                     // 3 sessions and 1 orientation
                     expect(queue.length).to.equal(4);
-                    // first object of the queue should be about begin session
+                    // first object of the queue should be about begin session, second is orientation
                     cy.check_session(queue[0]);
                     // third object of the queue should be about session extension, also input the expected duration
                     cy.check_session(queue[2], 4);
@@ -65,4 +61,3 @@ describe('Session tests ', () => {
         });
     });
 });
-

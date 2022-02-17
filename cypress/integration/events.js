@@ -1,6 +1,7 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 /* eslint-disable require-jsdoc */
 var Countly = require("../../lib/countly");
+var hp = require("../support/helper");
 
 function initMain() {
     Countly.init({
@@ -34,32 +35,31 @@ const timedEventObj = {
 
 describe('Events tests ', () => {
     it('Checks if adding events works', () => {
-        // halt countly if it was initiated before
-        if (Countly.device_id !== undefined) {
-            Countly.halt();
-        }
+        hp.haltAndClearStorage();
         initMain();
+        console.log(Countly);
+        console.log(Countly.device_id);
         Countly.add_event(eventObj);
-        cy.wait(50).then(()=>{
-            cy.fetch_local_event_queue().then((e)=>{
-                let queue = JSON.parse(e);
-                expect(queue.length).to.equal(1);
-                cy.check_event(queue[0], eventObj);
-            });
+        cy.fetch_local_event_queue().then((e) => {
+            const queue = JSON.parse(e);
+            expect(queue.length).to.equal(1);
+            cy.check_event(queue[0], eventObj);
         });
     });
     it('Checks if timed events works', () => {
-        Countly.halt();
-        cy.clearLocalStorage().then(()=>{
-            initMain();
-            // start the timer
-            Countly.start_event("timed");
-            // wait for a while
-            cy.wait(4000).then(()=>{
+        hp.haltAndClearStorage();
+        initMain();
+        console.log(Countly);
+        console.log(Countly.device_id);
+        // start the timer
+        Countly.start_event("timed");
+        // wait for a while
+        cy.fixture('variables').then((ob) => {
+            cy.wait(ob.mWait).then(() => {
                 // end the event and check duration
                 Countly.end_event(timedEventObj);
-                cy.fetch_local_event_queue().then((e)=>{
-                    let queue = JSON.parse(e);
+                cy.fetch_local_event_queue().then((e) => {
+                    const queue = JSON.parse(e);
                     expect(queue.length).to.equal(1);
                     cy.check_event(queue[0], timedEventObj, 4);
                 });

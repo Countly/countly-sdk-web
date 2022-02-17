@@ -1,6 +1,7 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 /* eslint-disable require-jsdoc */
 var Countly = require("../../lib/countly");
+
 const limits = {
     key: 8,
     value: 8,
@@ -8,18 +9,6 @@ const limits = {
     breadcrumb: 2,
     line_thread: 3,
     line_length: 10
-};
-const error = {
-    stack: "Lorem ipsum dolor sit amet,\n consectetur adipiscing elit, sed do eiusmod tempor\n incididunt ut labore et dolore magna\n aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n Duis aute irure dolor in reprehenderit in voluptate\n velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia\n deserunt mollit anim id\n est laborum.",
-};
-const bread = {
-    one: 'log1',
-    two: 'log2',
-    three: 'log3',
-    four: 'log4',
-    five: 'log5 too many',
-    six: 'log6',
-    seven: 'log7',
 };
 
 function initMain() {
@@ -37,6 +26,18 @@ function initMain() {
         max_stack_trace_line_length: limits.line_length, // set maximum length of a line for stack 
     });
 }
+const error = {
+    stack: "Lorem ipsum dolor sit amet,\n consectetur adipiscing elit, sed do eiusmod tempor\n incididunt ut labore et dolore magna\n aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n Duis aute irure dolor in reprehenderit in voluptate\n velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia\n deserunt mollit anim id\n est laborum.",
+};
+const bread = {
+    one: 'log1',
+    two: 'log2',
+    three: 'log3',
+    four: 'log4',
+    five: 'log5 too many',
+    six: 'log6',
+    seven: 'log7',
+};
 const customEvent = {
     key: "Enter your key here",
     count: 1,
@@ -84,38 +85,29 @@ const customProperties = {
 
 describe('Internal limit tests ', () => {
     it('Checks if custom event limits works', () => {
-        cy.clearLocalStorage().then(()=>{
-            if (Countly.device_id !== undefined) {
-                Countly.halt();
-            }
+        cy.haltAndClearStorage().then(() => {
             initMain();
             Countly.add_event(customEvent);
-            cy.wait(150).then(()=>{
-                cy.fetch_local_event_queue().then((e)=>{
-                    let queue = JSON.parse(e);
-                    expect(queue.length).to.equal(1);
-                    cy.check_custom_event_limit(queue[0], customEvent, limits);
-                });
+            cy.fetch_local_event_queue().then((e) => {
+                const queue = JSON.parse(e);
+                expect(queue.length).to.equal(1);
+                cy.check_custom_event_limit(queue[0], customEvent, limits);
             });
         });
     });
     it('Checks if view event limits works', () => {
-        cy.clearLocalStorage().then(()=>{
-            Countly.halt();
+        cy.haltAndClearStorage().then(() => {
             initMain();
             Countly.track_pageview(viewName);
-            cy.wait(100).then(()=>{
-                cy.fetch_local_event_queue().then((e)=>{
-                    let queue = JSON.parse(e);
-                    expect(queue.length).to.equal(1);
-                    cy.check_view_event_limit(queue[0], viewName, limits);
-                });
+            cy.fetch_local_event_queue().then((e) => {
+                const queue = JSON.parse(e);
+                expect(queue.length).to.equal(1);
+                cy.check_view_event_limit(queue[0], viewName, limits);
             });
         });
     });
     it('Checks if view event limits works', () => {
-        cy.clearLocalStorage().then(()=>{
-            Countly.halt();
+        cy.haltAndClearStorage().then(() => {
             initMain();
             Countly.add_log(bread.one);
             Countly.add_log(bread.two);
@@ -125,32 +117,26 @@ describe('Internal limit tests ', () => {
             Countly.add_log(bread.six);
             Countly.add_log(bread.seven);
             Countly.log_error(error);
-            cy.wait(150).then(()=>{
-                cy.fetch_local_request_queue().then((e)=>{
-                    let queue = JSON.parse(e);
-                    expect(queue.length).to.equal(1);
-                    cy.check_error_limit(queue[0], limits);
-                });
+            cy.fetch_local_request_queue().then((e) => {
+                const queue = JSON.parse(e);
+                expect(queue.length).to.equal(1);
+                cy.check_error_limit(queue[0], limits);
             });
         });
     });
     it('Checks if user detail limits works', () => {
-        cy.clearLocalStorage().then(()=>{
-            Countly.halt();
+        cy.haltAndClearStorage().then(() => {
             initMain();
             Countly.user_details(userDetail);
-            cy.wait(100).then(()=>{
-                cy.fetch_local_request_queue().then((e)=>{
-                    let queue = JSON.parse(e);
-                    expect(queue.length).to.equal(1);
-                    cy.check_user_details(queue[0], userDetail, limits);
-                });
+            cy.fetch_local_request_queue().then((e) => {
+                const queue = JSON.parse(e);
+                expect(queue.length).to.equal(1);
+                cy.check_user_details(queue[0], userDetail, limits);
             });
         });
     });
     it('Checks if custom property limits works', () => {
-        cy.clearLocalStorage().then(()=>{
-            Countly.halt();
+        cy.haltAndClearStorage().then(() => {
             initMain();
             Countly.userData.set(customProperties.set[0], customProperties.set[1]); // set custom property
             Countly.userData.set_once(customProperties.set_once[0], customProperties.set_once[1]); // set custom property only if property does not exist
@@ -162,12 +148,10 @@ describe('Internal limit tests ', () => {
             Countly.userData.push_unique(customProperties.push_unique[0], customProperties.push_unique[1]); // add value to key as array element, but only store unique values in array
             Countly.userData.pull(customProperties.pull[0], customProperties.pull[1]); // remove value from array under property with key as name
             Countly.userData.save();
-            cy.wait(100).then(()=>{
-                cy.fetch_local_request_queue().then((e)=>{
-                    let queue = JSON.parse(e);
-                    expect(queue.length).to.equal(1);
-                    cy.check_custom_properties(queue[0], customProperties, limits);
-                });
+            cy.fetch_local_request_queue().then((e) => {
+                const queue = JSON.parse(e);
+                expect(queue.length).to.equal(1);
+                cy.check_custom_properties(queue[0], customProperties, limits);
             });
         });
     });

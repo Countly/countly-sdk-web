@@ -27,21 +27,13 @@ const userDetailObj = {
 
 describe('User details tests ', () => {
     it('Checks if user detail recording works', () => {
-        // halt countly if it was initiated before
-        if (Countly.device_id !== undefined) {
-            Countly.halt();
-        }
-        cy.wait(150).then(()=>{
-            cy.clearLocalStorage().then(()=>{
-                initMain();
-                Countly.user_details(userDetailObj);
-                cy.fetch_local_request_queue().then((e)=>{
-                    let queue = JSON.parse(e);
-                    expect(queue.length).to.equal(1);
-                    cy.check_user_details(queue[0], userDetailObj);
-                });
-            });
+        cy.haltAndClearStorage();
+        initMain();
+        Countly.user_details(userDetailObj);
+        cy.fetch_local_request_queue().then((e) => {
+            const queue = JSON.parse(e);
+            expect(queue.length).to.equal(1);
+            cy.check_user_details(queue[0], userDetailObj);
         });
     });
 });
-
