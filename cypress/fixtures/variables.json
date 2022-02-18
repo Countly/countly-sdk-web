@@ -1,6 +1,6 @@
 {
   "appKey": "YOUR_APP_KEY",
-  "sWait" : 175,
+  "sWait" : 25,
   "mWait" : 4000,
   "lWait" : 10000
 }
