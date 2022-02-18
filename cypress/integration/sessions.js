@@ -45,7 +45,6 @@ describe('Session tests ', () => {
                 Countly.end_session(10, true);
                 // get the JSON string from local storage
                 cy.fetch_local_request_queue().then((rq) => {
-                    cy.log(rq);
                     // 3 sessions and 1 orientation
                     expect(rq.length).to.equal(4);
                     // first object of the queue should be about begin session, second is orientation
