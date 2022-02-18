@@ -36,30 +36,28 @@ const timedEventObj = {
 
 describe('Events tests ', () => {
     it('Checks if adding events works', () => {
-        hp.haltAndClearStorage();
-        initMain();
-        Countly.add_event(eventObj);
-        cy.fetch_local_event_queue().then((e) => {
-            const queue = JSON.parse(e);
-            expect(queue.length).to.equal(1);
-            cy.check_event(queue[0], eventObj);
+        hp.haltAndClearStorage(() => {
+            initMain();
+            Countly.add_event(eventObj);
+            cy.fetch_local_event_queue().then((eq) => {
+                expect(eq.length).to.equal(1);
+                cy.check_event(eq[0], eventObj);
+            });
         });
     });
     it('Checks if timed events works', () => {
-        hp.haltAndClearStorage();
-        initMain();
-        // start the timer
-        Countly.start_event("timed");
-        // wait for a while
-        cy.fixture('variables').then((ob) => {
-            cy.wait(ob.mWait).then(() => {
-                const dur = ob.mWait / 1000;
+        hp.haltAndClearStorage(() => {
+            initMain();
+            // start the timer
+            Countly.start_event("timed");
+            // wait for a while
+            cy.wait(3000).then(() => {
                 // end the event and check duration
                 Countly.end_event(timedEventObj);
-                cy.fetch_local_event_queue().then((e) => {
-                    const queue = JSON.parse(e);
-                    expect(queue.length).to.equal(1);
-                    cy.check_event(queue[0], timedEventObj, dur);
+                cy.fetch_local_event_queue().then((eq) => {
+                    expect(eq.length).to.equal(1);
+                    // we waited 3000 milliseconds so duration must be 3 to 4
+                    cy.check_event(eq[0], timedEventObj, 3);
                 });
             });
         });

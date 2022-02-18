@@ -14,51 +14,45 @@ const dummyQueue = [{ begin_session: 1, metrics: "{\"_app_version\":\"0.0\",\"_u
 
 describe('Session tests ', () => {
     it('Checks if session start, extension and ending works with a dummy queue', () => {
-        hp.haltAndClearStorage();
+        hp.haltAndClearStorage(() => {
         // initialize countly
-        initMain();
-        // begin session
-        Countly.begin_session();
-        // wait for session extension
-        cy.fixture('variables').then((ob) => {
-            cy.wait(ob.mWait).then(() => {
-                const dur = ob.mWait / 1000;
+            initMain();
+            // begin session
+            Countly.begin_session();
+            // wait for session extension
+            cy.wait(3000).then(() => {
                 // end the session
                 Countly.end_session(10, true);
                 var queue = dummyQueue;
                 // first object of the queue should be about begin session
                 cy.check_session(queue[0]);
                 // third object of the queue should be about session extension, also input the expected duration
-                cy.check_session(queue[2], dur);
+                cy.check_session(queue[2], 3);
                 // fourth object of the queue should be about end session, input the parameters that were used during the end session call
                 cy.check_session(queue[3], 10, true);
             });
         });
     });
     it('Checks if session start, extension and ending works', () => {
-        hp.haltAndClearStorage();
+        hp.haltAndClearStorage(() => {
         // initialize countly
-        initMain();
-        // begin session
-        Countly.begin_session();
-        // wait for session extension
-        cy.fixture('variables').then((ob) => {
-            cy.wait(ob.mWait).then(() => {
-                const dur = ob.mWait / 1000;
+            initMain();
+            // begin session
+            Countly.begin_session();
+            // wait for session extension
+            cy.wait(3000).then(() => {
                 // end the session
                 Countly.end_session(10, true);
                 // get the JSON string from local storage
-                cy.fetch_local_request_queue().then((e) => {
-                    // parse the JSON string from local storage, it should be an array either empty or filled with objects
-                    var queue = JSON.parse(e);
+                cy.fetch_local_request_queue().then((rq) => {
                     // 3 sessions and 1 orientation
-                    expect(queue.length).to.equal(4);
+                    expect(rq.length).to.equal(4);
                     // first object of the queue should be about begin session, second is orientation
-                    cy.check_session(queue[0]);
+                    cy.check_session(rq[0]);
                     // third object of the queue should be about session extension, also input the expected duration
-                    cy.check_session(queue[2], dur);
+                    cy.check_session(rq[2], 3);
                     // fourth object of the queue should be about end session, input the parameters that were used during the end session call
-                    cy.check_session(queue[3], 10, true);
+                    cy.check_session(rq[3], 10, true);
                 });
             });
         });
