@@ -28,10 +28,10 @@ Cypress.Commands.add('check_session', (queue, duration, isSessionEnd) => {
         expect(metrics._density).to.be.ok;
         expect(metrics._locale).to.be.ok;
     } else if (!isSessionEnd) {
-        expect(queue.session_duration).to.equal(duration);
+        expect(queue.session_duration).to.be.within(duration, duration+1);
     } else {
         expect(queue.end_session).to.equal(1);
-        expect(queue.session_duration).to.equal(duration);
+        expect(queue.session_duration).to.be.within(duration, duration+1);
     }
     expect(queue.app_key).to.equal(hp.appKey);
     expect(queue.device_id).to.be.ok;

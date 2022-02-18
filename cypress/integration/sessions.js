@@ -40,17 +40,18 @@ describe('Session tests ', () => {
             // begin session
             Countly.begin_session();
             // wait for session extension
-            cy.wait(3000).then(() => {
+            cy.wait(4000).then(() => {
                 // end the session
                 Countly.end_session(10, true);
                 // get the JSON string from local storage
                 cy.fetch_local_request_queue().then((rq) => {
+                    cy.log(rq);
                     // 3 sessions and 1 orientation
                     expect(rq.length).to.equal(4);
                     // first object of the queue should be about begin session, second is orientation
                     cy.check_session(rq[0]);
                     // third object of the queue should be about session extension, also input the expected duration
-                    cy.check_session(rq[2], 3);
+                    cy.check_session(rq[2], 4);
                     // fourth object of the queue should be about end session, input the parameters that were used during the end session call
                     cy.check_session(rq[3], 10, true);
                 });
