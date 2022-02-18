@@ -22,13 +22,14 @@ describe('Session tests ', () => {
         // wait for session extension
         cy.fixture('variables').then((ob) => {
             cy.wait(ob.mWait).then(() => {
-            // end the session
+                const dur = ob.mWait / 1000;
+                // end the session
                 Countly.end_session(10, true);
                 var queue = dummyQueue;
                 // first object of the queue should be about begin session
                 cy.check_session(queue[0]);
                 // third object of the queue should be about session extension, also input the expected duration
-                cy.check_session(queue[2], 4);
+                cy.check_session(queue[2], dur);
                 // fourth object of the queue should be about end session, input the parameters that were used during the end session call
                 cy.check_session(queue[3], 10, true);
             });
@@ -43,6 +44,7 @@ describe('Session tests ', () => {
         // wait for session extension
         cy.fixture('variables').then((ob) => {
             cy.wait(ob.mWait).then(() => {
+                const dur = ob.mWait / 1000;
                 // end the session
                 Countly.end_session(10, true);
                 // get the JSON string from local storage
@@ -54,7 +56,7 @@ describe('Session tests ', () => {
                     // first object of the queue should be about begin session, second is orientation
                     cy.check_session(queue[0]);
                     // third object of the queue should be about session extension, also input the expected duration
-                    cy.check_session(queue[2], 4);
+                    cy.check_session(queue[2], dur);
                     // fourth object of the queue should be about end session, input the parameters that were used during the end session call
                     cy.check_session(queue[3], 10, true);
                 });

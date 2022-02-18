@@ -32,12 +32,13 @@ describe('Views tests ', () => {
         Countly.track_view(pageNameOne);
         cy.fixture('variables').then((ob) => {
             cy.wait(ob.mWait).then(() => {
+                const dur = ob.mWait / 1000;
                 Countly.track_view(pageNameOne);
                 cy.fetch_local_event_queue().then((e) => {
                     const queue = JSON.parse(e);
                     expect(queue.length).to.equal(3);
                     cy.check_view_event(queue[0], pageNameOne);
-                    cy.check_view_event(queue[1], pageNameOne, 4);
+                    cy.check_view_event(queue[1], pageNameOne, dur);
                     cy.check_view_event(queue[2], pageNameOne);
                 });
             });
@@ -49,12 +50,13 @@ describe('Views tests ', () => {
         Countly.track_view(pageNameOne);
         cy.fixture('variables').then((ob) => {
             cy.wait(ob.mWait).then(() => {
+                const dur = ob.mWait / 1000;
                 Countly.track_view(pageNameTwo);
                 cy.fetch_local_event_queue().then((e) => {
                     const queue = JSON.parse(e);
                     expect(queue.length).to.equal(3);
                     cy.check_view_event(queue[0], pageNameOne);
-                    cy.check_view_event(queue[1], pageNameOne, 4);
+                    cy.check_view_event(queue[1], pageNameOne, dur);
                     cy.check_view_event(queue[2], pageNameTwo);
                 });
             });

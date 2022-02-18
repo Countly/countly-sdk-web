@@ -53,12 +53,13 @@ describe('Events tests ', () => {
         // wait for a while
         cy.fixture('variables').then((ob) => {
             cy.wait(ob.mWait).then(() => {
+                const dur = ob.mWait / 1000;
                 // end the event and check duration
                 Countly.end_event(timedEventObj);
                 cy.fetch_local_event_queue().then((e) => {
                     const queue = JSON.parse(e);
                     expect(queue.length).to.equal(1);
-                    cy.check_event(queue[0], timedEventObj, 4);
+                    cy.check_event(queue[0], timedEventObj, dur);
                 });
             });
         });

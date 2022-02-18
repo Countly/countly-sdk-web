@@ -1,4 +1,4 @@
-var Countly = require('../../lib/countly');
+// var Countly = require('../../lib/countly');
 import './index'
 
 /**
