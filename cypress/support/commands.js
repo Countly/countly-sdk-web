@@ -63,7 +63,7 @@ Cypress.Commands.add('check_event', (queue, eventObject, duration) => {
                     if (duration !== undefined) {
                         eventObject.dur = duration;
                     }
-                    expect(queue.dur).to.equal(eventObject.dur);
+                    expect(queue.dur).to.be.within(eventObject.dur, eventObject.dur+1);
                 }
                 if ( eventObject.segmentation !== undefined) {
                     for (var key in eventObject.segmentation) {
@@ -291,19 +291,16 @@ Cypress.Commands.add('fetch_local_event_queue', () => {
     });
 })
 
-/**
- * clears local storage and resets Countly
- */
- Cypress.Commands.add('haltAndClearStorage', () => {
-     console.log("======================]]]]",Countly.device_id);
-    if (Countly.i !== undefined) {
-     console.log("[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[");
-        Countly.halt();
-        console.log(Countly.device_id);
-    }
-    cy.fixture('variables').then((ob) => {
-        cy.wait(ob.sWait).then(()=>{
-            cy.clearLocalStorage();
-        })
-    });
-})
+// /**
+//  * clears local storage and resets Countly
+//  */
+//  Cypress.Commands.add('haltAndClearStorage', () => {
+//     if (Countly.i !== undefined) {
+//         Countly.halt();
+//     }
+//     cy.fixture('variables').then((ob) => {
+//         cy.wait(ob.sWait).then(()=>{
+//             cy.clearLocalStorage();
+//         })
+//     });
+// })

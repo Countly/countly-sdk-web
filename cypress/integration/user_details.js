@@ -1,6 +1,7 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 /* eslint-disable require-jsdoc */
 var Countly = require("../../lib/countly");
+var hp = require("../support/helper");
 
 function initMain() {
     Countly.init({
@@ -27,7 +28,7 @@ const userDetailObj = {
 
 describe('User details tests ', () => {
     it('Checks if user detail recording works', () => {
-        cy.haltAndClearStorage();
+        hp.haltAndClearStorage();
         initMain();
         Countly.user_details(userDetailObj);
         cy.fetch_local_request_queue().then((e) => {

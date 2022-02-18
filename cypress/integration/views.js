@@ -1,6 +1,7 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 /* eslint-disable require-jsdoc */
 var Countly = require("../../lib/countly");
+var hp = require("../support/helper");
 
 function initMain() {
     Countly.init({
@@ -16,7 +17,7 @@ var pageNameTwo = "test view page name2";
 
 describe('Views tests ', () => {
     it('Checks if recording page view works', () => {
-        cy.haltAndClearStorage();
+        hp.haltAndClearStorage();
         initMain();
         Countly.track_view(pageNameOne);
         cy.fetch_local_event_queue().then((e) => {
@@ -26,7 +27,7 @@ describe('Views tests ', () => {
         });
     });
     it('Checks if recording timed page views with same name works', () => {
-        cy.haltAndClearStorage();
+        hp.haltAndClearStorage();
         initMain();
         Countly.track_view(pageNameOne);
         cy.fixture('variables').then((ob) => {
@@ -43,7 +44,7 @@ describe('Views tests ', () => {
         });
     });
     it('Checks if recording timed page views with different name works', () => {
-        cy.haltAndClearStorage();
+        hp.haltAndClearStorage();
         initMain();
         Countly.track_view(pageNameOne);
         cy.fixture('variables').then((ob) => {

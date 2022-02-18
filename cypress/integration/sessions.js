@@ -1,5 +1,6 @@
 /* eslint-disable require-jsdoc */
 var Countly = require("../../lib/countly");
+var hp = require("../support/helper");
 
 function initMain() {
     Countly.init({
@@ -13,7 +14,7 @@ const dummyQueue = [{ begin_session: 1, metrics: "{\"_app_version\":\"0.0\",\"_u
 
 describe('Session tests ', () => {
     it('Checks if session start, extension and ending works with a dummy queue', () => {
-        cy.haltAndClearStorage();
+        hp.haltAndClearStorage();
         // initialize countly
         initMain();
         // begin session
@@ -34,7 +35,7 @@ describe('Session tests ', () => {
         });
     });
     it('Checks if session start, extension and ending works', () => {
-        cy.haltAndClearStorage();
+        hp.haltAndClearStorage();
         // initialize countly
         initMain();
         // begin session

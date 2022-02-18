@@ -9,7 +9,8 @@ function initMain() {
         url: "https://try.count.ly",
         session_update: 3,
         tests: true,
-        max_events: -1
+        max_events: -1,
+        debug: true
     });
 }
 // an event object to use 
@@ -37,8 +38,6 @@ describe('Events tests ', () => {
     it('Checks if adding events works', () => {
         hp.haltAndClearStorage();
         initMain();
-        console.log(Countly);
-        console.log(Countly.device_id);
         Countly.add_event(eventObj);
         cy.fetch_local_event_queue().then((e) => {
             const queue = JSON.parse(e);
@@ -49,8 +48,6 @@ describe('Events tests ', () => {
     it('Checks if timed events works', () => {
         hp.haltAndClearStorage();
         initMain();
-        console.log(Countly);
-        console.log(Countly.device_id);
         // start the timer
         Countly.start_event("timed");
         // wait for a while

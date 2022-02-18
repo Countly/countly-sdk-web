@@ -12,7 +12,7 @@ function haltAndClearStorage() {
    }
    cy.fixture('variables').then((ob) => {
        cy.wait(ob.sWait).then(()=>{
-           cy.clearLocalStorage();
+        //    cy.clearLocalStorage();
        })
    });
 }
