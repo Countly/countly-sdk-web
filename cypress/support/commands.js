@@ -1,4 +1,3 @@
-// var Countly = require('../../lib/countly');
 import './index'
 
 /**
@@ -290,17 +289,3 @@ Cypress.Commands.add('fetch_local_event_queue', () => {
         })
     });
 })
-
-// /**
-//  * clears local storage and resets Countly
-//  */
-//  Cypress.Commands.add('haltAndClearStorage', () => {
-//     if (Countly.i !== undefined) {
-//         Countly.halt();
-//     }
-//     cy.fixture('variables').then((ob) => {
-//         cy.wait(ob.sWait).then(()=>{
-//             cy.clearLocalStorage();
-//         })
-//     });
-// })
