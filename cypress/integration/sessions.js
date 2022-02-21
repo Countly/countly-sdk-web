@@ -40,7 +40,7 @@ describe('Session tests ', () => {
             // begin session
             Countly.begin_session();
             // wait for session extension
-            cy.wait(4000).then(() => {
+            cy.wait(3500).then(() => {
                 // end the session
                 Countly.end_session(10, true);
                 // get the JSON string from local storage

@@ -1,7 +1,7 @@
 var Countly = require("../../lib/countly");
 
 const appKey = "YOUR_APP_KEY";
-const sWait = 50;
+const sWait = 25;
 const mWait = 4000;
 const lWait = 10000;
 /**
