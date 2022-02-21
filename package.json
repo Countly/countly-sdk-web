@@ -36,10 +36,11 @@
     "cypress": "*",
     "cypress-localstorage-commands": "^1.6.1",
     "docdash": "*",
-    "eslint-config-airbnb-base": "^14.1.0",
-    "eslint-plugin-import": "^2.20.1",
     "eslint": "*",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-chai-friendly": "^0.7.2",
     "eslint-plugin-cypress": "^2.12.1",
+    "eslint-plugin-import": "^2.20.1",
     "jsdoc": "*",
     "webpack": "^5.24.1",
     "webpack-cli": "^4.2.0"

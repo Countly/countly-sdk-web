@@ -7,10 +7,6 @@ node_modules
 coverage
 .vscode
 .github
-cypress/fixtures
-cypress/plugins
-cypress/support
-cypress/.eslintrc.js
 .gitignore
 bower.json
 CHANGELOG.md

@@ -1,11 +1,11 @@
 module.exports = {
-    "plugins": [
+    plugins: [
         "cypress"
     ],
-    "parserOptions": {
-        "ecmaVersion": 6
+    parserOptions: {
+        ecmaVersion: 6
     },
-    "rules": {
+    rules: {
         "cypress/no-assigning-return-values": "error",
         "cypress/no-unnecessary-waiting": "off",
         "cypress/assertion-before-screenshot": "warn",
@@ -13,10 +13,11 @@ module.exports = {
         "cypress/no-async-tests": "error",
         "cypress/no-pause": "error"
     },
-    "env": {
+    env: {
         "cypress/globals": true
     },
-    "extends": [
-        "plugin:cypress/recommended"
-    ]
+    extends: [
+        "plugin:cypress/recommended",
+        "plugin:chai-friendly/recommended"
+    ],
 };
