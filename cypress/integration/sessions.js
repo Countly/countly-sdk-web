@@ -50,7 +50,7 @@ describe('Session tests ', () => {
                     // first object of the queue should be about begin session, second is orientation
                     cy.check_session(rq[0]);
                     // third object of the queue should be about session extension, also input the expected duration
-                    cy.check_session(rq[2], 4);
+                    cy.check_session(rq[2], 3);
                     // fourth object of the queue should be about end session, input the parameters that were used during the end session call
                     cy.check_session(rq[3], 10, true);
                 });
