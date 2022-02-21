@@ -14,6 +14,17 @@ Cypress.Commands.add('check_commons', (testObject) => {
 });
 
 /**
+ * Checks a queue object for valid app key, device id, sdk name and sdk version
+ * @param {Object} testObject - object to be checked
+ */
+Cypress.Commands.add('check_request_commons', (testObject) => {
+    expect(testObject.app_key).to.equal(hp.appKey);
+    expect(testObject.device_id).to.be.ok;
+    expect(testObject.sdk_name).to.be.exist;
+    expect(testObject.sdk_version).to.be.ok;
+});
+
+/**
  * Checks a queue object for valid/correct begin session, end session and session extension values 
  * @param {Object} queue - queue object to check
  * @param {Number} duration - session extension or end session duration to validate
@@ -36,10 +47,7 @@ Cypress.Commands.add('check_session', (queue, duration, isSessionEnd) => {
         expect(queue.end_session).to.equal(1);
         expect(queue.session_duration).to.be.within(duration, duration + 1);
     }
-    expect(queue.app_key).to.equal(hp.appKey);
-    expect(queue.device_id).to.be.ok;
-    expect(queue.sdk_name).to.equal("javascript_native_web");
-    expect(queue.sdk_version).to.be.ok;
+    cy.check_request_commons(queue);
     cy.check_commons(queue);
 });
 
@@ -106,10 +114,7 @@ Cypress.Commands.add('check_view_event', (queue, name, duration) => {
 Cypress.Commands.add('check_user_details', (details, userDetails, limits) => {
     const obj = details;
     cy.check_commons(obj);
-    expect(obj.app_key).to.equal(hp.appKey);
-    expect(obj.device_id).to.be.exist;
-    expect(obj.sdk_name).to.be.exist;
-    expect(obj.sdk_version).to.be.exist;
+    cy.check_request_commons(obj);
     const queue = JSON.parse(obj.user_details);
     if (limits !== undefined) {
         expect(queue.name).to.equal(userDetails.name.substring(0, limits.value));
@@ -203,10 +208,7 @@ Cypress.Commands.add('check_error_limit', (queue, limits) => {
     const obj = queue;
     const crash = JSON.parse(obj.crash);
     cy.check_commons(obj);
-    expect(obj.app_key).to.equal(hp.appKey);
-    expect(obj.device_id).to.be.exist;
-    expect(obj.sdk_name).to.be.exist;
-    expect(obj.sdk_version).to.be.exist;
+    cy.check_request_commons(obj);
     expect(crash._resolution).to.be.exist;
     expect(crash._app_version).to.be.exist;
     expect(crash._run).to.be.exist;
@@ -241,10 +243,7 @@ Cypress.Commands.add('check_error_limit', (queue, limits) => {
 Cypress.Commands.add('check_custom_properties', (properties, customProperties, limits) => {
     const obj = properties;
     cy.check_commons(obj);
-    expect(obj.app_key).to.equal(hp.appKey);
-    expect(obj.device_id).to.be.exist;
-    expect(obj.sdk_name).to.be.exist;
-    expect(obj.sdk_version).to.be.exist;
+    cy.check_request_commons(obj);
     const queue = JSON.parse(obj.user_details).custom;
     expect(queue[customProperties.set[0].substring(0, limits.key)]).to.equal(customProperties.set[1].substring(0, limits.value));
     expect(queue[customProperties.set_once[0].substring(0, limits.key)].$setOnce).to.equal(customProperties.set_once[1].substring(0, limits.value));
