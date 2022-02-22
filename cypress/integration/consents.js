@@ -68,6 +68,33 @@ function events() {
     }
 }
 
+/**
+ * Checks a queue object for valid/correct values/limits during consent tests
+ * @param {Array} eq - events queue 
+ * @param {Array} eventArr - events array for the events to test
+ * @param {boolean} custom - custom event check
+ * @param {boolean} internalOnly - internal event check
+ */
+function consent_check(eq, eventArr, custom, internalOnly) {
+    var i = 0;
+    var b = i;
+    var len = eventArr.length;
+    if (custom) {
+        len = 0;
+    }
+    if (internalOnly) {
+        b = i + 1;
+        len = eventArr.length - 1;
+    }
+    while (i < len) {
+        expect(eq[i].key).to.equal(eventArr[b].key);
+        expect(eq[i].count).to.equal(eventArr[b].count);
+        expect(eq[i].segmentation[eventArr[b].count]).to.equal(eventArr[b].segmentation[eventArr[b].count]);
+        i++;
+        b++;
+    }
+}
+
 // tests
 describe("Consent tests", () => {
     it("Only custom event should be sent to the queue", () => {
@@ -77,7 +104,7 @@ describe("Consent tests", () => {
             events();
             cy.fetch_local_event_queue().then((eq) => {
                 expect(eq.length).to.equal(1);
-                cy.consent_check(eq, eventArray, true);
+                consent_check(eq, eventArray, true);
             });
         });
     });
@@ -88,7 +115,7 @@ describe("Consent tests", () => {
             events();
             cy.fetch_local_event_queue().then((eq) => {
                 expect(eq.length).to.equal(5);
-                cy.consent_check(eq, eventArray, false, true);
+                consent_check(eq, eventArray, false, true);
             });
         });
     });
@@ -99,7 +126,7 @@ describe("Consent tests", () => {
             events();
             cy.fetch_local_event_queue().then((eq) => {
                 expect(eq.length).to.equal(6);
-                cy.consent_check(eq, eventArray, false, false);
+                consent_check(eq, eventArray, false, false);
             });
         });
     });
@@ -109,7 +136,7 @@ describe("Consent tests", () => {
             events();
             cy.fetch_local_event_queue().then((eq) => {
                 expect(eq.length).to.equal(6);
-                cy.consent_check(eq, eventArray, false, false);
+                consent_check(eq, eventArray, false, false);
             });
         });
     });
@@ -132,7 +159,7 @@ describe("Consent tests", () => {
             events();
             cy.fetch_local_event_queue().then((eq) => {
                 expect(eq.length).to.equal(5);
-                cy.consent_check(eq, eventArray, false, true);
+                consent_check(eq, eventArray, false, true);
             });
         });
     });
