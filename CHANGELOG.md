@@ -1,5 +1,8 @@
 ## 21.11.1
 - Fixed feedback widget bug related to the 'close events' origin check
+- When consent is changed it will now send the full consent state instead of just the changed consents
+- Rating widgets will now also be used through the feedback widgets API (in case the server supports it)
+- When overriding 'getViewName' it is now possible to return 'null' to indicate that the page name should not be recorded
 - Logs are now rearranged to include log levels
 
 ## 21.11.0
