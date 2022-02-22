@@ -1,6 +1,6 @@
 <html>
 <head>
-<input type="button" id="testButton" onclick="clickEvent(this)" value="Test Button">
+<input type="button" id="testButton" onclick="clickEvent()" value="Test Button">
 <p><a href='http://count.ly/'>Count.ly</a></p>
 <!--Countly script-->
 <script type='text/javascript' src='../lib/countly.js'></script>
@@ -10,7 +10,9 @@
 Countly.init({
 	app_key: "YOUR_APP_KEY",
 	url: "https://try.count.ly", //your server goes here
-	debug:true
+	debug:true,
+	max_events: -1,
+	offline_mode: true
 })
 //track sessions automatically
 Countly.track_sessions();
@@ -19,15 +21,15 @@ Countly.track_pageview();
 </script>
 </head>
 <body>
-<script type='text/javascript'>
+<script type='text/javascript' >
 //send event on button click
-function clickEvent(ob){
+function clickEvent(){
 	Countly.add_event({
-		key:"buttonClick", 
-		"segmentation": {
-			"id": ob.id
-		}
-	});
+    key: "buttonClick",
+    "segmentation": {
+        "id": "id"
+    }
+});
 }
 </script>
 </body>
