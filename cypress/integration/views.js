@@ -45,7 +45,7 @@ describe('Views tests ', () => {
         hp.haltAndClearStorage(() => {
             initMain();
             Countly.track_view(pageNameOne);
-            cy.wait(3250).then(() => {
+            cy.wait(3500).then(() => {
                 Countly.track_view(pageNameTwo);
                 cy.fetch_local_event_queue().then((eq) => {
                     expect(eq.length).to.equal(3);
