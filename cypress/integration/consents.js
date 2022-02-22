@@ -14,52 +14,60 @@ function initMain(consent) {
         debug: true
     });
 }
-
-// gathered events to add
-function events() {
-    Countly.add_event({
+// gathered events. count and segmentation key/values must be consistent
+const eventArray = [
+    // first event must be custom event
+    {
         key: "a",
         count: 1,
         segmentation: {
-            "custom key": "custom value",
+            1: "1",
         },
-    });
-    Countly.add_event({
+    },
+    // rest can be internal events
+    {
         key: "[CLY]_view",
-        count: 1,
+        count: 2,
         segmentation: {
-            "custom key": "custom value",
+            2: "2",
         },
-    });
-    Countly.add_event({
+    },
+    {
         key: "[CLY]_nps",
-        count: 1,
+        count: 3,
         segmentation: {
-            "custom key": "custom value",
+            3: "3",
         },
-    });
-    Countly.add_event({
+    },
+    {
         key: "[CLY]_survey",
-        count: 1,
+        count: 4,
         segmentation: {
-            "custom key": "custom value",
+            4: "4",
         },
-    });
-    Countly.add_event({
+    },
+    {
         key: "[CLY]_star_rating",
-        count: 1,
+        count: 5,
         segmentation: {
-            "custom key": "custom value",
+            5: "5",
         },
-    });
-    Countly.add_event({
+    },
+    {
         key: "[CLY]_orientation",
-        count: 1,
+        count: 6,
         segmentation: {
-            "custom key": "custom value",
+            6: "6",
         },
-    });
+    }
+];
+// event adding loop
+function events() {
+    for (var i = 0, len = eventArray.length; i < len; i++) {
+        Countly.add_event(eventArray[i]);
+    }
 }
+
 // tests
 describe("Consent tests", () => {
     it("Only custom event should be sent to the queue", () => {
@@ -69,7 +77,7 @@ describe("Consent tests", () => {
             events();
             cy.fetch_local_event_queue().then((eq) => {
                 expect(eq.length).to.equal(1);
-                expect(eq[0].key).to.equal("a");
+                cy.consent_check(eq, eventArray, true);
             });
         });
     });
@@ -80,11 +88,7 @@ describe("Consent tests", () => {
             events();
             cy.fetch_local_event_queue().then((eq) => {
                 expect(eq.length).to.equal(5);
-                expect(eq[0].key).to.equal("[CLY]_view");
-                expect(eq[1].key).to.equal("[CLY]_nps");
-                expect(eq[2].key).to.equal("[CLY]_survey");
-                expect(eq[3].key).to.equal("[CLY]_star_rating");
-                expect(eq[4].key).to.equal("[CLY]_orientation");
+                cy.consent_check(eq, eventArray, false, true);
             });
         });
     });
@@ -95,12 +99,7 @@ describe("Consent tests", () => {
             events();
             cy.fetch_local_event_queue().then((eq) => {
                 expect(eq.length).to.equal(6);
-                expect(eq[0].key).to.equal("a");
-                expect(eq[1].key).to.equal("[CLY]_view");
-                expect(eq[2].key).to.equal("[CLY]_nps");
-                expect(eq[3].key).to.equal("[CLY]_survey");
-                expect(eq[4].key).to.equal("[CLY]_star_rating");
-                expect(eq[5].key).to.equal("[CLY]_orientation");
+                cy.consent_check(eq, eventArray, false, false);
             });
         });
     });
@@ -110,12 +109,7 @@ describe("Consent tests", () => {
             events();
             cy.fetch_local_event_queue().then((eq) => {
                 expect(eq.length).to.equal(6);
-                expect(eq[0].key).to.equal("a");
-                expect(eq[1].key).to.equal("[CLY]_view");
-                expect(eq[2].key).to.equal("[CLY]_nps");
-                expect(eq[3].key).to.equal("[CLY]_survey");
-                expect(eq[4].key).to.equal("[CLY]_star_rating");
-                expect(eq[5].key).to.equal("[CLY]_orientation");
+                cy.consent_check(eq, eventArray, false, false);
             });
         });
     });
@@ -138,11 +132,7 @@ describe("Consent tests", () => {
             events();
             cy.fetch_local_event_queue().then((eq) => {
                 expect(eq.length).to.equal(5);
-                expect(eq[0].key).to.equal("[CLY]_view");
-                expect(eq[1].key).to.equal("[CLY]_nps");
-                expect(eq[2].key).to.equal("[CLY]_survey");
-                expect(eq[3].key).to.equal("[CLY]_star_rating");
-                expect(eq[4].key).to.equal("[CLY]_orientation");
+                cy.consent_check(eq, eventArray, false, true);
             });
         });
     });

@@ -257,6 +257,33 @@ Cypress.Commands.add('check_custom_properties', (properties, customProperties, l
 });
 
 /**
+ * Checks a queue object for valid/correct values/limits during consent tests
+ * @param {Array} eq - events queue 
+ * @param {Array} eventArr - events array for the events to test
+ * @param {boolean} custom - custom event check
+ * @param {boolean} internalOnly - internal event check
+ */
+Cypress.Commands.add('consent_check', (eq, eventArr, custom, internalOnly) => {
+    var i = 0;
+    var b = i;
+    var len = eventArr.length;
+    if (custom) {
+        len = 0;
+    }
+    if (internalOnly) {
+        b = i + 1;
+        len = eventArr.length - 1;
+    }
+    while (i < len) {
+        expect(eq[i].key).to.equal(eventArr[b].key);
+        expect(eq[i].count).to.equal(eventArr[b].count);
+        expect(eq[i].segmentation[eventArr[b].count]).to.equal(eventArr[b].segmentation[eventArr[b].count]);
+        i++;
+        b++;
+    }
+});
+
+/**
  * fetches request queue from the local storage 
  */
 Cypress.Commands.add('fetch_local_request_queue', () => {
