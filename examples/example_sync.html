@@ -24,8 +24,13 @@ Countly.track_errors();
 <script type='text/javascript' >
 //send event on button click
 function clickEvent(){
-	Countly.woohoo();
-};
+	Countly.add_event({
+    key: "buttonClick",
+    "segmentation": {
+        "id": "id"
+    }
+});
+}
 </script>
 </body>
 </html>
