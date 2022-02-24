@@ -45,13 +45,13 @@ describe('Views tests ', () => {
         hp.haltAndClearStorage(() => {
             initMain();
             Countly.track_view(pageNameOne);
-            cy.wait(8000).then(() => {
+            cy.wait(10000).then(() => {
                 Countly.track_view(pageNameTwo);
                 cy.fetch_local_event_queue().then((eq) => {
                     expect(eq.length).to.equal(3);
                     cy.check_view_event(eq[0], pageNameOne);
                     // this test is flaky we are expecting 3 and +1 (4) to make test more reliable 
-                    cy.check_view_event(eq[1], pageNameOne, 7);
+                    cy.check_view_event(eq[1], pageNameOne, 10);
                     cy.check_view_event(eq[2], pageNameTwo);
                 });
             });
