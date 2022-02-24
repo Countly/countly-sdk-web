@@ -46,7 +46,7 @@ describe('Views tests ', () => {
             initMain();
             Countly.track_view(pageNameOne);
             var expectedDur = 4000;
-            hp.waitFunction(hp.getTimestampMs(), expectedDur, 1000, ()=>{
+            hp.waitFunction(hp.getTimestampMs(), expectedDur, 500, ()=>{
                 // cy.wait(4000).then(() => {
                 Countly.track_view(pageNameTwo);
                 cy.fetch_local_event_queue().then((eq) => {
