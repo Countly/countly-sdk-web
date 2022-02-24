@@ -26,8 +26,8 @@ const userDetailObj = {
     },
 };
 
-describe('User details tests ', () => {
-    it('Checks if user detail recording works', () => {
+describe("User details tests ", () => {
+    it("Checks if user detail recording works", () => {
         hp.haltAndClearStorage(() => {
             initMain();
             Countly.user_details(userDetailObj);

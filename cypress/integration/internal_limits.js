@@ -31,13 +31,13 @@ const error = {
     stack: "Lorem ipsum dolor sit amet,\n consectetur adipiscing elit, sed do eiusmod tempor\n incididunt ut labore et dolore magna\n aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n Duis aute irure dolor in reprehenderit in voluptate\n velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia\n deserunt mollit anim id\n est laborum.",
 };
 const bread = {
-    one: 'log1',
-    two: 'log2',
-    three: 'log3',
-    four: 'log4',
-    five: 'log5 too many',
-    six: 'log6',
-    seven: 'log7',
+    one: "log1",
+    two: "log2",
+    three: "log3",
+    four: "log4",
+    five: "log5 too many",
+    six: "log6",
+    seven: "log7",
 };
 const customEvent = {
     key: "Enter your key here",
@@ -84,8 +84,8 @@ const customProperties = {
     pull: ["gender", "III Fernando Valdez"],
 };
 
-describe('Internal limit tests ', () => {
-    it('Checks if custom event limits works', () => {
+describe("Internal limit tests ", () => {
+    it("Checks if custom event limits works", () => {
         hp.haltAndClearStorage(() => {
             initMain();
             Countly.add_event(customEvent);
@@ -95,7 +95,7 @@ describe('Internal limit tests ', () => {
             });
         });
     });
-    it('Checks if view event limits works', () => {
+    it("Checks if view event limits works", () => {
         hp.haltAndClearStorage(() => {
             initMain();
             Countly.track_pageview(viewName);
@@ -105,7 +105,7 @@ describe('Internal limit tests ', () => {
             });
         });
     });
-    it('Checks if view event limits works', () => {
+    it("Checks if view event limits works", () => {
         hp.haltAndClearStorage(() => {
             initMain();
             Countly.add_log(bread.one);
@@ -122,7 +122,7 @@ describe('Internal limit tests ', () => {
             });
         });
     });
-    it('Checks if user detail limits works', () => {
+    it("Checks if user detail limits works", () => {
         hp.haltAndClearStorage(() => {
             initMain();
             Countly.user_details(userDetail);
@@ -132,7 +132,7 @@ describe('Internal limit tests ', () => {
             });
         });
     });
-    it('Checks if custom property limits works', () => {
+    it("Checks if custom property limits works", () => {
         hp.haltAndClearStorage(() => {
             initMain();
             Countly.userData.set(customProperties.set[0], customProperties.set[1]); // set custom property

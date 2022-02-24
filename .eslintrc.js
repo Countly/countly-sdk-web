@@ -9,7 +9,7 @@ module.exports = {
         amd: true,
         commonjs: true
     },
-    extends: 'airbnb/legacy',
+    extends: "airbnb/legacy",
     rules: {
         "prefer-arrow-callback": "off",
         "prefer-destructuring": "off",
@@ -158,7 +158,9 @@ module.exports = {
             "unix"
         ],
         "no-useless-escape": "off",
-        quotes: "off",
+        quotes: ["error",
+            "double"
+        ],
         "valid-jsdoc": [
             "error",
             {

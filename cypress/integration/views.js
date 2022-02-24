@@ -15,8 +15,8 @@ function initMain() {
 var pageNameOne = "test view page name1";
 var pageNameTwo = "test view page name2";
 
-describe('Views tests ', () => {
-    it('Checks if recording page view works', () => {
+describe("Views tests ", () => {
+    it("Checks if recording page view works", () => {
         hp.haltAndClearStorage(() => {
             initMain();
             Countly.track_view(pageNameOne);
@@ -26,7 +26,7 @@ describe('Views tests ', () => {
             });
         });
     });
-    it('Checks if recording timed page views with same name works', () => {
+    it("Checks if recording timed page views with same name works", () => {
         hp.haltAndClearStorage(() => {
             initMain();
             Countly.track_view(pageNameOne);
@@ -41,7 +41,7 @@ describe('Views tests ', () => {
             });
         });
     });
-    it('Checks if recording timed page views with different name works', () => {
+    it("Checks if recording timed page views with different name works", () => {
         hp.haltAndClearStorage(() => {
             initMain();
             Countly.track_view(pageNameOne);
