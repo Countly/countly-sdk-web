@@ -1,4 +1,4 @@
-import './index';
+import "./index";
 
 var hp = require("./helper");
 
@@ -6,7 +6,7 @@ var hp = require("./helper");
  * Checks a queue object for valid timestamp, hour and dow values
  * @param {Object} testObject - object to be checked
  */
-Cypress.Commands.add('check_commons', (testObject) => {
+Cypress.Commands.add("check_commons", (testObject) => {
     expect(testObject.timestamp).to.be.ok;
     expect(testObject.timestamp.toString().length).to.equal(13);
     expect(testObject.hour).to.be.within(0, 23);
@@ -17,7 +17,7 @@ Cypress.Commands.add('check_commons', (testObject) => {
  * Checks a queue object for valid app key, device id, sdk name and sdk version
  * @param {Object} testObject - object to be checked
  */
-Cypress.Commands.add('check_request_commons', (testObject) => {
+Cypress.Commands.add("check_request_commons", (testObject) => {
     expect(testObject.app_key).to.equal(hp.appKey);
     expect(testObject.device_id).to.be.ok;
     expect(testObject.sdk_name).to.be.exist;
@@ -30,7 +30,7 @@ Cypress.Commands.add('check_request_commons', (testObject) => {
  * @param {Number} duration - session extension or end session duration to validate
  * @param {Boolean} isSessionEnd - a boolean to mark this check is intended for end_session validation
  */
-Cypress.Commands.add('check_session', (queue, duration, isSessionEnd) => {
+Cypress.Commands.add("check_session", (queue, duration, isSessionEnd) => {
     if (!duration) {
         expect(queue.begin_session).to.equal(1);
         const metrics = JSON.parse(queue.metrics);
@@ -57,7 +57,7 @@ Cypress.Commands.add('check_session', (queue, duration, isSessionEnd) => {
  * @param {Object} eventObject - an event object to compare with queue values
  * @param {Number} duration - timed event duration to validate
  */
-Cypress.Commands.add('check_event', (queue, eventObject, duration) => {
+Cypress.Commands.add("check_event", (queue, eventObject, duration) => {
     expect(queue.key).to.equal(eventObject.key);
     if (eventObject.count === undefined) {
         expect(queue.count).to.equal(1);
@@ -88,8 +88,8 @@ Cypress.Commands.add('check_event', (queue, eventObject, duration) => {
  * @param {string} name - a view name
  * @param {Number} duration - view event duration to validate
  */
-Cypress.Commands.add('check_view_event', (queue, name, duration) => {
-    expect(queue.key).to.equal('[CLY]_view');
+Cypress.Commands.add("check_view_event", (queue, name, duration) => {
+    expect(queue.key).to.equal("[CLY]_view");
     expect(queue.count).to.equal(1);
     if (duration === undefined) {
         expect(queue.segmentation.visit).to.equal(1);
@@ -111,7 +111,7 @@ Cypress.Commands.add('check_view_event', (queue, name, duration) => {
  * @param {Object} limits - optional, if internal limits are going to be checked this should be provided as an object like this (values can change):
  * {key: 8, value: 8, segment: 3, breadcrumb: 2, line_thread: 3, line_length: 10};
  */
-Cypress.Commands.add('check_user_details', (details, userDetails, limits) => {
+Cypress.Commands.add("check_user_details", (details, userDetails, limits) => {
     const obj = details;
     cy.check_commons(obj);
     cy.check_request_commons(obj);
@@ -161,7 +161,7 @@ Cypress.Commands.add('check_user_details', (details, userDetails, limits) => {
  * @param {Object} limits - a limits object that has internal limits like this (values can change):
  * {key: 8, value: 8, segment: 3, breadcrumb: 2, line_thread: 3, line_length: 10};
  */
-Cypress.Commands.add('check_custom_event_limit', (queue, customEvent, limits) => {
+Cypress.Commands.add("check_custom_event_limit", (queue, customEvent, limits) => {
     const obj = queue;
     cy.check_commons(obj);
     // check key
@@ -188,7 +188,7 @@ Cypress.Commands.add('check_custom_event_limit', (queue, customEvent, limits) =>
  * @param {Object} limits - a limits object that has internal limits like this (values can change):
  * {key: 8, value: 8, segment: 3, breadcrumb: 2, line_thread: 3, line_length: 10};
  */
-Cypress.Commands.add('check_view_event_limit', (queue, viewName, limits) => {
+Cypress.Commands.add("check_view_event_limit", (queue, viewName, limits) => {
     const obj = queue;
     cy.check_commons(obj);
     // check key
@@ -204,7 +204,7 @@ Cypress.Commands.add('check_view_event_limit', (queue, viewName, limits) => {
  * @param {Object} limits - a limits object that has internal limits like this (values can change):
  * {key: 8, value: 8, segment: 3, breadcrumb: 2, line_thread: 3, line_length: 10};
  */
-Cypress.Commands.add('check_error_limit', (queue, limits) => {
+Cypress.Commands.add("check_error_limit", (queue, limits) => {
     const obj = queue;
     const crash = JSON.parse(obj.crash);
     cy.check_commons(obj);
@@ -221,12 +221,12 @@ Cypress.Commands.add('check_error_limit', (queue, limits) => {
     expect(crash._custom).to.be.exist;
     expect(crash._opengl).to.be.exist;
     expect(crash._logs).to.be.exist;
-    const err = crash._error.split('\n');
+    const err = crash._error.split("\n");
     for (let i = 0, len = err.length; i < len; i++) {
         expect(err[i].length).to.be.within(0, limits.line_length);
         expect(err.length).to.be.within(0, limits.line_thread);
     }
-    const log = crash._logs.split('\n');
+    const log = crash._logs.split("\n");
     for (let i = 0, len = log.length; i < len; i++) {
         expect(log[i].length).to.be.within(0, limits.line_length);
         expect(log.length).to.be.within(0, limits.line_thread);
@@ -240,7 +240,7 @@ Cypress.Commands.add('check_error_limit', (queue, limits) => {
  * @param {Object} limits - optional, if internal limits are going to be checked this should be provided as an object like this (values can change):
  * {key: 8, value: 8, segment: 3, breadcrumb: 2, line_thread: 3, line_length: 10};
  */
-Cypress.Commands.add('check_custom_properties', (properties, customProperties, limits) => {
+Cypress.Commands.add("check_custom_properties", (properties, customProperties, limits) => {
     const obj = properties;
     cy.check_commons(obj);
     cy.check_request_commons(obj);
@@ -259,7 +259,7 @@ Cypress.Commands.add('check_custom_properties', (properties, customProperties, l
 /**
  * fetches request queue from the local storage 
  */
-Cypress.Commands.add('fetch_local_request_queue', () => {
+Cypress.Commands.add("fetch_local_request_queue", () => {
     cy.wait(hp.sWait).then(() => {
         cy.getLocalStorage(`${hp.appKey}/cly_queue`).then((e) => {
             if (e === undefined) {
@@ -278,7 +278,7 @@ Cypress.Commands.add('fetch_local_request_queue', () => {
 /**
  * fetches event queue from the local storage 
  */
-Cypress.Commands.add('fetch_local_event_queue', () => {
+Cypress.Commands.add("fetch_local_event_queue", () => {
     cy.wait(hp.sWait).then(() => {
         cy.getLocalStorage(`${hp.appKey}/cly_event`).then((e) => {
             if (e === undefined) {

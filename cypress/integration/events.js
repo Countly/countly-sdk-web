@@ -34,8 +34,8 @@ const timedEventObj = {
     },
 };
 
-describe('Events tests ', () => {
-    it('Checks if adding events works', () => {
+describe("Events tests ", () => {
+    it("Checks if adding events works", () => {
         hp.haltAndClearStorage(() => {
             initMain();
             Countly.add_event(eventObj);
@@ -45,7 +45,7 @@ describe('Events tests ', () => {
             });
         });
     });
-    it('Checks if timed events works', () => {
+    it("Checks if timed events works", () => {
         hp.haltAndClearStorage(() => {
             initMain();
             // start the timer

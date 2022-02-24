@@ -15,8 +15,8 @@ function initMain() {
 var pageNameOne = "test view page name1";
 var pageNameTwo = "test view page name2";
 
-describe('Views tests ', () => {
-    it('Checks if recording page view works', () => {
+describe("Views tests ", () => {
+    it("Checks if recording page view works", () => {
         hp.haltAndClearStorage(() => {
             initMain();
             Countly.track_view(pageNameOne);
@@ -26,7 +26,7 @@ describe('Views tests ', () => {
             });
         });
     });
-    it('Checks if recording timed page views with same name works', () => {
+    it("Checks if recording timed page views with same name works", () => {
         hp.haltAndClearStorage(() => {
             initMain();
             Countly.track_view(pageNameOne);
@@ -41,19 +41,22 @@ describe('Views tests ', () => {
             });
         });
     });
-    it('Checks if recording timed page views with different name works', () => {
+    it("Checks if recording timed page views with different name works", () => {
         hp.haltAndClearStorage(() => {
             initMain();
             Countly.track_view(pageNameOne);
-            cy.wait(5000).then(() => {
+            var expectedDur = 4000;
+            hp.waitFunction(hp.getTimestampMs(), expectedDur, 500, ()=>{
+                // cy.wait(4000).then(() => {
                 Countly.track_view(pageNameTwo);
                 cy.fetch_local_event_queue().then((eq) => {
                     expect(eq.length).to.equal(3);
                     cy.check_view_event(eq[0], pageNameOne);
                     // this test is flaky we are expecting 3 and +1 (4) to make test more reliable 
-                    cy.check_view_event(eq[1], pageNameOne, 4);
+                    cy.check_view_event(eq[1], pageNameOne, expectedDur / 1000);
                     cy.check_view_event(eq[2], pageNameTwo);
                 });
+                // });
             });
         });
     });

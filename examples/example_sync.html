@@ -11,13 +11,13 @@ Countly.init({
 	app_key: "YOUR_APP_KEY",
 	url: "https://try.count.ly", //your server goes here
 	debug:true,
-	max_events: -1,
 	offline_mode: true
 })
 //track sessions automatically
 Countly.track_sessions();
 //track pageviews automatically
 Countly.track_pageview();
+Countly.track_errors();
 </script>
 </head>
 <body>

@@ -1,13 +1,15 @@
 module.exports = {
+    /**
+     * By default, ESLint expects ECMAScript 5 syntax. You can override that setting to enable support
+     * for other ECMAScript versions as well as JSX by using parser options. However for IE9 compatibility
+     * updating it to ECMAScript 6 or above is currently not permitted. -D
+     * */
     env: {
         browser: true,
         amd: true,
-        commonjs: true,
+        commonjs: true
     },
-    extends: ["airbnb-base"],
-    parserOptions: {
-        ecmaVersion: 6,
-    },
+    extends: "airbnb/legacy",
     rules: {
         "prefer-arrow-callback": "off",
         "prefer-destructuring": "off",
@@ -37,131 +39,133 @@ module.exports = {
         "object-shorthand": "off",
         "block-spacing": [
             "error",
-            "always",
+            "always"
         ],
         "brace-style": [
             "error",
-            "stroustrup",
+            "stroustrup"
         ],
         "comma-spacing": [
             "error",
             {
                 before: false,
-                after: true,
-            },
+                after: true
+            }
         ],
         "comma-style": [
             "error",
-            "last",
+            "last"
         ],
         "computed-property-spacing": [
             "error",
-            "never",
+            "never"
         ],
         curly: [
             "error",
-            "all",
+            "all"
         ],
         "eol-last": "off",
         "func-call-spacing": [
             "error",
-            "never",
+            "never"
         ],
         indent: [
             "error",
-            4,
+            4
         ],
         "key-spacing": [
             "error",
             {
                 beforeColon: false,
-                afterColon: true,
-            },
+                afterColon: true
+            }
         ],
         "keyword-spacing": [
             "error",
             {
                 before: true,
-                after: true,
-            },
+                after: true
+            }
         ],
         "lines-between-class-members": [
             "error",
-            "always",
+            "always"
         ],
         "no-multi-spaces": [
-            "error",
+            "error"
         ],
         "no-trailing-spaces": [
             "error",
             {
-                ignoreComments: true,
-            },
+                ignoreComments: true
+            }
         ],
         "no-whitespace-before-property": [
-            "error",
+            "error"
         ],
         "object-curly-newline": [
             "error",
             {
                 multiline: true,
-                consistent: true,
-            },
+                consistent: true
+            }
         ],
         "object-property-newline": [
             "error",
             {
-                allowAllPropertiesOnSameLine: true,
-            },
+                allowAllPropertiesOnSameLine: true
+            }
         ],
         semi: [
             "error",
-            "always",
+            "always"
         ],
         "semi-style": [
             "error",
-            "last",
+            "last"
         ],
         "space-before-blocks": [
             "error",
-            "always",
+            "always"
         ],
         "space-before-function-paren": [
             "error",
-            "never",
+            "never"
         ],
         "space-in-parens": [
             "error",
-            "never",
+            "never"
         ],
         "space-infix-ops": [
-            "error",
+            "error"
         ],
         "space-unary-ops": [
             "error",
             {
                 words: true,
-                nonwords: false,
-            },
+                nonwords: false
+            }
         ],
         "switch-colon-spacing": [
-            "error",
+            "error"
         ],
         "unicode-bom": [
             "error",
-            "never",
+            "never"
         ],
         "linebreak-style": [
             "error",
-            "unix",
+            "unix"
         ],
         "no-useless-escape": "off",
-        quotes: "off",
+        quotes: ["error",
+            "double"
+        ],
         "valid-jsdoc": [
             "error",
             {
-                requireReturn: false,
-            },
+                requireReturn: false
+            }
         ],
         "require-jsdoc": [
             "error",
@@ -171,55 +175,41 @@ module.exports = {
                     MethodDefinition: true,
                     ClassDeclaration: true,
                     ArrowFunctionExpression: true,
-                    FunctionExpression: false,
-                },
-            },
+                    FunctionExpression: false
+                }
+            }
         ],
         "no-console": [
-            "error",
+            "error"
         ],
         "dot-notation": [
-            "error",
+            "error"
         ],
         eqeqeq: [
             "error",
-            "always",
+            "always"
         ],
         "no-alert": [
-            "error",
+            "error"
         ],
         "no-caller": [
-            "error",
+            "error"
         ],
         "no-eval": [
-            "error",
+            "error"
         ],
         "no-extend-native": [
-            "error",
+            "error"
         ],
         "no-iterator": [
-            "error",
+            "error"
         ],
         "no-loop-func": [
-            "error",
+            "error"
         ],
         "no-shadow": [
-            "error",
-        ],
+            "error"
+        ]
     },
-    overrides: [
-        {
-            files: [
-                "test/**/*.js",
-                "webpack.config.js",
-            ],
-            env: {
-                es6: true,
-                node: true,
-            },
-            rules: {
-                "require-jsdoc": "off",
-            },
-        },
-    ],
+
 };
