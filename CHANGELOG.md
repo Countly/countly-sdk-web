@@ -1,3 +1,5 @@
+## 22.02.0
+- Fixed a bug where it was possible to change device ID at offline mode
 ## 21.11.1
 - Fixed feedback widget bug related to the 'close events' origin check
 - When consent is changed it will now send the full consent state instead of just the changed consents
