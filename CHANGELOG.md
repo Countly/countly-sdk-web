@@ -1,3 +1,6 @@
+## 22.02.0
+- Added a new functionality with which it is possible to check the device ID type
+
 ## 21.11.2
 - Fixed a bug where request queue was not processing
 ## 21.11.1
