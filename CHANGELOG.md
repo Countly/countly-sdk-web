@@ -1,3 +1,5 @@
+## 22.02.0
+- Fixed a bug where custom utm tags were being overridden
 ## 21.11.2
 - Fixed a bug where request queue was not processing
 ## 21.11.1
