@@ -1,5 +1,6 @@
 ## 22.02.0
 - Fixed a bug where custom utm tags were being overridden
+- Added a new call 'getSearchQuery' that can be overwritten during init and returns the url search query by default
 ## 21.11.2
 - Fixed a bug where request queue was not processing
 ## 21.11.1
