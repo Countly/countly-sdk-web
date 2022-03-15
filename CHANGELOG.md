@@ -1,5 +1,5 @@
 ## 21.11.3
-- Fixed a bug where manually registering ratings was not working properly
+- Fixed a bug with `recordRatingWidgetWithID` where it would not record ratings
 
 ## 21.11.2
 - Fixed a bug where request queue was not processing
