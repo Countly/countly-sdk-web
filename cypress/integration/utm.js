@@ -14,7 +14,38 @@ function initMulti(appKey, searchQuery, utmStuff) {
         }
     });
 }
-
+function validateDefaultUtmTags(aq, source, medium, campaign, term, content) {
+    if (typeof source === "string") {
+        expect(aq.utm_source).to.eq(source);
+    }
+    else {
+        expect(aq.utm_source).to.not.exist;
+    }
+    if (typeof medium === "string") {
+        expect(aq.utm_medium).to.eq(medium);
+    }
+    else {
+        expect(aq.utm_medium).to.not.exist;
+    }
+    if (typeof campaign === "string") {
+        expect(aq.utm_campaign).to.eq(campaign);
+    }
+    else {
+        expect(aq.utm_campaign).to.not.exist;
+    }
+    if (typeof term === "string") {
+        expect(aq.utm_term).to.eq(term);
+    }
+    else {
+        expect(aq.utm_term).to.not.exist;
+    }
+    if (typeof content === "string") {
+        expect(aq.utm_content).to.eq(content);
+    }
+    else {
+        expect(aq.utm_content).to.not.exist;
+    }
+}
 
 describe("UTM tests ", () => {
     it("Checks if a single default utm tag works", () => {
@@ -23,11 +54,7 @@ describe("UTM tests ", () => {
             cy.fetch_local_request_queue().then((rq) => {
                 cy.log(rq);
                 const custom = JSON.parse(rq[0].user_details).custom;
-                expect(custom.utm_source).to.eq("hehe");
-                expect(custom.utm_medium).to.eq("");
-                expect(custom.utm_campaign).to.eq("");
-                expect(custom.utm_term).to.eq("");
-                expect(custom.utm_content).to.eq("");
+                validateDefaultUtmTags(custom, "hehe", "", "", "", "");
             });
         });
     });
@@ -37,11 +64,7 @@ describe("UTM tests ", () => {
             cy.fetch_local_request_queue().then((rq) => {
                 cy.log(rq);
                 const custom = JSON.parse(rq[0].user_details).custom;
-                expect(custom.utm_source).to.eq("hehe");
-                expect(custom.utm_medium).to.eq("hehe");
-                expect(custom.utm_campaign).to.eq("hehe");
-                expect(custom.utm_term).to.eq("hehe");
-                expect(custom.utm_content).to.eq("hehe");
+                validateDefaultUtmTags(custom, "hehe", "hehe", "hehe", "hehe", "hehe");
             });
         });
     });
@@ -51,11 +74,7 @@ describe("UTM tests ", () => {
             cy.fetch_local_request_queue().then((rq) => {
                 cy.log(rq);
                 const custom = JSON.parse(rq[0].user_details).custom;
-                expect(custom.utm_source).to.not.exist;
-                expect(custom.utm_medium).to.not.exist;
-                expect(custom.utm_campaign).to.not.exist;
-                expect(custom.utm_term).to.not.exist;
-                expect(custom.utm_content).to.not.exist;
+                validateDefaultUtmTags(custom, undefined, undefined, undefined, undefined, undefined);
                 expect(custom.utm_aa).to.eq("hehe");
                 expect(custom.utm_bb).to.eq("");
             });
@@ -67,11 +86,7 @@ describe("UTM tests ", () => {
             cy.fetch_local_request_queue().then((rq) => {
                 cy.log(rq);
                 const custom = JSON.parse(rq[0].user_details).custom;
-                expect(custom.utm_source).to.not.exist;
-                expect(custom.utm_medium).to.not.exist;
-                expect(custom.utm_campaign).to.not.exist;
-                expect(custom.utm_term).to.not.exist;
-                expect(custom.utm_content).to.not.exist;
+                validateDefaultUtmTags(custom, undefined, undefined, undefined, undefined, undefined);
                 expect(custom.utm_aa).to.eq("hehe");
                 expect(custom.utm_bb).to.eq("hoho");
             });
@@ -97,30 +112,18 @@ describe("UTM tests ", () => {
             // check original
             cy.fetch_local_request_queue().then((rq) => {
                 const custom = JSON.parse(rq[0].user_details).custom;
-                expect(custom.utm_source).to.eq("hehe");
-                expect(custom.utm_medium).to.eq("");
-                expect(custom.utm_campaign).to.eq("");
-                expect(custom.utm_term).to.eq("");
-                expect(custom.utm_content).to.eq("");
+                validateDefaultUtmTags(custom, "hehe", "", "", "", "");
             });
             // check if custom utm tags works
             cy.fetch_local_request_queue("Countly_2").then((rq) => {
                 const custom = JSON.parse(rq[0].user_details).custom;
+                validateDefaultUtmTags(custom, undefined, undefined, undefined, undefined, undefined);
                 expect(custom.utm_ss).to.eq("hehe");
-                expect(custom.utm_source).to.not.exist;
-                expect(custom.utm_medium).to.not.exist;
-                expect(custom.utm_campaign).to.not.exist;
-                expect(custom.utm_term).to.not.exist;
-                expect(custom.utm_content).to.not.exist;
             });
             // check if default utm tags works
             cy.fetch_local_request_queue("Countly_3").then((rq) => {
                 const custom = JSON.parse(rq[0].user_details).custom;
-                expect(custom.utm_source).to.eq("hehe");
-                expect(custom.utm_medium).to.eq("");
-                expect(custom.utm_campaign).to.eq("");
-                expect(custom.utm_term).to.eq("");
-                expect(custom.utm_content).to.eq("");
+                validateDefaultUtmTags(custom, "hehe", "", "", "", "");
             });
             // check if no utm tag in request queue if the query is wrong
             cy.fetch_local_request_queue("Countly_4").then((rq) => {
