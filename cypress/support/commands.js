@@ -259,9 +259,10 @@ Cypress.Commands.add("check_custom_properties", (properties, customProperties, l
 /**
  * fetches request queue from the local storage 
  */
-Cypress.Commands.add("fetch_local_request_queue", () => {
+Cypress.Commands.add("fetch_local_request_queue", (appKey) => {
     cy.wait(hp.sWait).then(() => {
-        cy.getLocalStorage(`${hp.appKey}/cly_queue`).then((e) => {
+        appKey = appKey || hp.appKey;
+        cy.getLocalStorage(`${appKey}/cly_queue`).then((e) => {
             if (e === undefined) {
                 expect.fail("request queue inside the local storage should not be undefined");
             }
@@ -278,47 +279,10 @@ Cypress.Commands.add("fetch_local_request_queue", () => {
 /**
  * fetches event queue from the local storage 
  */
-Cypress.Commands.add("fetch_local_event_queue", () => {
+Cypress.Commands.add("fetch_local_event_queue", (appKey) => {
     cy.wait(hp.sWait).then(() => {
+        appKey = appKey || hp.appKey;
         cy.getLocalStorage(`${hp.appKey}/cly_event`).then((e) => {
-            if (e === undefined) {
-                expect.fail("event queue inside the local storage should not be undefined");
-            }
-            if (e === null) {
-                // assume the queue is empty
-                return [];
-            }
-            const queue = JSON.parse(e);
-            return queue;
-        });
-    });
-});
-
-/**
- * fetches request queue from the local storage (Multi instancing)
- */
-Cypress.Commands.add("fetch_local_request_queue_multi", (appKey) => {
-    cy.wait(hp.sWait).then(() => {
-        cy.getLocalStorage(`${appKey}/cly_queue`).then((e) => {
-            if (e === undefined) {
-                expect.fail("request queue inside the local storage should not be undefined");
-            }
-            if (e === null) {
-                // assume the queue is empty
-                return [];
-            }
-            const queue = JSON.parse(e);
-            return queue;
-        });
-    });
-});
-
-/**
- * fetches event queue from the local storage (Multi instancing)
- */
-Cypress.Commands.add("fetch_local_event_queue_multi", (appKey) => {
-    cy.wait(hp.sWait).then(() => {
-        cy.getLocalStorage(`${appKey}/cly_event`).then((e) => {
             if (e === undefined) {
                 expect.fail("event queue inside the local storage should not be undefined");
             }
