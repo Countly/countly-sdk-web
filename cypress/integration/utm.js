@@ -60,11 +60,11 @@ describe("UTM tests ", () => {
     });
     it("Checks if default utm tags works", () => {
         hp.haltAndClearStorage(() => {
-            initMulti("YOUR_APP_KEY", "?utm_source=hehe&utm_medium=hehe&utm_campaign=hehe&utm_term=hehe&utm_content=hehe", undefined);
+            initMulti("YOUR_APP_KEY", "?utm_source=hehe&utm_medium=hehe1&utm_campaign=hehe2&utm_term=hehe3&utm_content=hehe4", undefined);
             cy.fetch_local_request_queue().then((rq) => {
                 cy.log(rq);
                 const custom = JSON.parse(rq[0].user_details).custom;
-                validateDefaultUtmTags(custom, "hehe", "hehe", "hehe", "hehe", "hehe");
+                validateDefaultUtmTags(custom, "hehe", "hehe1", "hehe2", "hehe3", "hehe4");
             });
         });
     });
