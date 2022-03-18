@@ -1,5 +1,5 @@
 ## 22.02.0
-- Fixed a bug where it was possible to change device ID at offline mode without disabling it
+- Added a safety check preventing the user from changing the device ID at offline
 
 ## 21.11.3
 - Fixed a bug with `recordRatingWidgetWithID` where it would not record ratings
