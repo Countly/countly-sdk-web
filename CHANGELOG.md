@@ -1,5 +1,6 @@
 ## 22.02.0
 - Fixed a bug where custom utm tags were being overridden
+- Added a safety check preventing the user from changing the device ID at offline
 
 ## 21.11.3
 - Fixed a bug with `recordRatingWidgetWithID` where it would not record ratings
