@@ -48,38 +48,6 @@ var waitFunction = function(startTime, waitTime, waitIncrement, continueCallback
     }
 };
 
-/**
- *  returns a customized init object
- * @param {Array} specs - an array of strings that corresponds to desired object customization values. Possible values: 
- * tests, id, offline, debug
- * @returns {Object} - final customized object 
- */
-function giveInitObj(specs) {
-    var basicInit = {
-        app_key: "YOUR_APP_KEY",
-        url: "https://try.count.ly"
-    };
-
-    for (var i = 0, len = specs.length; i < len; i++) {
-        switch (specs[i]) {
-        case "id":
-            basicInit.device_id = "a";
-            break;
-        case "offline":
-            basicInit.offline_mode = true;
-            break;
-        case "debug":
-            basicInit.debug = true;
-            break;
-        case "tests":
-            basicInit.tests = true;
-            break;
-        default:
-            break;
-        }
-    }
-    return basicInit;
-}
 
 module.exports = {
     haltAndClearStorage,
@@ -89,5 +57,4 @@ module.exports = {
     appKey,
     getTimestampMs,
     waitFunction,
-    giveInitObj
 };
