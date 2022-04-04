@@ -75,7 +75,6 @@ const objectResponse4 = "{}";
 const nullResponse = null;
 const undefinedResponse = undefined;
 
-
 describe("Response validation tests ", () => {
     // enableRating call => only isResponseValidBroad with ignored result field should yield true
     it("isResponseValid, ignore result field = false, enableRatingResponse", () => {
