@@ -1,5 +1,7 @@
 ## 21.11.4
 - Fixed a bug where some server response formats were rejected
+- Fixed a bug where some widget text color was not displayed correctly
+- Improved debugging capabilities
 
 ## 21.11.3
 - Fixed a bug with `recordRatingWidgetWithID` where it would not record ratings
