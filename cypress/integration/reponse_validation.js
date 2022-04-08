@@ -99,8 +99,8 @@ describe("Response validation tests ", () => {
         hp.haltAndClearStorage(() => {
             initMain();
             variedStatusCodeTestPack(Countly._internals.isResponseValid, popupResponse, false);
-            expect(Countly._internals.isResponseValid(200, popupResponse)).to.equal(true);
-            expect(Countly._internals.isResponseValid(201, popupResponse)).to.equal(true);
+            expect(Countly._internals.isResponseValid(200, popupResponse)).to.equal(false);
+            expect(Countly._internals.isResponseValid(201, popupResponse)).to.equal(false);
         });
     });
     it("isResponseValidBroad, popupResponse", () => {
@@ -117,8 +117,8 @@ describe("Response validation tests ", () => {
         hp.haltAndClearStorage(() => {
             initMain();
             variedStatusCodeTestPack(Countly._internals.isResponseValid, remoteConfigResponse, false);
-            expect(Countly._internals.isResponseValid(200, remoteConfigResponse)).to.equal(true);
-            expect(Countly._internals.isResponseValid(201, remoteConfigResponse)).to.equal(true);
+            expect(Countly._internals.isResponseValid(200, remoteConfigResponse)).to.equal(false);
+            expect(Countly._internals.isResponseValid(201, remoteConfigResponse)).to.equal(false);
         });
     });
     it("isResponseValidBroad, remoteConfigResponse", () => {
@@ -144,7 +144,7 @@ describe("Response validation tests ", () => {
             fakeResponseKeyTestPack(Countly._internals.isResponseValid, objectResponse1, false);
             fakeResponseKeyTestPack(Countly._internals.isResponseValid, objectResponse2, false);
             fakeResponseKeyTestPack(Countly._internals.isResponseValid, objectResponse3, false);
-            fakeResponseKeyTestPack(Countly._internals.isResponseValid, objectResponse4, true);
+            fakeResponseKeyTestPack(Countly._internals.isResponseValid, objectResponse4, false);
             fakeResponseKeyTestPack(Countly._internals.isResponseValid, nullResponse, false);
             fakeResponseKeyTestPack(Countly._internals.isResponseValid, undefinedResponse, false);
         });
