@@ -24,7 +24,14 @@ function validateSdkGeneratedId(providedDeviceId) {
 function validateInternalDeviceIdType(expectedType) {
     expect(expectedType).to.eq(Countly._internals.getInternalDeviceIdType());
 }
-// device id // device id type exposed // device id internal !!!!!!!!!!!
+function checkRequestsForT(queue, expectedInternalType) {
+    for (var i = 0; i < queue.length; i++) {
+        expect(queue[i].t).to.exist;
+        expect(queue[i].t).to.eq(Countly._internals.getInternalDeviceIdType());
+        expect(queue[i].t).to.eq(expectedInternalType);
+    }
+}
+
 
 /**
  *device ID type:
@@ -49,6 +56,10 @@ describe("Device Id tests during first init", ()=>{
             expect(Countly.get_device_id_type()).to.eq(Countly.DeviceIdType.SDK_GENERATED);
             validateSdkGeneratedId(Countly.get_device_id());
             validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.SDK_GENERATED);
+            Countly.begin_session();
+            cy.fetch_local_request_queue().then((eq) => {
+                checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.SDK_GENERATED);
+            });
         });
     });
     // we provide device id information sdk should use it
@@ -58,6 +69,10 @@ describe("Device Id tests during first init", ()=>{
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
             expect(Countly.get_device_id()).to.eq("gerwutztreimer");
             validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
+            Countly.begin_session();
+            cy.fetch_local_request_queue().then((eq) => {
+                checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
+            });
         });
     });
     // we provide no device id information sdk should generate the id
@@ -67,6 +82,10 @@ describe("Device Id tests during first init", ()=>{
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.TEMPORARY_ID);
             expect(Countly.get_device_id()).to.eq("[CLY]_temp_id");
             validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.TEMPORARY_ID);
+            Countly.begin_session();
+            cy.fetch_local_request_queue().then((eq) => {
+                checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.TEMPORARY_ID);
+            });
         });
     });
     it("SDK is initialized without custom device id, without offline mode, with utm device id", ()=>{
@@ -75,6 +94,10 @@ describe("Device Id tests during first init", ()=>{
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
             expect(Countly.get_device_id()).to.eq("abab");
             validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.URL_PROVIDED);
+            Countly.begin_session();
+            cy.fetch_local_request_queue().then((eq) => {
+                checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.URL_PROVIDED);
+            });
         });
     });
     it("SDK is initialized with custom device id, with offline mode, without utm device id", ()=>{
@@ -83,6 +106,10 @@ describe("Device Id tests during first init", ()=>{
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.TEMPORARY_ID);
             expect(Countly.get_device_id()).to.eq("[CLY]_temp_id");
             validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.TEMPORARY_ID);
+            Countly.begin_session();
+            cy.fetch_local_request_queue().then((eq) => {
+                checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.TEMPORARY_ID);
+            });
         });
     });
     it("SDK is initialized with custom device id, without offline mode, with utm device id", ()=>{
@@ -91,6 +118,10 @@ describe("Device Id tests during first init", ()=>{
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
             expect(Countly.get_device_id()).to.eq("someID");
             validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.URL_PROVIDED);
+            Countly.begin_session();
+            cy.fetch_local_request_queue().then((eq) => {
+                checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.URL_PROVIDED);
+            });
         });
     });
     it("SDK is initialized with custom device id, with offline mode, with utm device id", ()=>{
@@ -99,148 +130,11 @@ describe("Device Id tests during first init", ()=>{
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
             expect(Countly.get_device_id()).to.eq("someID2");
             validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.URL_PROVIDED);
+            Countly.begin_session();
+            cy.fetch_local_request_queue().then((eq) => {
+                checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.URL_PROVIDED);
+            });
         });
     });
 });
 
-// describe("Device ID type tests ", () => {
-//     // 1
-//     it("Basic init device ID type check", () => {
-//         hp.haltAndClearStorage(() => {
-//             initMain(undefined, false);
-//             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.SDK_GENERATED);
-//             expect(Countly.get_device_id()).to.equal(1);
-//         });
-//     });
-
-//     // 2
-//     it("Basic init with device ID, device ID type check", () => {
-//         hp.haltAndClearStorage(() => {
-//             initMain("a", false);
-//             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
-//         });
-//     });
-
-//     // 3
-//     it("Basic init then enable_offline_mode, device ID type check", () => {
-//         hp.haltAndClearStorage(() => {
-//             initMain(undefined, false);
-//             Countly.enable_offline_mode();
-//             // tempId = 2
-//             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
-//         });
-//     });
-
-//     // 4
-//     it("Basic init with device ID then enable_offline_mode, device ID type check", () => {
-//         hp.haltAndClearStorage(() => {
-//             initMain("a", false);
-//             Countly.enable_offline_mode();
-//             // tempId = 2
-//             expect(Countly.get_device_id_type()).to.equal(2);
-//         });
-//     });
-
-
-//     // 5
-//     it("Basic init with offline_mode true, device ID type check", () => {
-//         hp.haltAndClearStorage(() => {
-//             initMain(undefined, true);
-//             // tempId = 2
-//             expect(Countly.get_device_id_type()).to.equal(2);
-//         });
-//     });
-
-//     // 6
-//     it("Basic init with device ID and offline_mode true, device ID type check", () => {
-//         hp.haltAndClearStorage(() => {
-//             initMain("a", true);
-//             // tempId = 2
-//             expect(Countly.get_device_id_type()).to.equal(2);
-//         });
-//     });
-
-//     // 7
-//     it("Basic init then change_id, device ID type check", () => {
-//         hp.haltAndClearStorage(() => {
-//             initMain(undefined, false);
-//             Countly.change_id("device_id");
-//             // userSet = 0
-//             expect(Countly.get_device_id_type()).to.equal(0);
-//         });
-//     });
-
-//     // 8
-//     it("Basic init with device ID then change_id, device ID type check", () => {
-//         hp.haltAndClearStorage(() => {
-//             initMain("a", false);
-//             Countly.change_id("device_id");
-//             // userSet = 0
-//             expect(Countly.get_device_id_type()).to.equal(0);
-//         });
-//     });
-
-//     // 9
-//     it("Basic init then change_id then enable_offline_mode, device ID type check", () => {
-//         hp.haltAndClearStorage(() => {
-//             initMain(undefined, false);
-//             Countly.change_id("device_id");
-//             Countly.enable_offline_mode();
-//             // tempID = 2
-//             expect(Countly.get_device_id_type()).to.equal(2);
-//         });
-//     });
-
-//     // 10
-//     it("Basic init with device ID then change_id then enable_offline_mode, device ID type check", () => {
-//         hp.haltAndClearStorage(() => {
-//             initMain("a", false);
-//             Countly.change_id("device_id");
-//             Countly.enable_offline_mode();
-//             // tempID = 2
-//             expect(Countly.get_device_id_type()).to.equal(2);
-//         });
-//     });
-
-//     // 11
-//     it("Basic init then enable_offline_mode then change_id, device ID type check", () => {
-//         hp.haltAndClearStorage(() => {
-//             initMain(undefined, false);
-//             Countly.enable_offline_mode();
-//             Countly.change_id("device_id");
-//             // user set = 0 (given during the change_id call)
-//             expect(Countly.get_device_id_type()).to.equal(0);
-//         });
-//     });
-
-//     // 12
-//     it("Basic init with device ID then enable_offline_mode then change_id, device ID type check", () => {
-//         hp.haltAndClearStorage(() => {
-//             initMain("a", false);
-//             Countly.enable_offline_mode();
-//             Countly.change_id("device_id");
-//             // user set = 0
-//             expect(Countly.get_device_id_type()).to.equal(0);
-//         });
-//     });
-
-//     // 13
-//     it("Basic init with offline_mode true then change_id, device ID type check", () => {
-//         hp.haltAndClearStorage(() => {
-//             initMain(undefined, true);
-//             Countly.change_id("device_id");
-//             // user set = 0 (given during the change_id call)
-//             expect(Countly.get_device_id_type()).to.equal(0);
-//         });
-//     });
-
-//     // 14
-//     it("Basic init with device ID and offline_mode true then change_id, device ID type check", () => {
-//         hp.haltAndClearStorage(() => {
-//             initMain("a", true);
-//             Countly.change_id("device_id");
-//             // user set = 0
-//             expect(Countly.get_device_id_type()).to.equal(0);
-//         });
-//     });
-// });
