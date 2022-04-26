@@ -136,5 +136,141 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
+
+    // from here on the tests focus the device id change and offline mode
+    // first pair
+    it("SDK is initialized with no device id, not offline mode, not utm device id", ()=>{
+        hp.haltAndClearStorage(() => {
+            initMain(undefined, false, undefined);
+            expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.SDK_GENERATED);
+            validateSdkGeneratedId(Countly.get_device_id());
+            validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.SDK_GENERATED);
+            Countly.change_id("newID");
+            Countly.begin_session();
+            expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
+            expect(Countly.get_device_id()).to.eq("newID");
+            validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
+            cy.fetch_local_request_queue().then((eq) => {
+                checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
+            });
+        });
+    });
+    it("SDK is initialized with no device id, not offline mode, not utm device id, but then offline", ()=>{
+        hp.haltAndClearStorage(() => {
+            initMain(undefined, false, undefined);
+            expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.SDK_GENERATED);
+            validateSdkGeneratedId(Countly.get_device_id());
+            validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.SDK_GENERATED);
+            Countly.enable_offline_mode();
+            Countly.begin_session();
+            expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.TEMPORARY_ID);
+            expect(Countly.get_device_id()).to.eq("[CLY]_temp_id");
+            validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.TEMPORARY_ID);
+            cy.fetch_local_request_queue().then((eq) => {
+                checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.TEMPORARY_ID);
+            });
+        });
+    });
+    // second pair
+    it("SDK is initialized with user defined device id, not offline mode, not utm device id", ()=>{
+        hp.haltAndClearStorage(() => {
+            initMain("userID", false, undefined);
+            expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
+            expect(Countly.get_device_id()).to.eq("userID");
+            validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
+            Countly.change_id("newID");
+            Countly.begin_session();
+            expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
+            expect(Countly.get_device_id()).to.eq("newID");
+            validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
+            cy.fetch_local_request_queue().then((eq) => {
+                checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
+            });
+        });
+    });
+    it("SDK is initialized with user defined device id, not offline mode, not utm device id, but then offline", ()=>{
+        hp.haltAndClearStorage(() => {
+            initMain("userID", false, undefined);
+            expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
+            expect(Countly.get_device_id()).to.eq("userID");
+            validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
+            Countly.enable_offline_mode();
+            Countly.begin_session();
+            expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.TEMPORARY_ID);
+            expect(Countly.get_device_id()).to.eq("[CLY]_temp_id");
+            validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.TEMPORARY_ID);
+            cy.fetch_local_request_queue().then((eq) => {
+                checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.TEMPORARY_ID);
+            });
+        });
+    });
+    // third pair
+    it("SDK is initialized with no device id, not offline mode, with utm device id", ()=>{
+        hp.haltAndClearStorage(() => {
+            initMain(undefined, false, "?cly_device_id=abab");
+            expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
+            expect(Countly.get_device_id()).to.eq("abab");
+            validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.URL_PROVIDED);
+            Countly.change_id("newID");
+            Countly.begin_session();
+            expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
+            expect(Countly.get_device_id()).to.eq("newID");
+            validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
+            cy.fetch_local_request_queue().then((eq) => {
+                checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
+            });
+        });
+    });
+    it("SDK is initialized with no device id, not offline mode, with utm device id, but then offline", ()=>{
+        hp.haltAndClearStorage(() => {
+            initMain(undefined, false, "?cly_device_id=abab");
+            expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
+            expect(Countly.get_device_id()).to.eq("abab");
+            validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.URL_PROVIDED);
+            Countly.enable_offline_mode();
+            Countly.begin_session();
+            expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.TEMPORARY_ID);
+            expect(Countly.get_device_id()).to.eq("[CLY]_temp_id");
+            validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.TEMPORARY_ID);
+            cy.fetch_local_request_queue().then((eq) => {
+                checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.TEMPORARY_ID);
+            });
+        });
+    });
+    // fourth pair
+    it("SDK is initialized with no device id, with offline mode, no utm device id", ()=>{
+        hp.haltAndClearStorage(() => {
+            initMain(undefined, true, undefined);
+            expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.TEMPORARY_ID);
+            expect(Countly.get_device_id()).to.eq("[CLY]_temp_id");
+            validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.TEMPORARY_ID);
+            Countly.change_id("newID");
+            Countly.begin_session();
+            expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
+            // TODO fix this error
+            // expect(Countly.get_device_id()).to.eq("newID");
+            validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
+            cy.fetch_local_request_queue().then((eq) => {
+                checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
+            });
+        });
+    });
+    it("SDK is initialized with no device id, with offline mode, no utm device id, but then offline", ()=>{
+        hp.haltAndClearStorage(() => {
+            initMain(undefined, true, undefined);
+            expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.TEMPORARY_ID);
+            expect(Countly.get_device_id()).to.eq("[CLY]_temp_id");
+            validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.TEMPORARY_ID);
+            Countly.enable_offline_mode();
+            Countly.begin_session();
+            var a = Countly.get_device_id();
+            expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.TEMPORARY_ID);
+            expect(a).to.eq("[CLY]_temp_id");
+            validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.TEMPORARY_ID);
+            cy.fetch_local_request_queue().then((eq) => {
+                checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.TEMPORARY_ID);
+            });
+        });
+    });
 });
 
