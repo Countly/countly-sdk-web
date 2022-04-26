@@ -165,8 +165,7 @@ describe("Device Id tests during first init", ()=>{
             Countly.change_id("newID");
             Countly.begin_session();
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
-            // TODO fix this error
-            // expect(Countly.get_device_id()).to.eq("newID");
+            expect(Countly.get_device_id()).to.eq("newID");
             validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
             cy.fetch_local_request_queue().then((eq) => {
                 checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
@@ -200,8 +199,7 @@ describe("Device Id tests during first init", ()=>{
             Countly.change_id("newID");
             Countly.begin_session();
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
-            // TODO fix this error
-            // expect(Countly.get_device_id()).to.eq("newID");
+            expect(Countly.get_device_id()).to.eq("newID");
             validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
             cy.fetch_local_request_queue().then((eq) => {
                 checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
@@ -235,8 +233,7 @@ describe("Device Id tests during first init", ()=>{
             Countly.change_id("newID");
             Countly.begin_session();
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
-            // TODO fix this error
-            // expect(Countly.get_device_id()).to.eq("newID");
+            expect(Countly.get_device_id()).to.eq("newID");
             validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
             cy.fetch_local_request_queue().then((eq) => {
                 checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
@@ -253,8 +250,7 @@ describe("Device Id tests during first init", ()=>{
             Countly.change_id("newID");
             Countly.begin_session();
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
-            // TODO fix this error
-            // expect(Countly.get_device_id()).to.eq("newID");
+            expect(Countly.get_device_id()).to.eq("newID");
             validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
             cy.fetch_local_request_queue().then((eq) => {
                 checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
@@ -271,8 +267,7 @@ describe("Device Id tests during first init", ()=>{
             Countly.change_id("newID");
             Countly.begin_session();
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
-            // TODO fix this error
-            // expect(Countly.get_device_id()).to.eq("newID");
+            expect(Countly.get_device_id()).to.eq("newID");
             validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
             cy.fetch_local_request_queue().then((eq) => {
                 checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
