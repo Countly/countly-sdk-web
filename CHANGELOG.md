@@ -1,4 +1,6 @@
 ## 22.02.0
+- Added a new functionality with which it is possible to check the device ID type
+- Now it appends the device ID type with each request
 - Fixed a bug where custom utm tags were being overridden
 - Added a safety check preventing the user from changing the device ID at offline
 

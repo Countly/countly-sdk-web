@@ -56,5 +56,5 @@ module.exports = {
     lWait,
     appKey,
     getTimestampMs,
-    waitFunction
+    waitFunction,
 };
