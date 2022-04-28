@@ -1,4 +1,5 @@
 import "./index";
+import "cypress-localstorage-commands";
 
 var hp = require("./helper");
 
