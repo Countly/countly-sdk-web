@@ -406,11 +406,11 @@ describe("Device Id tests during first init", ()=>{
             cy.setLocalStorage("YOUR_APP_KEY/cly_id", "storedID").then(()=>{
                 initMain(undefined, false, "?cly_device_id=abab");
                 expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
-                expect(Countly.get_device_id()).to.eq("abab");
-                validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.URL_PROVIDED);
+                expect(Countly.get_device_id()).to.eq("storedID");
+                validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
                 Countly.begin_session();
                 cy.fetch_local_request_queue().then((eq) => {
-                    checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.URL_PROVIDED);
+                    checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
                 });
             });
         });
@@ -434,11 +434,11 @@ describe("Device Id tests during first init", ()=>{
             cy.setLocalStorage("YOUR_APP_KEY/cly_id", "storedID").then(()=>{
                 initMain("counterID", false, "?cly_device_id=abab");
                 expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
-                expect(Countly.get_device_id()).to.eq("abab");
-                validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.URL_PROVIDED);
+                expect(Countly.get_device_id()).to.eq("storedID");
+                validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
                 Countly.begin_session();
                 cy.fetch_local_request_queue().then((eq) => {
-                    checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.URL_PROVIDED);
+                    checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
                 });
             });
         });
@@ -448,11 +448,11 @@ describe("Device Id tests during first init", ()=>{
             cy.setLocalStorage("YOUR_APP_KEY/cly_id", "storedID").then(()=>{
                 initMain(undefined, true, "?cly_device_id=abab");
                 expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
-                expect(Countly.get_device_id()).to.eq("abab");
-                validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.URL_PROVIDED);
+                expect(Countly.get_device_id()).to.eq("storedID");
+                validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
                 Countly.begin_session();
                 cy.fetch_local_request_queue().then((eq) => {
-                    checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.URL_PROVIDED);
+                    checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
                 });
             });
         });
@@ -462,11 +462,11 @@ describe("Device Id tests during first init", ()=>{
             cy.setLocalStorage("YOUR_APP_KEY/cly_id", "storedID").then(()=>{
                 initMain("counterID", true, "?cly_device_id=abab");
                 expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
-                expect(Countly.get_device_id()).to.eq("abab");
-                validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.URL_PROVIDED);
+                expect(Countly.get_device_id()).to.eq("storedID");
+                validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
                 Countly.begin_session();
                 cy.fetch_local_request_queue().then((eq) => {
-                    checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.URL_PROVIDED);
+                    checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
                 });
             });
         });
