@@ -1,7 +1,7 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 /* eslint-disable require-jsdoc */
 /**
- * Device ID consideration order: Stored ID > url > provided ID > temp ID
+ * Device ID consideration order: url > Stored ID > provided ID > temp ID
  * 
  * +--------------------------------------------------+------------------------------------+----------------------+
  * | SDK state at the end of the previous app session | Provided configuration during init | Action taken by SDK  |
