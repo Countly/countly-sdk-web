@@ -1,4 +1,6 @@
 ## 22.02.0
+- !! Major breaking change !! Device ID provided during the init will be ignored if a device ID was provided previously
+- Added a new init time flag which erases the previously stored device ID. This allows to set new device ID during init
 - Added a new functionality with which it is possible to check the device ID type
 - Now it appends the device ID type with each request
 - Fixed a bug where custom utm tags were being overridden
