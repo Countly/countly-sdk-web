@@ -359,16 +359,18 @@ describe("Device Id tests during first init", ()=>{
     // Auto generated or developer set device ID was present in the local storage before initialization
     it("17-Stored ID precedence, SDK is initialized with no device id, not offline mode, no utm device id", ()=>{
         hp.haltAndClearStorage(() => {
-            cy.setLocalStorage("YOUR_APP_KEY/cly_id", "storedID").then(()=>{
-                initMain(undefined, false, undefined);
-                expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
-                expect(Countly.get_device_id()).to.eq("storedID");
-                validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
-                Countly.begin_session();
-                cy.fetch_local_request_queue().then((eq) => {
-                    checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
+            cy.setLocalStorage("YOUR_APP_KEY/cly_id", "storedID")
+                .setLocalStorage("YOUR_APP_KEY/cly_id_type", 3)
+                .then(()=>{
+                    initMain(undefined, false, undefined);
+                    expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
+                    expect(Countly.get_device_id()).to.eq("storedID");
+                    validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.URL_PROVIDED);
+                    Countly.begin_session();
+                    cy.fetch_local_request_queue().then((eq) => {
+                        checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.URL_PROVIDED);
+                    });
                 });
-            });
         });
     });
     it("18-Stored ID precedence, SDK is initialized with device id, not offline mode, no utm device id", ()=>{
