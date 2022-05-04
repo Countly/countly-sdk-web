@@ -1,0 +1,39 @@
+<html>
+<head>
+<!--Countly script-->
+<script type='text/javascript' src='../../lib/countly.js'></script>
+<script type='text/javascript'>
+
+//initializing countly with params
+Countly.init({
+	app_key: "6382ac78c3ec207d8a10c8c8f7c4051cb393f5c1",
+	url: "https://master.count.ly",
+    session_update: 5,
+    tests: true,
+	debug:true
+})
+</script>
+</head>
+<body>
+<script type='text/javascript' >
+function clickEvent(){
+	Countly.add_event({
+    key: "buttonClick222",
+    "segmentation": {
+        "id": "id"
+    }
+});
+}
+function start(){
+	Countly.begin_session();
+}
+function end(){
+	Countly.end_session();
+}
+</script>
+<button type="button" onclick="clickEvent()">Event</button>
+<button type="button" onclick="start()">Start</button>
+<button type="button" onclick="end()">End</button>
+<button type="button" onclick="windowClose()">Close</button>
+</body>
+</html>
