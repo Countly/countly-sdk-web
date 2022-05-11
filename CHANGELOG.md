@@ -1,3 +1,6 @@
+## 22.02.1
+- Fixed a bug where heatmap files were not loading
+
 ## 22.02.0
 - !! Major breaking change !! Device ID provided during the init will be ignored if a device ID was provided previously
 - Added a new init time flag which erases the previously stored device ID. This allows to set new device ID during init
