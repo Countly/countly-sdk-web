@@ -3,6 +3,7 @@
 <!--Countly script-->
 <script type='text/javascript' src='../../lib/countly.js'></script>
 <script type='text/javascript' src='../support/integration_helper.js'></script>
+
 <script type='text/javascript'>
 
 const deleteAllCookies = () => {
@@ -14,25 +15,27 @@ const deleteAllCookies = () => {
     document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
   }
 }
+
 window.localStorage.clear();
 deleteAllCookies();
 console.error("cleared the storage");
-
 const confObj = queryExtractor(window.location.search);
 
 //initializing countly with params
 Countly.init({
 	app_key: "6382ac78c3ec207d8a10c8c8f7c4051cb393f5c1",
 	url: "https://master.count.ly",
-    device_id: "auto",
+    device_id: "manual_2",
     session_update: 5,
     tests: true,
     use_session_cookie: confObj.use_session_cookie || false,
 
 	debug:true
 })
-Countly.track_sessions();
-// Countly.track_pageview();
+Countly.begin_session();
+window.addEventListener("beforeunload", function () {
+    Countly.end_session();
+})
 </script>
 </head>
 <body>
@@ -45,6 +48,7 @@ function clickEvent(){
     }
 });
 }
+
 </script>
 <button type="button" onclick="clickEvent()">Event</button>
 </body>
