@@ -1,4 +1,4 @@
-## 22.02.1
+## 22.02.2
 - Fixed a bug where the minified version had issues with the heatmap feature
 
 ## 22.02.1
