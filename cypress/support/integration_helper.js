@@ -15,7 +15,3 @@ function queryExtractor(query) {
     }
     return returnVal;
 }
-
-// module.exports = {
-//     queryExtractor
-// };

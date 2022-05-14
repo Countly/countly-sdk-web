@@ -1,14 +1,14 @@
+<!--Here we have automatic session tracking-->
 <html>
 <head>
 <!--Countly script-->
 <script type='text/javascript' src='../../lib/countly.js'></script>
 <script type='text/javascript' src='../support/integration_helper.js'></script>
 <script type='text/javascript'>
-
+// here we implement a cookie and localStorage clearing logic
 const deleteAllCookies = () => {
-  const cookies = document.cookie.split(";");
-
-  for (const cookie of cookies) {
+const cookies = document.cookie.split(";");
+for (const cookie of cookies) {
     const eqPos = cookie.indexOf("=");
     const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
     document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
@@ -18,17 +18,17 @@ window.localStorage.clear();
 deleteAllCookies();
 console.error("cleared the storage");
 
+// we extract the url query and dissect the embedded configuration object within
 const confObj = queryExtractor(window.location.search);
 
 //initializing countly with params
 Countly.init({
-	app_key: "6382ac78c3ec207d8a10c8c8f7c4051cb393f5c1",
-	url: "https://master.count.ly",
-    device_id: "auto",
-    session_update: 5,
-    tests: true,
-    use_session_cookie: confObj.use_session_cookie || false,
-
+	app_key: "YOUR_APP_KEY",
+	url: "https://try.count.ly",
+  device_id: "auto",
+  session_update: 5,
+  tests: true,
+  use_session_cookie: confObj.use_session_cookie || false,
 	debug:true
 })
 Countly.track_sessions();
@@ -39,7 +39,7 @@ Countly.track_sessions();
 <script type='text/javascript' >
 function clickEvent(){
 	Countly.add_event({
-    key: "buttonClick222",
+    key: "buttonClick",
     "segmentation": {
         "id": "id"
     }
