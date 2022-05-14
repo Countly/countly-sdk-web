@@ -850,6 +850,7 @@ describe("Device Id tests during first init", ()=>{
             var oldUUID = Countly.get_device_id();
             Countly.halt();
             initMain(undefined, false, undefined);
+            validateSdkGeneratedId(Countly.get_device_id());
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.SDK_GENERATED);
             expect(Countly.get_device_id()).to.eq(oldUUID);
             validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.SDK_GENERATED);
@@ -865,6 +866,7 @@ describe("Device Id tests during first init", ()=>{
             var oldUUID = Countly.get_device_id();
             Countly.halt();
             initMain("counterID", false, undefined);
+            validateSdkGeneratedId(Countly.get_device_id());
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.SDK_GENERATED);
             expect(Countly.get_device_id()).to.eq(oldUUID);
             validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.SDK_GENERATED);
@@ -880,6 +882,7 @@ describe("Device Id tests during first init", ()=>{
             var oldUUID = Countly.get_device_id();
             Countly.halt();
             initMain(undefined, true, undefined);
+            validateSdkGeneratedId(Countly.get_device_id());
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.SDK_GENERATED);
             expect(Countly.get_device_id()).to.eq(oldUUID);
             validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.SDK_GENERATED);
@@ -895,6 +898,7 @@ describe("Device Id tests during first init", ()=>{
             var oldUUID = Countly.get_device_id();
             Countly.halt();
             initMain(undefined, false, "?cly_device_id=abab");
+            validateSdkGeneratedId(Countly.get_device_id());
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.SDK_GENERATED);
             expect(Countly.get_device_id()).to.eq(oldUUID);
             validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.SDK_GENERATED);
@@ -910,6 +914,7 @@ describe("Device Id tests during first init", ()=>{
             var oldUUID = Countly.get_device_id();
             Countly.halt();
             initMain("counterID", true, undefined);
+            validateSdkGeneratedId(Countly.get_device_id());
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.SDK_GENERATED);
             expect(Countly.get_device_id()).to.eq(oldUUID);
             validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.SDK_GENERATED);
@@ -925,6 +930,7 @@ describe("Device Id tests during first init", ()=>{
             var oldUUID = Countly.get_device_id();
             Countly.halt();
             initMain("counterID", false, "?cly_device_id=abab");
+            validateSdkGeneratedId(Countly.get_device_id());
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.SDK_GENERATED);
             expect(Countly.get_device_id()).to.eq(oldUUID);
             validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.SDK_GENERATED);
@@ -940,6 +946,7 @@ describe("Device Id tests during first init", ()=>{
             var oldUUID = Countly.get_device_id();
             Countly.halt();
             initMain(undefined, true, "?cly_device_id=abab");
+            validateSdkGeneratedId(Countly.get_device_id());
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.SDK_GENERATED);
             expect(Countly.get_device_id()).to.eq(oldUUID);
             validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.SDK_GENERATED);
@@ -955,6 +962,7 @@ describe("Device Id tests during first init", ()=>{
             var oldUUID = Countly.get_device_id();
             Countly.halt();
             initMain("counterID", true, "?cly_device_id=abab");
+            validateSdkGeneratedId(Countly.get_device_id());
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.SDK_GENERATED);
             expect(Countly.get_device_id()).to.eq(oldUUID);
             validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.SDK_GENERATED);
@@ -972,6 +980,7 @@ describe("Device Id tests during first init", ()=>{
             var oldUUID = Countly.get_device_id();
             Countly.halt();
             initMain(undefined, false, undefined, true);
+            validateSdkGeneratedId(Countly.get_device_id());
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.SDK_GENERATED);
             expect(Countly.get_device_id()).to.not.eq(oldUUID);
             validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.SDK_GENERATED);
