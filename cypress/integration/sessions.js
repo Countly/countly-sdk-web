@@ -93,7 +93,7 @@ describe("Browser session tests, manual 1", () => {
     it("Single sessions test with manual sessions", () => {
         cy.visit("./cypress/fixtures/session_test_manual_1.html?use_session_cookie=true");
         cy.contains("Start").click().wait(waitTime);
-        cy.contains("Event").click().wait(100);
+        cy.contains("Event").click().wait(300);
         cy.contains("End").click().wait(300);
         cy.visit("./cypress/fixtures/base.html");
         cy.fetch_local_request_queue(app_key).then((rq) => {
