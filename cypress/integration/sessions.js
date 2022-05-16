@@ -148,7 +148,7 @@ describe("Browser session tests, auto, no cookie", () => {
             // fourth object of the queue should be about event sent
             cy.check_event(JSON.parse(rq[3].events)[0], eventObj);
             // fifth object of the queue should be about session extension, also input the expected duration
-            cy.check_session(rq[4], 1, undefined, app_key);
+            cy.check_session(rq[4], 1, true, app_key);
         });
     });
 });
@@ -170,7 +170,7 @@ describe("Browser session tests, manual 1, no cookie", () => {
             // fourth object of the queue should be about event sent
             cy.check_event(JSON.parse(rq[3].events)[0], eventObj);
             // fifth object of the queue should be about session extension, also input the expected duration
-            cy.check_session(rq[4], 1, undefined, app_key);
+            cy.check_session(rq[4], 1, true, app_key);
         });
     });
 });
@@ -190,7 +190,7 @@ describe("Browser session tests, manual 2, no cookie", () => {
             // fourth object of the queue should be about event sent
             cy.check_event(JSON.parse(rq[3].events)[0], eventObj);
             // fifth object of the queue should be about session extension, also input the expected duration
-            cy.check_session(rq[4], 1, undefined, app_key);
+            cy.check_session(rq[4], 1, true, app_key);
         });
     });
 });
