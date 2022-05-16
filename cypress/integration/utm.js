@@ -6,7 +6,7 @@ function initMulti(appKey, searchQuery, utmStuff) {
     Countly.init({
         app_key: appKey,
         url: "https://try.count.ly",
-        tests: true,
+        test_mode: true,
         max_events: -1,
         utm: utmStuff,
         getSearchQuery: function() {

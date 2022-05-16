@@ -76,7 +76,7 @@ function initMain(deviceId, offline, searchQuery, clear) {
         app_key: "YOUR_APP_KEY",
         url: "https://try.count.ly",
         device_id: deviceId,
-        tests: true,
+        test_mode: true,
         debug: true,
         clear_stored_id: clear,
         getSearchQuery: function() {

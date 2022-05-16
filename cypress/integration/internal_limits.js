@@ -17,7 +17,7 @@ function initMain() {
         app_key: "YOUR_APP_KEY",
         url: "https://try.count.ly",
         max_events: -1,
-        tests: true,
+        test_mode: true,
         debug: true,
         max_key_length: limits.key, // set maximum key length here
         max_value_size: limits.value, // set maximum value length here
