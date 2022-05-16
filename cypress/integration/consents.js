@@ -9,7 +9,7 @@ function initMain(consent) {
         url: "https://try.count.ly",
         require_consent: consent,
         device_id: "György Ligeti",
-        tests: true,
+        test_mode: true,
         max_events: -1,
         debug: true
     });

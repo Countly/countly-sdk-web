@@ -11,7 +11,7 @@ function initMain() {
     Countly.init({
         app_key: "YOUR_APP_KEY",
         url: "https://try.count.ly",
-        tests: true,
+        test_mode: true,
         max_events: -1,
         debug: true
     });

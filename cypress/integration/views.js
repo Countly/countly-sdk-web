@@ -8,7 +8,7 @@ function initMain() {
         app_key: "YOUR_APP_KEY",
         url: "https://try.count.ly",
         max_events: -1,
-        tests: true
+        test_mode: true
     });
 }
 
