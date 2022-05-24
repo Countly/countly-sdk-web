@@ -1,6 +1,16 @@
 /* eslint-disable require-jsdoc */
 var Countly = require("../../lib/countly");
 var hp = require("../support/helper");
+// if you are testing on an app
+const app_key = hp.appKey;
+const waitTime = 7000;
+const eventObj = {
+    key: "buttonClick",
+    count: 1,
+    segmentation: {
+        id: "id",
+    },
+};
 
 function initMain() {
     Countly.init({
@@ -55,6 +65,132 @@ describe("Session tests ", () => {
                     cy.check_session(rq[3], 10, true);
                 });
             });
+        });
+    });
+});
+describe("Browser session tests, auto", () => {
+    it("Single session test with auto sessions", () => {
+        cy.visit("./cypress/fixtures/session_test_auto.html?use_session_cookie=true")
+            .wait(waitTime);
+        cy.contains("Event").click().wait(300);
+        cy.visit("./cypress/fixtures/base.html");
+        cy.fetch_local_request_queue(app_key).then((rq) => {
+            cy.log(rq);
+            // 3 session and 1 orientation 1 event
+            expect(rq.length).to.equal(5);
+            // first object of the queue should be about begin session, second is orientation
+            cy.check_session(rq[0], undefined, undefined, app_key);
+            // third object of the queue should be about session extension, also input the expected duration
+            cy.check_session(rq[2], 5, undefined, app_key);
+            // fourth object of the queue should be about event sent
+            cy.check_event(JSON.parse(rq[3].events)[0], eventObj);
+            // fifth object of the queue should be about session extension, also input the expected duration
+            cy.check_session(rq[4], 1, undefined, app_key);
+        });
+    });
+});
+describe("Browser session tests, manual 1", () => {
+    it("Single sessions test with manual sessions", () => {
+        cy.visit("./cypress/fixtures/session_test_manual_1.html?use_session_cookie=true");
+        cy.contains("Start").click().wait(waitTime);
+        cy.contains("Event").click().wait(300);
+        cy.contains("End").click().wait(300);
+        cy.visit("./cypress/fixtures/base.html");
+        cy.fetch_local_request_queue(app_key).then((rq) => {
+            cy.log(rq);
+            // 3 session and 1 orientation 1 event
+            expect(rq.length).to.equal(5);
+            // first object of the queue should be about begin session, second is orientation
+            cy.check_session(rq[0], undefined, undefined, app_key);
+            // third object of the queue should be about session extension, also input the expected duration
+            cy.check_session(rq[2], 5, undefined, app_key);
+            // fourth object of the queue should be about event sent
+            cy.check_event(JSON.parse(rq[3].events)[0], eventObj);
+            // fifth object of the queue should be about session extension, also input the expected duration
+            cy.check_session(rq[4], 1, undefined, app_key);
+        });
+    });
+});
+describe("Browser session tests, manual 2", () => {
+    it("Single bounce test with manual sessions 2", () => {
+        cy.visit("./cypress/fixtures/session_test_manual_2.html?use_session_cookie=true").wait(waitTime);
+        cy.contains("Event").click().wait(300);
+        cy.visit("./cypress/fixtures/base.html");
+        cy.fetch_local_request_queue(app_key).then((rq) => {
+            cy.log(rq);
+            // 3 session and 1 orientation 1 event
+            expect(rq.length).to.equal(5);
+            // first object of the queue should be about begin session, second is orientation
+            cy.check_session(rq[0], undefined, undefined, app_key);
+            // third object of the queue should be about session extension, also input the expected duration
+            cy.check_session(rq[2], 5, undefined, app_key);
+            // fourth object of the queue should be about event sent
+            cy.check_event(JSON.parse(rq[3].events)[0], eventObj);
+            // fifth object of the queue should be about session extension, also input the expected duration
+            cy.check_session(rq[4], 1, undefined, app_key);
+        });
+    });
+});
+describe("Browser session tests, auto, no cookie", () => {
+    it("Single bounce test with auto sessions and no cookies", () => {
+        cy.visit("./cypress/fixtures/session_test_auto.html")
+            .wait(waitTime);
+        cy.contains("Event").click().wait(300);
+        cy.visit("./cypress/fixtures/base.html");
+        cy.fetch_local_request_queue(app_key).then((rq) => {
+            cy.log(rq);
+            // 3 session and 1 orientation 1 event
+            expect(rq.length).to.equal(5);
+            // first object of the queue should be about begin session, second is orientation
+            cy.check_session(rq[0], undefined, undefined, app_key);
+            // third object of the queue should be about session extension, also input the expected duration
+            cy.check_session(rq[2], 5, undefined, app_key);
+            // fourth object of the queue should be about event sent
+            cy.check_event(JSON.parse(rq[3].events)[0], eventObj);
+            // fifth object of the queue should be about session extension, also input the expected duration
+            cy.check_session(rq[4], 1, true, app_key);
+        });
+    });
+});
+describe("Browser session tests, manual 1, no cookie", () => {
+    it("Single bounce test with manual sessions with no cookies", () => {
+        cy.visit("./cypress/fixtures/session_test_manual_1.html");
+        cy.contains("Start").click().wait(waitTime);
+        cy.contains("Event").click().wait(300);
+        cy.contains("End").click().wait(300);
+        cy.visit("./cypress/fixtures/base.html");
+        cy.fetch_local_request_queue(app_key).then((rq) => {
+            cy.log(rq);
+            // 3 session and 1 orientation 1 event
+            expect(rq.length).to.equal(5);
+            // first object of the queue should be about begin session, second is orientation
+            cy.check_session(rq[0], undefined, undefined, app_key);
+            // third object of the queue should be about session extension, also input the expected duration
+            cy.check_session(rq[2], 5, undefined, app_key);
+            // fourth object of the queue should be about event sent
+            cy.check_event(JSON.parse(rq[3].events)[0], eventObj);
+            // fifth object of the queue should be about session extension, also input the expected duration
+            cy.check_session(rq[4], 1, true, app_key);
+        });
+    });
+});
+describe("Browser session tests, manual 2, no cookie", () => {
+    it("Single bounce test with manual sessions 2 and no cookies", () => {
+        cy.visit("./cypress/fixtures/session_test_manual_2.html").wait(waitTime);
+        cy.contains("Event").click().wait(500);
+        cy.visit("./cypress/fixtures/base.html");
+        cy.fetch_local_request_queue(app_key).then((rq) => {
+            cy.log(rq);
+            // 3 session and 1 orientation 1 event
+            expect(rq.length).to.equal(5);
+            // first object of the queue should be about begin session, second is orientation
+            cy.check_session(rq[0], undefined, undefined, app_key);
+            // third object of the queue should be about session extension, also input the expected duration
+            cy.check_session(rq[2], 5, undefined, app_key);
+            // fourth object of the queue should be about event sent
+            cy.check_event(JSON.parse(rq[3].events)[0], eventObj);
+            // fifth object of the queue should be about session extension, also input the expected duration
+            cy.check_session(rq[4], 1, true, app_key);
         });
     });
 });
