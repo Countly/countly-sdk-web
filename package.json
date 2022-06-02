@@ -34,7 +34,7 @@
   "dependencies": {},
   "devDependencies": {
     "cypress": "^9.5.0",
-    "cypress-localstorage-commands": "^1.7.0",
+    "cypress-localstorage-commands": "^2.1.0",
     "docdash": "^1.2.0",
     "eslint": "^8.2.0",
     "eslint-config-airbnb": "^15.0.0",
