@@ -9,6 +9,9 @@ module.exports = {
         amd: true,
         commonjs: true
     },
+    parserOptions: {
+        ecmaVersion: 6
+    },
     extends: "airbnb/legacy",
     rules: {
         "prefer-arrow-callback": "off",
