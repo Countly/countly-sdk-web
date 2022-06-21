@@ -14,7 +14,8 @@ module.exports = {
         "cypress/no-pause": "error"
     },
     env: {
-        "cypress/globals": true
+        "cypress/globals": true,
+        es6: true
     },
     extends: [
         "plugin:cypress/recommended",
