@@ -14,7 +14,7 @@
     "lint": "./node_modules/.bin/eslint --ignore-path .eslintignore --fix .",
     "cypress:open": "cypress open",
     "pretest": "eslint --ignore-path .eslintignore .",
-    "test": "./node_modules/.bin/cypress run"
+    "test": "./node_modules/.bin/cypress run --headless --browser chrome"
   },
   "repository": {
     "type": "git",
