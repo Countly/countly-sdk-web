@@ -14,7 +14,7 @@
     "lint": "./node_modules/.bin/eslint --ignore-path .eslintignore --fix .",
     "cypress:open": "cypress open",
     "pretest": "eslint --ignore-path .eslintignore .",
-    "test": "./node_modules/.bin/cypress run --browser chrome"
+    "test": "./node_modules/.bin/cypress run --headless --browser chrome"
   },
   "repository": {
     "type": "git",
@@ -33,7 +33,7 @@
   "homepage": "https://count.ly/",
   "dependencies": {},
   "devDependencies": {
-    "cypress": "^10.1.0",
+    "cypress": "^10.0.3",
     "cypress-localstorage-commands": "^2.1.0",
     "docdash": "^1.2.0",
     "eslint": "^8.2.0",
