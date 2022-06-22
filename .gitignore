@@ -1,4 +1,3 @@
 /node_modules/
 .vscode/*
-package-lock.json
 __base64encode.csv
