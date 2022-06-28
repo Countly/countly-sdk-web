@@ -1,0 +1,20 @@
+<html>
+<head>
+<script type='text/javascript' src='../../lib/countly.js'></script>
+<script type='text/javascript'>
+
+Countly.init({
+	app_key: "YOUR_APP_KEY",
+	url: "https://try.count.ly",
+	debug:true
+})
+
+var cly = document.createElement('button'); 
+cly.value = Countly._internals.detect_device(); 
+cly.name = Countly._internals.is_bot(); 
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(cly, s);
+</script>
+</head>
+<body>
+</body>
+</html>

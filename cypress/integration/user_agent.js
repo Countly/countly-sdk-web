@@ -1,0 +1,62 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
+/* eslint-disable require-jsdoc */
+var Countly = require("../../lib/countly");
+var hp = require("../support/helper");
+
+function initMain() {
+    Countly.init({
+        app_key: "YOUR_APP_KEY",
+        url: "https://try.count.ly",
+        max_events: -1
+    });
+}
+
+describe("User Agent tests ", () => {
+    it("Check if the user agent set by the developer was recognized by the SDK", () => {
+        hp.haltAndClearStorage(() => {
+            cy.visit("./cypress/fixtures/user_agent.html");
+            // we set an attribute in documentElement (html tag for html files) called data-countly-useragent at our SDK with the ua_raw function value, check if it corresponds to user agent string
+            cy.get("html")
+                .invoke("attr", "data-countly-useragent")
+                // this value was set at the cypress.json file
+                .should("eq", "abcd");
+            // in test html file we created a button and set its value to detect_device(), check if it returns the correct device type
+            cy.get("button")
+                .invoke("attr", "value")
+                // useragent had no info on device type so should return desktop by default
+                .should("eq", "desktop");
+            // in test html file we created a button and set its name to is_bot(), check if it returns the correct value
+            cy.get("button")
+                .invoke("attr", "name")
+                // useragent has no info about search bots so returns false
+                .should("eq", "false");
+        });
+    });
+    it("Check if ua_raw works as intended", () => {
+        hp.haltAndClearStorage(() => {
+            initMain();
+            // from the config file set ua value
+            expect(Countly._internals.ua_raw()).to.equal("abcd");
+            // we override the ua string
+            expect(Countly._internals.ua_raw("123")).to.equal("123");
+        });
+    });
+    it("Check if detect_device works as intended", () => {
+        hp.haltAndClearStorage(() => {
+            initMain();
+            // setting ua value to strings that can pass the regex test
+            expect(Countly._internals.detect_device("123")).to.equal("desktop");
+            expect(Countly._internals.detect_device("mobile")).to.equal("phone");
+            expect(Countly._internals.detect_device("tablet")).to.equal("tablet");
+        });
+    });
+    it("Check if is_bot works as intended", () => {
+        hp.haltAndClearStorage(() => {
+            initMain();
+            // setting ua value to strings that can pass the regex test
+            expect(Countly._internals.is_bot("123")).to.equal(false);
+            expect(Countly._internals.is_bot("Googlebot")).to.equal(true);
+            expect(Countly._internals.is_bot("Google")).to.equal(false);
+        });
+    });
+});
