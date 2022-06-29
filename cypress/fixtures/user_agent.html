@@ -10,8 +10,8 @@ Countly.init({
 })
 
 var cly = document.createElement('button'); 
-cly.value = Countly._internals.detect_device(); 
-cly.name = Countly._internals.is_bot(); 
+cly.value = Countly._internals.userAgentDeviceDetection(); 
+cly.name = Countly._internals.userAgentSearchBotDetection(); 
 var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(cly, s);
 </script>
 </head>

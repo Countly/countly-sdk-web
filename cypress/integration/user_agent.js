@@ -36,27 +36,27 @@ describe("User Agent tests ", () => {
         hp.haltAndClearStorage(() => {
             initMain();
             // from the config file set ua value
-            expect(Countly._internals.ua_raw()).to.equal("abcd");
+            expect(Countly._internals.currentUserAgentString()).to.equal("abcd");
             // we override the ua string
-            expect(Countly._internals.ua_raw("123")).to.equal("123");
+            expect(Countly._internals.currentUserAgentString("123")).to.equal("123");
         });
     });
     it("Check if detect_device works as intended", () => {
         hp.haltAndClearStorage(() => {
             initMain();
             // setting ua value to strings that can pass the regex test
-            expect(Countly._internals.detect_device("123")).to.equal("desktop");
-            expect(Countly._internals.detect_device("mobile")).to.equal("phone");
-            expect(Countly._internals.detect_device("tablet")).to.equal("tablet");
+            expect(Countly._internals.userAgentDeviceDetection("123")).to.equal("desktop");
+            expect(Countly._internals.userAgentDeviceDetection("mobile")).to.equal("phone");
+            expect(Countly._internals.userAgentDeviceDetection("tablet")).to.equal("tablet");
         });
     });
     it("Check if is_bot works as intended", () => {
         hp.haltAndClearStorage(() => {
             initMain();
             // setting ua value to strings that can pass the regex test
-            expect(Countly._internals.is_bot("123")).to.equal(false);
-            expect(Countly._internals.is_bot("Googlebot")).to.equal(true);
-            expect(Countly._internals.is_bot("Google")).to.equal(false);
+            expect(Countly._internals.userAgentSearchBotDetection("123")).to.equal(false);
+            expect(Countly._internals.userAgentSearchBotDetection("Googlebot")).to.equal(true);
+            expect(Countly._internals.userAgentSearchBotDetection("Google")).to.equal(false);
         });
     });
 });
