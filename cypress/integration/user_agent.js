@@ -15,7 +15,7 @@ describe("User Agent tests ", () => {
     it("Check if the user agent set by the developer was recognized by the SDK", () => {
         hp.haltAndClearStorage(() => {
             cy.visit("./cypress/fixtures/user_agent.html");
-            // we set an attribute in documentElement (html tag for html files) called data-countly-useragent at our SDK with the ua_raw function value, check if it corresponds to user agent string
+            // we set an attribute in documentElement (html tag for html files) called data-countly-useragent at our SDK with the currentUserAgentString function value, check if it corresponds to user agent string
             cy.get("html")
                 .invoke("attr", "data-countly-useragent")
                 // this value was set at the cypress.json file
@@ -32,7 +32,7 @@ describe("User Agent tests ", () => {
                 .should("eq", "false");
         });
     });
-    it("Check if ua_raw works as intended", () => {
+    it("Check if currentUserAgentString works as intended", () => {
         hp.haltAndClearStorage(() => {
             initMain();
             // from the config file set ua value
@@ -41,7 +41,7 @@ describe("User Agent tests ", () => {
             expect(Countly._internals.currentUserAgentString("123")).to.equal("123");
         });
     });
-    it("Check if detect_device works as intended", () => {
+    it("Check if userAgentDeviceDetection works as intended", () => {
         hp.haltAndClearStorage(() => {
             initMain();
             // setting ua value to strings that can pass the regex test
@@ -50,7 +50,7 @@ describe("User Agent tests ", () => {
             expect(Countly._internals.userAgentDeviceDetection("tablet")).to.equal("tablet");
         });
     });
-    it("Check if is_bot works as intended", () => {
+    it("Check if userAgentSearchBotDetection works as intended", () => {
         hp.haltAndClearStorage(() => {
             initMain();
             // setting ua value to strings that can pass the regex test
