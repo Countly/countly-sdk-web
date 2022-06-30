@@ -2,11 +2,14 @@ import "./index";
 import "cypress-localstorage-commands";
 
 var hp = require("./helper");
-Cypress.on("uncaught:exception", (err, runnable) => {
-    // returning false here prevents Cypress from
-    // failing the test
-    return false;
-});
+
+// // uncomment for stopping uncaught:exception fail
+// Cypress.on("uncaught:exception", (err, runnable) => {
+//     // returning false here prevents Cypress from
+//     // failing the test
+//     return false;
+// });
+
 /**
  * Checks a queue object for valid timestamp, hour and dow values
  * @param {Object} testObject - object to be checked

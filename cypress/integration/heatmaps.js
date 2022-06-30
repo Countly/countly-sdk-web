@@ -27,8 +27,10 @@ describe("Browser heatmap tests", () => {
         cy.visit("./cypress/fixtures/scroll_test_3.html");
         // TODO: gave exact coordinates and check those exact coordinates are recorded or not for scrolls
         cy.scrollTo("bottom");
+        // click button that triggers view change
         cy.get("#b1").click();
         cy.scrollTo("bottom");
+        // click button that triggers view change
         cy.get("#b2").click();
         // 2 request with 1 session and 1 events
         cy.fetch_local_request_queue(hp.appKey).then((rq) => {
