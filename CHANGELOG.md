@@ -1,7 +1,6 @@
 ## 22.02.3
 - Added support for userAgentData
 - Now heatmap scroll event is recorded when leaving a view
-- Increased logging capabilities
 
 ## 22.02.2
 - Fixed a bug where the minified version had issues with the heatmap feature
