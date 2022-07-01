@@ -10,7 +10,8 @@ function initMain() {
         max_events: -1
     });
 }
-
+// TODO: Make tests browser specific as all browsers does not support userAgentData yet.
+// TODO: check if userAgentData is configurable in cypress config file (currently not)
 describe("User Agent tests ", () => {
     it("Check if the user agent set by the developer was recognized by the SDK", () => {
         hp.haltAndClearStorage(() => {
