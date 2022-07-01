@@ -1,3 +1,8 @@
+## 22.02.3
+- Added support for userAgentData
+- Now scroll heatmaps can be recorded for each view on a single page website
+- Increased logging capabilities
+
 ## 22.02.2
 - Fixed a bug where the minified version had issues with the heatmap feature
 

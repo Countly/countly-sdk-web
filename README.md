@@ -1,5 +1,5 @@
 # Countly Web SDK 
- [![Codacy Badge](https://app.codacy.com/project/badge/Grade/79582b7ee7ca4021a3950376402fac00)](https://www.codacy.com/gh/Countly/countly-sdk-web/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Countly/countly-sdk-web&amp;utm_campaign=Badge_Grade) [![npm version](https://badge.fury.io/js/countly-sdk-web.svg)](https://badge.fury.io/js/countly-sdk-web) [![Inline docs](https://inch-ci.org/github/Countly/countly-sdk-web.svg?branch=master)](https://inch-ci.org/github/Countly/countly-sdk-web) [![](https://data.jsdelivr.com/v1/package/npm/countly-sdk-web/badge)](https://www.jsdelivr.com/package/npm/countly-sdk-web)
+ [![Codacy Badge](https://app.codacy.com/project/badge/Grade/79582b7ee7ca4021a3950376402fac00)](https://www.codacy.com/gh/Countly/countly-sdk-web/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Countly/countly-sdk-web&amp;utm_campaign=Badge_Grade) [![npm version](https://badge.fury.io/js/countly-sdk-web.svg)](https://badge.fury.io/js/countly-sdk-web) [![](https://data.jsdelivr.com/v1/package/npm/countly-sdk-web/badge)](https://www.jsdelivr.com/package/npm/countly-sdk-web)
 
 ## What is Countly?
 [Countly](http://count.ly) is a product analytics solution and innovation enabler that helps teams track product performance and customer journey and behavior across [mobile](https://count.ly/mobile-analytics), [web](http://count.ly/web-analytics), and [desktop](https://count.ly/desktop-analytics) applications. [Ensuring privacy by design](https://count.ly/your-data-your-rules), Countly allows you to innovate and enhance your products to provide personalized and customized customer experiences, and meet key business and revenue goals.
@@ -30,7 +30,7 @@ or
 
 Countly web SDK is available on CDNJS. Use either
 
-[https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/22.02.2/countly.min.js](https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/22.02.2/countly.min.js)
+[https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/22.02.3/countly.min.js](https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/22.02.3/countly.min.js)
 
 or
 
@@ -38,45 +38,7 @@ or
 
 ## How to use Countly Web SDK?
 
-Link to the script and call helper methods based on what you want to track: sessions, views, clicks, custom events, user data, etc. More information is available at [https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-](https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-)
-
-    <script type='text/javascript'>
-    // Some default pre init
-    var Countly = Countly || {};
-    Countly.q = Countly.q || [];
-
-    // Provide your app key that you retrieved from Countly dashboard
-    Countly.app_key = "YOUR_APP_KEY";
-
-    // Provide your server IP or name. Use try.count.ly or us-try.count.ly 
-    // or asia-try.count.ly for EE trial server.
-    // If you use your own server, make sure you have https enabled if you use
-    // https below.
-    Countly.url = "https://yourdomain.com"; 
-
-    // Start pushing function calls to queue
-    // Track sessions automatically (recommended)
-    Countly.q.push(['track_sessions']);
-
-    //track web page views automatically (recommended)
-    Countly.q.push(['track_pageview']);
-
-    // Uncomment the following line to track web heatmaps (Enterprise Edition)
-    // Countly.q.push(['track_clicks']);
-
-    // Uncomment the following line to track web scrollmaps (Enterprise Edition)
-    // Countly.q.push(['track_scrolls']);
-
-    // Load Countly script asynchronously
-    (function() {
-        var cly = document.createElement('script'); cly.type = 'text/javascript'; 
-        cly.async = true;
-        // Enter url of script here (see below for other option)
-        cly.src = 'https://cdn.jsdelivr.net/npm/countly-sdk-web@latest/lib/countly.min.js'; // Use any of the 3 methods to get Countly Web Analytics SDK here
-        cly.onload = function(){Countly.init()};
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(cly, s);
-    })();
-    </script>
+Link to the script and call helper methods based on what you want to track: sessions, views, clicks, custom events, user data, etc. and for much more information check out our documentation at [https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-](https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-)
 
 Countly Web SDK has JSDoc3 compatible comments and you can generate documentation by running `npm run-script docs` or access online version at [https://countly.github.io/countly-sdk-web/](https://countly.github.io/countly-sdk-web/)
 
