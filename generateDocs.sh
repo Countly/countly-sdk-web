@@ -3,7 +3,7 @@
 #Original source https://gist.github.com/vidavidorra/548ffbcdae99d752da02
 
 echo "Starting documention deployment script"
-GITHUB_BRANCH=${GITHUB_REF##*/}
+GITHUB_BRANCH=${GITHUB_REF#refs/heads/}
 echo "$GITHUB_BRANCH"
 echo "$GITHUB_HEAD_REF"
 echo "$GITHUB_REF"
