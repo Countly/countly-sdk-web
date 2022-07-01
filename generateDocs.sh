@@ -75,5 +75,3 @@ else
     echo 'Warning: Not going to push the documentation to GitHub!' >&2
     exit 1
 fi
-
-fi
