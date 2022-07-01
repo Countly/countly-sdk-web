@@ -9,7 +9,7 @@ echo "$GITHUB_HEAD_REF"
 echo "$GITHUB_REF"
 echo "$GITHUB_REPOSITORY"
 
-if [ -z "$GITHUB_HEAD_REF" ] && [ "$GITHUB_REPOSITORY" == "Countly/countly-sdk-web" ] && [ "$GITHUB_BRANCH" == "master" ]; then
+if [ -z "$GITHUB_HEAD_REF" ] && [ "$GITHUB_REPOSITORY" == "Countly/countly-sdk-web" ] && [ "$GITHUB_BRANCH" == "merge" ]; then
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
