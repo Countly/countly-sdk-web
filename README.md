@@ -40,6 +40,8 @@ or
 
 Link to the script and call helper methods based on what you want to track: sessions, views, clicks, custom events, user data, etc. and for much more information check out our documentation at [https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-](https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-)
 
+You can reach minimal integration info for your website from here [https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-#minimal-setup](https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-#minimal-setup)
+
 Countly Web SDK has JSDoc3 compatible comments and you can generate documentation by running `npm run-script docs` or access online version at [https://countly.github.io/countly-sdk-web/](https://countly.github.io/countly-sdk-web/)
 
 ## Security
