@@ -3,6 +3,13 @@ import "cypress-localstorage-commands";
 
 var hp = require("./helper");
 
+// // uncomment for stopping uncaught:exception fail
+// Cypress.on("uncaught:exception", (err, runnable) => {
+//     // returning false here prevents Cypress from
+//     // failing the test
+//     return false;
+// });
+
 /**
  * Checks a queue object for valid timestamp, hour and dow values
  * @param {Object} testObject - object to be checked
@@ -97,12 +104,28 @@ Cypress.Commands.add("check_view_event", (queue, name, duration) => {
         expect(queue.segmentation.visit).to.equal(1);
         expect(queue.segmentation.view).to.be.ok;
         expect(queue.segmentation.domain).to.be.ok;
-        expect(queue.segmentation.start).to.be.ok;
+        // expect(queue.segmentation.start).to.be.ok; // TODO: this is only for manual tracking?
     }
     else {
         expect(queue.dur).to.be.within(duration, duration + 1);
     }
     expect(queue.segmentation.name).to.equal(name);
+    cy.check_commons(queue);
+});
+
+// TODO: make scroll tests better
+/**
+ * Checks a queue object for valid/correct scroll event values 
+ * @param {Object} queue - queue object to check
+ */
+Cypress.Commands.add("check_scroll_event", (queue) => {
+    expect(queue.key).to.equal("[CLY]_action");
+    expect(queue.segmentation.domain).to.be.ok;
+    expect(queue.segmentation.height).to.be.ok;
+    expect(queue.segmentation.type).to.equal("scroll");
+    expect(queue.segmentation.view).to.be.ok;
+    expect(queue.segmentation.width).to.be.ok;
+    expect(queue.segmentation.y).to.be.ok;
     cy.check_commons(queue);
 });
 

@@ -1,0 +1,72 @@
+<html>
+<head>
+  <script type='text/javascript' src='../../lib/countly.js'></script>
+  <script type='text/javascript'>
+    // here we implement a cookie and localStorage clearing logic
+const deleteAllCookies = () => {
+const cookies = document.cookie.split(";");
+for (const cookie of cookies) {
+    const eqPos = cookie.indexOf("=");
+    const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+  }
+}
+window.localStorage.clear();
+deleteAllCookies();
+console.error("cleared the storage");
+  Countly.init({
+    app_key: "YOUR_APP_KEY",
+    url: "https://try.count.ly",
+    debug:true,
+    test_mode: true
+  })
+  Countly.track_sessions();
+  Countly.track_pageview();
+  Countly.track_scrolls();
+  </script>
+</head>
+<body>
+  <script type='text/javascript'>
+  function view1(){
+    Countly.track_pageview("v1");
+    console.log("scroll test, v1 triggered");
+  }
+  function view2(){
+    Countly.track_pageview("v2");
+    console.log("scroll test, v2 triggered");
+  }
+  </script>
+<input type="button" id="b1" onclick="view1()" >
+<input type="button" id="b2" onclick="view2()" >
+<h1>page3</h1>
+<h2>text</h2>
+<h3>text</h3>
+<h4>text</h4>
+<h5>text</h5>
+<h6>text</h6>
+<h1>text</h1>
+<h2>text</h2>
+<h3>text</h3>
+<h4>text</h4>
+<h5>text</h5>
+<h6>text</h6>
+<h1>text</h1>
+<h2>text</h2>
+<h3>text</h3>
+<h4>text</h4>
+<h5>text</h5>
+<h6>text</h6>
+<h1>text</h1>
+<h2>text</h2>
+<h3>text</h3>
+<h4>text</h4>
+<h5>text</h5>
+<h6>text</h6>
+<h1>text</h1>
+<h2>text</h2>
+<h3>text</h3>
+<h4>text</h4>
+<h5>text</h5>
+<h6>text</h6>    
+</body>
+</html>
