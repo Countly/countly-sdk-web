@@ -8,8 +8,8 @@ echo "$GITHUB_BRANCH"
 echo "$GITHUB_HEAD_REF"
 echo "$GITHUB_REF"
 echo "$GITHUB_REPOSITORY"
-
-if [ -z "$GITHUB_HEAD_REF" ] && [ "$GITHUB_REPOSITORY" == "Countly/countly-sdk-web" ] && [ "$GITHUB_BRANCH" == "master" ]; then
+# // TODO: if check here needs to be fortified?
+if [ "$GITHUB_REPOSITORY" == "Countly/countly-sdk-web" ]; then
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -37,7 +37,8 @@ git config user.email "actions@github.com"
 # stayed the same and will only update the changed files. So the gh-pages branch
 # can be safely cleaned, and it is sure that everything pushed later is the new
 # documentation.
-rm -rf *
+# rm -rf * 
+#TODO: D wussed out but might be brought back
 
 # Need to create a .nojekyll file to allow filenames starting with an underscore
 # to be seen on the gh-pages site. Therefore creating an empty .nojekyll file.
@@ -46,8 +47,8 @@ echo "" > .nojekyll
 ################################################################################
 ##### Generate JSDOC documents.          #####
 echo 'Generating JSDoc code documentation...'
-$DIR/node_modules/.bin/jsdoc $DIR/lib/countly.js $DIR/plugins $DIR/README.md -c  $DIR/jsdoc_conf.json -d  $DIR/code_docs/repo ;
-
+$DIR/node_modules/.bin/jsdoc $DIR/lib/countly.js $DIR/README.md -c  $DIR/jsdoc_conf.json -d  $DIR/code_docs/repo ;
+#TODO: erased plugins from here but might be back
 ################################################################################
 ##### Upload the documentation to the gh-pages branch of the repository.   #####
 # Only upload if JSDoc successfully created the documentation.

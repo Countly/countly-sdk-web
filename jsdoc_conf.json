@@ -7,9 +7,11 @@
         "includePattern": ".+\\.js$",
         "excludePattern": "(node_modules/|docs)"
     },
-    "plugins": [],
+    "plugins": ["plugins/markdown"],
     "markdown":{
-        "idInHeadings": true
+        "idInHeadings": true,
+        "parser": "evilstreak",
+        "dialect": "Maruku"
     },
     "opts": {
         "template": "node_modules/docdash",
