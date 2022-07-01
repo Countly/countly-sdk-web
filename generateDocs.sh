@@ -46,7 +46,7 @@ echo "" > .nojekyll
 ################################################################################
 ##### Generate JSDOC documents.          #####
 echo 'Generating JSDoc code documentation...'
-$DIR/node_modules/.bin/jsdoc $DIR/lib/countly.js $DIR/plugins $DIR/README.md -c  $DIR/jsdoc_conf.json -d  $DIR/code_docs/repo ;
+$DIR/node_modules/.bin/jsdoc $DIR/lib/countly.js $DIR/README.md -c  $DIR/jsdoc_conf.json -d  $DIR/code_docs/repo ;
 
 ################################################################################
 ##### Upload the documentation to the gh-pages branch of the repository.   #####
