@@ -233,7 +233,7 @@
     */
     Countly.onload = Countly.onload || [];
 
-    var SDK_VERSION = "22.02.3";
+    var SDK_VERSION = "22.02.2";
     var SDK_NAME = "javascript_native_web";
 
     var urlParseRE = /^(((([^:\/#\?]+:)?(?:(\/\/)((?:(([^:@\/#\?]+)(?:\:([^:@\/#\?]+))?)@)?(([^:\/#\?\]\[]+|\[[^\/\]@#?]+\])(?:\:([0-9]+))?))?)?)?((\/?(?:[^\/\?#]+\/+)*)([^\?#]*)))?(\?[^#]+)?)(#.*)?/;
@@ -4357,8 +4357,26 @@
      *  @returns {string} currentUserAgentString - raw user agent string
      */
     function currentUserAgentString(uaOverride) {
+        if (uaOverride) {
+            return uaOverride;
+        }
+
+        var ua_raw = navigator.userAgent;
+        // check if userAgentData is supported and userAgent is not available, use it
+        if (!ua_raw) {
+            if (navigator.userAgentData) {
+                // turn brands array into string
+                ua_raw = navigator.userAgentData.brands.map(function(e) {
+                    return e.brand + ":" + e.version;
+                }).join();
+                // add mobile info
+                ua_raw += (navigator.userAgentData.mobile ? " mobi " : " ");
+                // add platform info
+                ua_raw += navigator.userAgentData.platform;
+            }
+        }
         // RAW USER AGENT STRING
-        return uaOverride || navigator.userAgent;
+        return ua_raw;
     }
 
     /**
@@ -4368,14 +4386,27 @@
      *  @returns {string} userAgentDeviceDetection - current device type (desktop, tablet, phone)
      */
     function userAgentDeviceDetection(uaOverride) {
-        var userAgent = uaOverride || currentUserAgentString();
+        var userAgent;
+        // TODO: refactor here
+        if (uaOverride) {
+            userAgent = uaOverride;
+        }
+        else if (navigator.userAgentData.mobile) {
+            return "phone";
+        }
+        else {
+            userAgent = currentUserAgentString();
+        }
         // make it lowercase for regex to work properly
         userAgent = userAgent.toLowerCase();
+
         // assign the default device
         var device = "desktop";
+
         // regexps corresponding to tablets or phones that can be found in userAgent string
         var tabletCheck = /(ipad|tablet|(android(?!.*mobile))|(windows(?!.*phone)(.*touch))|kindle|playbook|silk|(puffin(?!.*(IP|AP|WP))))/;
         var phoneCheck = /(mobi|ipod|phone|blackberry|opera mini|fennec|minimo|symbian|psp|nintendo ds|archos|skyfire|puffin|blazer|bolt|gobrowser|iris|maemo|semc|teashark|uzard)/;
+
         // check whether the regexp values corresponds to something in the user agent string
         if (tabletCheck.test(userAgent)) {
             device = "tablet";
@@ -4383,6 +4414,7 @@
         else if (phoneCheck.test(userAgent)) {
             device = "phone";
         }
+
         // set the device type
         return device;
     }
