@@ -5,16 +5,34 @@ updates:
   schedule:
     interval: daily
   open-pull-requests-limit: 10
+  reviewers:
+  - turtledreams
+  assignees:
+  - turtledreams
+  labels:
+  - dependencies
   versioning-strategy: increase-if-necessary
-  ignore:
-  - dependency-name: webpack
-    versions:
-    - 5.18.0
-    - 5.19.0
-    - 5.20.0
-    - 5.20.1
-    - 5.20.2
-    - 5.21.2
-    - 5.22.0
-    - 5.23.0
-    - 5.24.0
+- package-ecosystem: npm
+  directory: "/examples/symbolication/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  reviewers:
+  - turtledreams
+  assignees:
+  - turtledreams
+  labels:
+  - dependencies
+  versioning-strategy: increase-if-necessary
+- package-ecosystem: npm
+  directory: "/examples/react/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  reviewers:
+  - turtledreams
+  assignees:
+  - turtledreams
+  labels:
+  - dependencies
+  versioning-strategy: increase-if-necessary
