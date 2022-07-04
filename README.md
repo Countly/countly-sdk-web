@@ -30,7 +30,7 @@ or
 
 Countly web SDK is available on CDNJS. Use either
 
-[https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/22.02.3/countly.min.js](https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/22.02.3/countly.min.js)
+[https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/22.02.4/countly.min.js](https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/22.02.4/countly.min.js)
 
 or
 

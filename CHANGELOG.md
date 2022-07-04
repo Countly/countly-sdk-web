@@ -1,3 +1,5 @@
+## 22.02.4
+- Fixed logs that did not obey to the 'debug' flag
 ## 22.02.3
 - Added support for userAgentData
 - Now heatmap scroll event is recorded when leaving a view
