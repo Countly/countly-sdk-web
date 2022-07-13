@@ -33,15 +33,21 @@
  * * `sv`: Boomerang Loader Snippet version
  * * `sm`: Boomerang Loader Snippet method
  * * `u`: The page's URL (for most beacons), or the `XMLHttpRequest` URL
+ * * `n`: The beacon number
  * * `pgu`: The page's URL (for `XMLHttpRequest` beacons)
  * * `pid`: Page ID (8 characters)
  * * `r`: Navigation referrer (from `document.location`)
  * * `vis.pre`: `1` if the page transitioned from prerender to visible
+ * * `vis.st`: Document's visibility state when beacon was sent
+ * * `vis.lh`: Timestamp when page was last hidden
+ * * `vis.lv`: Timestamp when page was last visible
  * * `xhr.pg`: The `XMLHttpRequest` page group
  * * `errors`: Error messages of errors detected in Boomerang code, separated by a newline
  * * `rt.si`: Session ID
  * * `rt.ss`: Session start timestamp
  * * `rt.sl`: Session length (number of pages), can be increased by XHR beacons as well
+ * * `ua.plt`: `navigator.platform`
+ * * `ua.vnd`: `navigator.vendor`
  */
 
 /**
@@ -58,10 +64,14 @@
  */
 
 
+
 /**
  * @global
  * @type {TimeStamp}
  * @desc
+ * This variable is added to the global scope (`window`) until Boomerang loads,
+ * at which point it is removed.
+ *
  * Timestamp the boomerang.js script started executing.
  *
  * This has to be global so that we don't wait for this entire
@@ -75,6 +85,8 @@ BOOMR_start = new Date().getTime();
  * @function
  * @global
  * @desc
+ * This function is added to the global scope (`window`).
+ *
  * Check the value of `document.domain` and fix it if incorrect.
  *
  * This function is run at the top of boomerang, and then whenever
@@ -92,6 +104,7 @@ BOOMR_start = new Date().getTime();
 function BOOMR_check_doc_domain(domain) {
 	/*eslint no-unused-vars:0*/
 	var test;
+
 
 
 	if (!window) {
@@ -333,8 +346,8 @@ BOOMR_check_doc_domain();
 
 	// visibilitychange is useful to detect if the page loaded through prerender
 	// or if the page never became visible
-	// http://www.w3.org/TR/2011/WD-page-visibility-20110602/
-	// http://www.nczonline.net/blog/2011/08/09/introduction-to-the-page-visibility-api/
+	// https://www.w3.org/TR/2011/WD-page-visibility-20110602/
+	// https://www.nczonline.net/blog/2011/08/09/introduction-to-the-page-visibility-api/
 	// https://developer.mozilla.org/en-US/docs/Web/Guide/User_experience/Using_the_Page_Visibility_API
 
 	// Set the name of the hidden property and the change event for visibility
@@ -418,6 +431,15 @@ BOOMR_check_doc_domain();
 		// handlers_attached: false,
 
 		// waiting_for_config: false,
+
+		// All Boomerang cookies will be created with SameSite=Lax by default
+		same_site_cookie: "Lax",
+
+		// All Boomerang cookies will be without Secure attribute by default
+		secure_cookie: false,
+
+		// Sometimes we would like to be able to set the SameSite=None from a Boomerang plugin
+		forced_same_site_cookie_none: false,
 
 		events: {
 			/**
@@ -853,6 +875,7 @@ BOOMR_check_doc_domain();
 			e_name = e_name.toLowerCase();
 
 
+
 			// translate old names
 			if (this.translate_events[e_name]) {
 				e_name = this.translate_events[e_name];
@@ -895,6 +918,7 @@ BOOMR_check_doc_domain();
 					i--;
 				}
 			}
+
 
 
 			return;// true;
@@ -1079,7 +1103,7 @@ BOOMR_check_doc_domain();
 			/**
 			 * Maximum GET URL length.
 			 * Using 2000 here as a de facto maximum URL length based on:
- 			 * http://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url-in-different-browsers
+ 			 * https://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url-in-different-browsers
 			 *
 			 * @type {number}
 			 *
@@ -1248,6 +1272,7 @@ BOOMR_check_doc_domain();
 				}
 
 
+
 				if (typeof BOOMR.cookies[name] !== "undefined") {
 					// a cached value of false indicates that the value doesn't exist, if so,
 					// return undefined per the API
@@ -1282,6 +1307,7 @@ BOOMR_check_doc_domain();
 				if (!name) {
 					return null;
 				}
+
 
 
 				name = " " + name + "=";
@@ -1322,6 +1348,7 @@ BOOMR_check_doc_domain();
 				}
 
 
+
 				value = this.objectToString(subcookies, "&");
 
 				if (value === BOOMR.cookies[name]) {
@@ -1339,6 +1366,21 @@ BOOMR_check_doc_domain();
 						exp = exp.toGMTString();
 						c.push("expires=" + exp);
 					}
+
+					var extraAttributes = this.getSameSiteAttributeParts();
+
+					/**
+					 * 1. We check if the Secure attribute wasn't added already because SameSite=None will force adding it.
+					 * 2. We check the current protocol because if we are on HTTP and we try to create a secure cookie with
+					 *    SameSite=Strict then a cookie will be created with SameSite=Lax.
+					 */
+					if (location.protocol === "https:" && impl.secure_cookie === true && extraAttributes.indexOf("Secure") === -1) {
+						extraAttributes.push("Secure");
+					}
+
+					// add extra attributes
+					c = c.concat(extraAttributes);
+
 
 
 					// set the cookie
@@ -1441,6 +1483,73 @@ BOOMR_check_doc_domain();
 			},
 
 			/**
+			 * Depending on Boomerang configuration and checks of current protocol and
+			 * compatible browsers the logic below will provide an array of cookie
+			 * attributes that are needed for a successful creation of a cookie that
+			 * contains the SameSite attribute.
+			 *
+			 * How it works:
+			 * 1. We read the Boomerang configuration key `same_site_cookie` where
+			 *    one of the following values `None`, `Lax` or `Strict` is expected.
+			 * 2. A configuration value of `same_site_cookie` will be read in case-insensitive
+			 *    manner. E.g. `Lax`, `lax` and `lAx` will produce same result - `SameSite=Lax`.
+			 * 3. If a `same_site_cookie` configuration value is not specified a cookie
+			 *    will be created with `SameSite=Lax`.
+			 * 4. If a `same_site_cookie` configuration value does't match any of
+			 *    `None`, `Lax` or `Strict` then a cookie will be created with `SameSite=Lax`.
+			 * 5. The `Secure` cookie attribute will be added when a cookie is created
+			 *    with `SameSite=None`.
+			 * 6. It's possible that a Boomerang plugin or external code may need cookies
+			 *    to be created with `SameSite=None`. In such cases we check a special
+			 *    flag `forced_same_site_cookie_none`. If the value of this flag is equal to `true`
+			 *    then the `same_site_cookie` value will be ignored and Boomerang cookies
+			 *    will be created with `SameSite=None`.
+			 *
+			 * SameSite=None - INCOMPATIBILITIES and EXCEPTIONS:
+			 *
+			 * There are known problems with older browsers where cookies created
+			 * with `SameSite=None` are `dropped` or created with `SameSite=Strict`.
+			 * Reference: https://www.chromium.org/updates/same-site/incompatible-clients
+			 *
+			 * 1. If we detect a browser that can't create safely a cookie with `SameSite=None`
+			 *    then Boomerang will create a cookie without the `SameSite` attribute.
+			 * 2. A cookie with `SameSite=None` can be created only over `HTTPS` connection.
+			 *    If current connection is `HTTP` then a cookie will be created
+			 *    without the `SameSite` attribute.
+			 *
+			 *
+			 * @returns {Array} of cookie attributes used for setting a cookie with SameSite attribute
+			 *
+			 * @memberof BOOMR.utils
+			 */
+			getSameSiteAttributeParts: function() {
+				var sameSiteMode = impl.same_site_cookie.toUpperCase();
+
+				if (impl.forced_same_site_cookie_none) {
+					sameSiteMode = "NONE";
+				}
+
+				if (sameSiteMode === "LAX") {
+					return ["SameSite=Lax"];
+				}
+
+				if (sameSiteMode === "NONE") {
+					if (location.protocol === "https:" && this.isCurrentUASameSiteNoneCompatible()) {
+						return ["SameSite=None", "Secure"];
+					}
+
+					// Fallback to browser's default
+					return [];
+				}
+
+				if (sameSiteMode === "STRICT") {
+					return ["SameSite=Strict"];
+				}
+
+				return ["SameSite=Lax"];
+			},
+
+			/**
 			 * Retrieve items from localStorage
 			 *
 			 * @param {string} name Name of storage
@@ -1456,6 +1565,7 @@ BOOMR_check_doc_domain();
 				if (!name || !impl.localStorageSupported) {
 					return null;
 				}
+
 
 
 				try {
@@ -1505,6 +1615,7 @@ BOOMR_check_doc_domain();
 				if (!name || !impl.localStorageSupported || typeof items !== "object") {
 					return false;
 				}
+
 
 
 				data = {"items": items};
@@ -1789,12 +1900,14 @@ BOOMR_check_doc_domain();
 				var MO, zs, o = {observer: null, timer: null};
 
 
+
 				if (!this.isMutationObserverSupported() || !callback || !el) {
 					return null;
 				}
 
 				function done(mutations) {
 					var run_again = false;
+
 
 
 					if (o.timer) {
@@ -1846,16 +1959,20 @@ BOOMR_check_doc_domain();
 			 * @param {DOMElement} el DOM element
 			 * @param {string} type Event name
 			 * @param {function} fn Callback function
-			 * @param {boolean} passive Passive mode
+			 * @param {boolean|object} passiveOrOpts Passive mode or Options object
 			 *
 			 * @memberof BOOMR.utils
 			 */
-			addListener: function(el, type, fn, passive) {
+			addListener: function(el, type, fn, passiveOrOpts) {
 				var opts = false;
 
 
+
 				if (el.addEventListener) {
-					if (passive && BOOMR.browser.supportsPassive()) {
+					if (typeof passiveOrOpts === "object") {
+						opts = passiveOrOpts;
+					}
+					else if (typeof passiveOrOpts === "boolean" && passiveOrOpts && BOOMR.browser.supportsPassive()) {
 						opts = {
 							capture: false,
 							passive: true
@@ -1886,6 +2003,7 @@ BOOMR_check_doc_domain();
 			 */
 			removeListener: function(el, type, fn) {
 				var i;
+
 
 
 				if (el.removeEventListener) {
@@ -1983,7 +2101,29 @@ BOOMR_check_doc_domain();
 					if (params[i]) {
 						kv = params[i].split("=");
 						if (kv.length && kv[0] === param) {
-							return kv.length > 1 ? decodeURIComponent(kv.splice(1).join("=").replace(/\+/g, " ")) : "";
+							try {
+								return kv.length > 1 ? decodeURIComponent(kv.splice(1).join("=").replace(/\+/g, " ")) : "";
+							}
+							catch (e) {
+								/**
+								 * We have different messages for the same error in different browsers but
+								 * we can look at the error name because it looks more consistent.
+								 *
+								 * Examples:
+								 *  - URIError: The URI to be encoded contains invalid character (Edge)
+								 *  - URIError: malformed URI sequence (Firefox)
+								 *  - URIError: URI malformed (Chrome)
+								 *  - URIError: URI error (Safari 13.0) / Missing on MDN but this is the result of my local tests.
+								 *
+								 * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Malformed_URI#Message
+								 */
+								if (e && typeof e.name === "string" && e.name.indexOf("URIError") !== -1) {
+									// NOP
+								}
+								else {
+									throw e;
+								}
+							}
 						}
 					}
 				}
@@ -2040,9 +2180,11 @@ BOOMR_check_doc_domain();
 				if (BOOMR.utils.Compression && BOOMR.utils.Compression.jsUrl) {
 					return BOOMR.utils.Compression.jsUrl(value);
 				}
+
 				if (window.JSON) {
 					return JSON.stringify(value);
 				}
+
 				// not supported
 				
 				return "";
@@ -2282,7 +2424,111 @@ BOOMR_check_doc_domain();
 				var hash = (hval >>> 0).toString() + string.length;
 
 				return parseInt(hash).toString(36);
+			},
+
+			/**
+			 * Wrapper of isUASameSiteNoneCompatible() that ensures that we pass correct User Agent string
+			 *
+			 * @returns {boolean} True if a browser can safely create SameSite=None cookie
+			 *
+			 * @memberof BOOMR.utils
+			 */
+			isCurrentUASameSiteNoneCompatible: function() {
+				if (w && w.navigator && w.navigator.userAgent && typeof w.navigator.userAgent === "string") {
+					return this.isUASameSiteNoneCompatible(w.navigator.userAgent);
+				}
+
+				return true;
+			},
+
+			/**
+			 * @param {string} uaString User agent string
+			 *
+			 * @returns {boolean} True if a browser can safely create SameSite=None cookie
+			 *
+			 * @memberof BOOMR.utils
+			 */
+			isUASameSiteNoneCompatible: function(uaString) {
+				/**
+				 * 1. UCBrowser lower than 12.13.2
+				 */
+				var result = uaString.match(/(UCBrowser)\/(\d+\.\d+)\.(\d+)/);
+
+				if (result) {
+					var ucMajorMinorPart = parseFloat(result[2]);
+					var ucPatch = result[3];
+
+					if (ucMajorMinorPart === 12.13) {
+						if (ucPatch <= 2) {
+							return false;
+						}
+
+						return true;
+					}
+
+					if (ucMajorMinorPart < 12.13) {
+						return false;
+					}
+
+					return true;
+				}
+
+				/**
+				 * 2. Chrome and Chromium version between 51 and 66
+				 *
+				 * This the regex covers both because a Chromium AU contains "Chromium/65.0.3325.181 Chrome/65.0.3325.181"
+				 */
+				result = uaString.match(/(Chrome)\/(\d+)\.(\d+)\.(\d+)\.(\d+)/);
+
+				if (result) {
+					var chromeMajor = result[2];
+					if (chromeMajor >= 51 && chromeMajor <= 66) {
+						return false;
+					}
+
+					return true;
+				}
+
+				/**
+				 * 3. Mac OS 10.14.* check
+				 */
+				result = uaString.match(/(Macintosh;.*Mac OS X 10_14[_\d]*.*) AppleWebKit\//);
+
+				if (result) {
+					// 3.2 Safari check
+					result = uaString.match(/Version\/.* Safari\//);
+
+					if (result) {
+						// 3.2.1 Not Chrome based check
+						result = uaString.match(/Chrom(?:e|ium)/);
+
+						if (result === null) {
+							return false;
+						}
+					}
+
+					// 3.3 Mac OS embeded browser
+					result = uaString.match(/^Mozilla\/\d+(?:\.\d+)* \(Macintosh;.*Mac OS X \d+(?:_\d+)*\) AppleWebKit\/\d+(?:\.\d+)* \(KHTML, like Gecko\)$/);
+
+					if (result) {
+						return false;
+					}
+
+					return true;
+				}
+
+				/**
+				 * 4. iOS and iPad OS 12 for all browsers
+				 */
+				result = uaString.match(/(iP.+; CPU .*OS 12(?:_\d+)*.*)/);
+
+				if (result) {
+					return false;
+				}
+
+				return true;
 			}
+
 
 
 		}, // closes `utils`
@@ -2357,6 +2603,8 @@ BOOMR_check_doc_domain();
 		 * whether it should re-measure the user's bandwidth or just use the
 		 * value stored in the cookie. You may use IPv4, IPv6 or anything else
 		 * that you think can be used to identify the user's network connection.
+		 * @param {string} [config.same_site_cookie] Used for creating cookies with `SameSite` with one of the following values: `None`, `Lax` or `Strict`.
+		 * @param {boolean} [config.secure_cookie] When `true` all cookies will be created with `Secure` flag.
 		 * @param {function} [config.log] Logger to use. Set to `null` to disable logging.
 		 * @param {function} [<plugins>] Each plugin has its own section
 		 *
@@ -2377,8 +2625,11 @@ BOOMR_check_doc_domain();
 				    "beacon_type",
 				    "site_domain",
 				    "strip_query_string",
-				    "user_ip"
+				    "user_ip",
+				    "same_site_cookie",
+				    "secure_cookie"
 			    ];
+
 
 
 			BOOMR_check_doc_domain();
@@ -2427,6 +2678,7 @@ BOOMR_check_doc_domain();
 			}
 
 
+
 			for (k in this.plugins) {
 				if (this.plugins.hasOwnProperty(k)) {
 					// config[plugin].enabled has been set to false
@@ -2464,7 +2716,9 @@ BOOMR_check_doc_domain();
 					if (typeof this.plugins[k].init === "function") {
 						try {
 
+
 							this.plugins[k].init(config);
+
 
 						}
 						catch (err) {
@@ -2473,6 +2727,7 @@ BOOMR_check_doc_domain();
 					}
 				}
 			}
+
 
 
 			for (i = 0; i < properties.length; i++) {
@@ -2497,6 +2752,7 @@ BOOMR_check_doc_domain();
 
 			// only attach handlers once
 			if (impl.handlers_attached) {
+
 
 				return this;
 			}
@@ -2579,6 +2835,7 @@ BOOMR_check_doc_domain();
 			}());
 
 			impl.handlers_attached = true;
+
 
 
 			return this;
@@ -2762,6 +3019,7 @@ BOOMR_check_doc_domain();
 			var cb, cstack;
 
 
+
 			cb = function() {
 				fn.call(cb_scope || null, data, cb_data || {}, cstack);
 				cb = null;
@@ -2821,6 +3079,18 @@ BOOMR_check_doc_domain();
 			catch (ignore) {
 				// empty
 			}
+		},
+
+		/**
+		 * Allows us to force SameSite=None from a Boomerang plugin or a third party code.
+		 *
+		 * When this function is called then Boomerang won't honor "same_site_cookie"
+		 * configuration key and won't attempt to return the default value of SameSite=Lax .
+		 *
+		 * @memberof BOOMR
+		 */
+		forceSameSiteCookieNone: function() {
+			impl.forced_same_site_cookie_none = true;
 		},
 
 		/**
@@ -2951,6 +3221,7 @@ BOOMR_check_doc_domain();
 			e_name = e_name.toLowerCase();
 
 
+
 			// translate old names
 			if (impl.translate_events[e_name]) {
 				e_name = impl.translate_events[e_name];
@@ -3011,7 +3282,7 @@ BOOMR_check_doc_domain();
 
 					if (e_name === "page_unload") {
 						// pagehide is for iOS devices
-						// see http://www.webkit.org/blog/516/webkit-page-cache-ii-the-unload-event/
+						// see https://www.webkit.org/blog/516/webkit-page-cache-ii-the-unload-event/
 						if (w.onpagehide || w.onpagehide === null) {
 							BOOMR.utils.addListener(w, "pagehide", unload_handler);
 						}
@@ -3041,6 +3312,7 @@ BOOMR_check_doc_domain();
 		 */
 		addError: function BOOMR_addError(err, src, extra) {
 			var str, E = BOOMR.plugins.Errors;
+
 
 
 			BOOMR.error("Boomerang caught error: " + err + ", src: " + src + ", extra: " + extra);
@@ -3144,6 +3416,7 @@ BOOMR_check_doc_domain();
 		 * @memberof BOOMR
 		 */
 		 addVar: function(name, value, singleBeacon) {
+
 
 			if (typeof name === "string") {
 				impl.vars[name] = value;
@@ -3572,11 +3845,12 @@ BOOMR_check_doc_domain();
 		 * @memberof BOOMR
 		 */
 		real_sendBeacon: function() {
-			var k, form, url, errors = [], params = [], paramsJoined, varsSent = {}, _if;
+			var k, form, url, errors = [], params = [], paramsJoined, varsSent = {};
 
 			if (!impl.beaconQueued) {
 				return false;
 			}
+
 
 
 			impl.beaconQueued = false;
@@ -3593,6 +3867,10 @@ BOOMR_check_doc_domain();
 					}
 					if (!this.plugins[k].is_complete(impl.vars)) {
 						
+						// if an Early beacon is blocked, then we'll cancel it.
+						// By removing the `early` param, the beacon params will be merged
+						// with the following load beacon.
+						delete impl.vars.early;
 						return false;
 					}
 				}
@@ -3646,7 +3924,14 @@ BOOMR_check_doc_domain();
 			if (BOOMR.session.enabled) {
 				impl.vars["rt.si"] = BOOMR.session.ID + "-" + Math.round(BOOMR.session.start / 1000).toString(36);
 				impl.vars["rt.ss"] = BOOMR.session.start;
-				impl.vars["rt.sl"] = BOOMR.session.length;
+
+				if (typeof impl.vars.early === "undefined") {
+					// make sure Session Length is always at least 1 for non-Early beacons
+					impl.vars["rt.sl"] = BOOMR.session.length >= 1 ? BOOMR.session.length : 1;
+				}
+				else {
+					impl.vars["rt.sl"] = BOOMR.session.length;
+				}
 			}
 			else {
 				BOOMR.removeVar("rt.si", "rt.ss", "rt.sl");
@@ -3673,8 +3958,7 @@ BOOMR_check_doc_domain();
 			impl.vars.n = ++this.beaconsSent;
 
 			if (w !== window) {
-				_if = "if";  // work around uglifyJS minification that breaks in IE8 and quirks mode
-				impl.vars[_if] = "";
+				impl.vars["if"] = "";
 			}
 
 			for (k in impl.errors) {
@@ -3741,16 +4025,8 @@ BOOMR_check_doc_domain();
 			BOOMR.sendBeaconData(varsSent);
 
 
-			return true;
-		},
 
-		/**
-		 * Determines whether or not a Page Load beacon has been sent.
-		 *
-		 * @returns {boolean} True if a Page Load beacon has been sent.
-		 */
-		hasSentPageLoadBeacon: function() {
-			return impl.hasSentPageLoadBeacon;
+			return true;
 		},
 
 		/**
@@ -4025,6 +4301,7 @@ BOOMR_check_doc_domain();
 			}
 		}
 
+
 	};
 
 	// if not already set already on BOOMR, determine the URL
@@ -4045,6 +4322,9 @@ BOOMR_check_doc_domain();
 	 * @type {TimeStamp}
 	 * @name BOOMR_lstart
 	 * @desc
+	 * This variable is added to the global scope (`window`) until Boomerang loads,
+	 * at which point it is removed.
+	 *
 	 * Time the loader script started fetching boomerang.js (if the asynchronous
 	 * loader snippet is used).
 	 */
@@ -4064,6 +4344,8 @@ BOOMR_check_doc_domain();
 	}
 
 	/**
+	 * This variable is added to the global scope (`window`).
+	 *
 	 * Time the `window.onload` event fired (if using the asynchronous loader snippet).
 	 *
 	 * This timestamp is logged in the case boomerang.js loads after the onload event
@@ -4224,6 +4506,7 @@ BOOMR_check_doc_domain();
 	}());
 
 
+
 	dispatchEvent("onBoomerangLoaded", { "BOOMR": BOOMR }, true);
 
 }(window));
@@ -4231,1029 +4514,11 @@ BOOMR_check_doc_domain();
 
 // end of boomerang beaconing section
 
-// Adding Resource timing decompression module
-//
-// resourcetiming-decompression.js
-//
-// Decompresses ResourceTiming data compressed via resourcetiming-compression.js.
-//
-// See http://nicj.net/compressing-resourcetiming/
-//
-// https://github.com/nicjansma/resourcetiming-compression.js
-//
-(function(window) {
-    "use strict";
-
-    // save old ResourceTimingDecompression object for noConflict()
-    var root;
-    var previousObj;
-    if (typeof window !== "undefined") {
-        root = window;
-        previousObj = root.ResourceTimingDecompression;
-    }
-
-    // model
-    var ResourceTimingDecompression = {};
-
-    //
-    // Constants / Config
-    //
-
-    /**
-     * Are hostnames in the compressed trie reversed or not
-     */
-    ResourceTimingDecompression.HOSTNAMES_REVERSED = true;
-
-    /**
-     * Initiator type map
-     */
-    ResourceTimingDecompression.INITIATOR_TYPES = {
-        /** Unknown type */
-        "other": 0,
-        /** IMG element */
-        "img": 1,
-        /** LINK element (i.e. CSS) */
-        "link": 2,
-        /** SCRIPT element */
-        "script": 3,
-        /** Resource referenced in CSS */
-        "css": 4,
-        /** XMLHttpRequest */
-        "xmlhttprequest": 5,
-        /** The root HTML page itself */
-        "html": 6,
-        /** IMAGE element inside a SVG */
-        "image": 7,
-        /** [sendBeacon]{@link https://developer.mozilla.org/en-US/docs/Web/API/Navigator/sendBeacon} */
-        "beacon": 8,
-        /** [Fetch API]{@link https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API} */
-        "fetch": 9,
-        /** An IFRAME */
-        "iframe": "a",
-        /** IE11 and Edge (some versions) send "subdocument" instead of "iframe" */
-        "subdocument": "a",
-        /** BODY element */
-        "body": "b",
-        /** INPUT element */
-        "input": "c",
-        /** FRAME element */
-        "frame": "a",
-        /** OBJECT element */
-        "object": "d",
-        /** VIDEO element */
-        "video": "e",
-        /** AUDIO element */
-        "audio": "f",
-        /** SOURCE element */
-        "source": "g",
-        /** TRACK element */
-        "track": "h",
-        /** EMBED element */
-        "embed": "i",
-        /** EventSource */
-        "eventsource": "j",
-        /** The root HTML page itself */
-        "navigation": 6
-    };
-
-    /**
-    * Dimension name map
-    */
-    ResourceTimingDecompression.DIMENSION_NAMES = {
-        "height": 0,
-        "width": 1,
-        "y": 2,
-        "x": 3,
-        "naturalHeight": 4,
-        "naturalWidth": 5
-    };
-
-    /**
-     * Script mask map
-     */
-    ResourceTimingDecompression.SCRIPT_ATTRIBUTES = {
-        "scriptAsync": 0x1,
-        "scriptDefer": 0x2,
-        "scriptBody": 0x4
-    };
-
-    /**
-     * These are the only `rel` types that might be reference-able from
-     * ResourceTiming.
-     *
-     * https://html.spec.whatwg.org/multipage/links.html#linkTypes
-     *
-     * @enum {number}
-     */
-    ResourceTimingDecompression.REL_TYPES = {
-        "prefetch": 1,
-        "preload": 2,
-        "prerender": 3,
-        "stylesheet": 4
-    };
-
-    /**
-     * Returns a map with key/value pairs reversed.
-     *
-     * @param {object} origMap Map we want to reverse.
-     *
-     * @returns {object} New map with reversed mappings.
-     */
-    ResourceTimingDecompression.getRevMap = function(origMap) {
-        var revMap = {};
-        for (var key in origMap) {
-            if (origMap.hasOwnProperty(key)) {
-                revMap[origMap[key]] = key;
-            }
-        }
-        return revMap;
-    };
-
-    /**
-     * Reverse initiator type map
-     */
-    ResourceTimingDecompression.REV_INITIATOR_TYPES = ResourceTimingDecompression.
-        getRevMap(ResourceTimingDecompression.INITIATOR_TYPES);
-
-    /**
-     * Reverse dimension name map
-     */
-    ResourceTimingDecompression.REV_DIMENSION_NAMES = ResourceTimingDecompression.
-        getRevMap(ResourceTimingDecompression.DIMENSION_NAMES);
-
-    /**
-     * Reverse script attribute map
-     */
-    ResourceTimingDecompression.REV_SCRIPT_ATTRIBUTES = ResourceTimingDecompression.
-        getRevMap(ResourceTimingDecompression.SCRIPT_ATTRIBUTES);
-
-    /**
-     * Reverse link rel attribute map
-     */
-    ResourceTimingDecompression.REV_REL_TYPES = ResourceTimingDecompression.
-        getRevMap(ResourceTimingDecompression.REL_TYPES);
-
-    // Any ResourceTiming data time that starts with this character is not a time,
-    // but something else (like dimension data)
-    ResourceTimingDecompression.SPECIAL_DATA_PREFIX = "*";
-
-    // Dimension data special type
-    ResourceTimingDecompression.SPECIAL_DATA_DIMENSION_TYPE = "0";
-    ResourceTimingDecompression.SPECIAL_DATA_DIMENSION_PREFIX = ResourceTimingDecompression.SPECIAL_DATA_PREFIX +
-        ResourceTimingDecompression.SPECIAL_DATA_DIMENSION_TYPE;
-
-    // Dimension data special type
-    ResourceTimingDecompression.SPECIAL_DATA_SIZE_TYPE = "1";
-
-    // Dimension data special type
-    ResourceTimingDecompression.SPECIAL_DATA_SCRIPT_TYPE = "2";
-
-    // Dimension data special type
-    ResourceTimingDecompression.SPECIAL_DATA_SERVERTIMING_TYPE = "3";
-
-    // Link attributes
-    ResourceTimingDecompression.SPECIAL_DATA_LINK_ATTR_TYPE = "4";
-
-    // Namespaced data
-    ResourceTimingDecompression.SPECIAL_DATA_NAMESPACED_TYPE = "5";
-
-    // Service worker type
-    ResourceTimingDecompression.SPECIAL_DATA_SERVICE_WORKER_TYPE = "6";
-
-    // Regular Expression to parse a URL
-    ResourceTimingDecompression.HOSTNAME_REGEX = /^(https?:\/\/)([^/]+)(.*)/;
-
-    //
-    // Functions
-    //
-
-    /**
-     * Returns the index of the first value in the array such that it is
-     * greater or equal to x.
-     * The search is performed using binary search and the array is assumed
-     * to be sorted in ascending order.
-     *
-     * @param {array} arr haystack
-     * @param {any} x needle
-     * @param {function} by transform function (optional)
-     *
-     * @returns {number} the desired index or arr.length if x is more than all values.
-     */
-    ResourceTimingDecompression.searchSortedFirst = function(arr, x, by) {
-        if (!arr || arr.length === 0) {
-            return -1;
-        }
-
-        function ident(a) {
-            return a;
-        }
-        by = by || ident;
-        x = by(x);
-        var min = -1;
-        var max = arr.length;
-        var m = 0;
-
-        while (min < (max - 1)) {
-            m = (min + max) >>> 1;
-            if (by(arr[m]) < x) {
-                min = m;
-            } else {
-                max = m;
-            }
-        }
-        return max;
-    };
-
-    /**
-     * Returns the index of the last value in the array such that is it less
-     * than or equal to x.
-     * The search is performed using binary search and the array is assumed
-     * to be sorted in ascending order.
-     *
-     * @param {array} arr haystack
-     * @param {any} x needle
-     * @param {function} by transform function (optional)
-     *
-     * @returns {number} the desired index or -1 if x is less than all values.
-     */
-    ResourceTimingDecompression.searchSortedLast = function(arr, x, by) {
-        if (!arr || arr.length === 0) {
-            return -1;
-        }
-
-        function ident(a) {
-            return a;
-        }
-        by = by || ident;
-        x = by(x);
-        var min = -1;
-        var max = arr.length;
-        var m = 0;
-
-        while (min < (max - 1)) {
-            m = (min + max) >>> 1;
-            if (x < by(arr[m])) {
-                max = m;
-            } else {
-                min = m;
-            }
-        }
-        return min;
-    };
-
-    /**
-     * Changes the value of ResourceTimingDecompression back to its original value, returning
-     * a reference to the ResourceTimingDecompression object.
-     *
-     * @returns {object} Original ResourceTimingDecompression object
-     */
-    ResourceTimingDecompression.noConflict = function() {
-        root.ResourceTimingDecompression = previousObj;
-        return ResourceTimingDecompression;
-    };
-
-    /**
-     * Decompresses a compressed ResourceTiming trie
-     *
-     * @param {object} rt ResourceTiming trie
-     * @param {array} st server timing entries lookup
-     * @param {string} prefix URL prefix for the current node
-     *
-     * @returns {ResourceTiming[]} ResourceTiming array
-     */
-    ResourceTimingDecompression.decompressResources = function(rt, st, prefix) {
-        var resources = [];
-
-        // Dimension data for resources.
-        var dimensionData;
-
-        prefix = prefix || "";
-
-        for (var key in rt) {
-            // skip over inherited properties
-            if (!rt.hasOwnProperty(key)) {
-                continue;
-            }
-
-            var node = rt[key];
-            var nodeKey = prefix + key;
-
-            // strip trailing pipe, which is used to designate a node that is a prefix for
-            // other nodes but has resTiming data
-            if (nodeKey.indexOf("|", nodeKey.length - 1) !== -1) {
-                nodeKey = nodeKey.substring(0, nodeKey.length - 1);
-            }
-
-            if (typeof node === "string") {
-                // add all occurences
-                var timings = node.split("|");
-
-                if (timings.length === 0) {
-                    continue;
-                }
-
-                // Make sure we reset the dimensions before each new resource.
-                dimensionData = undefined;
-
-                if (this.isDimensionData(timings[0])) {
-                    dimensionData = this.decompressDimension(timings[0]);
-
-                    // Remove the dimension data from our timings array
-                    timings = timings.splice(1);
-                }
-
-                // end-node
-                for (var i = 0; i < timings.length; i++) {
-                    var resourceData = timings[i];
-
-                    if (resourceData.length > 0 &&
-                        resourceData[0] === ResourceTimingDecompression.SPECIAL_DATA_PREFIX) {
-                        // dimensions or sizes for this resource
-                        continue;
-                    }
-
-                    // Decode resource and add dimension data to it.
-                    resources.push(
-                        this.addDimension(
-                            this.decodeCompressedResource(resourceData, nodeKey, st),
-                            dimensionData
-                        )
-                    );
-                }
-            } else {
-                // continue down
-                var nodeResources = this.decompressResources(node, st, nodeKey);
-
-                resources = resources.concat(nodeResources);
-            }
-        }
-
-        return resources;
-    };
-
-    /**
-     * Checks that the input contains dimension information.
-     *
-     * @param {string} resourceData The string we want to check.
-     *
-     * @returns {boolean} True if resourceData starts with SPECIAL_DATA_DIMENSION_PREFIX, false otherwise.
-     */
-    ResourceTimingDecompression.isDimensionData = function(resourceData) {
-        return resourceData &&
-            resourceData.substring(0, ResourceTimingDecompression.SPECIAL_DATA_DIMENSION_PREFIX.length)
-                === ResourceTimingDecompression.SPECIAL_DATA_DIMENSION_PREFIX;
-    };
-
-    /**
-     * Extract height, width, y and x from a string.
-     *
-     * @param {string} resourceData A string containing dimension data.
-     *
-     * @returns {object} Dimension data with keys defined by DIMENSION_NAMES.
-     */
-    ResourceTimingDecompression.decompressDimension = function(resourceData) {
-        var dimensions, i;
-        var dimensionData = {};
-
-        // If the string does not contain dimension information, do nothing.
-        if (!this.isDimensionData(resourceData)) {
-            return dimensionData;
-        }
-
-        // Remove special prefix
-        resourceData = resourceData.substring(ResourceTimingDecompression.SPECIAL_DATA_DIMENSION_PREFIX.length);
-
-        dimensions = resourceData.split(",");
-
-        // The data should contain at least height/width.
-        if (dimensions.length < 2) {
-            return dimensionData;
-        }
-
-        // If x is 0, and the last dimension, then it will be excluded, so initialize to 0
-        // If x & y are 0, and the last dimensions, then both will be excluded, so initialize to 0
-        dimensionData.y = 0;
-        dimensionData.x = 0;
-
-        // Base 36 decode and assign to correct keys of dimensionData.
-        for (i = 0; i < dimensions.length; i++) {
-            if (dimensions[i] === "") {
-                dimensionData[this.REV_DIMENSION_NAMES[i]] = 0;
-            } else {
-                dimensionData[this.REV_DIMENSION_NAMES[i]] = parseInt(dimensions[i], 36);
-            }
-        }
-
-        // If naturalHeight and naturalWidth are missing, then they are the same as height and width
-        if (!dimensionData.hasOwnProperty("naturalHeight")) {
-            dimensionData.naturalHeight = dimensionData.height;
-        }
-        if (!dimensionData.hasOwnProperty("naturalWidth")) {
-            dimensionData.naturalWidth = dimensionData.width;
-        }
-
-        return dimensionData;
-    };
-
-    /**
-     * Adds dimension data to the given resource.
-     *
-     * @param {object} resource The resource we want to edit.
-     * @param {object} dimensionData The dimension data we want to add.
-     *
-     * @returns {object} The resource with added dimensions.
-     */
-    ResourceTimingDecompression.addDimension = function(resource, dimensionData) {
-        // If the resource or data are not defined, do nothing.
-        if (!resource || !dimensionData) {
-            return resource;
-        }
-
-        // Add all the dimensions to our resource.
-        for (var key in this.DIMENSION_NAMES) {
-            if (this.DIMENSION_NAMES.hasOwnProperty(key) &&
-                dimensionData.hasOwnProperty(key)) {
-                resource[key] = dimensionData[key];
-            }
-        }
-
-        return resource;
-    };
-
-    /**
-     * Compute a list of cells based on the start/end times of the
-     * given array of resources.
-     * The returned list of cells is sorted in chronological order.
-     *
-     * @param {array} rts array of resource timings.
-     *
-     * @returns {array} Array of cells.
-     */
-    ResourceTimingDecompression.getSortedCells = function(rts) {
-        // We have exactly 2 events per resource (start and end).
-        // var cells = new Array(rts.length * 2);
-
-        var cells = [];
-        for (var i = 0; i < rts.length; i++) {
-            // Ignore resources with duration <= 0
-            if (rts[i].responseEnd <= rts[i].startTime) {
-                continue;
-            }
-            // Increment on resource start
-            cells.push({
-                ts: rts[i].startTime,
-                val: 1.0
-            });
-            // Decrement on resource end
-            cells.push({
-                ts: rts[i].responseEnd,
-                val: -1.0
-            });
-        }
-
-        // Sort in chronological order
-        cells.sort(function(x, y) {
-            return x.ts - y.ts;
-        });
-
-        return cells;
-    };
-
-    /**
-     * Add contributions to the array of cells.
-     *
-     * @param {array} cells array of cells that need contributions.
-     *
-     * @returns {array} Array of cells with their contributions.
-     */
-    ResourceTimingDecompression.addCellContributions = function(cells) {
-        var tot = 0.0;
-        var incr = 0.0;
-        var deleteIdx = [];
-        var currentSt = cells[0].ts;
-        var cellLen = cells.length;
-        var c = {};
-
-        for (var i = 0; i < cellLen; i++) {
-            c = cells[i];
-            // The next timestamp is the same.
-            // We don't want to have cells of duration 0, so
-            // we aggregate them.
-            if ((i < (cellLen - 1)) && (cells[i + 1].ts === c.ts)) {
-                cells[i + 1].val += c.val;
-                deleteIdx.push(i);
-                continue;
-            }
-
-            incr = c.val;
-            if (tot > 0) {
-                // divide time delta by number of active resources.
-                c.val = (c.ts - currentSt) / tot;
-            }
-
-            currentSt = c.ts;
-            tot += incr;
-        }
-
-        // Delete timestamps that don't delimit cells.
-        for (i = deleteIdx.length - 1; i >= 0; i--) {
-            cells.splice(deleteIdx[i], 1);
-        }
-
-        return cells;
-    };
-
-    /**
-     * Sum the contributions of a single resource based on an array of cells.
-     *
-     * @param {array} cells Array of cells with their contributions.
-     * @param {ResourceTiming} rt a single resource timing object.
-     *
-     * @returns {number} The total contribution for that resource.
-     */
-    ResourceTimingDecompression.sumContributions = function(cells, rt) {
-        if (!rt || typeof rt.startTime === "undefined" ||
-            typeof rt.responseEnd === "undefined") {
-
-            return 0.0;
-        }
-
-        var startTime = rt.startTime + 1;
-        var responseEnd = rt.responseEnd;
-
-        function getTs(x) {
-            return x.ts;
-        }
-
-        // Find indices of cells that were affected by our resource.
-        var low = this.searchSortedFirst(cells, { ts: startTime }, getTs);
-        var up = this.searchSortedLast(cells, { ts: responseEnd }, getTs);
-
-        var tot = 0.0;
-
-        // Sum contributions across all those cells
-        for (var i = low; i <= up; i++) {
-            tot += cells[i].val;
-        }
-
-        return tot;
-    };
-
-    /**
-     * Adds contribution scores to all resources in the array.
-     *
-     * @param {array} rts array of resource timings.
-     *
-     * @returns {array} Array of resource timings with their contributions.
-     */
-    ResourceTimingDecompression.addContribution = function(rts) {
-        if (!rts || rts.length === 0) {
-            return rts;
-        }
-
-        // Get cells in chronological order.
-        var cells = this.getSortedCells(rts);
-
-        // We need at least two cells and they need to begin
-        // with a start event. Furthermore, the last timestamp
-        // should be > 0.
-        if (cells.length < 2 ||
-            cells[0].val < 1.0 ||
-            cells[cells.length - 1].ts <= 0
-        ) {
-            return rts;
-        }
-
-        // Compute each cell's contribution.
-        this.addCellContributions(cells);
-
-        // Total load time for this batch of resources.
-        var loadTime = cells[cells.length - 1].ts;
-
-        for (var i = 0; i < rts.length; i++) {
-            // Compute the contribution of each resource.
-            // Normalize by total load time.
-            rts[i].contribution = this.sumContributions(cells, rts[i]) / loadTime;
-        }
-
-        return rts;
-    };
-
-    /**
-     * Determines the initiatorType from a lookup
-     *
-     * @param {number} index Initiator type index
-     *
-     * @returns {string} initiatorType, or "other" if not known
-     */
-    ResourceTimingDecompression.getInitiatorTypeFromIndex = function(index) {
-        if (this.REV_INITIATOR_TYPES.hasOwnProperty(index)) {
-            return this.REV_INITIATOR_TYPES[index];
-        }
-
-        return "other";
-    };
-
-    /**
-     * Decodes a compressed ResourceTiming data string
-     *
-     * @param {string} data Compressed timing data
-     * @param {string} url  URL
-     * @param {array} st server timing entries lookup
-     *
-     * @returns {ResourceTiming} ResourceTiming pseudo-object (containing all of the properties of a
-     * ResourceTiming object)
-     */
-    ResourceTimingDecompression.decodeCompressedResource = function(data, url, st) {
-        if (!data || !url) {
-            return {};
-        }
-
-        if (ResourceTimingDecompression.HOSTNAMES_REVERSED) {
-            url = ResourceTimingDecompression.reverseHostname(url);
-        }
-
-        var initiatorType = isNaN(parseInt(data[0], 10)) ? data[0] : parseInt(data[0], 10);
-        data = data.length > 1 ? data.split(ResourceTimingDecompression.SPECIAL_DATA_PREFIX) : [];
-        var timings = data.length > 0 && data[0].length > 1 ? data[0].substring(1).split(",") : [];
-        var specialData = data.length > 1 ? data.slice(1) : [];
-
-        // convert all timings from base36
-        for (var i = 0; i < timings.length; i++) {
-            if (timings[i] === "") {
-                // startTime being 0
-                timings[i] = 0;
-            } else {
-                // de-base36
-                timings[i] = parseInt(timings[i], 36);
-            }
-        }
-
-        // special case timestamps
-        var startTime = timings.length >= 1 ? timings[0] : 0;
-
-        // fetchStart is either the redirectEnd time, or startTime
-        // NOTE: This may be later modified by Service Worker special data, which has the real timestamp if needed
-        var fetchStart = timings.length < 10 ?
-            startTime :
-            this.decodeCompressedResourceTimeStamp(timings, 9, startTime);
-
-        // all others are offset from startTime
-        var res = {
-            name: url,
-            initiatorType: this.getInitiatorTypeFromIndex(initiatorType),
-            startTime: startTime,
-            redirectStart: this.decodeCompressedResourceTimeStamp(timings, 9, startTime) > 0 ? startTime : 0,
-            redirectEnd: this.decodeCompressedResourceTimeStamp(timings, 9, startTime),
-            fetchStart: fetchStart,
-            domainLookupStart: this.decodeCompressedResourceTimeStamp(timings, 8, startTime),
-            domainLookupEnd: this.decodeCompressedResourceTimeStamp(timings, 7, startTime),
-            connectStart: this.decodeCompressedResourceTimeStamp(timings, 6, startTime),
-            secureConnectionStart: this.decodeCompressedResourceTimeStamp(timings, 5, startTime),
-            connectEnd: this.decodeCompressedResourceTimeStamp(timings, 4, startTime),
-            requestStart: this.decodeCompressedResourceTimeStamp(timings, 3, startTime),
-            responseStart: this.decodeCompressedResourceTimeStamp(timings, 2, startTime),
-            responseEnd: this.decodeCompressedResourceTimeStamp(timings, 1, startTime)
-        };
-
-        res.duration = res.responseEnd > 0 ? (res.responseEnd - res.startTime) : 0;
-
-        // decompress resource size data
-        for (i = 0; i < specialData.length; i++) {
-            this.decompressSpecialData(specialData[i], res, st);
-        }
-
-        return res;
-    };
-
-    /**
-     * Decodes a timestamp from a compressed RT array
-     *
-     * @param {number[]} timings ResourceTiming timings
-     * @param {number} idx Index into array
-     * @param {number} startTime NavigationTiming The Resource's startTime
-     *
-     * @returns {number} Timestamp, or 0 if unknown or missing
-     */
-    ResourceTimingDecompression.decodeCompressedResourceTimeStamp = function(timings, idx, startTime) {
-        if (timings && timings.length >= (idx + 1)) {
-            if (timings[idx] !== 0) {
-                return timings[idx] + startTime;
-            }
-        }
-
-        return 0;
-    };
-
-    /**
-     * Decompresses script load type into the specified resource.
-     *
-     * @param {string} compressed String with a single integer.
-     * @param {ResourceTiming} resource ResourceTiming object.
-     * @returns {ResourceTiming} ResourceTiming object with decompressed script type.
-     */
-    ResourceTimingDecompression.decompressScriptType = function(compressed, resource) {
-        var data = parseInt(compressed, 10);
-
-        if (!resource) {
-            resource = {};
-        }
-
-        for (var key in this.SCRIPT_ATTRIBUTES) {
-            if (this.SCRIPT_ATTRIBUTES.hasOwnProperty(key)) {
-                resource[key] = (data & this.SCRIPT_ATTRIBUTES[key]) === this.SCRIPT_ATTRIBUTES[key];
-            }
-        }
-
-        return resource;
-    };
-
-    /**
-     * Decompresses link attributes
-     *
-     * @param {string} compressed String with a single integer.
-     * @param {ResourceTiming} resource ResourceTiming object.
-     * @returns {ResourceTiming} ResourceTiming object with decompressed link attribute type.
-     */
-    ResourceTimingDecompression.decompressLinkAttrType = function(compressed, resource) {
-        var data = parseInt(compressed, 10);
-
-        if (!resource) {
-            resource = {};
-        }
-
-        if (this.REV_REL_TYPES.hasOwnProperty(data)) {
-            resource.rel = this.REV_REL_TYPES[data];
-        }
-
-        return resource;
-    };
-
-    /**
-     * Decompresses size information back into the specified resource
-     *
-     * @param {string} compressed Compressed string
-     * @param {ResourceTiming} resource ResourceTiming object
-     * @returns {ResourceTiming} ResourceTiming object with decompressed sizes
-     */
-    ResourceTimingDecompression.decompressSize = function(compressed, resource) {
-        var split, i;
-
-        if (typeof resource === "undefined") {
-            resource = {};
-        }
-
-        split = compressed.split(",");
-
-        for (i = 0; i < split.length; i++) {
-            if (split[i] === "_") {
-                // special non-delta value
-                split[i] = 0;
-            } else {
-                // fill in missing numbers
-                if (split[i] === "") {
-                    split[i] = 0;
-                }
-
-                // convert back from Base36
-                split[i] = parseInt(split[i], 36);
-
-                if (i > 0) {
-                    // delta against first number
-                    split[i] += split[0];
-                }
-            }
-        }
-
-        // fill in missing
-        if (split.length === 1) {
-            // transferSize is a delta from encodedSize
-            split.push(split[0]);
-        }
-
-        if (split.length === 2) {
-            // decodedSize is a delta from encodedSize
-            split.push(split[0]);
-        }
-
-        // re-add attributes to the resource
-        resource.encodedBodySize = split[0];
-        resource.transferSize = split[1];
-        resource.decodedBodySize = split[2];
-
-        return resource;
-    };
-
-    /**
-     * Decompresses namespaced data back into the specified resource
-     *
-     * @param {string} compressed Compressed string
-     * @param {ResourceTiming} resource ResourceTiming object
-     * @returns {ResourceTiming} ResourceTiming object with namespaced data
-     */
-    ResourceTimingDecompression.decompressNamespacedData = function(compressed, resource) {
-        resource = resource || {};
-
-        if (typeof compressed === "string") {
-            var delimiter = ":";
-            var colon = compressed.indexOf(delimiter);
-            if (colon > 0) {
-                var key = compressed.substring(0, colon);
-                var value = compressed.substring(colon + delimiter.length);
-
-                resource._data = resource._data || {};
-                if (resource._data.hasOwnProperty(key)) {
-                    // we are adding our 2nd or nth value (n > 2) for this key
-                    if (!Array.isArray(resource._data[key])) {
-                        // we are adding our 2nd value for this key, convert to array before pushing
-                        resource._data[key] = [resource._data[key]];
-                    }
-
-                    // push it onto the array
-                    resource._data[key].push(value);
-                } else {
-                    // we are adding our 1st value for this key
-                    resource._data[key] = value;
-                }
-            }
-        }
-
-        return resource;
-    };
-
-    /**
-     * Decompresses service worker data
-     *
-     * @param {string} compressed Compressed string
-     * @param {ResourceTiming} resource ResourceTiming object
-     * @returns {ResourceTiming} ResourceTiming object with decompressed special data
-     */
-    ResourceTimingDecompression.decompressServiceWorkerData = function(compressed, resource) {
-        resource = resource || {};
-
-        if (typeof compressed === "string") {
-            var splitCompressed = compressed.split(",");
-
-            var offset = parseInt(splitCompressed[0], 36);
-            resource.workerStart = resource.startTime + offset;
-
-            // if fetchStart is set, also use that instead of the inferred startTime/redirectEnd
-            if (splitCompressed[1]) {
-                resource.fetchStart = resource.startTime + parseInt(splitCompressed[1], 36);
-            }
-        }
-
-        return resource;
-    };
-
-    /**
-     * Decompresses special data such as resource size or script type into the given resource.
-     *
-     * @param {string} compressed Compressed string
-     * @param {ResourceTiming} resource ResourceTiming object
-     * @param {array} st server timing entries lookup
-     * @returns {ResourceTiming} ResourceTiming object with decompressed special data
-     */
-    ResourceTimingDecompression.decompressSpecialData = function(compressed, resource, st) {
-        var dataType;
-
-        if (!compressed || compressed.length === 0) {
-            return resource;
-        }
-
-        dataType = compressed[0];
-
-        compressed = compressed.substring(1);
-
-        if (dataType === ResourceTimingDecompression.SPECIAL_DATA_SIZE_TYPE) {
-            resource = this.decompressSize(compressed, resource);
-        } else if (dataType === ResourceTimingDecompression.SPECIAL_DATA_SCRIPT_TYPE) {
-            resource = this.decompressScriptType(compressed, resource);
-        } else if (dataType === ResourceTimingDecompression.SPECIAL_DATA_SERVERTIMING_TYPE) {
-            resource = this.decompressServerTimingEntries(st, compressed, resource);
-        } else if (dataType === ResourceTimingDecompression.SPECIAL_DATA_LINK_ATTR_TYPE) {
-            resource = this.decompressLinkAttrType(compressed, resource);
-        } else if (dataType === ResourceTimingDecompression.SPECIAL_DATA_NAMESPACED_TYPE) {
-            resource = this.decompressNamespacedData(compressed, resource);
-        } else if (dataType === ResourceTimingDecompression.SPECIAL_DATA_SERVICE_WORKER_TYPE) {
-            resource = this.decompressServiceWorkerData(compressed, resource);
-        }
-
-        return resource;
-    };
-
-    /**
-     * Reverse the hostname portion of a URL
-     *
-     * @param {string} url a fully-qualified URL
-     * @returns {string} the input URL with the hostname portion reversed, if it can be found
-     */
-    ResourceTimingDecompression.reverseHostname = function(url) {
-        return url.replace(ResourceTimingDecompression.HOSTNAME_REGEX, function(m, p1, p2, p3) {
-            // p2 is everything after the first `://` and before the next `/`
-            // which includes `<username>:<password>@` and `:<port-number>`, if present
-            return p1 + ResourceTimingDecompression.reverseString(p2) + p3;
-        });
-    };
-
-    /**
-     * Reverse a string
-     *
-     * @param {string} i a string
-     * @returns {string} the reversed string
-     */
-    ResourceTimingDecompression.reverseString = function(i) {
-        var l = i.length, o = "";
-        while (l--) {
-            o += i[l];
-        }
-        return o;
-    };
-
-    /**
-     * Decompress a list of compressed server timing entries for a resource
-     *
-     * @param {array} lookup server timing entries lookup
-     * @param {string} compressedList server timing entries for a resource
-     * @param {ResourceTiming} resource ResourceTiming object.
-     * @returns {ResourceTiming} ResourceTiming object with decompressed server timing entries.
-     */
-    ResourceTimingDecompression.decompressServerTimingEntries = function(lookup, compressedList, resource) {
-        if (typeof resource === "undefined") {
-            resource = {};
-        }
-
-        if (lookup && compressedList) {
-            resource.serverTiming = compressedList.split(",").map(function(compressedEntry) {
-                return this.decompressServerTiming(lookup, compressedEntry);
-            }, this);
-        }
-        return resource;
-    };
-
-    /**
-     * Decompress a compressed server timing entry for a resource
-     *
-     * @param {array} lookup server timing entries lookup
-     * @param {string} key key into the lookup for one server timing entry
-     * @returns {object} server timing entry
-     */
-    ResourceTimingDecompression.decompressServerTiming = function(lookup, key) {
-        var split = key.split(":");
-        var duration = Number(split[0]);
-        var entryIndex = 0, descriptionIndex = 0;
-
-        if (split.length > 1) {
-            var identity = split[1].split(".");
-            if (identity[0] !== "") {
-                entryIndex = Number(identity[0]);
-            }
-            if (identity.length > 1) {
-                descriptionIndex = Number(identity[1]);
-            }
-        }
-
-        var name, description = "";
-        if (Array.isArray(lookup[entryIndex])) {
-            name = lookup[entryIndex][0];
-            description = lookup[entryIndex][1 + descriptionIndex] || "";
-        } else {
-            name = lookup[entryIndex];
-        }
-
-        return {
-            name: name,
-            duration: duration,
-            description: description
-        };
-    };
-
-    //
-    // Export to the appropriate location
-    //
-    if (typeof define === "function" && define.amd) {
-        //
-        // AMD / RequireJS
-        //
-        define([], function() {
-            return ResourceTimingDecompression;
-        });
-    } else if (typeof module !== "undefined" && module.exports) {
-        //
-        // Node.js
-        //
-        module.exports = ResourceTimingDecompression;
-    } else if (typeof root !== "undefined") {
-        //
-        // Browser Global
-        //
-        root.ResourceTimingDecompression = ResourceTimingDecompression;
-    }
-}(typeof window !== "undefined" ? window : undefined));
-
 /**
  * The Continuity plugin measures performance and user experience metrics beyond
  * just the traditional Page Load timings.
+ *
+ * This plugin has a corresponding {@tutorial header-snippets} that helps measure events prior to Boomerang loading.
  *
  * ## Approach
  *
@@ -5330,7 +4595,7 @@ BOOMR_check_doc_domain();
  * * A `PerformanceObserver` will be turned on to capture all Long Tasks that happen
  *     on the page.
  * * Long Tasks will be used to calculate _Time to Interactive_
- * * A log (`c.lt`), timeline (`c.t.lt`) and other Long Task metrics (`c.lt.*`) will
+ * * A log (`c.lt`), timeline (`c.t.longtask`) and other Long Task metrics (`c.lt.*`) will
  *     be added to the beacon (see Beacon Parameters details below)
  *
  * The log `c.lt` is a JSON (or JSURL) object of compressed `LongTask` data.  See
@@ -5362,6 +4627,7 @@ BOOMR_check_doc_domain();
  * Page Busy is not the most efficient way of measuring what the browser is doing,
  * but since it is calculated via `setInterval()`, it is supported in all browsers.
  * The Continuity plugin currently measures Page Busy by polling every 32 milliseconds.
+ * Page Busy is disabled if Long Tasks are supported in the browser.
  *
  * Page Busy can be an indicator of how likely the user will have a good experience
  * when they interact with it. If Page Busy is 100%, the user may see the page lag
@@ -5422,6 +4688,9 @@ BOOMR_check_doc_domain();
  *     * Distinct Scrolls: Scrolls that happened over 2 seconds since the last scroll
  * * Page Visibility changes
  * * Orientation changes
+ * * Pointer Down and Up, Mouse Down and Touch Start:
+ *    Timestamp of these events is used to track and calculate interaction metrics
+ *    like _First Input Delay_
  *
  * These interactions are monitored and instrumented throughout the page load.  By using
  * the event's `timeStamp`, we can detect how long it took for the physical event (e.g.
@@ -5450,7 +4719,7 @@ BOOMR_check_doc_domain();
  * If {@link BOOMR.plugins.Continuity.init `monitorInteractions`} is enabled:
  *
  * * Passive event handlers will be added to monitor clicks, keys, etc.
- * * A log and many interaction metrics (`c.f.*`) will be added to the
+ * * A log and many interaction metrics (`c.i.*`, `c.ttfi`) will be added to the
  *     beacon (see Beacon Parameters details below)
  *
  * For `interaction` beacons, the following will be set:
@@ -5492,6 +4761,26 @@ BOOMR_check_doc_domain();
  * This option is off by default, and can be turned on via the
  * {@link BOOMR.plugins.Continuity.init `monitorStats`} config option.
  *
+ * ### Monitoring Layout Shifts
+ *
+ * If {@link BOOMR.plugins.Continuity.init `monitorLayoutShifts`} is turned on,
+ * the Continuity plugin will measure visual instability via the
+ * [Layout Instability API](https://github.com/WICG/layout-instability), and will calculate the Cumulative
+ * Layout Shift (CLS) score.
+ *
+ * The Cumulative Layout Shift (CLS) score approximates the severity of visual layout changes by monitoring
+ * how DOM nodes shift during the user experience.  A CLS of `0` indicates a stable view where no DOM nodes shifted.  Each
+ * time an unexpected layout shifts occur, the CLS increases.  CLS is represented in decimal form, with a value of `0.1`
+ * indicating a fraction of the screen's elements were affected.  CLS values can be larger than `1.0` if the
+ * layout shifts multiple times.
+ *
+ * See [web.dev/cls](https://web.dev/cls/) for a more detailed explanation.
+ *
+ * CLS is included on the beacon as `c.cls`, and resets each beacon, so represents the CLS since the last beacon.
+ *
+ * This option is on by default, and can be disabled via the
+ * {@link BOOMR.plugins.Continuity.init `monitorLayoutShifts`} config option.
+ *
  * ## New Timers
  *
  * There are 4 new timers from the Continuity plugin that center around user
@@ -5532,6 +4821,8 @@ BOOMR_check_doc_domain();
  *     * These might just be paints of white, so they're not the only signal we should use
  * * First Contentful Paint (if available)
  *     * Via [PaintTiming](https://www.w3.org/TR/paint-timing/)
+ * * Largest Contentful Paint (if available)
+ *     * Via [Largest Contentful Paint API](https://wicg.github.io/largest-contentful-paint/)
  * * [domContentLoadedEventEnd](https://msdn.microsoft.com/en-us/library/ff974719)
  *     * "The DOMContentLoaded event is fired when the initial HTML document has been
  *         completely loaded and parsed, without waiting for stylesheets, images,
@@ -5555,6 +4846,10 @@ BOOMR_check_doc_domain();
  * Once the last of all of the above have happened, Visually Ready has occurred.
  *
  * Visually Ready will add `c.tti.vr` to the beacon.
+ *
+ * Visually Ready is only included on regular Page Load and Single Page App Hard navigation beacons.  It is not
+ * suitable for Single Page App Soft navigation beacons as the page has already been visually ready at the start
+ * of the soft navigation.
  *
  * #### Controlling Visually Ready via Framework Ready
  *
@@ -5645,12 +4940,17 @@ BOOMR_check_doc_domain();
  * which is the higest-accuracy method available for TTI calculation: `lt` (Long Tasks),
  * `raf` (FPS), or `b` (Page Busy).
  *
+ * Time to Interaction is only included on regular Page Load and Single Page App Hard navigation beacons.  It is not
+ * suitable for Single Page App Soft navigation beacons as the page is already interactive at the start of
+ * the soft navigation.
+ *
  * #### Algorithm
  *
  * Putting these two timers together, here's how we measure Visually Ready and
  * Time to Interactive:
  *
  * 1. Determine the highest Visually Ready timestamp (VRTS):
+ *     * Largest Contentful Paint (if available)
  *     * First Contentful Paint (if available)
  *     * First Paint (if available)
  *     * `domContentLoadedEventEnd`
@@ -5692,6 +4992,14 @@ BOOMR_check_doc_domain();
  * to the user if the callback is delayed.
  *
  * This time (measured in milliseconds) is added to the beacon as `c.fid`.
+ *
+ * The polyfill for FirstInputDelay calculation from previous version of this plugin
+ * has been updated to match the latest industry standards for FID. This polyfill now
+ * evaluates click, mousedown, keydown, touchstart, pointerdown followed by pointerup
+ * events as indicators for First Input Delay calculations.
+ *
+ * Note if the {@link BOOMR.plugins.EventTiming `EventTiming`} plugin is included,
+ * this measurement is deferred to the First Input Delay calculated by that plugin.
  *
  * ## Timelines
  *
@@ -5904,6 +5212,7 @@ BOOMR_check_doc_domain();
  * * `c.b`: Page Busy percentage (Base-10)
  * * `c.c.r`: Rage click count (Base-10)
  * * `c.c`: Click count (Base-10)
+ * * `c.cls`: Cumulative Layout Shift score (since last beacon) (Base-10 fraction)
  * * `c.e`: Continuity Epoch timestamp (when everything started measuring) (Base-36)
  * * `c.f.d`: Frame Rate duration (how long it has been measuring) (milliseconds) (Base-10)
  * * `c.f.l`: Number of Long Frames (>= 50ms) (Base-10)
@@ -6024,6 +5333,11 @@ BOOMR_check_doc_domain();
 	 */
 	var LARGE_NUMBER_WRAP = ".";
 
+	/**
+	 * Listener Options args with Passive and Capture set to true
+	 */
+	var listenerOpts = {passive: true, capture: true};
+
 	// Performance object
 	var p = BOOMR.getPerformance();
 
@@ -6052,8 +5366,8 @@ BOOMR_check_doc_domain();
 	/**
 	 * Compress JSON to a string for a URL parameter in the best way possible.
 	 *
-	 * If UserTimingCompression is available (which has JSURL), use that.  The
-	 * data will start with the character `~`
+	 * If BOOMR.utils.Compression.jsUrl, or UserTimingCompression is available (which has JSURL),
+	 * use that.  The data will start with the character `~`.
 	 *
 	 * Otherwise, use JSON.stringify.  The data will start with the character `{`.
 	 *
@@ -6062,10 +5376,12 @@ BOOMR_check_doc_domain();
 	 * @returns {string} Compressed data
 	 */
 	function compressJson(data) {
-		var utc = window.UserTimingCompression || BOOMR.window.UserTimingCompression;
+		var jsUrlFn = (BOOMR.utils.Compression && BOOMR.utils.Compression.jsUrl) ||
+			(window.UserTimingCompression && window.UserTimingCompression.jsUrl) ||
+			(BOOMR.window.UserTimingCompression && BOOMR.window.UserTimingCompression.jsUrl);
 
-		if (utc) {
-			return utc.jsUrl(data);
+		if (jsUrlFn) {
+			return jsUrlFn(data);
 		}
 		else if (window.JSON) {
 			return JSON.stringify(data);
@@ -6098,7 +5414,7 @@ BOOMR_check_doc_domain();
 	function compressBucketLog(type, backfill, dataSet, sinceBucket, endBucket) {
 		var out = "", val = 0, i, j, dupes, valStr, nextVal, wroteSomething;
 
-		if (!dataSet || !BOOMR.utils.Compression) {
+		if (!dataSet) {
 			return "";
 		}
 
@@ -6207,6 +5523,7 @@ BOOMR_check_doc_domain();
 	}
 
 
+
 	/**
 	 * Timeline data
 	 *
@@ -6270,6 +5587,9 @@ BOOMR_check_doc_domain();
 
 		// hero images timestamp
 		var heroImagesReady = 0;
+
+		// whether or not to add Visually Ready to the next beacon
+		var addVisuallyReadyToBeacon = true;
 
 		// check for pre-Boomerang FPS log
 		if (BOOMR.fpsLog && BOOMR.fpsLog.length) {
@@ -6501,11 +5821,12 @@ BOOMR_check_doc_domain();
 
 		/**
 		 * Determine Visually Ready time.  This is the last of:
-		 * 1. First Contentful Paint (if available)
-		 * 2. First Paint (if available)
-		 * 3. domContentLoadedEventEnd
-		 * 4. Hero Images are loaded (if configured)
-		 * 5. Framework Ready (if configured)
+		 * 1. Largest Contentful Paint (if available)
+		 * 2. First Contentful Paint (if available)
+		 * 3. First Paint (if available)
+		 * 4. domContentLoadedEventEnd
+		 * 5. Hero Images are loaded (if configured)
+		 * 6. Framework Ready (if configured)
 		 *
 		 * @returns {number|undefined} Timestamp, if everything is ready, or
 		 *    `undefined` if not
@@ -6522,12 +5843,17 @@ BOOMR_check_doc_domain();
 				latestTs = impl.frameworkReady;
 			}
 
-			// use First Contentful Paint (if available) or
+			// use Largest/First Contentful Paint (if available) or
 			if (BOOMR.plugins.PaintTiming &&
 			    BOOMR.plugins.PaintTiming.is_supported() &&
 			    p &&
 			    p.timeOrigin) {
-				var fp = BOOMR.plugins.PaintTiming.getTimingFor("first-contentful-paint");
+				var fp = BOOMR.plugins.PaintTiming.getTimingFor("largest-contentful-paint");
+
+				if (!fp) {
+					fp = BOOMR.plugins.PaintTiming.getTimingFor("first-contentful-paint");
+				}
+
 				if (!fp) {
 					// or get First Paint directly from PaintTiming
 					fp = BOOMR.plugins.PaintTiming.getTimingFor("first-paint");
@@ -6679,14 +6005,19 @@ BOOMR_check_doc_domain();
 				}
 			}
 
-			// add Visually Ready to the beacon
-			impl.addToBeacon("c.tti.vr", externalMetrics.timeToVisuallyReady());
+			if (addVisuallyReadyToBeacon) {
+				// add Visually Ready to the beacon
+				impl.addToBeacon("c.tti.vr", externalMetrics.timeToVisuallyReady());
 
-			// add Framework Ready to the beacon
-			impl.addToBeacon("c.tti.fr", externalMetrics.timeToFrameworkReady());
+				// add Framework Ready to the beacon
+				impl.addToBeacon("c.tti.fr", externalMetrics.timeToFrameworkReady());
 
-			// add Framework Ready to the beacon
-			impl.addToBeacon("c.tti.hi", externalMetrics.timeToHeroImagesReady());
+				// add Framework Ready to the beacon
+				impl.addToBeacon("c.tti.hi", externalMetrics.timeToHeroImagesReady());
+
+				// only add to the first beacon
+				addVisuallyReadyToBeacon = false;
+			}
 
 			// Calculate TTI
 			if (!data.longtask && !data.fps && !data.busy) {
@@ -6821,6 +6152,9 @@ BOOMR_check_doc_domain();
 
 			// reset the data log
 			dataLog = [];
+
+			// only add Visually Ready to the first beacon if available
+			addVisuallyReadyToBeacon = false;
 		}
 
 		return {
@@ -6830,6 +6164,92 @@ BOOMR_check_doc_domain();
 			increment: increment,
 			getTimeBucket: getTimeBucket,
 			getStats: getStats,
+			analyze: analyze,
+			stop: stop,
+			onBeacon: onBeacon
+		};
+	};
+
+	/**
+	 * Monitors Layout Shift events
+	 */
+	var LayoutShiftMonitor = function(w) {
+		if (!w.PerformanceObserver || !w.LayoutShift) {
+			return;
+		}
+
+		// whether or not we're enabled
+		var enabled = true;
+
+		// CumulativeLayoutShift score
+		var clsScore = 0;
+
+		// PerformanceObserver
+		var perfObserver = new w.PerformanceObserver(onLayoutShiftObserver);
+
+		try {
+			perfObserver.observe({type: "layout-shift", buffered: true});
+		}
+		catch (e) {
+			// layout-shift not supported
+			return;
+		}
+
+		function onLayoutShiftObserver(list) {
+			var entries, i;
+
+			if (!enabled) {
+				return;
+			}
+
+			entries = list.getEntries();
+			for (i = 0; i < entries.length; i++) {
+				// Only account for Layoutshift score that didnt have recent user input.
+				if (!entries[i].hadRecentInput) {
+					clsScore += entries[i].value;
+				}
+			}
+		}
+
+		/**
+		 * Record Cumulative Layout Shift score on beacon
+		 */
+		function analyze(startTime) {
+			// add data to beacon
+			impl.addToBeacon("c.cls", externalMetrics.clsScore());
+		}
+
+		function clearClsScore() {
+			clsScore = 0;
+		}
+
+		/**
+		 * Disables the monitor
+		 */
+		function stop() {
+			enabled = false;
+
+			perfObserver.disconnect();
+
+			clearClsScore();
+		}
+
+		/**
+		 * Resets on beacon
+		 */
+		function onBeacon() {
+			clearClsScore();
+		}
+
+		/**
+		 * Cumulative Layout Shift Score
+		 */
+		externalMetrics.clsScore = function() {
+			return clsScore;
+		};
+
+		return {
+			clearClsScore: clearClsScore,
 			analyze: analyze,
 			stop: stop,
 			onBeacon: onBeacon
@@ -7515,7 +6935,7 @@ BOOMR_check_doc_domain();
 			lastScroll = now;
 
 			// determine how many pixels were scrolled
-			var curY = BOOMR.utils.scroll().y;
+			var curY = Math.ceil(BOOMR.utils.scroll().y);
 			var diffY = Math.abs(lastY - curY);
 
 			scrollPixels += diffY;
@@ -7533,8 +6953,7 @@ BOOMR_check_doc_domain();
 				lastYLogged = curY;
 			}
 
-			// update the interaction monitor
-			i.interact("scroll", now, e);
+			// We wont consider Scroll events as triggering an interaction
 
 			// calculate percentage of document scrolled
 			intervalScrollPct += Math.round(diffY / documentHeight * 100);
@@ -7625,7 +7044,7 @@ BOOMR_check_doc_domain();
 		};
 
 		// startup
-		BOOMR.utils.addListener(w, "scroll", onScroll, true);
+		BOOMR.utils.addListener(w, "scroll", onScroll, listenerOpts);
 
 		collectionInterval = setInterval(reportScroll, COLLECTION_INTERVAL);
 
@@ -7721,8 +7140,11 @@ BOOMR_check_doc_domain();
 				y: newY
 			});
 
-			// update the interaction monitor
-			i.interact("click", now, e);
+			// Only count cancellable event for interactions.
+			if (e.cancelable) {
+				// update the interaction monitor
+				i.interact("click", now, e);
+			}
 		}
 
 		/**
@@ -7763,7 +7185,7 @@ BOOMR_check_doc_domain();
 		//
 		// Startup
 		//
-		BOOMR.utils.addListener(w.document, "click", onClick, true);
+		BOOMR.utils.addListener(w.document, "click", onClick, listenerOpts);
 
 		return {
 			analyze: analyze,
@@ -7809,8 +7231,11 @@ BOOMR_check_doc_domain();
 			// add to the log (don't track the actual keys)
 			t.log(LOG_TYPE_KEY, now);
 
-			// update the interaction monitor
-			i.interact("key", now, e);
+			// Only count cancellable event for interactions.
+			if (e.cancelable) {
+				// update the interaction monitor
+				i.interact("key", now, e);
+			}
 		}
 
 		/**
@@ -7848,7 +7273,7 @@ BOOMR_check_doc_domain();
 		};
 
 		// start
-		BOOMR.utils.addListener(w.document, "keydown", onKeyDown, true);
+		BOOMR.utils.addListener(w.document, "keydown", onKeyDown, listenerOpts);
 
 		return {
 			analyze: analyze,
@@ -8031,7 +7456,7 @@ BOOMR_check_doc_domain();
 		reportMouseLogInterval = setInterval(reportMouseLog, REPORT_LOG_INTERVAL);
 
 		// start
-		BOOMR.utils.addListener(w.document, "mousemove", onMouseMove, true);
+		BOOMR.utils.addListener(w.document, "mousemove", onMouseMove, listenerOpts);
 
 		return {
 			analyze: analyze,
@@ -8106,6 +7531,9 @@ BOOMR_check_doc_domain();
 		// whether or not a SPA nav is happening
 		var isSpaNav = false;
 
+		// whether we've sent TTFI and FID already
+		var sentTimers = false;
+
 		/**
 		 * Logs an interaction
 		 *
@@ -8115,6 +7543,7 @@ BOOMR_check_doc_domain();
 		 */
 		function interact(type, now, e) {
 			var delay = 0;
+			var hrNow = BOOMR.hrNow();
 
 			now = now || BOOMR.now();
 
@@ -8125,7 +7554,13 @@ BOOMR_check_doc_domain();
 			interactions++;
 
 			if (!timeToFirstInteraction) {
-				timeToFirstInteraction = now;
+				if (e && e.timeStamp) {
+					// e.timeStamp is DomHighRes timestamp, so convert to epoch based.
+					timeToFirstInteraction = e.timeStamp + epoch;
+				}
+				else {
+					timeToFirstInteraction = now;
+				}
 			}
 
 			// check for interaction delay.
@@ -8137,8 +7572,8 @@ BOOMR_check_doc_domain();
 					delay = now - e.timeStamp;
 				}
 				else {
-					// if timeStamp is a DOMHighResTimeStamp, convert BOOMR.now() to same
-					delay = (now - epoch) - e.timeStamp;
+					// if timeStamp is a DOMHighResTimeStamp, convert BOOMR.hrNow() to same
+					delay = BOOMR.hrNow() - e.timeStamp;
 				}
 
 				interactionsDelay += delay;
@@ -8252,13 +7687,32 @@ BOOMR_check_doc_domain();
 		 * Analyzes Interactions
 		 */
 		function analyze(startTime) {
-			impl.addToBeacon("c.ttfi", externalMetrics.timeToFirstInteraction());
+			var fid;
+
 			impl.addToBeacon("c.i.dc", externalMetrics.interactionDelayed());
 			impl.addToBeacon("c.i.dt", externalMetrics.interactionDelayedTime());
 			impl.addToBeacon("c.i.a", externalMetrics.interactionAvgDelay());
 
-			if (firstInputDelay !== null) {
-				impl.addToBeacon("c.fid", externalMetrics.firstInputDelay(), true);
+			// Only send FID and TTFI Timers once
+			if (!sentTimers) {
+				// defer to EventTiming's FID if available
+				if (BOOMR.plugins.EventTiming &&
+				    BOOMR.plugins.EventTiming.is_enabled()) {
+					fid = BOOMR.plugins.EventTiming.metrics.firstInputDelay();
+				}
+
+				if (!fid && firstInputDelay !== null) {
+					fid = externalMetrics.firstInputDelay();
+				}
+
+				if (fid) {
+					impl.addToBeacon("c.fid", Math.ceil(fid), true);
+
+					impl.addToBeacon("c.ttfi", BOOMR.plugins.EventTiming.metrics.timeToFirstInteraction() ||
+					    externalMetrics.timeToFirstInteraction());
+
+					sentTimers = true;
+				}
 			}
 		}
 
@@ -8306,6 +7760,9 @@ BOOMR_check_doc_domain();
 			}
 		};
 
+		/**
+		 * ttfi relative to nav start
+		 */
 		externalMetrics.timeToFirstInteraction = function() {
 			if (timeToFirstInteraction) {
 				// milliseconds since nav start
@@ -8337,6 +7794,130 @@ BOOMR_check_doc_domain();
 			analyze: analyze,
 			stop: stop,
 			onBeacon: onBeacon
+		};
+	};
+
+	/**
+	 * Monitor pointerdown followed by pointerup interaction event for calculating FID
+	 */
+	var PointerDownMonitor = function(w, t, i) {
+		// we are not registering timeline events for pointerdown as these end up as click
+		// events which are already tracked for timelines.
+
+		var enabled = true;
+		var now, originalEvent;
+
+		function onPointerUp() {
+			if (!enabled) {
+				// Either stop() was called because of onBeacon event shutting things down
+				// or 'pointercancel' event resulted in stop() being called.
+				return;
+			}
+
+			// Update the interaction monitor
+			i.interact("pd", now, originalEvent);
+			now = null;
+			originalEvent = null;
+
+			BOOMR.utils.removeListener(window, "pointerup", onPointerUp);
+		}
+
+		function onPointerDown(e) {
+			// Only count cancelable event that should trigger behavior
+			// important to user
+			if (!enabled || !e.cancelable) {
+				return;
+			}
+
+			now = BOOMR.now();
+			originalEvent = e;
+
+			BOOMR.utils.addListener(window, "pointerup", onPointerUp, listenerOpts);
+		}
+
+		/**
+		 * Stop this monitor
+		 */
+		function stop() {
+			enabled = false;
+			BOOMR.utils.removeListener(window, "pointerdown", onPointerDown);
+			BOOMR.utils.removeListener(window, "pointerup", onPointerUp);
+			BOOMR.utils.removeListener(window, "pointercancel", stop);
+		}
+
+		BOOMR.utils.addListener(window, "pointerdown", onPointerDown, listenerOpts);
+		BOOMR.utils.addListener(window, "pointercancel", stop, listenerOpts);
+
+		return {
+			stop: stop
+		};
+	};
+
+	/**
+	 * Monitor mousedown Event
+	 */
+	var MouseDownMonitor = function(w, t, i) {
+		var enabled = true;
+
+		function onMouseDown(e) {
+			// Only count cancelable event that should trigger behavior
+			// important to user
+			if (!enabled || !e.cancelable) {
+				return;
+			}
+
+			var now = BOOMR.now();
+
+			// Update the interaction monitor
+			i.interact("md", now, e);
+		}
+
+		/**
+		 * Stop this monitor
+		 */
+		function stop() {
+			enabled = false;
+			BOOMR.utils.removeListener(window, "mousedown", onMouseDown);
+		}
+
+		BOOMR.utils.addListener(window, "mousedown", onMouseDown, listenerOpts);
+
+		return {
+			stop: stop
+		};
+	};
+
+	/**
+	 * Monitors TouchStart event
+	 */
+	var TouchStartMonitor = function(w, t, i) {
+		var enabled = true;
+
+		function onTouchStart(e) {
+			// Only count cancelable event that should trigger behavior
+			// important to user
+			if (!enabled || !e.cancelable) {
+				return;
+			}
+
+			var now = BOOMR.now();
+
+			// Update the interaction monitor
+			i.interact("ts", now, e);
+		}
+
+		/**
+		 * Stop this monitor
+		 */
+		function stop() {
+			enabled = false;
+			BOOMR.utils.removeListener(window, "touchstart", onTouchStart);
+		}
+
+		BOOMR.utils.addListener(window, "touchstart", onTouchStart, listenerOpts);
+
+		return {
+			stop: stop
 		};
 	};
 
@@ -8380,9 +7961,7 @@ BOOMR_check_doc_domain();
 			t.log(LOG_TYPE_VIS, now, {
 				s: VIS_MAP[BOOMR.visibilityState()]
 			});
-
-			// update the interaction monitor
-			i.interact("vis", now, e);
+			// Visibility change doesn't explicitly trigger an "interaction"
 		});
 
 		/**
@@ -8437,9 +8016,6 @@ BOOMR_check_doc_domain();
 					a: angle
 				});
 			}
-
-			// update the interaction monitor
-			i.interact("orn", now, e);
 		}
 
 		/**
@@ -8454,7 +8030,7 @@ BOOMR_check_doc_domain();
 		//
 		// Setup
 		//
-		BOOMR.utils.addListener(w, "orientationchange", onOrientationChange, true);
+		BOOMR.utils.addListener(w, "orientationchange", onOrientationChange, listenerOpts);
 
 		return {
 			stop: stop
@@ -8692,6 +8268,11 @@ BOOMR_check_doc_domain();
 		monitorStats: false,
 
 		/**
+		 * Whether to monitor Layout Shifts
+		 */
+		monitorLayoutShifts: true,
+
+		/**
 		 * Whether to monitor for interactions after onload
 		 */
 		afterOnload: false,
@@ -8808,7 +8389,7 @@ BOOMR_check_doc_domain();
 		interactionMonitor: null,
 
 		/**
-		 * ScrollMontior
+		 * ScrollMonitor
 		 */
 		scrollMonitor: null,
 
@@ -8838,9 +8419,29 @@ BOOMR_check_doc_domain();
 		orientationMonitor: null,
 
 		/**
+		 * TouchStartMonitor
+		 */
+		touchStartMonitor: null,
+
+		/**
+		 * MouseDownMonitor
+		 */
+		mouseDownMonitor: null,
+
+		/**
+		 * PointerDownMonitor
+		 */
+		pointerDownMonitor: null,
+
+		/**
 		 * StatsMonitor
 		 */
 		statsMonitor: null,
+
+		/**
+		* LayoutShiftMonitor
+		*/
+		layoutShiftMonitor: null,
 
 		/**
 		 * All possible monitors
@@ -8857,7 +8458,11 @@ BOOMR_check_doc_domain();
 			"interactionMonitor",
 			"visibilityMonitor",
 			"orientationMonitor",
-			"statsMonitor"
+			"statsMonitor",
+			"layoutShiftMonitor",
+			"touchStartMonitor",
+			"mouseDownMonitor",
+			"pointerDownMonitor"
 		],
 
 		/**
@@ -9063,6 +8668,8 @@ BOOMR_check_doc_domain();
 		 * monitor Interactions.
 		 * @param {boolean} [config.Continuity.monitorStats=true] Whether or not to
 		 * monitor Page Statistics.
+		 * @param {boolean} [config.Continuity.monitorLayoutShifts=true] Whether or not to
+		 * monitor Layout Shifts
 		 * @param {boolean} [config.Continuity.afterOnload=false] Whether or not to
 		 * monitor Long Tasks, Page Busy, Frame Rate, interactions and Page Statistics
 		 * after `onload` (up to `afterOnloadMaxLength`).
@@ -9095,7 +8702,7 @@ BOOMR_check_doc_domain();
 				["monitorLongTasks", "monitorPageBusy", "monitorFrameRate", "monitorInteractions",
 					"monitorStats", "afterOnload", "afterOnloadMaxLength", "afterOnloadMinWait",
 					"waitAfterOnload", "ttiWaitForFrameworkReady", "ttiWaitForHeroImages",
-					"sendLog", "logMaxEntries", "sendTimeline"]);
+					"sendLog", "logMaxEntries", "sendTimeline", "monitorLayoutShifts"]);
 
 			if (impl.initialized) {
 				return this;
@@ -9156,6 +8763,9 @@ BOOMR_check_doc_domain();
 					impl.mouseMonitor = new MouseMonitor(BOOMR.window, impl.timeline, impl.interactionMonitor);
 					impl.visibilityMonitor = new VisibilityMonitor(BOOMR.window, impl.timeline, impl.interactionMonitor);
 					impl.orientationMonitor = new OrientationMonitor(BOOMR.window, impl.timeline, impl.interactionMonitor);
+					impl.touchStartMonitor = new TouchStartMonitor(BOOMR.window, impl.timeline, impl.interactionMonitor);
+					impl.mouseDownMonitor = new MouseDownMonitor(BOOMR.window, impl.timeline, impl.interactionMonitor);
+					impl.pointerDownMonitor = new PointerDownMonitor(BOOMR.window, impl.timeline, impl.interactionMonitor);
 				}
 
 				//
@@ -9163,6 +8773,12 @@ BOOMR_check_doc_domain();
 				//
 				if (impl.monitorStats) {
 					impl.statsMonitor = new StatsMonitor(BOOMR.window, impl.timeline, impl.interactionMonitor);
+				}
+
+				if (impl.monitorLayoutShifts &&
+					BOOMR.window.PerformanceObserver) {
+					impl.layoutShiftMonitor = new LayoutShiftMonitor(BOOMR.window);
+
 				}
 			}
 
@@ -9201,6 +8817,7 @@ BOOMR_check_doc_domain();
 
 		// external metrics
 		metrics: externalMetrics
+
 
 	};
 }());
@@ -9262,6 +8879,7 @@ BOOMR_check_doc_domain();
 	}
 
 	w = BOOMR.window;
+
 
 
 	var impl = {
@@ -9550,6 +9168,11 @@ BOOMR_check_doc_domain();
  * This plugin also monitors DOM manipulations following a XHR to filter out
  * "background" XHRs.
  *
+ * This plugin provides the backbone for the {@link BOOMR.plugins.SPA} plugin.  Single Page App navigations
+ * use XHR and DOM monitoring to determine when the SPA navigations are complete.
+ *
+ * This plugin has a corresponding {@tutorial header-snippets} that helps monitor XHRs prior to Boomerang loading.
+ *
  * For information on how to include this plugin, see the {@tutorial building} tutorial.
  *
  * ## What is Measured
@@ -9576,9 +9199,11 @@ BOOMR_check_doc_domain();
  *
  * To enable AutoXHR, you should set {@link BOOMR.plugins.AutoXHR.init|instrument_xhr} to `true`:
  *
- *     BOOMR.init({
- *       instrument_xhr: true
- *     });
+ * ```
+ * BOOMR.init({
+ *     instrument_xhr: true
+ * });
+ * ```
  *
  * Once enabled and initialized, the `window.XMLHttpRequest` object will be
  * replaced with a "proxy" object that instruments all XHRs.
@@ -9587,9 +9212,11 @@ BOOMR_check_doc_domain();
  *
  * After `AutoXHR` is enabled, any `XMLHttpRequest.send` will be monitored:
  *
- *     xhr = new XMLHttpRequest();
- *     xhr.open("GET", "/api/foo");
- *     xhr.send(null);
+ * ```
+ * xhr = new XMLHttpRequest();
+ * xhr.open("GET", "/api/foo");
+ * xhr.send(null);
+ * ```
  *
  * If this XHR triggers DOM changes, a beacon will eventually be sent.
  *
@@ -9607,9 +9234,40 @@ BOOMR_check_doc_domain();
  * If you don't want this behavior, and want to measure *every* XHR on the page, you
  * can enable {@link BOOMR.plugins.AutoXHR.init|alwaysSendXhr=true}.  When set, every
  * distinct XHR will get its own XHR beacon.
+ *
+ * ```
+ * BOOMR.init({
+ *     AutoXHR: {
+ *         alwaysSendXhr: true
+ *     }
+ * });
+ * ```
+ *
  * {@link BOOMR.plugins.AutoXHR.init|alwaysSendXhr} can also be a list of strings
  * (matching URLs), regular expressions (matching URLs), or a function which returns
  * true for URLs to always send XHRs for.
+ *
+ * ```
+ * BOOMR.init({
+ *     AutoXHR: {
+ *         alwaysSendXhr: [
+ *             "domain.com",
+ *             /regexmatch/,
+ *         ]
+ *    }
+ * });
+ *
+ * // or
+ *
+ * BOOMR.init({
+ *     AutoXHR: {
+ *         alwaysSendXhr: function(url) {
+ *             return url.indexOf("domain.com") !== -1;
+ *         }
+ *    }
+ * });
+ * ```
+ *
  *
  * ### Compatibility and Browser Support
  *
@@ -9626,14 +9284,17 @@ BOOMR_check_doc_domain();
  * We will not use MutationObserver in IE 11 due to several browser bugs.
  * See {@link BOOMR.utils.isMutationObserverSupported} for details.
  *
- * ## Excluding Certain Requests From Instrumentation
+ * ## Excluding Certain Requests or DOM Elements From Instrumentation
  *
- * Whenever Boomerang intercepts an `XMLHttpRequest`, it will check if that request
+ * Whenever Boomerang intercepts an `XMLHttpRequest` (or Fetch), it will check if that request
  * matches anything in the XHR exclude list. If it does, Boomerang will not
  * instrument, time, send a beacon for that request, or include it in the
  * {@link BOOMR.plugins.SPA} calculations.
  *
- * The XHR exclude list is defined by creating an `BOOMR.xhr_excludes` map, and
+ * There are two methods of excluding XHRs: Defining the `BOOMR.xhr_excludes` array,
+ * or using the {@link BOOMR.plugins.AutoXHR.init|excludeFilters} option.
+ *
+ * The `BOOMR.xhr_excludes` XHR excludes list is defined by creating a map, and
  * adding URL parts that you would like to exclude from instrumentation. You
  * can put any of the following in `BOOMR.xhr_excludes`:
  *
@@ -9654,6 +9315,37 @@ BOOMR_check_doc_domain();
  * };
  * ```
  *
+ * The {@link BOOMR.plugins.AutoXHR.init|excludeFilters} gives you more control by allowing you
+ * to specify one or more callbacks that will be run for each XHR/Fetch.  If any callback
+ * returns `true`, the XHR/Fetch will *not* be instrumented.
+ *
+ * ```
+ * BOOMR.init({
+ *   AutoXHR: {
+ *     excludeFilters: [
+ *       function(anchor) {
+ *         return anchor.href.match(/non-trackable/);
+ *       }
+ *     ]
+ *   }
+ * });
+ * ```
+ *
+ * Finally, the {@link BOOMR.plugins.AutoXHR.init|domExcludeFilters} DOM filters can be used to filter out
+ * specific DOM elements from being tracked (marked as "uninteresting").
+ *
+ * ```
+ * BOOMR.init({
+ *   AutoXHR: {
+ *     domExcludeFilters: [
+ *       function(elem) {
+ *         return elem.id === "ignore";
+ *       }
+ *     ]
+ *   }
+ * });
+ * ```
+ *
  * ## Beacon Parameters
  *
  * XHR beacons have different parameters in general than Page Load beacons.
@@ -9666,20 +9358,25 @@ BOOMR_check_doc_domain();
  *
  * ## Interesting Nodes
  *
- * MutationObserver is used to detect "interesting" nodes. Interesting nodes are
+ * A `MutationObserver` is used to detect "interesting" nodes. Interesting nodes are
  * new IMG/IMAGE/IFRAME/LINK (rel=stylesheet) nodes or existing nodes that are
  * changing their source URL.
+ *
  * We consider the following "uninteresting" nodes:
  *   - Nodes that have either a width or height <= 1px.
+ *   - Nodes with either a width or height of 0px.
  *   - Nodes that have display:none.
  *   - Nodes that have visibility:hidden.
+ *   - Nodes with an opacity:0.
  *   - Nodes that update their source URL to the same value.
  *   - Nodes that have a blank source URL.
+ *   - Images with a loading="lazy" attribute
  *   - Nodes that have a source URL starting with `about:`, `javascript:` or `data:`.
  *   - SCRIPT nodes because there is no consistent way to detect when they have loaded.
  *   - Existing IFRAME nodes that are changing their source URL because is no consistent
  *     way to detect when they have loaded.
  *   - Nodes that have a source URL that matches a AutoXHR exclude filter rule.
+ *   - Nodes that have been manually excluded
  *
  * ## Algorithm
  *
@@ -9724,6 +9421,14 @@ BOOMR_check_doc_domain();
  *   - We do not know if the developer's event listener has already run before
  *     ours or if it will run in the future or even if they do have an event listener.
  *   - Our best bet is the same as 0.1 above.
+ *
+ * - `0.3` SPA soft route change from a click that triggers a XHR before the state is
+ *    changed (when {@link BOOMR.plugins.AutoXHR.init|spaStartFromClick} is enabled).
+ *
+ *   - We store the time of the click
+ *   - If any additional XHRs come next, we track those
+ *   - When a pushState comes after the XHRs (before the timeout), we will "migrate" the
+ *     click to a SPA event
  *
  * - `1` Click initiated (Only available when no SPA plugins are enabled)
  *
@@ -9840,7 +9545,6 @@ BOOMR_check_doc_domain();
 	 */
 	var CLICK_XHR_TIMEOUT = 50;
 
-
 	/**
 	 * Fetch events that don't read the body of the response get an extra wait time before
 	 * we look for it's corresponding ResourceTiming entry.
@@ -9922,6 +9626,7 @@ BOOMR_check_doc_domain();
 		// Nothing to instrument
 		return;
 	}
+
 
 
 	/**
@@ -10112,7 +9817,8 @@ BOOMR_check_doc_domain();
 			resource: resource,
 			nodes_to_wait: 0,  // MO resources + xhrs currently outstanding + wait filter (max: 1)
 			total_nodes: 0,  // total MO resources + xhrs + wait filter (max: 1)
-			resources: [],  // resources reported to MO handler (no xhrs)
+			resources: [],  // resources reported by MO handler (no xhrs)
+			xhr_resources: [],  // resources reported by xhr monitoring (for debugging only)
 			complete: false,
 			aborted: false,  // this event was aborted
 			firedEarlyBeacon: false
@@ -10132,7 +9838,55 @@ BOOMR_check_doc_domain();
 		}
 
 		if (last_ev) {
-			if (last_ev.type === "click") {
+			if (last_ev.type === "click" &&
+			    impl.singlePageApp &&
+			    impl.spaStartFromClick &&
+			    ev.type === "xhr") {
+				// spaStartFromClick active, we had a click, and this is an XHR
+
+				// mark that this XHR came from a click event
+				ev.resource.fromClick = true;
+
+				// transition XHR start time from the click
+				ev.resource.timing.click = last_ev.resource.timing.requestStart;
+				ev.resource.timing.requestStart = last_ev.resource.timing.requestStart;
+
+				ev.interesting = last_ev.interesting || 0;
+				ev.total_nodes += last_ev.total_nodes;
+				ev.resources = last_ev.resources.concat(ev.resources);
+				ev.xhr_resources = last_ev.xhr_resources.concat(ev.xhr_resources);
+
+				// stop the click event
+				this.pending_events[last_ev_index] = undefined;
+				this.watch--;
+			}
+			else if ((last_ev.type === "click" || last_ev.resource.fromClick) &&
+			         impl.singlePageApp &&
+			         impl.spaStartFromClick &&
+			         ev.type === "spa") {
+				// spaStartFromClick active, we have a click (or XHR from click) active,
+				// and this is a SPA
+
+				// transition all XHR times
+				ev.resource.timing = last_ev.resource.timing;
+
+				ev.interesting = last_ev.interesting || 0;
+				ev.total_nodes += last_ev.total_nodes;
+				ev.resources = last_ev.resources.concat(ev.resources);
+
+				// add previous XHR URL
+				if (last_ev.resource.url) {
+					ev.xhr_resources.push(last_ev.resource.url);
+				}
+
+				// add any other XHRs tracked in the previous
+				ev.xhr_resources = ev.xhr_resources.concat(last_ev.xhr_resources);
+
+				// stop the previous event
+				this.pending_events[last_ev_index] = undefined;
+				this.watch--;
+			}
+			else if (last_ev.type === "click") {
 				// 3.1 & 3.3
 				if (last_ev.nodes_to_wait === 0 || !last_ev.resource.url) {
 					this.pending_events[last_ev_index] = undefined;
@@ -10256,8 +10010,6 @@ BOOMR_check_doc_domain();
 
 			this.watch--;
 
-			ev.resource.resources = ev.resources;
-
 			// for SPA events, the resource's URL may be set to the previous navigation's URL.
 			// reset it to the current document URL
 			if (BOOMR.utils.inArray(ev.type, BOOMR.constants.BEACON_TYPE_SPAS)) {
@@ -10273,15 +10025,40 @@ BOOMR_check_doc_domain();
 				return;
 			}
 
+			// if click event did not trigger additional resources or doesn't have
+			// a url then do not send a beacon
+			if (ev.type === "click" && (ev.total_nodes === 0 || !ev.resource.url)) {
+				
+				this.pending_events[index] = undefined;
+				return;
+			}
+
+			// when in spaStartFromClick mode, if we're tracking clicks, transition them to an 'xhr' event
+			if (ev.type === "click" && impl.singlePageApp && impl.spaStartFromClick) {
+				ev.type = ev.resource.initiator = "xhr";
+			}
+
+			// if this was a XHR that did not trigger additional resources then we will not send a beacon,
+			// note that XHRs start out with total_nodes=1 to account for itself
+			if (impl.xhrRequireChanges &&
+			    ev.type === "xhr" &&
+			    ev.total_nodes === 1 &&
+			    (typeof ev.interesting === "undefined" || ev.interesting === 0) &&
+			    !matchesAlwaysSendXhr(ev.resource.url, impl.alwaysSendXhr)) {
+				
+				this.pending_events[index] = undefined;
+				return;
+			}
+
 			if (BOOMR.utils.inArray(ev.type, BOOMR.constants.BEACON_TYPE_SPAS)) {
 				// save the last SPA location
 				self.lastSpaLocation = ev.resource.url;
 
 				if (!ev.forced) {
-					// if this was a SPA nav that triggered no additional resources, substract the
-					// SPA_TIMEOUT from now to determine the end time
-					if (ev.total_nodes === 0) {
-						ev.resource.timing.loadEventEnd = now - impl.spaIdleTimeout;
+					// if this was a SPA soft nav that triggered no additional resources, call it
+					// a 1ms duration
+					if (ev.type === "spa" && ev.total_nodes === 0) {
+						ev.resource.timing.loadEventEnd = ev.resource.timing.requestStart + 1;
 					}
 
 					// if the event wasn't forced then the SPA hard nav should have the page's
@@ -10343,12 +10120,12 @@ BOOMR_check_doc_domain();
 			    BOOMR.plugins.ResourceTiming.is_enabled() &&
 			    resource.timing &&
 			    resource.timing.requestStart) {
-				var r = BOOMR.plugins.ResourceTiming.getCompressedResourceTiming(
-						resource.timing.requestStart,
-						resource.timing.loadEventEnd
-					);
 
-				BOOMR.plugins.ResourceTiming.addToBeacon(r);
+				// Save resourceTiming data onto beacon as it may not go out right away
+				resource.restiming = BOOMR.plugins.ResourceTiming.getCompressedResourceTiming(
+					resource.timing.requestStart,
+					resource.timing.loadEventEnd
+				);
 			}
 
 			// For SPAs, calculate Back-End and Front-End timings
@@ -10535,20 +10312,11 @@ BOOMR_check_doc_domain();
 			if (BOOMR.utils.inArray(ev.type, BOOMR.constants.BEACON_TYPE_SPAS) && !BOOMR.hasBrowserOnloadFired()) {
 				// browser onload hasn't fired yet, lets wait because there might be more interesting
 				// things on the way
-				this.setTimeout(SPA_TIMEOUT, index);
+				this.setTimeout(impl.spaIdleTimeout, index);
 				return;
 			}
 
 			if (ev.nodes_to_wait === 0) {
-				// TODO, if xhr event did not trigger additional resources then do not
-				// send a beacon unless it matches alwaysSendXhr. See !868
-
-				// if click event did not trigger additional resources or doesn't have
-				// a url then do not send a beacon
-				if (ev.type === "click" && (ev.total_nodes === 0 || !ev.resource.url)) {
-					this.watch--;
-					this.pending_events[index] = undefined;
-				}
 				// send event if there are no outstanding downloads
 				this.sendEvent(index);
 			}
@@ -10689,6 +10457,7 @@ BOOMR_check_doc_domain();
 								return;
 							}
 							current_event.firedEarlyBeacon = true;
+							
 							BOOMR.plugins.Early.sendEarlyBeacon(current_event.resource, current_event.type);
 						}, SPA_EARLY_TIMEOUT);  // give the SPA framework a bit of time to load the resource
 					}
@@ -10775,6 +10544,10 @@ BOOMR_check_doc_domain();
 					// placeholder IMG
 					return false;
 				}
+				else if (node.loading === "lazy") {
+					// lazy loading - we can't know when this request will be triggered
+					return false;
+				}
 			}
 
 			// IFRAMEs whose SRC has changed will not fire a load event again
@@ -10808,21 +10581,36 @@ BOOMR_check_doc_domain();
 			if (isNaN(domWidth)) {
 				domWidth = (node.style &&
 				   (node.style.width === "0" ||
-					node.style.width === "0px" ||
-					node.style.width === "1px")) ? 0 : undefined;
+				    node.style.width === "0px" ||
+				    node.style.width === "1px")) ? 0 : undefined;
 			}
 
-			if (!isNaN(domHeight) && domHeight <= 1 && !isNaN(domWidth) && domWidth <= 1) {
+			// Skip anything where *both* dimensions are 1px or less
+			if (!isNaN(domHeight) &&
+			    domHeight <= 1 &&
+			    !isNaN(domWidth) &&
+			    domWidth <= 1) {
 				return false;
 			}
 
-			// Check against display:none
-			if (node.style && node.style.display === "none") {
+			// Skip anything where *either* dimension is 0px
+			if (domHeight === 0 || domWidth === 0) {
 				return false;
 			}
 
-			// Check against visibility:hidden
-			if (node.style && node.style.visibility === "hidden") {
+			// Check against display:none, visibility:hidden, opacity: 0
+			if (node.style && (
+			    (node.style.display === "none") ||
+			    (node.style.visibility === "hidden") ||
+			    (node.style.opacity === "0"))) {
+				return false;
+			}
+
+			// Run any final customer-defined DOM exclusions
+			if (impl.domExcludeFilter(node)) {
+				
+
+				// excluded resource, so abort
 				return false;
 			}
 
@@ -10850,7 +10638,7 @@ BOOMR_check_doc_domain();
 			if (!current_event.resource.url) {
 				a.href = url;
 
-				if (impl.excludeFilter(a)) {
+				if (impl.xhrExcludeFilter(a)) {
 					
 					// excluded resource, so abort
 					return false;
@@ -10947,6 +10735,7 @@ BOOMR_check_doc_domain();
 		}
 
 		
+		current_event.xhr_resources.push(resource.url);  // for debugging
 
 		// increase the number of outstanding resources by one
 		current_event.nodes_to_wait++;
@@ -11123,7 +10912,7 @@ BOOMR_check_doc_domain();
 	function instrumentClick() {
 		// Capture clicks and wait 50ms to see if they result in DOM mutations
 		BOOMR.subscribe("click", function() {
-			if (impl.singlePageApp) {
+			if (impl.singlePageApp && !impl.spaStartFromClick) {
 				// In a SPA scenario, only route changes (or events from the SPA
 				// framework) trigger an interesting event.
 				return;
@@ -11264,7 +11053,7 @@ BOOMR_check_doc_domain();
 			}
 
 			a.href = url;
-			if (impl.excludeFilter(a)) {
+			if (impl.xhrExcludeFilter(a)) {
 				// this fetch should be excluded from instrumentation
 				
 				// call the original open method
@@ -11284,7 +11073,10 @@ BOOMR_check_doc_domain();
 			handler.addEvent(resource);
 
 			try {
-				resource.timing.requestStart = BOOMR.now();
+				if (!resource.timing.requestStart) {
+					resource.timing.requestStart = BOOMR.now();
+				}
+
 				var promise = BOOMR.orig_fetch.apply(this, arguments);
 
 				/**
@@ -11411,6 +11203,10 @@ BOOMR_check_doc_domain();
 
 				return promise.then(function(response) {
 					var i, res, ct, parseJson = false, parseXML = false;
+
+					if (response.redirected) {
+						resource.responseUrl = response.url;
+					}
 
 					if (response.status < 200 || response.status >= 400) {
 						// put the HTTP error code on the resource if it's not a success
@@ -11576,7 +11372,7 @@ BOOMR_check_doc_domain();
 			req.open = function(method, url, async) {
 				a.href = url;
 
-				if (impl.excludeFilter(a)) {
+				if (impl.xhrExcludeFilter(a)) {
 					// this xhr should be excluded from instrumentation
 					excluded = true;
 					
@@ -11618,6 +11414,11 @@ BOOMR_check_doc_domain();
 								// meaning the request wasn't aborted.  Aborted requests will fire the
 								// next handler.
 								if (req.readyState === 4 && req.status !== 0) {
+
+									if (req.responseURL !== resource.url) {
+										resource.responseUrl = req.responseURL;
+									}
+
 									if (req.status < 200 || req.status >= 400) {
 										// put the HTTP error code on the resource if it's not a success
 										resource.status = req.status;
@@ -11657,11 +11458,18 @@ BOOMR_check_doc_domain();
 								}
 								else if (req.readyState === 0 && typeof resource.timing.open === "number") {
 									// something called .abort() after the request was started
+									if (req.responseURL !== resource.url) {
+										resource.responseUrl = req.responseURL;
+									}
 									resource.status = XHR_STATUS_ABORT;
 									impl.loadFinished(resource);
 								}
 							}
 							else {
+								if (req.responseURL !== resource.url) {
+									resource.responseUrl = req.responseURL;
+								}
+
 								// load, timeout, error, abort
 								if (ename === "load") {
 									if (req.status !== 0 && (req.status < 200 || req.status >= 400)) {
@@ -11746,7 +11554,10 @@ BOOMR_check_doc_domain();
 
 				handler.addEvent(resource);
 
-				resource.timing.requestStart = BOOMR.now();
+				if (!resource.timing.requestStart) {
+					resource.timing.requestStart = BOOMR.now();
+				}
+
 				// call the original send method unless there was an error
 				// during .open
 				if (typeof resource.status === "undefined" ||
@@ -11794,41 +11605,47 @@ BOOMR_check_doc_domain();
 	}
 
 	/**
-	 * Container for AutoXHR plugin Closure specific state configuration data
+	 * Container for AutoXHR plugin state
 	 *
 	 * @property {string[]} spaBackendResources Default resources to count as Back-End during a SPA nav
-	 * @property {FilterObject[]} filters Array of {@link FilterObject} that is used to apply filters on XHR Requests
-	 * @property {boolean} initialized Set to true after the first run of
+	 * @property {XhrFilterObject[]} xhrExcludeFilters Array of {@link XhrFilterObject} that is used to apply filters on XHR Requests
+	 * @property {DomFilterObject[]} domExcludeFilters Array of {@link DomFilterObject} that is used to apply filters on DOM elements
+	 * @property {boolean} initialized Set to true after initialization
+	 *
 	 * {@link BOOMR.plugins.AutoXHR#init}
 	 */
 	impl = {
 		spaBackEndResources: SPA_RESOURCES_BACK_END,
 		alwaysSendXhr: false,
-		excludeFilters: [],
+		xhrExcludeFilters: [],
+		domExcludeFilters: [],
 		initialized: false,
 		captureXhrRequestResponse: false,
 		singlePageApp: false,
+		spaStartFromClick: false,
 		autoXhrEnabled: false,
 		monitorFetch: false,  // new feature, off by default
 		fetchBodyUsedWait: FETCH_BODY_USED_WAIT_DEFAULT,
 		spaIdleTimeout: SPA_TIMEOUT,
 		xhrIdleTimeout: CLICK_XHR_TIMEOUT,
+		xhrRequireChanges: true,
 
 		/**
-		 * Filter function iterating over all available {@link FilterObject}s if
-		 * returns true will not instrument an XHR
+		 * Filter function iterating over all available {@link XhrFilterObject}s.
+		 *
+		 * If any filter returns true, the XHR will *not* be instrumented.
 		 *
 		 * @param {HTMLAnchorElement} anchor - HTMLAnchorElement node created with
-		 * the XHRs URL as `href` to evaluate by {@link FilterObject}s and passed
-		 * to {@link FilterObject#cb} callbacks.
+		 * the XHRs URL as `href` to evaluate by {@link XhrFilterObject}s and passed
+		 * to {@link XhrFilterObject#cb} callbacks.
 		 *
 		 * NOTE: The anchor needs to be created from the host document
 		 * (ie. `BOOMR.window.document`) to enable us to resolve relative URLs to
 		 * a full valid path and BASE HREF mechanics can take effect.
 		 *
-		 * @return {boolean} true if the XHR should not be instrumented false if it should be instrumented
+		 * @return {boolean} True if the XHR should not be instrumented.
 		 */
-		excludeFilter: function(anchor) {
+		xhrExcludeFilter: function(anchor) {
 			var idx, ret, ctx;
 
 			// If anchor is null we just throw it out period
@@ -11836,25 +11653,62 @@ BOOMR_check_doc_domain();
 				return false;
 			}
 
-			for (idx = 0; idx < impl.excludeFilters.length; idx++) {
-				if (typeof impl.excludeFilters[idx].cb === "function") {
-					ctx = impl.excludeFilters[idx].ctx;
-					if (impl.excludeFilters[idx].name) {
-						
-					}
+			for (idx = 0; idx < impl.xhrExcludeFilters.length; idx++) {
+				if (typeof impl.xhrExcludeFilters[idx].cb === "function") {
+					ctx = impl.xhrExcludeFilters[idx].ctx;
 
 					try {
-						ret = impl.excludeFilters[idx].cb.call(ctx, anchor);
+						ret = impl.xhrExcludeFilters[idx].cb.call(ctx, anchor);
 						if (ret) {
+
 
 							return true;
 						}
 					}
 					catch (exception) {
-						BOOMR.addError(exception, "BOOMR.plugins.AutoXHR.impl.excludeFilter()");
+						BOOMR.addError(exception, "BOOMR.plugins.AutoXHR.impl.xhrExcludeFilter()");
 					}
 				}
 			}
+			return false;
+		},
+
+		/**
+		 * Filter function iterating over all available {@link DomFilterObject}s.
+		 *
+		 * @param {HTMLElement} elem - HTMLElement to review for instrumentation.
+		 *
+		 * If any filter returns true, the DOM element will *not* be instrumented.
+		 *
+		 * @return {boolean} True if the DOM element should not be instrumented.
+		 */
+		domExcludeFilter: function(elem) {
+			var idx, ret, ctx;
+
+			for (idx = 0; idx < impl.domExcludeFilters.length; idx++) {
+				if (typeof impl.domExcludeFilters[idx].cb === "function") {
+					ctx = impl.domExcludeFilters[idx].ctx;
+
+					if (impl.domExcludeFilters[idx].name) {
+						
+					}
+
+					try {
+						ret = impl.domExcludeFilters[idx].cb.call(ctx, elem);
+						if (ret) {
+
+
+							return true;
+						}
+					}
+					catch (exception) {
+						BOOMR.addError(exception, "BOOMR.plugins.AutoXHR.impl.domExcludeFilter()");
+					}
+				}
+			}
+
+			
+
 			return false;
 		},
 
@@ -11928,8 +11782,10 @@ BOOMR_check_doc_domain();
 							resource.timing.loadEventEnd = entryResponseEnd;
 						}
 
-						// use the startTime from ResourceTiming instead
-						resource.timing.requestStart = entryStartTime;
+						// use the startTime from ResourceTiming instead (if not already set from Click)
+						if (!resource.fromClick || !resource.timing.requestStart) {
+							resource.timing.requestStart = entryStartTime;
+						}
 
 						// also track it as the fetchStart time
 						resource.timing.fetchStart = entryStartTime;
@@ -11979,12 +11835,20 @@ BOOMR_check_doc_domain();
 		 * @param {string[]} [config.AutoXHR.spaBackEndResources] Default resources to count as
 		 * Back-End during a SPA nav
 		 * @param {boolean} [config.AutoXHR.monitorFetch] Whether or not to instrument fetch()
-		 * @param {number} [config.AuthXHR.fetchBodyUsedWait] If the fetch response's bodyUsed flag is false,
+		 * @param {number} [config.AutoXHR.fetchBodyUsedWait] If the fetch response's bodyUsed flag is false,
 		 * we'll wait this amount of ms before checking RT for an entry. Setting to 0 will disable this feature
-		 * @param {boolean} [config.AutoXHR.alwaysSendXhr] Whether or not to send XHR
+		 * @param {boolean|string[]|RegExp[]|function[]} [config.AutoXHR.alwaysSendXhr] Whether or not to send XHR
 		 * beacons for every XHR.
 		 * @param {boolean} [config.captureXhrRequestResponse] Whether or not to capture an XHR's
 		 * request and response bodies on for the {@link event:BOOMR#xhr_load xhr_load} event.
+		 * @param {number} [config.AutoXHR.spaIdleTimeout=1000] Timeout for Single Page Applications after the final
+		 * resource fetch has completed before calling the SPA navigation complete. Default is 1000ms.
+		 * @param {number} [config.AutoXHR.xhrIdleTimeout=50] Timeout for XHRs after final resource fetch has completed
+		 * before calling the XHR complete.  Default is 50ms.
+		 * @param {boolean} [config.AutoXHR.xhrRequireChanges=true] Whether or not a XHR beacon will only be triggered
+		 * if there were DOM changes.
+		 * @param {boolean} [config.AutoXHR.spaStartFromClick=false] In Single Page Apps, start tracking
+		 * the SPA Soft Navigation from any preceeding clicks.  If false, will start from the most recent pushState.
 		 *
 		 * @returns {@link BOOMR.plugins.AutoXHR} The AutoXHR plugin for chaining
 		 * @memberof BOOMR.plugins.AutoXHR
@@ -12004,7 +11868,7 @@ BOOMR_check_doc_domain();
 			// gather config and config overrides
 			BOOMR.utils.pluginConfig(impl, config, "AutoXHR",
 			    ["spaBackEndResources", "alwaysSendXhr", "monitorFetch", "fetchBodyUsedWait",
-			    "spaIdleTimeout", "xhrIdleTimeout"]);
+			    "spaIdleTimeout", "xhrIdleTimeout", "xhrRequireChanges", "spaStartFromClick"]);
 
 			BOOMR.instrumentXHR = instrumentXHR;
 			BOOMR.uninstrumentXHR = uninstrumentXHR;
@@ -12018,10 +11882,39 @@ BOOMR_check_doc_domain();
 				impl.initialized = true;
 			}
 
-			// Add filters from config
+			//
+			// Add XHR filters from config
+			// NOTE via config it's just called 'excudeFilters' (for compat), while in the code it's always
+			// 'xhrExcludeFilters' to differentiate itself from domExcludeFilters
+			//
 			if (config && config.AutoXHR && config.AutoXHR.excludeFilters && config.AutoXHR.excludeFilters.length > 0) {
 				for (idx = 0; idx < config.AutoXHR.excludeFilters.length; idx++) {
-					impl.excludeFilters.push(config.AutoXHR.excludeFilters[idx]);
+					if (typeof config.AutoXHR.excludeFilters[idx] === "function") {
+						impl.xhrExcludeFilters.push({
+							cb: config.AutoXHR.excludeFilters[idx],
+							ctx: this,
+							name: "unknown XHR filter"
+						});
+					}
+					else {
+						impl.xhrExcludeFilters.push(config.AutoXHR.excludeFilters[idx]);
+					}
+				}
+			}
+
+			// Add DOM filters from config
+			if (config && config.AutoXHR && config.AutoXHR.domExcludeFilters && config.AutoXHR.domExcludeFilters.length > 0) {
+				for (idx = 0; idx < config.AutoXHR.domExcludeFilters.length; idx++) {
+					if (typeof config.AutoXHR.domExcludeFilters[idx] === "function") {
+						impl.domExcludeFilters.push({
+							cb: config.AutoXHR.domExcludeFilters[idx],
+							ctx: this,
+							name: "unknown DOM filter"
+						});
+					}
+					else {
+						impl.domExcludeFilters.push(config.AutoXHR.domExcludeFilters[idx]);
+					}
 				}
 			}
 
@@ -12108,12 +12001,12 @@ BOOMR_check_doc_domain();
 		/**
 		 * A callback with a HTML element.
 		 * @callback htmlElementCallback
-		 * @param {HTMLAnchorElement} elem HTML a element
+		 * @param {HTMLAnchorElement} elem HTML element
 		 * @memberof BOOMR.plugins.AutoXHR
 		 */
 
 		/**
-		 * Add a filter function to the list of functions to run to validate if an
+		 * Add a XHR filter function to the list of functions to run to validate if an
 		 * XHR should be instrumented.
 		 *
 		 * @example
@@ -12133,7 +12026,25 @@ BOOMR_check_doc_domain();
 		 * @memberof BOOMR.plugins.AutoXHR
 		 */
 		addExcludeFilter: function(cb, ctx, name) {
-			impl.excludeFilters.push({cb: cb, ctx: ctx, name: name});
+			impl.xhrExcludeFilters.push({cb: cb, ctx: ctx, name: name});
+		},
+
+		/**
+		 * Add a DOM filter function to the list of functions to run to validate if an
+		 * DOM element should be instrumented.
+		 *
+		 * @example
+		 * BOOMR.plugins.AutoXHR.addDomExcludeFilter(function(elem) {
+		 *   return elem.id === "ignore";
+		 * }, null, "exampleFilter");
+		 * @param {BOOMR.plugins.AutoXHR.htmlElementCallback} cb Callback to run to validate filtering of an XHR Request
+		 * @param {Object} ctx Context to run {@param cb} in
+		 * @param {string} [name] Optional name for the filter, called out when running exclude filters for debugging purposes
+		 *
+		 * @memberof BOOMR.plugins.AutoXHR
+		 */
+		addDomExcludeFilter: function(cb, ctx, name) {
+			impl.domExcludeFilters.push({cb: cb, ctx: ctx, name: name});
 		},
 
 		/**
@@ -12145,6 +12056,7 @@ BOOMR_check_doc_domain();
 		setXhrRequestResponseCapturing: function(enabled) {
 			impl.captureXhrRequestResponse = enabled;
 		}
+
 
 	};
 
@@ -12197,16 +12109,28 @@ BOOMR_check_doc_domain();
 	 */
 
 	/**
-	 * Filter object with data on the callback, context and name.
+	 * XHR filter object with data on the callback, context and name.
 	 *
-	 * @typedef FilterObject
+	 * @typedef XhrFilterObject
 	 *
 	 * @property {BOOMR.plugins.AutoXHR.htmlElementCallback} cb Callback
 	 * @property {Object} ctx Execution context to use when running `cb`
-	 * @property {string} [name] Name of the filter used for logging and debugging purposes (This is an entirely optional property)
+	 * @property {string} [name] Name of the filter used for logging and debugging purposes
 	 *
 	 * @memberof BOOMR.plugins.AutoXHR
 	 */
+
+	 /**
+ 	 * DOM filter object with data on the callback, context and name.
+ 	 *
+ 	 * @typedef DomFilterObject
+ 	 *
+ 	 * @property {BOOMR.plugins.AutoXHR.htmlElementCallback} cb Callback
+ 	 * @property {Object} ctx Execution context to use when running `cb`
+ 	 * @property {string} [name] Name of the filter used for logging and debugging purposes
+ 	 *
+ 	 * @memberof BOOMR.plugins.AutoXHR
+ 	 */
 })();
 
 /**
@@ -12323,6 +12247,7 @@ BOOMR_check_doc_domain();
 	    firstSpaNav = true,
 	    routeFilter = false,
 	    routeChangeWaitFilter = false,
+	    routeChangeWaitFilterHardNavs = false,
 	    disableHardNav = false,
 	    supported = [],
 	    latestResource,
@@ -12334,6 +12259,7 @@ BOOMR_check_doc_domain();
 	if (BOOMR.plugins.SPA || !BOOMR.plugins.AutoXHR) {
 		return;
 	}
+
 
 
 	var impl = {
@@ -12353,7 +12279,8 @@ BOOMR_check_doc_domain();
 		 * @param {BOOMR.plugins.AutoXHR.Resource} resource Resource
 		 */
 		spaHardMissedOnComplete: function(resource) {
-			var p, navigationStart = (BOOMR.plugins.RT && BOOMR.plugins.RT.navigationStart());
+			var p, navigationStart = (BOOMR.plugins.RT && BOOMR.plugins.RT.navigationStart()),
+			    ev, mh = BOOMR.plugins.AutoXHR.getMutationHandler();
 
 			waitingOnHardMissedComplete = false;
 
@@ -12368,11 +12295,18 @@ BOOMR_check_doc_domain();
 			// always use the start time of navigationStart
 			resource.timing.requestStart = navigationStart;
 
-			if (resource.resources.length === 0) {
-				// No other resources were fetched, so set the end time
-				// to NavigationTiming's performance.loadEventEnd if available (instead of 'now')
+			ev = mh.pending_events[resource.index];
+			if (!ev || ev.total_nodes === 0) {
+				// No other resources (xhrs or mutations) were detected, so set the end time
+				// to NavigationTiming's page loadEventEnd if available (instead of 'now')
 				p = BOOMR.getPerformance();
-				if (p && p.timing && p.timing.navigationStart && p.timing.loadEventEnd) {
+
+				if (p &&
+				    p.timing &&
+				    p.timing.navigationStart &&
+				    p.timing.loadEventEnd &&
+				    // loadEventEnd may have been set by a wait filter
+				    typeof resource.timing.loadEventEnd === "undefined") {
 					resource.timing.loadEventEnd = p.timing.loadEventEnd;
 				}
 			}
@@ -12398,8 +12332,9 @@ BOOMR_check_doc_domain();
 		 *
 		 * @memberof BOOMR.plugins.SPA
 		 */
-		is_complete: function() {
-			return !waitingOnHardMissedComplete;
+		is_complete: function(vars) {
+			// allow error and early beacons to go through even if we're not complete
+			return !waitingOnHardMissedComplete || (vars && (vars["http.initiator"] === "error" || typeof vars.early !== "undefined"));
 		},
 
 		/**
@@ -12521,6 +12456,7 @@ BOOMR_check_doc_domain();
 		 * @param {object} [options] Additional options
 		 * @param {BOOMR.plugins.SPA.spaRouteFilter} [options.routeFilter] Route filter
 		 * @param {BOOMR.plugins.SPA.spaRouteChangeWaitFilter} [options.routeChangeWaitFilter] Route change wait filter
+		 * @param {boolean} [options.routeChangeWaitFilterHardNavs] Whether to apply wait filter on hard navs
 		 * @param {boolean} [options.disableHardNav] Disable sending SPA hard beacons
 		 *
 		 * @returns {@link BOOMR.plugins.SPA} The SPA plugin for chaining
@@ -12539,6 +12475,10 @@ BOOMR_check_doc_domain();
 
 			if (typeof options.routeChangeWaitFilter === "function") {
 				routeChangeWaitFilter = options.routeChangeWaitFilter;
+			}
+
+			if (typeof options.routeChangeWaitFilterHardNavs === "boolean") {
+				routeChangeWaitFilterHardNavs = options.routeChangeWaitFilterHardNavs;
 			}
 
 			if (options.disableHardNav) {
@@ -12565,7 +12505,7 @@ BOOMR_check_doc_domain();
 		 * begin monitoring downloadable resources to measure the SPA soft navigation.
 		 *
 		 * @param {function} onComplete Called on completion
-		 * @param {object[]} routeFilterArgs Route Filter arguments
+		 * @param {object[]} routeFilterArgs Route Filter arguments array
 		 *
 		 * @memberof BOOMR.plugins.SPA
 		 */
@@ -12643,7 +12583,7 @@ BOOMR_check_doc_domain();
 
 			// if we have a routeChangeWaitFilter, make sure AutoXHR waits on the custom event
 			// for this SPA soft route
-			if (initiator === "spa" && routeChangeWaitFilter) {
+			if ((initiator === "spa" || routeChangeWaitFilterHardNavs) && routeChangeWaitFilter) {
 				
 				try {
 					if (routeChangeWaitFilter.apply(null, arguments)) {
@@ -12849,6 +12789,7 @@ BOOMR_check_doc_domain();
 		disableHardNav: false,  // whether or not to disable SPA hard beacons
 		routeFilter: undefined,  // route change filter callback function
 		routeChangeWaitFilter: undefined,  // route change wait filter callback function
+		routeChangeWaitFilterHardNavs: false, // whether to apply wait filter on hard navs
 		monitorReplaceState: true,  // whether or not to hook history.replaceState
 		a: undefined,  // helper anchor object used to cleanup urls
 		browserOnloadBeforeSetup: false,  // browser onload happened before our setup
@@ -12916,7 +12857,7 @@ BOOMR_check_doc_domain();
 						impl.a.href = event.toUrl;
 						event.toUrl = impl.a.href;
 					}
-					BOOMR.plugins.SPA.route_change(null, event);
+					BOOMR.plugins.SPA.route_change(null, [event.type, event.fromUrl, event.toUrl]);
 				}
 				else {
 					
@@ -12944,6 +12885,7 @@ BOOMR_check_doc_domain();
 	BOOMR.plugins.SPA.register("History");
 
 	impl.a = BOOMR.window.document.createElement("A");
+
 
 
 	/**
@@ -13120,6 +13062,10 @@ BOOMR_check_doc_domain();
 				options.routeChangeWaitFilter = impl.routeChangeWaitFilter;
 			}
 
+			if (impl.routeChangeWaitFilterHardNavs) {
+				options.routeChangeWaitFilterHardNavs = impl.routeChangeWaitFilterHardNavs;
+			}
+
 			if (!impl.hooked && impl.monitorHistory) {
 				setup();
 			}
@@ -13148,6 +13094,7 @@ BOOMR_check_doc_domain();
 		 * @param {boolean} [config.History.disableHardNav] Whether or not to disable SPA hard beacons
 		 * @param {function} [config.History.routeFilter] Route change filter callback function
 		 * @param {function} [config.History.routeChangeWaitFilter] Route change wait filter callback function
+		 * @param {boolean} [config.History.routeChangeWaitFilterHardNavs] Whether to apply wait filter on hard navs
 		 * @param {boolean} [config.History.monitorReplaceState] Whether or not to hook History.replaceState
 		 *
 		 * @returns {@link BOOMR.plugins.History} The History plugin for chaining
@@ -13162,7 +13109,7 @@ BOOMR_check_doc_domain();
 		init: function(config) {
 			BOOMR.utils.pluginConfig(impl, config, "History",
 				["enabled", "monitorHistory", "disableHardNav",
-				 "routeFilter", "routeChangeWaitFilter",
+				 "routeFilter", "routeChangeWaitFilter", "routeChangeWaitFilterHardNavs",
 				 "monitorReplaceState"]);
 
 			if (impl.enabled) {
@@ -13298,6 +13245,10 @@ BOOMR_check_doc_domain();
  * * `fetch.bnu`: For XHR beacons from fetch API requests, `1` if fetch response body was not used.
  * * `rt.tt`: Sum of load times across session
  * * `rt.obo`: Number of pages in session that did not have a load time
+ * * `xhr.ru`: final response URL after any redirects
+ *    - `XMLHttpRequest`: it will be present if any redirects happened
+ *       and final URL is not equivalent to the final response URL after any redirects.
+ *    - `fetch`: it will only be present if any redirects happened
  *
  * ## Cookie
  *
@@ -14129,6 +14080,15 @@ BOOMR_check_doc_domain();
 					if (t_done < t_resp_start) {
 						BOOMR.addVar("t_page.inv", 1, true);
 					}
+					else if ((t_done - t_resp_start === 0) &&
+					         (data && data.timing && data.timing.requestStart) &&
+					         (impl.timers.t_resp && impl.timers.t_resp.delta)) {
+						// if t_page would be zero, try calculating t_page based on the inversion of t_resp
+						// this could happen for XHRs that were started by a click/DOM
+						BOOMR.plugins.RT.setTimer(
+							"t_page",
+							(t_done - data.timing.requestStart) - impl.timers.t_resp.delta);
+					}
 					else {
 						BOOMR.plugins.RT.setTimer("t_page", t_done - t_resp_start);
 					}
@@ -14800,6 +14760,10 @@ BOOMR_check_doc_domain();
 				if (edata.responseBodyNotUsed) {
 					BOOMR.addVar("fetch.bnu", 1, true);
 				}
+
+				if (edata.responseUrl) {
+					BOOMR.addVar("xhr.ru", BOOMR.utils.cleanupURL(edata.responseUrl), true);
+				}
 			}
 
 			// This is an explicit subresource
@@ -14955,6 +14919,7 @@ BOOMR_check_doc_domain();
 
 			return impl.navigationStart;
 		}
+
 
 	};
 
@@ -15157,8 +15122,8 @@ BOOMR_check_doc_domain();
 		latency: null,
 		runs_left: 0,
 		aborted: false,
-		complete: true,		// defaults to true so we don't block other plugins if this cannot start.
-					// init sets it to false
+		complete: true,  // defaults to true so we don't block other plugins if this cannot start.
+		                 // init sets it to false
 		running: false,
 		initialized: false,
 
@@ -15229,8 +15194,8 @@ BOOMR_check_doc_domain();
 
 
 			median = Math.round(
-					(lat_filtered[Math.floor(n / 2)] + lat_filtered[Math.ceil(n / 2)]) / 2
-				);
+				(lat_filtered[Math.floor(n / 2)] + lat_filtered[Math.ceil(n / 2)]) / 2
+			);
 
 			return { mean: amean, median: median, stddev: std_dev, stderr: std_err };
 		},
@@ -15321,8 +15286,8 @@ BOOMR_check_doc_domain();
 
 			n = bandwidths.length - 1;
 			median = Math.round(
-					(bandwidths[Math.floor(n / 2)] + bandwidths[Math.ceil(n / 2)]) / 2
-				);
+				(bandwidths[Math.floor(n / 2)] + bandwidths[Math.ceil(n / 2)]) / 2
+			);
 
 			if (bandwidths_corrected.length < 1) {
 				
@@ -15342,11 +15307,11 @@ BOOMR_check_doc_domain();
 
 				n = bandwidths_corrected.length - 1;
 				median_corrected = Math.round(
-							(
-								bandwidths_corrected[Math.floor(n / 2)] +
-								bandwidths_corrected[Math.ceil(n / 2)]
-							) / 2
-						);
+					(
+						bandwidths_corrected[Math.floor(n / 2)] +
+						bandwidths_corrected[Math.ceil(n / 2)]
+					) / 2
+				);
 			}
 
 			
@@ -15597,7 +15562,7 @@ BOOMR_check_doc_domain();
 		 * Note that if you're doing some kind of real-time streaming, then
 		 * chances are that this bandwidth test isn't right for you, so
 		 * setting this cookie to a shorter value isn't the right solution.
-		 * @param {boolean} [config.BW.timeout] The timeout in seconds for the entire bandwidth test.
+		 * @param {number} [config.BW.timeout] The timeout in seconds for the entire bandwidth test.
 		 *
 		 * The default is set to 15 seconds.
 		 *
@@ -15611,7 +15576,7 @@ BOOMR_check_doc_domain();
 		 * Increasing the timeout can get you more data and increase the accuracy
 		 * of the test, but at the same time increases the risk of the test not
 		 * completing before the user leaves the page.
-		 * @param {boolean} [config.BW.nruns] The number of times the bandwidth test should run.
+		 * @param {number} [config.BW.nruns] The number of times the bandwidth test should run.
 		 *
 		 * The default is set to 5.
 		 *
@@ -15732,9 +15697,9 @@ BOOMR_check_doc_domain();
 		abort: function() {
 			impl.aborted = true;
 			if (impl.running) {
-				impl.finish();	// we don't defer this call because it might be called from
-						// onunload and we want the entire chain to complete
-						// before we return
+				impl.finish();  // we don't defer this call because it might be called from
+				                // onunload and we want the entire chain to complete
+				                // before we return
 			}
 		},
 
@@ -15759,7 +15724,9 @@ BOOMR_check_doc_domain();
 
 /**
  * The PaintTiming plugin collects paint metrics exposed by the W3C
- * [Paint Timing]{@link https://www.w3.org/TR/paint-timing/} specification.
+ * [Paint Timing]{@link https://www.w3.org/TR/paint-timing/} and
+ * [Largest Contentful Paint]{@link https://wicg.github.io/largest-contentful-paint/}
+ * specifications.
  *
  * For information on how to include this plugin, see the {@tutorial building} tutorial.
  *
@@ -15771,10 +15738,12 @@ BOOMR_check_doc_domain();
  *
  * * `pt.fp`: `first-paint` in `DOMHighResTimestamp`
  * * `pt.fcp`: `first-contentful-paint` in `DOMHighResTimestamp`
+ * * `pt.lcp`: `largest-contentful-paint` in `DOMHighResTimestamp`
  * * `pt.hid`: The document was loaded hidden (at some point), so FP and FCP are
  *             user-driven events, and thus won't be added to the beacon.
  *
  * @see {@link https://www.w3.org/TR/paint-timing/}
+ * @see {@link https://wicg.github.io/largest-contentful-paint/}
  * @class BOOMR.plugins.PaintTiming
  */
 (function() {
@@ -15792,7 +15761,8 @@ BOOMR_check_doc_domain();
 	 */
 	var PAINT_TIMING_MAP = {
 		"first-paint": "fp",
-		"first-contentful-paint": "fcp"
+		"first-contentful-paint": "fcp",
+		"largest-contentful-paint": "lcp"
 	};
 
 	/**
@@ -15818,6 +15788,16 @@ BOOMR_check_doc_domain();
 		 * Cached PaintTiming values
 		 */
 		timingCache: {},
+
+
+
+		/**
+		 * LCP observer
+		 */
+		observer: null,
+
+		// Metrics that will be exported
+		externalMetrics: {},
 
 		/**
 		 * Executed on `page_ready`, `xhr_load` and `before_unload`
@@ -15875,6 +15855,37 @@ BOOMR_check_doc_domain();
 
 				BOOMR.sendBeacon();
 			}
+		},
+
+		/**
+		 * Performance observer callback for LCP
+		 *
+		 * @param {PerformanceEntry[]} list Performance entries
+		 */
+		onObserver: function(list) {
+			var entries = list.getEntries();
+			if (entries.length === 0) {
+				return;
+			}
+
+			// Use the latest one
+			var lcp = entries[entries.length - 1];
+
+			// LCP can change over time, so always take the latest value.  Use renderTime
+			// if available (for same-origin resources or if they have Timing-Allow-Origin),
+			// otherwise loadTime is the best we can get.
+			var lcpTime = lcp.renderTime || lcp.loadTime;
+
+			// cache it for others who want to use it
+			impl.timingCache[lcp.entryType] = lcpTime;
+
+
+
+			BOOMR.addVar("pt.lcp", Math.floor(lcpTime), true);
+
+			impl.externalMetrics.lcp = function() {
+				return Math.floor(lcpTime);
+			};
 		}
 	};
 
@@ -15911,6 +15922,13 @@ BOOMR_check_doc_domain();
 				BOOMR.subscribe("page_ready", impl.done, "load", impl);
 				BOOMR.subscribe("xhr_load", impl.done, "xhr", impl);
 				BOOMR.subscribe("before_unload", impl.done, null, impl);
+
+				// create a PO for LCP
+				if (typeof BOOMR.window.PerformanceObserver === "function" &&
+				    typeof window.LargestContentfulPaint === "function") {
+					impl.observer = new BOOMR.window.PerformanceObserver(impl.onObserver);
+					impl.observer.observe({ type: "largest-contentful-paint", buffered: true });
+				}
 
 				impl.initialized = true;
 			}
@@ -16000,7 +16018,12 @@ BOOMR_check_doc_domain();
 					}
 				}
 			}
-		}
+		},
+
+
+
+		// external metrics
+		metrics: impl.externalMetrics
 	};
 
 }());
@@ -16708,6 +16731,9 @@ BOOMR_check_doc_domain();
 	// Namespaced data
 	var SPECIAL_DATA_NAMESPACED_TYPE = "5";
 
+	// Service worker type
+	var SPECIAL_DATA_SERVICE_WORKER_TYPE = "6";
+
 	/**
 	 * Converts entries to a Trie (`splitAtPath=true`) or Radix
 	 * Trie (`splitAtPath=false`):
@@ -16912,6 +16938,20 @@ BOOMR_check_doc_domain();
 			// more than two nodes and not the top, we can't compress any more
 			return false;
 		}
+	}
+
+	/**
+	 * Rounds up the timing value
+	 *
+	 * @param {number} time Time
+	 * @returns {number} Rounded up timestamp
+	 */
+	function roundUpTiming(time) {
+		if (typeof time !== "number") {
+			time = 0;
+		}
+
+		return Math.ceil(time ? time : 0);
 	}
 
 	/**
@@ -17354,16 +17394,20 @@ BOOMR_check_doc_domain();
 		for (i = 0; i < entries.length; i++) {
 			e = entries[i];
 
+			if (typeof e.name !== "string") {
+				continue;
+			}
+
 			// skip non-resource URLs
 			if (e.name.indexOf("http:") !== 0 &&
 			    e.name.indexOf("https:") !== 0) {
 				continue;
 			}
 
-			// skip boomerang.js and config URLs
-			if (e.name.indexOf(BOOMR.url) > -1 ||
-			    e.name.indexOf(BOOMR.config_url) > -1 ||
-			    (typeof BOOMR.getBeaconURL === "function" && BOOMR.getBeaconURL() && e.name.indexOf(BOOMR.getBeaconURL()) > -1)) {
+			// skip beacon URLs
+			if (typeof BOOMR.getBeaconURL === "function" &&
+			    BOOMR.getBeaconURL() &&
+			    e.name.indexOf(BOOMR.getBeaconURL()) > -1) {
 				continue;
 			}
 
@@ -17445,6 +17489,7 @@ BOOMR_check_doc_domain();
 			return "";
 		}
 	}
+
 
 
 	/**
@@ -17569,7 +17614,7 @@ BOOMR_check_doc_domain();
 					}).length;
 			},
 			0
-		);
+			);
 	}
 
 	/**
@@ -17730,6 +17775,22 @@ BOOMR_check_doc_domain();
 
 			if (e.hasOwnProperty("linkAttrs")) {
 				data += SPECIAL_DATA_PREFIX + SPECIAL_DATA_LINK_ATTR_TYPE + e.linkAttrs;
+			}
+
+			if (e.workerStart && typeof e.workerStart === "number" && e.workerStart !== 0) {
+				// Has Service worker timing data that's non zero. Resource request not intercepted
+				// by Service worker always return 0 as per MDN
+				// https://developer.mozilla.org/en-US/docs/Web/API/PerformanceResourceTiming/workerStart
+
+				// Lets round it and offset from startTime. We are going to round up the workerStart
+				// timing specifically. We are doing this to avoid the issue where the case of Service
+				// worker timestamps being sub-milliseconds more than startTime getting incorrectly
+				// marked as 0ms (due to round down).
+				// We feel marking such cases as 0ms, after rounding down, for workerStart would present
+				// more incorrect indication to the user. Hence the decision to round up.
+				var wsRoundedUp = roundUpTiming(e.workerStart);
+				var workerStartOffset = trimTiming(wsRoundedUp, e.startTime);
+				data += SPECIAL_DATA_PREFIX + SPECIAL_DATA_SERVICE_WORKER_TYPE + toBase36(workerStartOffset);
 			}
 
 			url = trimUrl(e.name, impl.trimUrls);
@@ -17913,7 +17974,9 @@ BOOMR_check_doc_domain();
 		}
 
 
+
 		r = getCompressedResourceTiming(from, to);
+
 
 
 		if (r) {
@@ -18104,12 +18167,18 @@ BOOMR_check_doc_domain();
 	 * @returns {Object} decompressed resource timing entry (name, duration, description)
 	 */
 
+
 	impl = {
 		complete: false,
 		sentNavBeacon: false,
 		initialized: false,
 		supported: null,
-		xhr_load: function() {
+		xhr_load: function(data) {
+			if (data && data.restiming) {
+				// put RT data on beacon
+				addToBeacon(data.restiming);
+			}
+
 			if (this.complete) {
 				return;
 			}
@@ -18316,6 +18385,7 @@ BOOMR_check_doc_domain();
 		//
 		// Test Exports (only for debug)
 		//
+
 	};
 
 }());
@@ -18334,7 +18404,11 @@ BOOMR_check_doc_domain();
  * * `mob.ct`: [`navigator.connection.type`](https://developer.mozilla.org/en-US/docs/Web/API/NetworkInformation/type)
  * * `mob.bw`: [`navigator.connection.bandwidth`](https://developer.mozilla.org/en-US/docs/Web/API/Connection/bandwidth)
  * * `mob.mt`: [`navigator.connection.metered`](https://developer.mozilla.org/en-US/docs/Web/API/Connection/metered)
+ * * `mob.etype`: [`navigator.connection.effectiveType`](https://developer.mozilla.org/en-US/docs/Web/API/NetworkInformation/effectiveType)
  * * `mob.lm`: [`navigator.connection.downlinkMax`](https://developer.mozilla.org/en-US/docs/Web/API/NetworkInformation/downlinkMax)
+ * * `mob.dl`: [`navigator.connection.downlink](https://developer.mozilla.org/en-US/docs/Web/API/NetworkInformation/downlink)
+ * * `mob.rtt`: [`navigator.connection.rtt`](https://developer.mozilla.org/en-US/docs/Web/API/NetworkInformation/rtt)
+ * * `mob.sd`: [`navigator.connection.saveData`](https://developer.mozilla.org/en-US/docs/Web/API/NetworkInformation/saveData)
  *
  * @class BOOMR.plugins.Mobile
  */
@@ -18452,6 +18526,21 @@ BOOMR_check_doc_domain();
 	}
 
 	/**
+	 * This flag protects us from a hard loop/blocking the browser
+	 * when we get an exception when calling BOOMR.utils.arrayFilter()
+	 * from the Memory plugin and we send an error beacon after onload.
+	 *
+	 * Why we get a hard loop?
+	 *
+	 * When we send an error beacon then Boomerang will call
+	 * the done() function from the Memory plugin. If at some line
+	 * in the done() function we get an error then an error beacon will
+	 * be sent again and we will fall in to a hard loop.
+	 *
+	 */
+	var hasTriggeredArrayFilterError = false;
+
+	/**
 	 * Count elements of a given type and return the count or an object with the
 	 * `key` mapped to the `count` if a `key` is specified. If one or more filters
 	 * are included, apply them incrementally to the `element` array, assigning
@@ -18509,7 +18598,10 @@ BOOMR_check_doc_domain();
 						}
 					}
 					catch (err) {
-						BOOMR.addError(err, "Memory.nodeList." + type + ".filter[" + (i - 2) + "]");
+						if (!hasTriggeredArrayFilterError) {
+							hasTriggeredArrayFilterError = true;
+							BOOMR.addError(err, "Memory.nodeList." + type + ".filter[" + (i - 2) + "]");
+						}
 					}
 				}
 
@@ -19004,11 +19096,14 @@ BOOMR_check_doc_domain();
 		}
 	};
 
+
 }());
 
 /**
  * The `Errors` plugin automatically captures JavaScript and other errors from
  * your web application.
+ *
+ * This plugin has a corresponding {@tutorial header-snippets} that helps capture errors prior to Boomerang loading.
  *
  * For information on how to include this plugin, see the {@tutorial building} tutorial.
  *
@@ -19020,24 +19115,27 @@ BOOMR_check_doc_domain();
  *   [`onerror`](https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/onerror)
  *   global event handler
  * * [``XMLHttpRequest``](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest)
- *   responses that were not successful.  Note {@link BOOMR.plugins.AutOXHR} is required
+ *   responses that were not successful.  Note {@link BOOMR.plugins.AutoXHR} is required
  *   if using this.
  * * Any calls to [``window.console.error``](https://developer.mozilla.org/en-US/docs/Web/API/Console/error)
  * * JavaScript runtime errors that happen during a callback for
  *   [``addEventListener``](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener)
+ *   _(disabled by default, enabled via {@link BOOMR.plugins.Errors.init `monitorEvents`})_
  * * JavaScript runtime errors that happen during a callback for
  *   [``setTimeout``](https://developer.mozilla.org/en-US/docs/Web/API/WindowTimers/setTimeout)
  *   and [``setInterval``](https://developer.mozilla.org/en-US/docs/Web/API/WindowTimers/setInterval)
+ *   _(disabled by default, enabled via {@link BOOMR.plugins.Errors.init `monitorTimeout`})_
  * * Manually sent errors via {@link BOOMR.plugins.Errors.send}
  * * Functions that threw an exception that were wrapped via {@link BOOMR.plugins.Errors.wrap}
  * * Functions that threw an exception that were run via {@link BOOMR.plugins.Errors.test}
  * * JavaScript runtime errors captured via the
  *   [`unhandledrejection`](https://developer.mozilla.org/en-US/docs/Web/Events/unhandledrejection)
- *   global event handler. Disabled by default.
+ *   global event handler _(disabled by default, enabled via {@link BOOMR.plugins.Errors.init `monitorRejections`})_
  * * JavaScript runtime warnings captured via the
- *   [`Reporting API`](https://www.w3.org/TR/reporting/#reporting-observer). Disabled by default.
+ *   [`Reporting API`](https://www.w3.org/TR/reporting/#reporting-observer)
+ *   _(disabled by default, enabled via {@link BOOMR.plugins.Errors.init `monitorReporting`})_
  *
- * These are all enabled by default, and can be
+ * All of the options above can be
  * {@link BOOMR.plugins.Errors.init manually turned off}.
  *
  * ## Supported Browsers
@@ -19176,7 +19274,7 @@ BOOMR_check_doc_domain();
  * Assume `my-script.js` is the same file being served from both `website.com` and
  * `anothersite.com`:
  *
- * ```js
+ * ```javascript
  * function runCode() {
  *     a = b + 1;
  * }
@@ -19270,7 +19368,7 @@ BOOMR_check_doc_domain();
  * setting ACAO (and aren't within your control) is by manually wrapping calls
  * to any of the third-party script's functions in a `try {} catch {}`.
  *
- * ```js
+ * ```javascript
  * try {
  *     // calls a cross-origin script that doesn't have ACAO
  *     runThirdPartyCode();
@@ -19286,10 +19384,17 @@ BOOMR_check_doc_domain();
  * script as a result of browser events or callbacks (since you're not wrapping them).
  *
  * When using Boomerang to monitor JavaScript errors, Boomerang automatically wraps some
- * of the built-in browser APIs such as `setTimeout`, `setInterval` and `addEventListener`
+ * of the built-in browser APIs such as `setTimeout`, `setInterval`
+ * (via the {@link BOOMR.plugins.Errors.init `monitorTimeout`} option)
+ * and `addEventListener` (via the {@link BOOMR.plugins.Errors.init `monitorEvents`} option)
  * with a minimal-overhead wrapper.  It does this to help ensure as many cross-origin
  * exceptions as possible have full stack details. You may also do this manually via
  * [`` BOOMR.plugin.Errors.wrap(function)``](#BOOMR_plugin_Errors_wrap).
+ *
+ * Note that enabling {@link BOOMR.plugins.Errors.init `monitorTimeout`} or
+ * {@link BOOMR.plugins.Errors.init `monitorEvents`} can have side-effects and has caused
+ * compatibility issues with JavaScript code on some sites. Enabling those options is only
+ * recommended after verifying there are no problems.
  *
  * ## Why is Boomerang in my Error Stack?
  *
@@ -19312,9 +19417,11 @@ BOOMR_check_doc_domain();
  * Examples of Boomerang wrapping native methods include:
  *
  * * `XMLHttpRequest` if the XHR instrumentation is turned on
- * * `setTimeout` and `setInterval` if error tracking is turned on
  * * `console.error` if error tracking is turned on
- * * `addEventListener` and `removeEventListener` if error tracking is turned on
+ * * `setTimeout` and `setInterval`(if error tracking is turned on
+ *    (with {@link BOOMR.plugins.Errors.init `monitorTimeout`})
+ * * `addEventListener` and `removeEventListener` (if error tracking is turned on
+ *    (with {@link BOOMR.plugins.Errors.init `monitorEvents`})
  *
  * All of these wrapped functions come into play when you see an error stack with
  * a `boomerang.js` function in it.
@@ -19382,6 +19489,27 @@ BOOMR_check_doc_domain();
  * * `BOOMR_plugins_errors_wrap`
  * * `BOOMR.window.console.error`
  * * `BOOMR_plugins_errors_onrejection`
+ *
+ * ## Side Effects
+ *
+ * Enabling wrapping through {@link BOOMR.plugins.Errors.init `monitorEvents`} and
+ * {@link BOOMR.plugins.Errors.init `monitorTimeout`} may trigger some side effects:
+ *
+ * * Boomerang's monitoring code will be run first for every callback, which will add minimal (though non-zero)
+ *   overhead.
+ * * In browser console logs, errors that are triggered by other libraries that have been wrapped
+ *   will now look like they come from Boomerang instead, as Boomerang is now on the bottom of the call stack.
+ * * Browser developer tools such as Chrome's Performance and Profiler tabs may be confused about
+ *   JavaScript CPU attribution. In other words, they may think Boomerang is the cause of more work than it is.
+ * * Chrome Lighthouse may be confused about JavaScript CPU attribution, due to the same reasons as above.
+ * * WebPagetest may be confused about JavaScript CPU attribution, due to the same reasons as above.
+ * * There are some cases where JavaScript applications may have compatibility issues with the wrapping.  Some
+ *   notable cases include:
+ *     * Use of the global `window.event` object, [see issue](https://github.com/whatwg/dom/issues/735).
+ *     * Other libraries that wrap `setTimeout`, `addEventListener`, etc such as `history.js`.
+ *     * Pages that use the `<base href="...">` tag.
+ *
+ * For more details, you can read this [article](https://nicj.net/side-effects-of-boomerangs-javascript-error-tracking/).
  *
  * ## Beacon Parameters
  *
@@ -20006,9 +20134,9 @@ BOOMR_check_doc_domain();
 		monitorGlobal: true,
 		monitorNetwork: true,
 		monitorConsole: true,
-		monitorEvents: true,
-		monitorTimeout: true,
-		monitorRejections: false,  // new feature, off by default
+		monitorEvents: false,     // can cause compat issues, off by default
+		monitorTimeout: false,    // can cause compat issues, off by default
+		monitorRejections: false, // new feature, off by default
 		monitorReporting: false,  // new feature, off by default
 		sendAfterOnload: false,
 		maxErrors: 10,
@@ -20784,6 +20912,7 @@ BOOMR_check_doc_domain();
 			return errors;
 		}
 
+
 	};
 
 	//
@@ -20801,9 +20930,11 @@ BOOMR_check_doc_domain();
 		 * @param {boolean} [config.Errors.monitorNetwork] Monitor XHR errors
 		 * @param {boolean} [config.Errors.monitorConsole] Monitor `console.error`
 		 * @param {boolean} [config.Errors.monitorEvents] Monitor event callbacks
-		 * (from `addEventListener`).
+		 * (from `addEventListener`). NOTE: Enabling this may cause compatibility issues with certain sites.
+		 * Verifications should be run before enabling in production.
 		 * @param {boolean} [config.Errors.monitorTimeout] Monitor `setTimout`
-		 * and `setInterval`.
+		 * and `setInterval`. NOTE: Enabling this may cause compatibility issues with certain sites.
+		 * Verifications should be run before enabling in production.
 		 * @param {boolean} [config.Errors.monitorRejections] Monitor unhandled
 		 * promise rejections.
 		 * @param {boolean} [config.Errors.monitorReporting] Monitor Reporting API
@@ -20989,6 +21120,8 @@ BOOMR_check_doc_domain();
 			}
 
 			// listen for errors in addEventListener callbacks
+			// NOTE: Enabling this may cause compatibility issues with certain sites.
+			//       Verifications should be run before enabling in production
 			if (impl.monitorEvents) {
 				// EventTarget's addEventListener will catch events from window, document, Element and XHR in modern browsers.
 				// We want to instrument addEventListener at the end of the protocol chain in order to avoid conflicts with
@@ -21018,6 +21151,8 @@ BOOMR_check_doc_domain();
 			}
 
 			// listen for errors in timeout callbacks
+			// NOTE: Enabling this may cause compatibility issues with certain sites.
+			//       Verifications should be run before enabling in production
 			if (impl.monitorTimeout) {
 				impl.wrapFn("setTimeout", BOOMR.window, false, 0, E.VIA_TIMEOUT);
 				impl.wrapFn("setInterval", BOOMR.window, false, 0, E.VIA_TIMEOUT);
@@ -21158,6 +21293,7 @@ BOOMR_check_doc_domain();
 		//
 		// Test Exports (only for debug)
 		//
+
 	};
 
 }());
@@ -21202,8 +21338,6 @@ BOOMR_check_doc_domain();
  */
 /*eslint dot-notation:0*/
 (function() {
-	"use strict";
-
 	
 	
 
@@ -22724,6 +22858,7 @@ BOOMR_check_doc_domain();
 	}
 
 
+
 	var impl = {
 		initialized: false,
 		autorun: true,
@@ -22865,6 +23000,316 @@ BOOMR_check_doc_domain();
 			impl.sendEarlyBeacon(edata, ename);
 		}
 	};
+}());
+
+/**
+ * The EventTiming plugin collects paint metrics exposed by the WICG
+ * [Event Timing]{@link https://github.com/WICG/event-timing/} proposal.
+ *
+ * For information on how to include this plugin, see the {@tutorial building} tutorial.
+ *
+ * ## Beacon Parameters
+ *
+ * All beacon parameters are prefixed with `et.`.
+ *
+ * This plugin adds the following parameters to the beacon:
+ *
+ * * `et.e`: Compressed EventTiming events
+ * * `et.fid`: Observed First Input Delay
+ *
+ * @see {@link https://github.com/WICG/event-timing/}
+ * @class BOOMR.plugins.EventTiming
+ */
+(function() {
+	
+	
+
+	if (BOOMR.plugins.EventTiming) {
+		return;
+	}
+
+	/**
+	 * Event names
+	 */
+	var EVENT_TYPES = {
+		"click": 0,
+		"dblclick": 1,
+		"mousedown": 2,
+		"mouseup": 3,
+		"mousemove": 4,
+		"touchstart": 5,
+		"touchend": 6,
+		"touchmove": 7,
+		"keydown": 8,
+		"keyup": 9,
+		"keypress": 10,
+		"wheel": 11,
+		"pointerdown": 12,
+		"pointerup": 13,
+		"pointermove": 14,
+		"compositionstart": 17,
+		"compositionupdate": 18,
+		"compositionend": 19,
+		"contextmenu": 20
+	};
+
+	/**
+	 * Private implementation
+	 */
+	var impl = {
+		/**
+		 * Whether or not we've initialized yet
+		 */
+		initialized: false,
+
+		/**
+		 * Whether or not the browser supports EventTiming (cached value)
+		 */
+		supported: null,
+
+		/**
+		 * The PerformanceObserver for 'event'
+		 */
+		observerEvent: null,
+
+		/**
+		 * The PerformanceObserver for 'firstInput'
+		 */
+		observerFirstInput: null,
+
+		/**
+		 * List of EventTiming entries
+		 */
+		entries: [],
+
+		/**
+		 * First Input Delay (calculated)
+		 */
+		firstInputDelay: null,
+
+		/**
+		 * Time to First Interaction
+		 */
+		timeToFirstInteraction: null,
+
+		/**
+		 * Executed on `before_beacon`
+		 */
+		onBeforeBeacon: function() {
+			var i;
+
+			if (impl.entries && impl.entries.length) {
+				var compressed = [];
+
+				for (i = 0; i < impl.entries.length; i++) {
+					compressed.push({
+						n: EVENT_TYPES[impl.entries[i].name] ?
+						   EVENT_TYPES[impl.entries[i].name] : impl.entries[i].name,
+						s: Math.round(impl.entries[i].startTime).toString(36),
+						d: Math.round(impl.entries[i].duration).toString(36),
+						p: Math.round(impl.entries[i].processingEnd -
+						   impl.entries[i].processingStart).toString(36),
+						c: impl.entries[i].cancelable ? 1 : 0,
+						fi: impl.entries[i].entryType === "first-input" ? 1 : undefined
+					});
+				}
+
+				BOOMR.addVar("et.e", BOOMR.utils.serializeForUrl(compressed), true);
+			}
+
+			// clear until the next beacon
+			impl.entries = [];
+
+			// First Input Delay
+			if (impl.firstInputDelay !== null) {
+				BOOMR.addVar("et.fid", Math.ceil(impl.firstInputDelay), true);
+
+				// should only go out on one beacon
+				impl.firstInputDelay = null;
+			}
+		},
+
+		/**
+		 * Fired on each EventTiming event
+		 *
+		 * @param {object[]} list List of EventTimings
+		 */
+		onEventTiming: function(list) {
+			impl.entries = impl.entries.concat(list.getEntries());
+		},
+
+		/**
+		 * Fired on each FirstInput event
+		 *
+		 * @param {object[]} list List of EventTimings
+		 */
+		onFirstInput: function(list) {
+			var i, newEntries = list.getEntries();
+
+			impl.entries = impl.entries.concat(newEntries);
+
+			impl.firstInputDelay = newEntries[0].processingStart - newEntries[0].startTime;
+			impl.timeToFirstInteraction = newEntries[0].startTime;
+		}
+	};
+
+	//
+	// Exports
+	//
+	BOOMR.plugins.EventTiming = {
+		/**
+		 * Initializes the plugin.
+		 *
+		 * This plugin does not have any configuration.
+		 *
+		 * @returns {@link BOOMR.plugins.EventTiming} The EventTiming plugin for chaining
+		 * @memberof BOOMR.plugins.EventTiming
+		 */
+		init: function() {
+			// skip initialization if not supported
+			if (!this.is_supported()) {
+				impl.initialized = true;
+			}
+
+			if (!impl.initialized) {
+				BOOMR.subscribe("before_beacon", impl.onBeforeBeacon, null, impl);
+
+				try {
+					var w = BOOMR.window;
+
+					impl.observerEvent = new w.PerformanceObserver(impl.onEventTiming);
+					impl.observerEvent.observe({
+						type: ["event"],
+						buffered: true
+					});
+
+					impl.observerFirstInput = new w.PerformanceObserver(impl.onFirstInput);
+					impl.observerFirstInput.observe({
+						type: ["first-input"],
+						buffered: true
+					});
+				}
+				catch (e) {
+					impl.supported = false;
+				}
+
+				impl.initialized = true;
+			}
+
+			return this;
+		},
+
+		/**
+		 * Whether or not this plugin is complete
+		 *
+		 * @returns {boolean} `true` if the plugin is complete
+		 * @memberof BOOMR.plugins.EventTiming
+		 */
+		is_complete: function() {
+			return true;
+		},
+
+		/**
+		 * Whether or not this plugin is enabled and EventTiming is supported.
+		 *
+		 * @returns {boolean} `true` if EventTiming plugin is enabled and supported.
+		 * @memberof BOOMR.plugins.EventTiming
+		 */
+		is_enabled: function() {
+			return impl.initialized && this.is_supported();
+		},
+
+		/**
+		 * Whether or not EventTiming is supported in this browser.
+		 *
+		 * @returns {boolean} `true` if EventTiming is supported.
+		 * @memberof BOOMR.plugins.EventTiming
+		 */
+		is_supported: function() {
+			var p;
+
+			if (impl.supported !== null) {
+				return impl.supported;
+			}
+
+			var w = BOOMR.window;
+
+			// check for getEntriesByType and the entry type existing
+			var p = BOOMR.getPerformance();
+			impl.supported = p &&
+				typeof w.PerformanceEventTiming !== "undefined" &&
+				typeof w.PerformanceObserver === "function";
+
+			if (impl.supported) {
+				BOOMR.info("This user agent supports EventTiming", "et");
+			}
+
+			return impl.supported;
+		},
+
+		/**
+		 * Stops observing
+		 *
+		 * @memberof BOOMR.plugins.EventTiming
+		 */
+		stop: function() {
+			if (impl.observerEvent) {
+				impl.observerEvent.disconnect();
+				impl.observerEvent = null;
+			}
+
+			if (impl.observerFirstInput) {
+				impl.observerFirstInput.disconnect();
+				impl.observerFirstInput = null;
+			}
+		},
+
+		/**
+		 * Exported metrics
+		 *
+		 * @memberof BOOMR.plugins.EventTiming
+		 */
+		metrics: {
+			/**
+			 * Calculates the EventTiming count
+			 */
+			count: function() {
+				return impl.entries.length;
+			},
+
+			/**
+			 * Calculates the average EventTiming duration
+			 */
+			averageDuration: function() {
+				if (impl.entries.length === 0) {
+					return 0;
+				}
+
+				var sum = 0;
+
+				for (var i = 0; i < impl.entries.length; i++) {
+					sum += impl.entries[i].duration;
+				}
+
+				return sum / impl.entries.length;
+			},
+
+			/**
+			 * Returns the observed First Input Delay
+			 */
+			firstInputDelay: function() {
+				return impl.firstInputDelay;
+			},
+
+			/**
+			 * Returns the observed Time to First Interaction
+			 */
+			timeToFirstInteraction: function() {
+				return impl.timeToFirstInteraction;
+			}
+		}
+	};
+
 }());
 
 // This code is run after all plugins have initialized

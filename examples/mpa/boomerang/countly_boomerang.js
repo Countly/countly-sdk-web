@@ -19,7 +19,7 @@ Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
             function initBoomerang(BOOMR){
                 if (BOOMR && !initedBoomr) {
                     BOOMR.subscribe("before_beacon", function(beaconData) {
-                        Countly._internals.log("BOOMR", "before_beacon", JSON.stringify(beaconData, null, 2));
+                        Countly._internals.log("[INFO]", "Boomerang, before_beacon", JSON.stringify(beaconData, null, 2));
                         var trace = {};
                         if (beaconData["rt.start"] !== "manual" && !beaconData["http.initiator"] && beaconData["rt.quit"] !== ""){
                             trace.type = "device";
@@ -77,7 +77,7 @@ Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
                                 }
                             }
                             catch(e) {
-                                Countly._internals.log("Error while using resource timing data decompression", config);
+                                Countly._internals.log("[ERROR]","Boomerang, Error while using resource timing data decompression", config);
                             }
 
                             trace.type = "network";
@@ -107,17 +107,19 @@ Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
                     BOOMR.t_end = new Date().getTime();
                     Countly.BOOMR = BOOMR;
                     initedBoomr = true;
-                    Countly._internals.log("Boomerang initiated:", config);
+                    Countly._internals.log("[INFO]","Boomerang, initiated with config:", config);
                 }
                 else {
-                    Countly._internals.log("Boomerang called without its instance or was already initialized");
+                    Countly._internals.log("[WARNING]", "Boomerang, called without its instance or was already initialized");
                 }
             }
+            
+            // Main execution is here
             if (window.BOOMR) {
                 initBoomerang(window.BOOMR);
             }
             else {
-                Countly._internals.log("Boomerang not yet loaded, waiting for it to load");
+                Countly._internals.log("[WARNING]","Boomerang, not yet loaded, waiting for it to load");
                 // Modern browsers
                 if (document.addEventListener) {
                     document.addEventListener("onBoomerangLoaded", function(e) {
