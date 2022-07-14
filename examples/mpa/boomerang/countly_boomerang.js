@@ -7,8 +7,8 @@ Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
 (function () {
     Countly = Countly || {}; // eslint-disable-line no-global-assign
     Countly.onload = Countly.onload || [];
-    // the Boomerang version that this script was designed to work with
-    var designedBoomVersion = "1.737.0";
+    // version of this script
+    var scriptVersion = "1";
     /**
      *  Enables tracking performance through boomerang.js
      *  @memberof Countly
@@ -21,8 +21,11 @@ Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
             function initBoomerang(BOOMR){
                 if (BOOMR && !initedBoomr) {
                     BOOMR.subscribe("before_beacon", function(beaconData) {
-                        if (designedBoomVersion !== Countly.expectedBoomVersion) {
-                            Countly._internals.log("[WARNING]", "Boomerang, The boomerang version is different than expected, some features might not work. For best performance please use the version:[" + designedBoomVersion + "]");
+                        if (beaconData.v !== Countly.expectedBoomVersion) {
+                            Countly._internals.log("[WARNING]", "Boomerang, The current boomerang version:["+beaconData.v+"], is different than expected, some features might not work. For best performance please use the version:[" + Countly.expectedBoomVersion + "]");
+                        }
+                        if (scriptVersion !== Countly.boomScriptVersion) {
+                            Countly._internals.log("[WARNING]", "Boomerang, This countly_boomerang script you are using is different than the one SDK is looking for. Something might go wrong. Pleas use version:[" + scriptVersion + "]");
                         }
                         Countly._internals.log("[INFO]", "Boomerang, before_beacon", JSON.stringify(beaconData, null, 2));
                         var trace = {};

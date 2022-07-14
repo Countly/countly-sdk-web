@@ -1,6 +1,8 @@
 lib/countly.min.js
 lib/countly.pack.js
-plugin
+plugin/ga_adapter
+plugin/boomerang/boomerang-1.737.0.js
+plugin/boomerang/boomerang-1.737.0.min.js
 examples
 test
 node_modules
