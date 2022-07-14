@@ -7,6 +7,8 @@ Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
 (function () {
     Countly = Countly || {}; // eslint-disable-line no-global-assign
     Countly.onload = Countly.onload || [];
+    // the Boomerang version that this script was designed to work with
+    var designedBoomVersion = "1.737.0";
     /**
      *  Enables tracking performance through boomerang.js
      *  @memberof Countly
@@ -19,6 +21,9 @@ Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
             function initBoomerang(BOOMR){
                 if (BOOMR && !initedBoomr) {
                     BOOMR.subscribe("before_beacon", function(beaconData) {
+                        if (designedBoomVersion !== Countly.expectedBoomVersion) {
+                            Countly._internals.log("[WARNING]", "Boomerang, The boomerang version is different than expected, some features might not work. For best performance please use the version:[" + designedBoomVersion + "]");
+                        }
                         Countly._internals.log("[INFO]", "Boomerang, before_beacon", JSON.stringify(beaconData, null, 2));
                         var trace = {};
                         if (beaconData["rt.start"] !== "manual" && !beaconData["http.initiator"] && beaconData["rt.quit"] !== ""){

@@ -1,5 +1,6 @@
 "use strict";
-/*global Countly */
+
+/* global Countly */
 /*
 Countly APM based on Boomerang JS
 Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
@@ -15,6 +16,8 @@ Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
             }
         });
     }
+    // the Boomerang version that this script was designed to work with
+    var designedBoomVersion = "1.737.0";
     /**
      *  Enables tracking performance through boomerang.js
      *  @memberof Countly
@@ -31,7 +34,10 @@ Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
         function initBoomerang(BOOMR) {
             if (BOOMR && !initedBoomr) {
                 BOOMR.subscribe("before_beacon", function(beaconData) {
-                    self._internals.log("[INFO]","Boomerang, before_beacon:", JSON.stringify(beaconData, null, 2));
+                    if (designedBoomVersion !== Countly.expectedBoomVersion) {
+                        self._internals.log("[WARNING]", "Boomerang, The boomerang version is different than expected, some features might not work. For best performance please use the version:[" + designedBoomVersion + "]");
+                    }
+                    self._internals.log("[INFO]", "Boomerang, before_beacon:", JSON.stringify(beaconData, null, 2));
                     var trace = {};
                     if (beaconData["rt.start"] !== "manual" && !beaconData["http.initiator"] && beaconData["rt.quit"] !== "") {
                         trace.type = "device";
@@ -59,22 +65,23 @@ Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
                         }
                     }
                     else if (beaconData["http.initiator"] && ["xhr", "spa", "spa_hard"].indexOf(beaconData["http.initiator"]) !== -1) {
-                        var responseTime, responsePayloadSize, requestPayloadSize, responseCode;
+                        var responseTime; var responsePayloadSize; var requestPayloadSize; var
+                            responseCode;
                         responseTime = beaconData.t_resp;
-                        //t_resp - Time taken from the user initiating the request to the first byte of the response. - Added by RT
+                        // t_resp - Time taken from the user initiating the request to the first byte of the response. - Added by RT
                         responseCode = (typeof beaconData["http.errno"] !== "undefined") ? beaconData["http.errno"] : 200;
 
                         try {
                             var restiming = JSON.parse(beaconData.restiming);
                             var ResourceTimingDecompression = window.ResourceTimingDecompression;
                             if (ResourceTimingDecompression && restiming) {
-                                //restiming contains information regarging all the resources that are loaded in any
-                                //spa, spa_hard or xhr requests.
-                                //xhr requests should ideally have only one entry in the array which is the one for
-                                //which the beacon is being sent.
-                                //But for spa_hard requests it can contain multiple entries, one for each resource
-                                //that is loaded in the application. Example - all images, scripts etc.
-                                //ResourceTimingDecompression is not included in the official boomerang library.
+                                // restiming contains information regarging all the resources that are loaded in any
+                                // spa, spa_hard or xhr requests.
+                                // xhr requests should ideally have only one entry in the array which is the one for
+                                // which the beacon is being sent.
+                                // But for spa_hard requests it can contain multiple entries, one for each resource
+                                // that is loaded in the application. Example - all images, scripts etc.
+                                // ResourceTimingDecompression is not included in the official boomerang library.
                                 ResourceTimingDecompression.HOSTNAMES_REVERSED = false;
                                 var decompressedData = ResourceTimingDecompression.decompressResources(restiming);
                                 var currentBeacon = decompressedData.filter(function(resource) {
@@ -84,12 +91,12 @@ Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
                                 if (currentBeacon.length) {
                                     responsePayloadSize = currentBeacon[0].decodedBodySize;
                                     responseTime = currentBeacon[0].duration ? currentBeacon[0].duration : responseTime;
-                                    //duration - Returns the difference between the resource's responseEnd timestamp and its startTime timestamp - ResourceTiming API
+                                    // duration - Returns the difference between the resource's responseEnd timestamp and its startTime timestamp - ResourceTiming API
                                 }
                             }
                         }
                         catch (e) {
-                            self._internals.log("[ERROR]","Boomerang, Error while using resource timing data decompression", config);
+                            self._internals.log("[ERROR]", "Boomerang, Error while using resource timing data decompression", config);
                         }
 
                         trace.type = "network";
@@ -118,17 +125,17 @@ Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
                 BOOMR.t_end = new Date().getTime();
                 Countly.BOOMR = BOOMR;
                 initedBoomr = true;
-                self._internals.log("[INFO]","Boomerang initiated:", config);
+                self._internals.log("[INFO]", "Boomerang initiated:", config);
             }
             else {
-                self._internals.log("[WARNING]","Boomerang called without its instance or was already initialized");
+                self._internals.log("[WARNING]", "Boomerang called without its instance or was already initialized");
             }
         }
         if (window.BOOMR) {
             initBoomerang(window.BOOMR);
         }
         else {
-            self._internals.log("[WARNING]","Boomerang not yet loaded, waiting for it to load");
+            self._internals.log("[WARNING]", "Boomerang not yet loaded, waiting for it to load");
             // Modern browsers
             if (document.addEventListener) {
                 document.addEventListener("onBoomerangLoaded", function(e) {
