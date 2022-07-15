@@ -224,7 +224,7 @@ BOOMR_check_doc_domain();
 	 *
 	 * @memberof BOOMR
 	 */
-	BOOMR.version = "1.0.0";
+	BOOMR.version = "1.737.0";
 
 	/**
 	 * The main document window.
