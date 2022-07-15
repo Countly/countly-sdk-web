@@ -11,7 +11,8 @@ module.exports = {
         "cypress/assertion-before-screenshot": "warn",
         "cypress/no-force": "warn",
         "cypress/no-async-tests": "error",
-        "cypress/no-pause": "error"
+        "cypress/no-pause": "error",
+        "comma-dangle": ["error", "never"]
     },
     env: {
         "cypress/globals": true
@@ -19,5 +20,5 @@ module.exports = {
     extends: [
         "plugin:cypress/recommended",
         "plugin:chai-friendly/recommended"
-    ],
+    ]
 };
