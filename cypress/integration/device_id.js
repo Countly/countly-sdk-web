@@ -117,7 +117,6 @@ function checkRequestsForT(queue, expectedInternalType) {
     }
 }
 
-
 /**
  *device ID type:
     *0 - device ID was set by the developer during init
@@ -1082,4 +1081,3 @@ describe("Device Id tests during first init", ()=>{
         });
     });
 });
-

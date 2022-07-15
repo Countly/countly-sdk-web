@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = {
     /**
      * By default, ESLint expects ECMAScript 5 syntax. You can override that setting to enable support

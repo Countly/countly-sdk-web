@@ -12,7 +12,8 @@ module.exports = {
         "cypress/no-force": "warn",
         "cypress/no-async-tests": "error",
         "cypress/no-pause": "error",
-        "comma-dangle": ["error", "never"]
+        "comma-dangle": ["error", "never"],
+        "no-multiple-empty-lines": [2, { max: 1, maxEOF: 0 }]
     },
     env: {
         "cypress/globals": true
