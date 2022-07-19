@@ -1,7 +1,6 @@
 lib/countly.min.js
 lib/countly.pack.js
 plugin/ga_adapter
-plugin/boomerang/boomerang-1.0.0.js
 plugin/boomerang/boomerang.min.js
 examples
 test
