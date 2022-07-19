@@ -16,8 +16,6 @@ Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
             }
         });
     }
-    // version of this script
-    var scriptVersion = "1";
     /**
      *  Enables tracking performance through boomerang.js
      *  @memberof Countly
@@ -34,12 +32,6 @@ Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
         function initBoomerang(BOOMR) {
             if (BOOMR && !initedBoomr) {
                 BOOMR.subscribe("before_beacon", function(beaconData) {
-                    if (beaconData.v !== Countly.expectedBoomVersion) {
-                        self._internals.log("[WARNING]", "Boomerang, The current boomerang version:[" + beaconData.v + "], is different than expected, some features might not work. For best performance please use the version:[" + Countly.expectedBoomVersion + "]");
-                    }
-                    if (scriptVersion !== Countly.boomScriptVersion) {
-                        self._internals.log("[WARNING]", "Boomerang, This countly_boomerang script you are using is different than the one SDK is looking for. Something might go wrong. Pleas use version:[" + scriptVersion + "]");
-                    }
                     self._internals.log("[INFO]", "Boomerang, before_beacon:", JSON.stringify(beaconData, null, 2));
                     var trace = {};
                     if (beaconData["rt.start"] !== "manual" && !beaconData["http.initiator"] && beaconData["rt.quit"] !== "") {
