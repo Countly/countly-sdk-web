@@ -17,7 +17,11 @@
     <script type='text/javascript'>
         syncScripts();
         function syncScripts() {
-            var scripts = ['./boomerang/boomerang.min.js', './boomerang/countly_boomerang.js'];
+            // To automatically report traces you will need control the loading sequence of countly and boomerang.js scripts 
+            // as boomerang.js depends on Countly to be initialized first. So instead of defining the scripts at the head tag 
+            // you should use the script provided below, first thing inside your Countly init script as shown here and 
+            // give exact paths to the boomerang and countly_boomerang scripts per your project
+            var scripts = ['../../plugin/boomerang/boomerang.min.js', './boomerang/countly_boomerang.js'];
             var i = 0;
             function loopScriptList(scripts) {
                 recursiveScriptMaker(scripts[i], function() {
