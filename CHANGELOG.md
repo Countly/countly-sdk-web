@@ -1,16 +1,22 @@
 ## 22.02.4
+
 - Fixed logs that did not obey to the 'debug' flag
+
 ## 22.02.3
+
 - Added support for userAgentData
 - Now heatmap scroll event is recorded when leaving a view
 
 ## 22.02.2
+
 - Fixed a bug where the minified version had issues with the heatmap feature
 
 ## 22.02.1
+
 - Fixed a bug where heatmap files were not loading
 
 ## 22.02.0
+
 - !! Major breaking change !! Device ID provided during the init will be ignored if a device ID was provided previously
 - Added a new init time flag which erases the previously stored device ID. This allows to set new device ID during init
 - Added a new functionality with which it is possible to check the device ID type
@@ -19,16 +25,20 @@
 - Added a safety check preventing the user from changing the device ID at offline
 
 ## 21.11.4
+
 - Fixed a bug where some server response formats were rejected
 - Fixed a bug where some widgets' text color was not displayed correctly
 
 ## 21.11.3
+
 - Fixed a bug with `recordRatingWidgetWithID` where it would not record ratings
 
 ## 21.11.2
+
 - Fixed a bug where request queue was not processing
 
 ## 21.11.1
+
 - Fixed feedback widget bug related to the 'close events' origin check
 - When consent is changed it will now send the full consent state instead of just the changed consents
 - Rating widgets will now also be used through the feedback widgets API (in case the server supports it)
@@ -36,39 +46,42 @@
 - Logs are now rearranged to include log levels
 
 ## 21.11.0
+
 - !! Major breaking change !! Rating and Feedback widgets now require 'star-rating' or 'feedback' consent exclusively, according to their type, instead of both:
-    - `present_feedback_widget` needs 'feedback' consent only
-    - `get_available_feedback_widgets` needs 'feedback' consent only
-    - `enable_feedback` needs 'star-rating' consent only
-    - `show_feedback_popup` needs 'star-rating' consent only
-    - `initialize_feedback_popups` needs 'star-rating' consent only
-    - `report_feedback` needs 'star-rating' consent only
+  - `present_feedback_widget` needs 'feedback' consent only
+  - `get_available_feedback_widgets` needs 'feedback' consent only
+  - `enable_feedback` needs 'star-rating' consent only
+  - `show_feedback_popup` needs 'star-rating' consent only
+  - `initialize_feedback_popups` needs 'star-rating' consent only
+  - `report_feedback` needs 'star-rating' consent only
 - !! Major breaking change !! Enabling offline mode or changing device ID without merging will now clear the current consent. Consent has to be given again after performing this action.
 - ! Minor breaking change ! 'change_id' will now not accept invalid device ID values. It will now reject null, undefined, values that are not of the type string and empty string values.
 - ! Minor breaking change ! Multiple values now have a default limit adjustable at initialization:
-    - Maximum size of all string keys is now 128 characters by default.
-    - Maximum size of all values in key-value pairs is now 256 characters by default.
-    - Maximum amount of segmentation in one event is mow 30 key-value pairs by default.
-    - Maximum amount of breadcrumbs that can be recorded at once is now 100 by default.
-    - Maximum stack trace lines per thread is now 30 by default.
-    - Maximum stack trace line length is now 200 by default. 
+  - Maximum size of all string keys is now 128 characters by default.
+  - Maximum size of all values in key-value pairs is now 256 characters by default.
+  - Maximum amount of segmentation in one event is mow 30 key-value pairs by default.
+  - Maximum amount of breadcrumbs that can be recorded at once is now 100 by default.
+  - Maximum stack trace lines per thread is now 30 by default.
+  - Maximum stack trace line length is now 200 by default.
 - Bug Fix - Fixed a bug where duration counter/timer was not paused even when the browser was out of focus
 - Deprecating `report_feedback`, now it redirects to `recordRatingWidgetWithID`
 - Deprecating `show_feedback_popup`, now it redirects to `presentRatingWidgetWithID`
 - Deprecating `initialize_feedback_popups`, now it redirects to `initializeRatingWidgets`
 - Deprecating `enable_feedback`, now it redirects to `enableRatingWidgets`
 - Deprecating `report_conversion`, now it redirects to `recordDirectAttribution`
-- When recording internal events with 'add_event', the respective feature consent will now be checked instead of the 'events' consent. 
+- When recording internal events with 'add_event', the respective feature consent will now be checked instead of the 'events' consent.
 - Increased the default max event batch size to 100.
 - Automatic orientation tracking is now enabled by default. It can be turned off during init.
 - Device ID can now be changed when no consent is given
 
 ## 20.11.3
+
 - Surveys ie bugfix for the undefined origin
 - Remove unload handlers
 - Don't use closest polyfill
 
 ## 20.11.2
+
 - [example] Crashes for react apps
 - [fix] Fetch remote config on init bug fix
 - [fix] Make sure code is running in a browser
@@ -77,6 +90,7 @@
 - [update] Example dependency updates
 
 ## 20.11.1
+
 - Added new sample app to demo js symbolication
 - Added option to control storage (localstorage, cookie, none)
 - Bumped dependencies
@@ -84,6 +98,7 @@
 - Provided an option to disable domain tracking
 
 ## 20.11
+
 - Add javascript flag to reported errors
 - Added React JS sample
 - Added explicit remote-config consent
@@ -99,6 +114,7 @@
 - Stricter Eslint rules
 
 ## 20.04
+
 - Add APM plugin which uses boomerang js for reporting performance
 - Add basic performance trace reporting option
 - Add device orientation reporting
@@ -115,6 +131,7 @@
 - Removed unsafe innerHTML assignments
 
 ## 19.08
+
 - Allow overwriting serialize and deserialize functions
 - Allow overwriting a way to provide view name and url
 - Allow namespacing shared storage for multiple separate trackers on same domain
@@ -129,10 +146,12 @@
 - Implement offline mode support with option to delay passing device_id
 
 ## 19.02.1
+
 - Fixed feedback if disabled widgets on panel widgets are still enable.
 - Fixed feedback if set “all pages” as target, sticker not appear on all pages.
 
 ## 19.02
+
 - Add remote config support
 - Fixed loader for Google Analytics adapter
 - Use Array.isArray instead of === Array to avoid context problems
@@ -143,18 +162,21 @@
 - Report unhandled promise rejections as handled crashes
 
 ## 18.11
+
 - Added persistence tests to test suite
 - Fixed views overreporting duration in some cases
 - Added session cookie support
 - Google Analytics adapter (reuse implemented Google Analytics code to send data to Countly servers)
 
 ## 18.08.2
+
 - Important Fix for regenerated device_id
-    - Update to this version if you use 18.08 or 18.08.1.
+  - Update to this version if you use 18.08 or 18.08.1.
 - Fixed storing none json data
 - Widgets params changed as popups and back-compatibility provided.
 
 ## 18.08
+
 - Add crash log breadcrumb limit
 - Allow unsetting custom property
 - Block Google security scanner
@@ -168,18 +190,21 @@
 - Webpack packaging wrapper
 
 ## 18.04
+
 - Add GDPR compliant consent management
 - Add internal method for creating consents and expose it
 - Notify loader listeners for sdk plugins on init too
 - Fix opt out functionality to keep event queue empty
 
 ## 18.01
+
 - Improved documentation and code clean up
 - Added track_scrolls to visualize in scroll heat map (Enterprise version)
 - Added resolution segmenting to heat/scroll map (Enterprise version)
 - Fixed scoping in form data collection
 
 ## 17.09
+
 - Improved documentation
 - Added view segment to autogenerated helper events
 - Added optin/optout functionality
@@ -187,6 +212,7 @@
 - Fixed crashing when storage is not allowed by browser (cookies blocked)
 
 ## 17.05
+
 - Improved documentation
 - Expose internal methods for plugins
 - Allow loading pluggable code
@@ -195,9 +221,11 @@
 - Fix possible recursion loop when using queued method calls
 
 ## 16.12.1
+
 - Some minor changes
 
 ## 16.12
+
 - Add ignore list for tracking views to ignore specific urls/view names
 - Fix logging message with undefined key for debug output
 - Added new configuration options, as session_update and max_events, force_post, ignore_prefetch
@@ -213,6 +241,7 @@
 - Using device pixels ratio as density metric
 
 ## 16.06
+
 - Improved the way to detect browsers
 - Updated searchbot ignore list
 - Improved efficiency (less writes and reads)
@@ -224,6 +253,7 @@
 - Added queue size limitation
 
 ## 16.02
+
 - Added page referrer metric for sources
 - More accurate session and time tracking
 - Tracking pages, pageviews and clicks, view frequency, landing pages, exits and bounces
@@ -240,4 +270,5 @@
 - Added storing and reporting conversions for Attribution Analytics
 
 ## 15.08
+
 - First official release compatible with Countly Server 15.08 functionalities

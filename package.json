@@ -12,6 +12,7 @@
     "docs": "node_modules/.bin/jsdoc lib/countly.js README.md -c jsdoc_conf.json -d docs",
     "build": "webpack",
     "lint": "./node_modules/.bin/eslint --ignore-path .eslintignore --fix .",
+    "lintMD": "markdownlint *.md --fix",
     "cypress:open": "cypress open",
     "pretest": "eslint --ignore-path .eslintignore .",
     "test": "./node_modules/.bin/cypress run"
@@ -31,7 +32,6 @@
     "url": "https://github.com/Countly/countly-sdk-web/issues"
   },
   "homepage": "https://count.ly/",
-  "dependencies": {},
   "devDependencies": {
     "cypress": "^9.5.0",
     "cypress-localstorage-commands": "^1.7.0",
@@ -42,6 +42,7 @@
     "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-import": "^2.25.2",
     "jsdoc": "^3.6.10",
+    "markdownlint": "^0.26.0",
     "webpack": "^5.24.1",
     "webpack-cli": "^4.2.0"
   },
