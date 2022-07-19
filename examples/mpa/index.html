@@ -17,11 +17,17 @@
     <script type='text/javascript'>
         syncScripts();
         function syncScripts() {
-            // To automatically report traces you will need control the loading sequence of countly and boomerang.js scripts 
-            // as boomerang.js depends on Countly to be initialized first. So instead of defining the scripts at the head tag 
-            // you should use the script provided below, first thing inside your Countly init script as shown here and 
-            // give exact paths to the boomerang and countly_boomerang scripts per your project
-            var scripts = ['../../plugin/boomerang/boomerang.min.js', './boomerang/countly_boomerang.js'];
+            // Here we should refer to the 'boomerang.min.js' and 'countly_boomerang.js' scripts' path in this order inside scripts array
+            // in your production implementation you would most likely have something like this:
+            // var scripts = ['../plugin/boomerang/boomerang.min.js', '../plugin/boomerang/countly_boomerang.js'];
+            //
+            // For ones with a keen eye, they might notice that these paths differ from the ones in the documentation, reason being that we would like to keep a single copy of these files
+            // in our repo so we directly refer to them from our plugin folder. 
+            //
+            // If you would like to use this example stand alone, you would need to copy those files and refer to their
+            // correct paths here. Like creating a folder and pasting them there and then referring to that folder. Folder name 
+            // does not matter as long as you provide them correctly in to the scripts array
+            var scripts = ['../../plugin/boomerang/boomerang.min.js', '../../plugin/boomerang/countly_boomerang.js'];
             var i = 0;
             function loopScriptList(scripts) {
                 recursiveScriptMaker(scripts[i], function() {
