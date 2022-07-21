@@ -12,7 +12,7 @@
     "docs": "node_modules/.bin/jsdoc lib/countly.js README.md -c jsdoc_conf.json -d docs",
     "build": "webpack",
     "lint": "./node_modules/.bin/eslint --ignore-path .eslintignore --fix .",
-    "lintMD": "markdownlint *.md --fix",
+    "lintMD": "markdownlint **/*.md --fix",
     "cypress:open": "cypress open",
     "pretest": "eslint --ignore-path .eslintignore .",
     "test": "./node_modules/.bin/cypress run"
