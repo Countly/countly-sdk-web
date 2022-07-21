@@ -1,6 +1,6 @@
 lib/countly.min.js
 lib/countly.pack.js
-plugin
+plugin/boomerang/boomerang.min.js
 examples
 test
 node_modules
