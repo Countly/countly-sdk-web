@@ -1,5 +1,4 @@
 # Countly Web SDK Crash Test Sample App
-
 This project has been created to generate crashes in sourcemapped files to
 demonstrate Countly's ability to process stacktraces that occured on uglified
 (minified, transpiled etc) Javascript files to point to the correct locations

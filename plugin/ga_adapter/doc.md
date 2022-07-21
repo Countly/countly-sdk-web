@@ -1,15 +1,12 @@
 # Countly Google Analytics Adapter
 
 ## What's Countly Google Analytics Adapter?
-
 Countly Google Analytics Adapter is a migration tool for your web apps which has already implemented Google Analytics trackers, you can easily send your analytics data to your Countly instance too without any extra integration.
 
 ## Implementing Countly Google Analytics Adapter in your web pages
-
 There are only two step for integration.
 
 ### 1. Add Countly Web SDK integration snippet into your web page
-
 ```js
 <script type='text/javascript'>
   
@@ -53,7 +50,6 @@ Countly.q.push(['track_pageview']);
 ```
 
 ### 2. Change your Google Analytics integration code like below
-
 ```js
 <script>
 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
