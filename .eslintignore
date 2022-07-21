@@ -1,10 +1,7 @@
 lib/countly.min.js
 lib/countly.pack.js
 plugin/boomerang/boomerang.min.js
-examples
-test
 node_modules
-coverage
 .vscode
 .github
 .gitignore
