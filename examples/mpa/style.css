@@ -89,6 +89,18 @@ a {
   color: #fff;
 }
 
+#mid-section {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+}
+
+#wallpaper {
+    width: 50%;
+}
+
 @media (min-width: 768px) {
   .selective-button {
     font-size: 14px;
