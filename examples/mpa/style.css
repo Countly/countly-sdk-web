@@ -241,8 +241,3 @@ input {
     font-size: 15px;
 }
 
-@media only screen and (max-width: 900px) {
-    body {
-        background-color: grey;
-    }
-}
