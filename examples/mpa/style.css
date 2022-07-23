@@ -21,7 +21,7 @@ a {
 }
 
 #header {
-    padding: 20px;
+    padding: 15px;
     display: flex; 
     flex-direction: row;
     justify-content: space-between;
@@ -37,9 +37,32 @@ a {
     color: rgb(255, 255, 255);
 }
 
-#user-state {
+.highlight-button {
+    align-items: center;
+    border-radius: 6px;
+    box-sizing: border-box;
+    color: #ffffff;
     cursor: pointer;
-}
+    font-family: Inter,sans-serif;
+    font-size: 1rem;
+    justify-content: center;
+    line-height: 1;
+    margin: 0;
+    outline: none;
+    padding: 7px 10px;
+    text-align: center;
+    text-decoration: none;
+    transition: box-shadow .2s,-webkit-box-shadow .2s;
+    white-space: nowrap;
+    border: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+  }
+  
+  .highlight-button:hover {
+    box-shadow: #ffffff 0 0 0 3px, transparent 0 0 0 0;
+  }
 
 #form-div {
     display: none;
