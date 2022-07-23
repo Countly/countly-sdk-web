@@ -177,8 +177,8 @@
     <!-- Header  -->
     <div id="header">
         <img id="logo" src="./logo.png">
-        <h1 class="header-text">Web Demo App</h1>
-        <p id="user-state" class="highlight-button"></p>
+        <h1>Web Demo App</h1>
+        <p id="user-state" class="header-button"></p>
     </div>
 
     <!-- Center Image  -->
@@ -195,7 +195,11 @@
 
         <!-- Button Group  -->
         <div id="buttons">
+
+            <!-- Widget related first segment  -->
             <div id="new-ratings">
+
+                <!-- Widget information section  -->
                 <div style="text-align: right;padding-right: 5%;" id="mormons">
                     <div style="padding-bottom: 6px;">
                         <label for="tags" style="font-size: var(--tag-size);">Tags</label>
@@ -222,51 +226,50 @@
                             type="text" name="widget-id" readonly />
                     </div>
                 </div>
+
+                <!-- Widget buttons  -->
                 <div id="galactic-conquest">
                     <button class="mormon-father" style="border-radius: 2px;border: none; padding: 5px;"><i
                             class="fa fa-arrows-v" aria-hidden="true"></i></button>
-                    <button id="nps"
-                        style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+                    <button id="nps" class="selective-button">
                         Show NPS
                     </button>
-                    <button id="survey"
-                        style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+                    <button id="survey" class="selective-button">
                         Show Survey
                     </button>
-                    <button id="rating"
-                        style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+                    <button id="rating" class="selective-button">
                         Show Rating Widget
                     </button>
-                    <button id="random"
-                        style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+                    <button id="random" class="selective-button">
                         Show Random Feedback Widget
                     </button>
                 </div>
             </div>
+
+            <!-- Old widget buttons  -->
             <div id="old-ratings">
-                <button id="rating-enable"
-                    style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+                <button id="rating-enable" class="selective-button">
                     Show Old Rating Widget
                 </button>
-                <button id="rating-multi"
-                    style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+                <button id="rating-multi" class="selective-button">
                     Show Old Rating Widget (Multi)
                 </button>
             </div>
+
+            <!-- Other feature buttons  -->
             <div id="miscellaneous-buttons">
-                <button id="call-remote-config"
-                    style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+                <button id="call-remote-config" class="selective-button">
                     Fetch Remote Config (Header Color)
                 </button>
-                <button id="send-custom-event"
-                    style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+                <button id="send-custom-event" class="selective-button">
                     Send Custom Event
                 </button>
-                <button id="change-device-id"
-                    style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+                <button id="change-device-id" class="selective-button">
                     Change Device ID
                 </button>
             </div>
+
+            <!-- Change device ID form  -->
             <div id="form-div">
                 <form action="" id="form-container">
                     <h3>Change device ID:</h3>
@@ -284,6 +287,7 @@
                     </span>
                 </form>
             </div>
+
         </div>
 
 
@@ -305,7 +309,7 @@
     <script>
         //some dummy user details 
         var users = [{
-            "device_id": "mrsparkles-new-3",
+            "device_id": "dummy-1",
             "name": "mrsparkles",
             "username": "mrsparkles",
             "email": "mrsparkles@cly.com",
@@ -314,7 +318,7 @@
             "gender": "M",
             "byear": "1994"
         }, {
-            "device_id": "alex-new-3",
+            "device_id": "dummy-2",
             "name": "Alex",
             "username": "alex",
             "email": "alex@cly.com",
@@ -323,7 +327,7 @@
             "gender": "M",
             "byear": "2010"
         }, {
-            "device_id": "hannah-new-3",
+            "device_id": "dummy-3",
             "name": "Hannah",
             "username": "hannah",
             "email": "hannah@cly.com",
@@ -332,7 +336,7 @@
             "gender": "F",
             "byear": "2000"
         }, {
-            "device_id": "jarvis-new-3",
+            "device_id": "dummy-4",
             "name": "Jarvis",
             "username": "jarvis",
             "email": "jarvis@cly.com",
@@ -341,7 +345,7 @@
             "gender": "F",
             "byear": "2013"
         }, {
-            "device_id": "dummy-jarvis-new-3",
+            "device_id": "dummy-5",
             "name": "Jarvis dummy",
             "username": "jarvis",
             "email": "jarvis@cly.com",
@@ -350,7 +354,7 @@
             "gender": "F",
             "byear": "2013"
         }, {
-            "device_id": "new-dummy-jarvis-new-3",
+            "device_id": "dummy-6",
             "name": "New Jarvis dummy",
             "username": "jarvis",
             "email": "jarvis@cly.com",
@@ -359,7 +363,7 @@
             "gender": "F",
             "byear": "2013"
         }, {
-            "device_id": "jarvis-new",
+            "device_id": "dummy-7",
             "name": "Jarvis new",
             "username": "jarvis",
             "email": "jarvis@cly.com",
@@ -368,7 +372,7 @@
             "gender": "F",
             "byear": "2013"
         }, {
-            "device_id": "sid-new-3",
+            "device_id": "dummy-8",
             "name": "Sid",
             "username": "sid",
             "email": "sid@cly.com",
@@ -377,7 +381,7 @@
             "gender": "M",
             "byear": "2018"
         }, {
-            "device_id": "harry-new-3",
+            "device_id": "dummy-9",
             "name": "Harry",
             "username": "harry",
             "email": "harry@cly.com",
@@ -516,13 +520,12 @@
 
             // get log in state from local storage under "web-demo-login-state" key
             var loginState = localStorage.getItem("web-demo-login-state");
-
             if (loginState) {
                 //User logout
                 localStorage.removeItem("web-demo-login-state");
                 localStorage.removeItem("web-demo-user");
                 $("#welcome-user").text("Welcome");
-                $("#user-state").text("Sign in");
+                $("#user-state").text("Sign In");
                 // $("#subscription").hide();
 
                 Countly.q.push(['change_id', Countly._internals.generateUUID()]);
@@ -536,7 +539,7 @@
                     var userIndex = getRandomUserIndex();
                     var user = users[userIndex];
                     $("#welcome-user").text("Welcome " + user.name);
-                    $("#user-state").text("Sign out");
+                    $("#user-state").text("Sign Out");
                     // $("#subscription").show();
                     localStorage.setItem("web-demo-user", userIndex);
                     localStorage.setItem("web-demo-login-state", true);
@@ -564,12 +567,12 @@
             var userIndex = localStorage.getItem("web-demo-user");
             var user = users[userIndex];
             $("#welcome-user").text("Welcome " + user.name);
-            $("#user-state").text("Sign out");
+            $("#user-state").text("Sign Out");
             // $("#subscription").show();
         }
         else {
             //User can sign in
-            $("#user-state").text("Sign in");
+            $("#user-state").text("Sign In");
             // $("#subscription").hide();
         }
 
