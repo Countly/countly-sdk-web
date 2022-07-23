@@ -1,5 +1,6 @@
 <!doctype html>
 <html>
+
 <head>
     <title>
         Countly Web Demo
@@ -8,12 +9,14 @@
 		//Content security policy
 		<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'"></meta>
 	-->
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" name="viewport">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"
+        integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"
+        name="viewport">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!-- Page styling here -->
     <link rel='stylesheet' type='text/css' href='style.css'>
-     <!-- Async Countly init logic here -->
+    <!-- Async Countly init logic here -->
     <script type='text/javascript'>
         syncScripts();
         function syncScripts() {
@@ -30,18 +33,18 @@
             var scripts = ['../../plugin/boomerang/boomerang.min.js', '../../plugin/boomerang/countly_boomerang.js'];
             var i = 0;
             function loopScriptList(scripts) {
-                recursiveScriptMaker(scripts[i], function() {
+                recursiveScriptMaker(scripts[i], function () {
                     i++;
-                    if(i < scripts.length) {
-                        loopScriptList(scripts);   
+                    if (i < scripts.length) {
+                        loopScriptList(scripts);
                     }
-                }); 
+                });
             }
-            loopScriptList(scripts);      
+            loopScriptList(scripts);
         }
-        function recursiveScriptMaker(source, callback ) {
+        function recursiveScriptMaker(source, callback) {
             var script = document.createElement('script');
-            script.onload = function() {
+            script.onload = function () {
                 console.log('Successfully loaded the source: ' + source)
                 callback();
             }
@@ -64,10 +67,10 @@
 
         //Example usage of remote config to fetch remote configurations 
         // Countly.remote_config = function(err, rc) {
-            //     if (err) {
-                //         return;
-                //     }
-                //     console.log(rc);
+        //     if (err) {
+        //         return;
+        //     }
+        //     console.log(rc);
         //     //DO SOMETHING
         //     //...
         // };
@@ -105,7 +108,7 @@
         //tracking user actions
         Countly.q.push(['track_sessions']);
         Countly.q.push(['track_pageview']);
-        
+
         //For heatmaps record scrolls and clicks
         Countly.q.push(['track_scrolls']);
         Countly.q.push(['track_clicks']);
@@ -144,14 +147,14 @@
                 splitAtPath: true
             }
         }]);
-        
+
         //init countly
-        (function() {
+        (function () {
             var cly = document.createElement('script');
             cly.type = 'text/javascript';
             cly.async = true;
             cly.src = '../../lib/countly.js';
-            cly.onload = function() {
+            cly.onload = function () {
                 Countly.init();
             };
             var s = document.getElementsByTagName('script')[0];
@@ -159,8 +162,8 @@
         })();
         //Uncomment to change device id randomly
         // Countly.change_id(Countly._internals.generateUUID());
-        
-        setTimeout(function() {
+
+        setTimeout(function () {
             Countly.q.push(['track_forms', $("#mynewform-form")[0]]);
         }, 1000);
     </script>
@@ -169,23 +172,24 @@
 <body>
     <div id="form-div">
         <form action="" id="form-container">
-          <h3>Change device ID:</h3>
-          <div>
-              <p>Please enter a valid device ID</p>
-              <input type="text" id="id-input" value="" required>
-        </div>
-          <div id="check-box">
-          <label for="merge" style="padding-right: 5px;">Merge</label>
-          <input type="checkbox" name="merge" id="merge-checkbox">
-        </div>
-        <span id="form-btn">
-            <button type="submit" id="accept-btn">OK</button>
-            <button type="button" id="cancel-btn">Cancel</button>
-        </span>
+            <h3>Change device ID:</h3>
+            <div>
+                <p>Please enter a valid device ID</p>
+                <input type="text" id="id-input" value="" required>
+            </div>
+            <div id="check-box">
+                <label for="merge" style="padding-right: 5px;">Merge</label>
+                <input type="checkbox" name="merge" id="merge-checkbox">
+            </div>
+            <span id="form-btn">
+                <button type="submit" id="accept-btn">OK</button>
+                <button type="button" id="cancel-btn">Cancel</button>
+            </span>
         </form>
-      </div>
+    </div>
 
-    <div id="header" style="z-index: 100000; width: 100%; height: 100px; display: flex; justify-content: space-between; align-items: center; background-color: #cff96b;">
+    <div id="header"
+        style="z-index: 100000; width: 100%; height: 100px; display: flex; justify-content: space-between; align-items: center; background-color: #cff96b;">
         <div style="float: left;">
             <a style="font-size: 26px;" href="">Home</a>
         </div>
@@ -209,53 +213,71 @@
                 <div style="text-align: right;padding-right: 5%;" id="mormons">
                     <div style="padding-bottom: 6px;">
                         <label for="tags" style="font-size: var(--tag-size);">Tags</label>
-                        <input id="tags-m8" value="" style="font-size: var(--tag-size);overflow-y: scroll; width: var(--tag-width); height: var(--tag-height); scroll-behavior: auto; background-color: rgb(187, 187, 187);" type="text" name="tags" readonly/>
+                        <input id="tags-m8" value=""
+                            style="font-size: var(--tag-size);overflow-y: scroll; width: var(--tag-width); height: var(--tag-height); scroll-behavior: auto; background-color: rgb(187, 187, 187);"
+                            type="text" name="tags" readonly />
                     </div>
                     <div style="padding-bottom: 6px;">
-                        <label for="name"style="font-size: var(--tag-size);">Name</label>
-                        <input id="name-m8" value="" style="font-size: var(--tag-size);overflow-y: scroll; width:var(--tag-width); height: var(--tag-height); scroll-behavior: auto; background-color: rgb(187, 187, 187);" type="text" name="name" readonly/>
-                    </div>    
-                    <div style="padding-bottom: 6px;">
-                        <label for="show-policy"style="font-size: var(--tag-size);">Show Policy</label>
-                        <input id="show-policy-m8" value="" style="font-size: var(--tag-size);overflow-y: scroll; width: var(--tag-width); height: var(--tag-height); scroll-behavior: auto; background-color: rgb(187, 187, 187);" type="text" name="show-policy" readonly/>
+                        <label for="name" style="font-size: var(--tag-size);">Name</label>
+                        <input id="name-m8" value=""
+                            style="font-size: var(--tag-size);overflow-y: scroll; width:var(--tag-width); height: var(--tag-height); scroll-behavior: auto; background-color: rgb(187, 187, 187);"
+                            type="text" name="name" readonly />
                     </div>
                     <div style="padding-bottom: 6px;">
-                        <label for="widget-id"style="font-size: var(--tag-size);">ID</label>
-                        <input id="widget-id-m8" value="" style="font-size: var(--tag-size);overflow-y: scroll; width: var(--tag-width); height: var(--tag-height); scroll-behavior: auto; background-color: rgb(187, 187, 187);" type="text" name="widget-id" readonly/>
+                        <label for="show-policy" style="font-size: var(--tag-size);">Show Policy</label>
+                        <input id="show-policy-m8" value=""
+                            style="font-size: var(--tag-size);overflow-y: scroll; width: var(--tag-width); height: var(--tag-height); scroll-behavior: auto; background-color: rgb(187, 187, 187);"
+                            type="text" name="show-policy" readonly />
+                    </div>
+                    <div style="padding-bottom: 6px;">
+                        <label for="widget-id" style="font-size: var(--tag-size);">ID</label>
+                        <input id="widget-id-m8" value=""
+                            style="font-size: var(--tag-size);overflow-y: scroll; width: var(--tag-width); height: var(--tag-height); scroll-behavior: auto; background-color: rgb(187, 187, 187);"
+                            type="text" name="widget-id" readonly />
                     </div>
                 </div>
                 <div id="galactic-conquest">
-                    <button class="mormon-father" style="border-radius: 2px;border: none; padding: 5px;"><i class="fa fa-arrows-v" aria-hidden="true"></i></button>
-                    <button id="nps" style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+                    <button class="mormon-father" style="border-radius: 2px;border: none; padding: 5px;"><i
+                            class="fa fa-arrows-v" aria-hidden="true"></i></button>
+                    <button id="nps"
+                        style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
                         Show NPS
                     </button>
-                    <button id="survey" style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+                    <button id="survey"
+                        style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
                         Show Survey
                     </button>
-                    <button id="rating" style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+                    <button id="rating"
+                        style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
                         Show Rating Widget
                     </button>
-                    <button id="random" style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+                    <button id="random"
+                        style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
                         Show Random Feedback Widget
                     </button>
                 </div>
             </div>
             <div id="old-ratings">
-                <button id="rating-enable" style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+                <button id="rating-enable"
+                    style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
                     Show Old Rating Widget
                 </button>
-                <button id="rating-multi" style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+                <button id="rating-multi"
+                    style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
                     Show Old Rating Widget (Multi)
                 </button>
             </div>
             <div id="miscellaneous-buttons">
-                <button id="call-remote-config" style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+                <button id="call-remote-config"
+                    style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
                     Fetch Remote Config (Header Color)
                 </button>
-                <button id="send-custom-event" style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+                <button id="send-custom-event"
+                    style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
                     Send Custom Event
                 </button>
-                <button id="change-device-id" style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
+                <button id="change-device-id"
+                    style="color: #000; border: none; padding: 5px; border-radius: 2px; cursor: pointer; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-size: 14px; background-color: #bed3da;">
                     Change Device ID
                 </button>
             </div>
@@ -273,7 +295,7 @@
 
     <script>
         //some dummy user details 
-    var users = [{
+        var users = [{
             "device_id": "mrsparkles-new-3",
             "name": "mrsparkles",
             "username": "mrsparkles",
@@ -354,9 +376,9 @@
             "phone": "+919882102018",
             "gender": "M",
             "byear": "2005"
-        }, ];
+        },];
         //add custom events by clicking subscription
-        $("#subscription-button").on("click", function() {
+        $("#subscription-button").on("click", function () {
             Countly.q.push(['add_event', {
                 "key": "subscription-clicked",
                 "count": 1,
@@ -365,9 +387,9 @@
                     "click_on": "august"
                 }
             }]);
-            
+
             var subscribe = confirm("Do you want to subscribe ?");
-            
+
             if (subscribe) {
                 Countly.q.push(['add_event', {
                     "key": "subscribed",
@@ -386,8 +408,8 @@
         document.getElementById("show-policy-m8").value = tagManagerText;
         document.getElementById("widget-id-m8").value = tagManagerText;
         //Accept button for change ID form
-        $("#accept-btn").on("click", function() {
-            let merge = document.getElementById("merge-checkbox").checked;  
+        $("#accept-btn").on("click", function () {
+            let merge = document.getElementById("merge-checkbox").checked;
             let ID = document.getElementById("id-input").value;
             if (!ID) {
                 alert("Please provide a valid ID!!");
@@ -396,38 +418,38 @@
                 Countly.q.push(['change_id', ID, merge]);
                 document.getElementById("form-div").style.display = "block";
             }
-            
+
         });
         //cancel button for change ID form
-        $("#cancel-btn").on("click", function() {
+        $("#cancel-btn").on("click", function () {
             document.getElementById("form-div").style.display = "none";
         });
         //change device ID button logic
-        $("#change-device-id").on("click", function() {
+        $("#change-device-id").on("click", function () {
             var id = Countly._internals.generateUUID();
             document.getElementById("id-input").value = id;
             document.getElementById("form-div").style.display = "block";
         });
         //fetch nps widgets
-        $("#nps").on("click", function() {
+        $("#nps").on("click", function () {
             Countly.q.push(["get_available_feedback_widgets", allWidgetsCallbackNPS]);
         });
         //fetch survey widgets
-        $("#survey").on("click", function() {
+        $("#survey").on("click", function () {
             Countly.q.push(["get_available_feedback_widgets", allWidgetsCallbackSurvey]);
         });
-         //fetch rating widgets
-         $("#rating").on("click", function() {
+        //fetch rating widgets
+        $("#rating").on("click", function () {
             Countly.q.push(["get_available_feedback_widgets", allWidgetsCallbackRating]);
         });
-         //fetch random feedback widgets
-         $("#random").on("click", function() {
-            const callbacks = [allWidgetsCallbackNPS,allWidgetsCallbackSurvey, allWidgetsCallbackRating];
-            var widget = getRandomNumber(0, callbacks.length-1);
+        //fetch random feedback widgets
+        $("#random").on("click", function () {
+            const callbacks = [allWidgetsCallbackNPS, allWidgetsCallbackSurvey, allWidgetsCallbackRating];
+            var widget = getRandomNumber(0, callbacks.length - 1);
             Countly.q.push(["get_available_feedback_widgets", callbacks[widget]]);
         });
         //display a rating widget with ID
-        $("#rating-enable").on("click", function() {
+        $("#rating-enable").on("click", function () {
             let id = prompt("Please enter widget ID");
             if (!id) {
                 return;
@@ -438,30 +460,30 @@
             }
         });
         //display multiple rating widgets with IDs
-        $("#rating-multi").on("click", function() {
+        $("#rating-multi").on("click", function () {
             let ids = prompt("Please enter widget IDs separated with commas");
             if (!ids) {
                 return;
             } else {
                 //trim whitespace
-                const idArray = ids.split(',').map(a=>a.trim());
+                const idArray = ids.split(',').map(a => a.trim());
                 Countly.initializeRatingWidgets(idArray);
             }
         });
         //fetch, display and use the remote configuration
-        $("#call-remote-config").on("click", function() {
-            Countly.fetch_remote_config(function(err, remoteConfigs){
+        $("#call-remote-config").on("click", function () {
+            Countly.fetch_remote_config(function (err, remoteConfigs) {
                 if (err) {
                     return;
                 }
                 console.log(remoteConfigs);
                 if (remoteConfigs.header_background_color !== undefined) {
-                    $("#header").css({'background-color': remoteConfigs.header_background_color});
+                    $("#header").css({ 'background-color': remoteConfigs.header_background_color });
                 }
             });
         });
         //send custom events to your hearts content
-        $("#send-custom-event").on("click", function() {
+        $("#send-custom-event").on("click", function () {
             let eventName = prompt("Please enter event name", "new-header-is-cool");
             if (!eventName) {
                 alert("Please provide a valid event name!!");
@@ -475,7 +497,7 @@
         });
 
         //log in logic here
-        $("#user-state").on("click", function() {
+        $("#user-state").on("click", function () {
             var loginState = localStorage.getItem("ptsdemo-login-state");
 
             if (loginState) {
@@ -513,24 +535,24 @@
                 }
             }
 
-            setTimeout(function() {
+            setTimeout(function () {
                 location.reload();
             }, 1000);
         });
-		var loginState = localStorage.getItem("ptsdemo-login-state");
-		if(loginState) {
-			//User can signout
-			var userIndex = localStorage.getItem("ptsdemo-user");
-			var user = users[userIndex];
-			$("#welcome-user").text("Welcome " + user.name);
-			$("#user-state").text("Sign out");
-			// $("#subscription").show();
-		}
-		else {
-			//User can sign in
-			$("#user-state").text("Sign in");
-			// $("#subscription").hide();
-		}
+        var loginState = localStorage.getItem("ptsdemo-login-state");
+        if (loginState) {
+            //User can signout
+            var userIndex = localStorage.getItem("ptsdemo-user");
+            var user = users[userIndex];
+            $("#welcome-user").text("Welcome " + user.name);
+            $("#user-state").text("Sign out");
+            // $("#subscription").show();
+        }
+        else {
+            //User can sign in
+            $("#user-state").text("Sign in");
+            // $("#subscription").hide();
+        }
 
         function getRandomUserIndex() {
             return getRandomNumber(0, users.length - 1);
@@ -564,7 +586,7 @@
                     document.getElementById("tags-m8").value = tags.join(' ');
                 }
                 document.getElementById("tags-m8").style.backgroundColor = '#93BD2C';
-            } 
+            }
             else {
                 document.getElementById("tags-m8").value = "Tags are not returned for this widget";
                 document.getElementById("tags-m8").style.backgroundColor = '#DE1903';
@@ -572,7 +594,7 @@
             if (!id) {
                 document.getElementById("widget-id-m8").value = "No ID returned returned for this widget";
                 document.getElementById("widget-id-m8").style.backgroundColor = '#DE1903';
-            } 
+            }
             else {
                 document.getElementById("widget-id-m8").value = id;
                 document.getElementById("widget-id-m8").style.backgroundColor = '#93BD2C';
@@ -580,7 +602,7 @@
             if (!name) {
                 document.getElementById("name-m8").value = "No name returned returned for this widget";
                 document.getElementById("name-m8").style.backgroundColor = '#DE1903';
-            } 
+            }
             else {
                 document.getElementById("name-m8").value = name;
                 document.getElementById("name-m8").style.backgroundColor = '#93BD2C';
@@ -588,7 +610,7 @@
             if (!policy) {
                 document.getElementById("show-policy-m8").value = "No showPolicy returned returned for this widget";
                 document.getElementById("show-policy-m8").style.backgroundColor = '#DE1903';
-            } 
+            }
             else {
                 document.getElementById("show-policy-m8").value = policy;
                 document.getElementById("show-policy-m8").style.backgroundColor = '#93BD2C';
@@ -598,11 +620,11 @@
         function getRandomNumber(min, max) {
             return parseInt(Math.random() * (max - min) + min);
         }
-        $(".mormon-father").on("click", function() {
+        $(".mormon-father").on("click", function () {
             var current = document.getElementById("mormons").style.display;
-            if (current === 'none' ) {
+            if (current === 'none') {
                 document.getElementById("mormons").style.display = "block";
-            } 
+            }
             else {
                 document.getElementById("mormons").style.display = "none";
             }
@@ -615,7 +637,7 @@
                 var overlay = document.getElementsByClassName('countly-ratings-overlay')[0];
                 var iframeR = document.getElementById('countly-ratings-iframe');
                 var iframeS = document.getElementById('countly-surveys-iframe');
-                if(anchor&&wrapper) {
+                if (anchor && wrapper) {
                     iframeR.remove();
                     overlay.remove();
                     wrapper.nextSibling.remove();
@@ -638,7 +660,7 @@
             }
             //first nps widget to fetch
             var i = 0;
-            while(i < feedbacks.length) {
+            while (i < feedbacks.length) {
                 if (feedbacks[i].type === 'nps') {
                     deleteOldFeedbackWidget(feedbacks[i], 'nps');
                     setTimeout(() => {
@@ -657,7 +679,7 @@
             }
             //first survey widget to fetch
             var i = 0;
-            while(i < feedbacks.length) {
+            while (i < feedbacks.length) {
                 if (feedbacks[i].type === 'survey') {
                     deleteOldFeedbackWidget(feedbacks[i], 'survey');
                     setTimeout(() => {
@@ -669,16 +691,16 @@
                 i++;
             }
         }
-        
+
         //callback to choose rating widget from the fetched widget list, widget is the index of the desired widget in the widget list
         function allWidgetsCallbackRating(feedbacks, err) {
             if (err) {
                 return console.log("error ", err);
             }
-			console.log(feedbacks);
+            console.log(feedbacks);
             //first rating widget to fetch
             var i = 0;
-            while(i < feedbacks.length) {
+            while (i < feedbacks.length) {
                 if (feedbacks[i].type === 'rating') {
                     deleteOldFeedbackWidget(feedbacks[i], 'rating');
                     setTimeout(() => {
@@ -687,7 +709,7 @@
                     }, 250);
                     break;
                 }
-            i++;
+                i++;
             }
         }
     </script>
