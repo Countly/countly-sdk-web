@@ -100,6 +100,13 @@ opacity: 0.8;
 #header p {
     padding: 20px;
     cursor: pointer;
+    z-index: 100000;
+    width: 100%;
+    height: 100px; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    background-color: #cff96b;
 }
 
 #buttons {

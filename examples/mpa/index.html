@@ -170,44 +170,35 @@
 </head>
 
 <body>
-    <div id="form-div">
-        <form action="" id="form-container">
-            <h3>Change device ID:</h3>
-            <div>
-                <p>Please enter a valid device ID</p>
-                <input type="text" id="id-input" value="" required>
-            </div>
-            <div id="check-box">
-                <label for="merge" style="padding-right: 5px;">Merge</label>
-                <input type="checkbox" name="merge" id="merge-checkbox">
-            </div>
-            <span id="form-btn">
-                <button type="submit" id="accept-btn">OK</button>
-                <button type="button" id="cancel-btn">Cancel</button>
-            </span>
-        </form>
-    </div>
 
-    <div id="header"
-        style="z-index: 100000; width: 100%; height: 100px; display: flex; justify-content: space-between; align-items: center; background-color: #cff96b;">
-        <div style="float: left;">
+    <!-- Header  -->
+    <div id="header">
+        <div>
             <a style="font-size: 26px;" href="">Home</a>
         </div>
         <div>
-            <h1 style="text-transform: uppercase;">Countly Demo App</h1>
+            <h1>Countly Demo App</h1>
         </div>
-        <div style="float: left;">
+        <div>
             <div style="display: inline-block;">
                 <p id="user-state"></p>
             </div>
         </div>
     </div>
+
+    <!-- Center Image  -->
     <div style="width: 100%; display:flex; justify-content: center; align-items: center;">
         <img src="./team_countly.jpg" />
     </div>
+
+    <!-- Below Image  -->
     <center>
+
+        <!-- Welcome Text  -->
         <h1 id="welcome-user" style="text-transform: capitalize;">Welcome</h1>
         <br />
+
+        <!-- Button Group  -->
         <div id="buttons">
             <div id="new-ratings">
                 <div style="text-align: right;padding-right: 5%;" id="mormons">
@@ -281,14 +272,36 @@
                     Change Device ID
                 </button>
             </div>
+            <div id="form-div">
+                <form action="" id="form-container">
+                    <h3>Change device ID:</h3>
+                    <div>
+                        <p>Please enter a valid device ID</p>
+                        <input type="text" id="id-input" value="" required>
+                    </div>
+                    <div id="check-box">
+                        <label for="merge" style="padding-right: 5px;">Merge</label>
+                        <input type="checkbox" name="merge" id="merge-checkbox">
+                    </div>
+                    <span id="form-btn">
+                        <button type="submit" id="accept-btn">OK</button>
+                        <button type="button" id="cancel-btn">Cancel</button>
+                    </span>
+                </form>
+            </div>
         </div>
+
+        
         <br />
+
+        <!-- Email Box -->
         <div id="mynewform">
             <form id="mynewform-form">
                 <input type="text" placeholder="Enter your email" />
                 <input type="submit" />
             </form>
         </div>
+
         <!-- Some empty elements to append feedback widgets -->
         <ol id="nullMen"></ol>
     </center>
@@ -377,6 +390,7 @@
             "gender": "M",
             "byear": "2005"
         },];
+        
         //add custom events by clicking subscription
         $("#subscription-button").on("click", function () {
             Countly.q.push(['add_event', {
