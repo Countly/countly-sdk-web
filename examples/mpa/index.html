@@ -176,9 +176,9 @@
 
     <!-- Header  -->
     <div id="header">
-        <a href="">Home</a>
-        <h1>Countly Demo App</h1>
-        <p id="user-state"></p>
+        <img id="logo" src="./logo.png">
+        <h1 class="header-text">Web Demo App</h1>
+        <p id="user-state" class="header-text"></p>
     </div>
 
     <!-- Center Image  -->
@@ -484,7 +484,7 @@
             }
         });
 
-        //fetch, display and use the remote configuration
+        //fetch, display and use the remote configuration, this is an example implementation, must be changed for your own specific use case
         $("#call-remote-config").on("click", function () {
             Countly.fetch_remote_config(function (err, remoteConfigs) {
                 if (err) {

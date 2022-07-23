@@ -22,10 +22,23 @@ a {
 
 #header {
     padding: 20px;
-    cursor: pointer;
     display: flex; 
     flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
     background-color: #1A2A39;
+}
+
+#logo {
+    height: 50px;
+}
+
+.header-text {
+    color: rgb(255, 255, 255);
+}
+
+#user-state {
+    cursor: pointer;
 }
 
 #form-div {
