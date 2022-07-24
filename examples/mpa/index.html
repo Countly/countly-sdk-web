@@ -2,612 +2,612 @@
 <html>
 
 <head>
-    <!-- Title of our tab -->
-    <title>
-        Countly Web Demo
-    </title>
-    <!--
+  <!-- Title of our tab -->
+  <title>
+    Countly Web Demo
+  </title>
+  <!--
         // Content security policy
 		<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'"></meta>
 	-->
-    <!-- jquery-3 -->
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"
-        integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
-    <!-- mobile view info -->
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"
-        name="viewport">
-    <!-- For some font-awesome icons we use -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <!-- Page styling here -->
-    <link rel='stylesheet' type='text/css' href='style.css'>
-    <!-- Scripts for the main logic -->
-    <script src="dummy_users.js"></script>
-    <script src="helper_functions.js"></script>
-    <!-- Async Countly init logic here -->
-    <script type='text/javascript'>
-        // load BoomerangJS scripts after Countly is initiated this way 
-        syncScripts();
-        function syncScripts() {
-            // Here we should refer to the 'boomerang.min.js' and 'countly_boomerang.js' scripts' path in this order inside scripts array
-            // in your production implementation you would most likely have something like this:
-            // var scripts = ['../plugin/boomerang/boomerang.min.js', '../plugin/boomerang/countly_boomerang.js'];
-            //
-            // For ones with a keen eye, they might notice that these paths differ from the ones in the documentation, reason being that we would like to keep a single copy of these files
-            // in our repo so we directly refer to them from our plugin folder. 
-            //
-            // If you would like to use this example stand alone, you would need to copy those files and refer to their
-            // correct paths here. Like creating a folder and pasting them there and then referring to that folder. Folder name 
-            // does not matter as long as you provide them correctly in to the scripts array
-            var scripts = ['../../plugin/boomerang/boomerang.min.js', '../../plugin/boomerang/countly_boomerang.js'];
-            var i = 0;
-            function loopScriptList(scripts) {
-                recursiveScriptMaker(scripts[i], function () {
-                    i++;
-                    if (i < scripts.length) {
-                        loopScriptList(scripts);
-                    }
-                });
-            }
+  <!-- jquery-3 -->
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"
+    integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+  <!-- mobile view info -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"
+    name="viewport">
+  <!-- For some font-awesome icons we use -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!-- Page styling here -->
+  <link rel='stylesheet' type='text/css' href='style.css'>
+  <!-- Scripts for the main logic -->
+  <script src="dummy_users.js"></script>
+  <script src="helper_functions.js"></script>
+  <!-- Async Countly init logic here -->
+  <script type='text/javascript'>
+    // load BoomerangJS scripts after Countly is initiated this way 
+    syncScripts();
+    function syncScripts() {
+      // Here we should refer to the 'boomerang.min.js' and 'countly_boomerang.js' scripts' path in this order inside scripts array
+      // in your production implementation you would most likely have something like this:
+      // var scripts = ['../plugin/boomerang/boomerang.min.js', '../plugin/boomerang/countly_boomerang.js'];
+      //
+      // For ones with a keen eye, they might notice that these paths differ from the ones in the documentation, reason being that we would like to keep a single copy of these files
+      // in our repo so we directly refer to them from our plugin folder. 
+      //
+      // If you would like to use this example stand alone, you would need to copy those files and refer to their
+      // correct paths here. Like creating a folder and pasting them there and then referring to that folder. Folder name 
+      // does not matter as long as you provide them correctly in to the scripts array
+      var scripts = ['../../plugin/boomerang/boomerang.min.js', '../../plugin/boomerang/countly_boomerang.js'];
+      var i = 0;
+      function loopScriptList(scripts) {
+        recursiveScriptMaker(scripts[i], function () {
+          i++;
+          if (i < scripts.length) {
             loopScriptList(scripts);
-        }
-        function recursiveScriptMaker(source, callback) {
-            var script = document.createElement('script');
-            script.onload = function () {
-                console.log('Successfully loaded the source: ' + source)
-                callback();
-            }
-            script.src = source;
-            document.getElementsByTagName('head')[0].appendChild(script);
-        }
+          }
+        });
+      }
+      loopScriptList(scripts);
+    }
+    function recursiveScriptMaker(source, callback) {
+      var script = document.createElement('script');
+      script.onload = function () {
+        console.log('Successfully loaded the source: ' + source)
+        callback();
+      }
+      script.src = source;
+      document.getElementsByTagName('head')[0].appendChild(script);
+    }
 
-        // Countly Related Settings
-        var Countly = Countly || {};
-        Countly.q = Countly.q || [];
-        // Countly Config
-        Countly.app_key = 'YOUR_APP_KEY';
-        Countly.url = 'https://try.count.ly';
-        Countly.session_update = 30; //Time interval for session extend
-        Countly.use_session_cookie = false; //if false, begin_session on every app open, be it in new tab
-        Countly.debug = true;
-        Countly.require_consent = false;
-        Countly.namespace = "demo";
-        Countly.inactivity_time = 1; //User will marked inactive after 1 min, i.e. stop_time and no extend session or end session
-        Countly.offline_mode = false;
-        Countly.force_post = false;
+    // Countly Related Settings
+    var Countly = Countly || {};
+    Countly.q = Countly.q || [];
+    // Countly Config
+    Countly.app_key = 'YOUR_APP_KEY';
+    Countly.url = 'https://try.count.ly';
+    Countly.session_update = 30; //Time interval for session extend
+    Countly.use_session_cookie = false; //if false, begin_session on every app open, be it in new tab
+    Countly.debug = true;
+    Countly.require_consent = false;
+    Countly.namespace = "demo";
+    Countly.inactivity_time = 1; //User will marked inactive after 1 min, i.e. stop_time and no extend session or end session
+    Countly.offline_mode = false;
+    Countly.force_post = false;
 
-        // Example usage of remote config to fetch remote configurations 
-        // Countly.remote_config = function(err, rc) {
-        //     if (err) {
-        //         return;
-        //     }
-        //     console.log(rc);
-        //     //DO SOMETHING
-        //     //...
-        // };
+    // Example usage of remote config to fetch remote configurations 
+    // Countly.remote_config = function(err, rc) {
+    //     if (err) {
+    //         return;
+    //     }
+    //     console.log(rc);
+    //     //DO SOMETHING
+    //     //...
+    // };
 
-        // (optionally) provide custom feature tree if needed
-        // Countly.q.push(['group_features', {
-        //     activity: ["sessions", "events", "views", "location", "remote-config", "apm"],
-        //     interaction: ["scrolls", "clicks", "feedback", "star-rating", "attribution"],
-        //     whereabouts: ["users", "forms"]
-        // }]);
+    // (optionally) provide custom feature tree if needed
+    // Countly.q.push(['group_features', {
+    //     activity: ["sessions", "events", "views", "location", "remote-config", "apm"],
+    //     interaction: ["scrolls", "clicks", "feedback", "star-rating", "attribution"],
+    //     whereabouts: ["users", "forms"]
+    // }]);
 
-        // Handling local storage related things here, like consents
-        // if (typeof (localStorage) !== "undefined") {
-        //     //check if consent is stored
-        //     var consents = localStorage.getItem("consents");
+    // Handling local storage related things here, like consents
+    // if (typeof (localStorage) !== "undefined") {
+    //     //check if consent is stored
+    //     var consents = localStorage.getItem("consents");
 
-        //     if (consents) {
-        //         Countly.q.push(['add_consent', JSON.parse(consents)]);
-        //     }
-        //     else {
-        //         //prompt user for consent
-        //         var consent = confirm("We are going to track you. Do you give your consent ?");
-        //         consents = ["activity", "interaction", "whereabouts"];
-        //         if (consent) {
-        //             Countly.q.push(['add_consent', consents]);
-        //             localStorage.setItem("consents", JSON.stringify(consents));
-        //         }
-        //         else {
-        //             Countly.q.push(['remove_consent', consents]);
-        //             localStorage.removeItem("consents");
-        //         }
-        //     }
-        // }
+    //     if (consents) {
+    //         Countly.q.push(['add_consent', JSON.parse(consents)]);
+    //     }
+    //     else {
+    //         //prompt user for consent
+    //         var consent = confirm("We are going to track you. Do you give your consent ?");
+    //         consents = ["activity", "interaction", "whereabouts"];
+    //         if (consent) {
+    //             Countly.q.push(['add_consent', consents]);
+    //             localStorage.setItem("consents", JSON.stringify(consents));
+    //         }
+    //         else {
+    //             Countly.q.push(['remove_consent', consents]);
+    //             localStorage.removeItem("consents");
+    //         }
+    //     }
+    // }
 
-        // Tracking user actions
-        Countly.q.push(['track_sessions']);
-        Countly.q.push(['track_pageview']);
+    // Tracking user actions
+    Countly.q.push(['track_sessions']);
+    Countly.q.push(['track_pageview']);
 
-        // For heatmaps record scrolls and clicks
-        Countly.q.push(['track_scrolls']);
-        Countly.q.push(['track_clicks']);
+    // For heatmaps record scrolls and clicks
+    Countly.q.push(['track_scrolls']);
+    Countly.q.push(['track_clicks']);
 
-        // Countly.q.push(['track_links', '']);
-        // Countly.q.push(['track_forms']);
-        // Countly.q.push(['recordDirectAttribution']);
+    // Countly.q.push(['track_links', '']);
+    // Countly.q.push(['track_forms']);
+    // Countly.q.push(['recordDirectAttribution']);
 
-        // APM related configuration
-        Countly.q.push(["track_performance", {
-            RT: {
-                enabled: true
-            },
-            instrument_xhr: true,
-            AutoXHR: {
-                enabled: true,
-                alwaysSendXhr: true,
-                monitorFetch: true,
-                captureXhrRequestResponse: true
-            },
-            Continuity: {
-                enabled: true,
-                monitorLongTasks: true,
-                monitorPageBusy: true,
-                monitorFrameRate: true,
-                monitorInteractions: true,
-                afterOnload: true
-            },
-            NavigationTiming: {
-                enabled: true
-            },
-            ResourceTiming: {
-                enabled: true,
-                clearOnBeacon: true,
-                urlLimit: 2000,
-                splitAtPath: true
-            }
-        }]);
+    // APM related configuration
+    Countly.q.push(["track_performance", {
+      RT: {
+        enabled: true
+      },
+      instrument_xhr: true,
+      AutoXHR: {
+        enabled: true,
+        alwaysSendXhr: true,
+        monitorFetch: true,
+        captureXhrRequestResponse: true
+      },
+      Continuity: {
+        enabled: true,
+        monitorLongTasks: true,
+        monitorPageBusy: true,
+        monitorFrameRate: true,
+        monitorInteractions: true,
+        afterOnload: true
+      },
+      NavigationTiming: {
+        enabled: true
+      },
+      ResourceTiming: {
+        enabled: true,
+        clearOnBeacon: true,
+        urlLimit: 2000,
+        splitAtPath: true
+      }
+    }]);
 
-        // init Countly
-        (function () {
-            var cly = document.createElement('script');
-            cly.type = 'text/javascript';
-            cly.async = true;
-            // provide the correct path according to your project structure
-            cly.src = '../../lib/countly.js';
-            cly.onload = function () {
-                Countly.init();
-            };
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(cly, s);
-        })();
+    // init Countly
+    (function () {
+      var cly = document.createElement('script');
+      cly.type = 'text/javascript';
+      cly.async = true;
+      // provide the correct path according to your project structure
+      cly.src = '../../lib/countly.js';
+      cly.onload = function () {
+        Countly.init();
+      };
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(cly, s);
+    })();
 
-        // Change device id randomly
-        // Countly.change_id(Countly._internals.generateUUID());
+    // Change device id randomly
+    // Countly.change_id(Countly._internals.generateUUID());
 
-        setTimeout(function () {
-            // if the email form is filled report 30 sec after init
-            Countly.q.push(['track_forms', $("#mynewform-form")[0]]);
-        }, 30000);
-    </script>
+    setTimeout(function () {
+      // if the email form is filled report 30 sec after init
+      Countly.q.push(['track_forms', $("#mynewform-form")[0]]);
+    }, 30000);
+  </script>
 </head>
 
 <!-- Everything that will be visible in your site  -->
 
 <body>
 
-    <!-- Header, banner etc. Top part of your site  -->
-    <div id="header">
-        <img id="logo" src="./logo.png">
-        <h1>Web Demo App</h1>
-        <p id="user-state" class="header-button"></p>
-    </div>
+  <!-- Header, banner etc. Top part of your site  -->
+  <div id="header">
+    <img id="logo" src="./logo.png">
+    <h1>Web Demo App</h1>
+    <p id="user-state" class="header-button"></p>
+  </div>
 
-    <!-- Center Image. Anything you want to show at the center.  -->
-    <div id="mid-section">
-        <img src="./team_countly.jpg" id="wallpaper" />
-    </div>
+  <!-- Center Image. Anything you want to show at the center.  -->
+  <div id="mid-section">
+    <img src="./team_countly.jpg" id="wallpaper" />
+  </div>
 
-    <!-- Below Image. Utilities  -->
-    <center>
+  <!-- Below Image. Utilities  -->
+  <center>
 
-        <!-- Welcome Text. With user name. -->
-        <h1 id="welcome-user"">Welcome</h1>
+    <!-- Welcome Text. With user name. -->
+    <h2 id="welcome-user"">No User is Signed In</h2>
         <br />
 
-        <!-- Button Group  -->
-        <div id="buttons">
+    <!-- Button Group  -->
+    <div id="buttons">
 
-            <!-- Widget related first segment  -->
-            <div id="new-ratings">
+      <!-- Widget related first segment  -->
+      <div id="new-ratings">
 
-                <!-- Widget information section  -->
-                <div style="text-align: right;padding-right: 5%;" id="mormons">
-                    <div style="padding-bottom: 6px;">
-                        <label for="tags" style="font-size: var(--tag-size);">Tags</label>
-                        <input id="tags-m8" value=""
-                            style="font-size: var(--tag-size);overflow-y: scroll; width: var(--tag-width); height: var(--tag-height); scroll-behavior: auto; background-color: rgb(187, 187, 187);"
-                            type="text" name="tags" readonly />
-                    </div>
-                    <div style="padding-bottom: 6px;">
-                        <label for="name" style="font-size: var(--tag-size);">Name</label>
-                        <input id="name-m8" value=""
-                            style="font-size: var(--tag-size);overflow-y: scroll; width:var(--tag-width); height: var(--tag-height); scroll-behavior: auto; background-color: rgb(187, 187, 187);"
-                            type="text" name="name" readonly />
-                    </div>
-                    <div style="padding-bottom: 6px;">
-                        <label for="show-policy" style="font-size: var(--tag-size);">Show Policy</label>
-                        <input id="show-policy-m8" value=""
-                            style="font-size: var(--tag-size);overflow-y: scroll; width: var(--tag-width); height: var(--tag-height); scroll-behavior: auto; background-color: rgb(187, 187, 187);"
-                            type="text" name="show-policy" readonly />
-                    </div>
-                    <div style="padding-bottom: 6px;">
-                        <label for="widget-id" style="font-size: var(--tag-size);">ID</label>
-                        <input id="widget-id-m8" value=""
-                            style="font-size: var(--tag-size);overflow-y: scroll; width: var(--tag-width); height: var(--tag-height); scroll-behavior: auto; background-color: rgb(187, 187, 187);"
-                            type="text" name="widget-id" readonly />
-                    </div>
-                </div>
+        <!-- Widget information section  -->
+        <div style="text-align: right;padding-right: 5%;" id="mormons">
+          <div style="padding-bottom: 6px;">
+            <label for="tags" style="font-size: var(--tag-size);">Tags</label>
+            <input id="tags-m8" value=""
+              style="font-size: var(--tag-size);overflow-y: scroll; width: var(--tag-width); height: var(--tag-height); scroll-behavior: auto; background-color: rgb(187, 187, 187);"
+              type="text" name="tags" readonly />
+          </div>
+          <div style="padding-bottom: 6px;">
+            <label for="name" style="font-size: var(--tag-size);">Name</label>
+            <input id="name-m8" value=""
+              style="font-size: var(--tag-size);overflow-y: scroll; width:var(--tag-width); height: var(--tag-height); scroll-behavior: auto; background-color: rgb(187, 187, 187);"
+              type="text" name="name" readonly />
+          </div>
+          <div style="padding-bottom: 6px;">
+            <label for="show-policy" style="font-size: var(--tag-size);">Show Policy</label>
+            <input id="show-policy-m8" value=""
+              style="font-size: var(--tag-size);overflow-y: scroll; width: var(--tag-width); height: var(--tag-height); scroll-behavior: auto; background-color: rgb(187, 187, 187);"
+              type="text" name="show-policy" readonly />
+          </div>
+          <div style="padding-bottom: 6px;">
+            <label for="widget-id" style="font-size: var(--tag-size);">ID</label>
+            <input id="widget-id-m8" value=""
+              style="font-size: var(--tag-size);overflow-y: scroll; width: var(--tag-width); height: var(--tag-height); scroll-behavior: auto; background-color: rgb(187, 187, 187);"
+              type="text" name="widget-id" readonly />
+          </div>
+        </div>
 
-                <!-- Widget buttons  -->
-                <div id="galactic-conquest">
-                    <button class="mormon-father" style="border-radius: 2px;border: none; padding: 5px;"><i
-                            class="fa fa-arrows-v" aria-hidden="true"></i></button>
-                    <button id="nps" class="selective-button">
-                        Show NPS
-                    </button>
-                    <button id="survey" class="selective-button">
-                        Show Survey
-                    </button>
-                    <button id="rating" class="selective-button">
-                        Show Rating Widget
-                    </button>
-                    <button id="random" class="selective-button">
-                        Show Random Feedback Widget
-                    </button>
-                </div>
-            </div>
+        <!-- Widget buttons  -->
+        <div id="galactic-conquest">
+          <button class="mormon-father" style="border-radius: 2px;border: none; padding: 5px;"><i class="fa fa-arrows-v"
+              aria-hidden="true"></i></button>
+          <button id="nps" class="selective-button">
+            Show NPS
+          </button>
+          <button id="survey" class="selective-button">
+            Show Survey
+          </button>
+          <button id="rating" class="selective-button">
+            Show Rating Widget
+          </button>
+          <button id="random" class="selective-button">
+            Show Random Feedback Widget
+          </button>
+        </div>
+      </div>
 
-            <!-- Old widget buttons  -->
-            <div id="old-ratings">
-                <button id="rating-enable" class="selective-button">
-                    Show Old Rating Widget
-                </button>
-                <button id="rating-multi" class="selective-button">
-                    Show Old Rating Widget (Multi)
-                </button>
-            </div>
+      <!-- Old widget buttons  -->
+      <div id="old-ratings">
+        <button id="rating-enable" class="selective-button">
+          Show Old Rating Widget
+        </button>
+        <button id="rating-multi" class="selective-button">
+          Show Old Rating Widget (Multi)
+        </button>
+      </div>
 
-            <!-- Other feature buttons  -->
-            <div id="miscellaneous-buttons">
-                <button id="call-remote-config" class="selective-button">
-                    Fetch Remote Config (Header Color)
-                </button>
-                <button id="send-custom-event" class="selective-button">
-                    Send Custom Event
-                </button>
-                <button id="change-device-id" class="selective-button">
-                    Change Device ID
-                </button>
-            </div>
+      <!-- Other feature buttons  -->
+      <div id="miscellaneous-buttons">
+        <button id="call-remote-config" class="selective-button">
+          Fetch Remote Config (Header Color)
+        </button>
+        <button id="send-custom-event" class="selective-button">
+          Send Custom Event
+        </button>
+        <button id="change-device-id" class="selective-button">
+          Change Device ID
+        </button>
+      </div>
 
-            <!-- Change device ID form  -->
-            <div id="form-div">
-                <form action="" id="form-container">
-                    <h3>Change device ID:</h3>
-                    <div>
-                        <p>Please enter a valid device ID</p>
-                        <input type="text" id="id-input" value="" required>
-                    </div>
-                    <div id="check-box">
-                        <label for="merge" style="padding-right: 5px;">Merge</label>
-                        <input type="checkbox" name="merge" id="merge-checkbox">
-                    </div>
-                    <span id="form-btn">
-                        <button type="submit" id="accept-btn">OK</button>
-                        <button type="button" id="cancel-btn">Cancel</button>
-                    </span>
-                </form>
-            </div>
+      <!-- Change device ID form  -->
+      <div id="form-div">
+        <form action="" id="form-container">
+          <h3>Change device ID:</h3>
+          <div>
+            <p>Please enter a valid device ID</p>
+            <input type="text" id="id-input" value="" required>
+          </div>
+          <div id="check-box">
+            <label for="merge" style="padding-right: 5px;">Merge</label>
+            <input type="checkbox" name="merge" id="merge-checkbox">
+          </div>
+          <span id="form-btn">
+            <button type="submit" id="accept-btn">OK</button>
+            <button type="button" id="cancel-btn">Cancel</button>
+          </span>
+        </form>
+      </div>
 
-            </div>
+    </div>
 
 
-            <br />
+    <br />
 
-            <!-- Email Box -->
-            <div id="mynewform">
-                <form id="mynewform-form">
-                    <input type="text" placeholder="Enter your email" />
-                    <input type="submit" />
-                </form>
-            </div>
+    <!-- Email Box -->
+    <div id="mynewform">
+      <form id="mynewform-form">
+        <input type="text" placeholder="Enter your email" />
+        <input type="submit" />
+      </form>
+    </div>
 
-            <!-- Some empty elements to append feedback widgets -->
-            <ol id="nullMen"></ol>
-    </center>
+    <!-- Some empty elements to append feedback widgets -->
+    <ol id="nullMen"></ol>
+  </center>
 
-    <!-- Main logic behind all buttons and other features -->
-    <script>
+  <!-- Main logic behind all buttons and other features -->
+  <script>
 
-        // Check if user is signed in or not when you open the site
-        var loginState = localStorage.getItem("web-demo-login-state");
-        if (loginState) {
-            var userIndex = localStorage.getItem("web-demo-user");
-            var user = users[userIndex];
-            // Post user name
-            $("#welcome-user").text("Welcome " + user.name);
-            // User can sign out
-            $("#user-state").text("Sign Out");
+    // Check if user is signed in or not when you open the site
+    var loginState = localStorage.getItem("web-demo-login-state");
+    if (loginState) {
+      var userIndex = localStorage.getItem("web-demo-user");
+      var user = users[userIndex];
+      // Post user name
+      $("#welcome-user").text("Welcome " + user.name);
+      // User can sign out
+      $("#user-state").text("Sign Out");
+    }
+    else {
+      // User can sign in
+      $("#user-state").text("Sign In");
+    }
+
+    // Sign in button logic
+    $("#user-state").on("click", function () {
+
+      // get sign in state from local storage under "web-demo-login-state" key
+      var loginState = localStorage.getItem("web-demo-login-state");
+      if (loginState) {
+        // Sign user out
+        localStorage.removeItem("web-demo-login-state");
+        localStorage.removeItem("web-demo-user");
+        $("#welcome-user").text("Not Signed In");
+        $("#user-state").text("Sign In");
+        Countly.q.push(['change_id', Countly._internals.generateUUID()]);
+      } else {
+        // Sign user in
+        var login = confirm("Do you want to login ?");
+        if (login) {
+          var userIndex = getRandomUserIndex();
+          var user = users[userIndex];
+          $("#welcome-user").text("Welcome " + user.name);
+          $("#user-state").text("Sign Out");
+          localStorage.setItem("web-demo-user", userIndex);
+          localStorage.setItem("web-demo-login-state", true);
+
+          // Change user's device on login - He is now an identified user
+          Countly.q.push(['change_id', user.device_id]);
+
+          // send user_details
+          setUserData(user);
         }
-        else {
-            // User can sign in
-            $("#user-state").text("Sign In");
+      }
+    });
+
+    // widget tag info
+    const tagManagerText = "No feedback widget requested yet";
+    document.getElementById("tags-m8").value = tagManagerText;
+    document.getElementById("name-m8").value = tagManagerText;
+    document.getElementById("show-policy-m8").value = tagManagerText;
+    document.getElementById("widget-id-m8").value = tagManagerText;
+
+    //fetch nps widgets
+    $("#nps").on("click", function () {
+      Countly.q.push(["get_available_feedback_widgets", allWidgetsCallbackNPS]);
+    });
+    //fetch survey widgets
+    $("#survey").on("click", function () {
+      Countly.q.push(["get_available_feedback_widgets", allWidgetsCallbackSurvey]);
+    });
+    //fetch rating widgets
+    $("#rating").on("click", function () {
+      Countly.q.push(["get_available_feedback_widgets", allWidgetsCallbackRating]);
+    });
+    //fetch random feedback widgets
+    $("#random").on("click", function () {
+      const callbacks = [allWidgetsCallbackNPS, allWidgetsCallbackSurvey, allWidgetsCallbackRating];
+      var widget = getRandomNumber(0, callbacks.length - 1);
+      Countly.q.push(["get_available_feedback_widgets", callbacks[widget]]);
+    });
+
+    //display a rating widget with ID
+    $("#rating-enable").on("click", function () {
+      let id = prompt("Please enter widget ID");
+      if (!id) {
+        return;
+      } else {
+        Countly.enableRatingWidgets({
+          'popups': [id.trim()]
+        });
+      }
+    });
+
+    //display multiple rating widgets with IDs
+    $("#rating-multi").on("click", function () {
+      let ids = prompt("Please enter widget IDs separated with commas");
+      if (!ids) {
+        return;
+      } else {
+        //trim whitespace
+        const idArray = ids.split(',').map(a => a.trim());
+        Countly.initializeRatingWidgets(idArray);
+      }
+    });
+
+    //fetch, display and use the remote configuration, this is an example implementation, must be changed for your own specific use case
+    $("#call-remote-config").on("click", function () {
+      Countly.fetch_remote_config(function (err, remoteConfigs) {
+        if (err) {
+          return;
         }
-
-        // Sign in button logic
-        $("#user-state").on("click", function () {
-
-            // get sign in state from local storage under "web-demo-login-state" key
-            var loginState = localStorage.getItem("web-demo-login-state");
-            if (loginState) {
-                // Sign user out
-                localStorage.removeItem("web-demo-login-state");
-                localStorage.removeItem("web-demo-user");
-                $("#welcome-user").text("Not Signed In");
-                $("#user-state").text("Sign In");
-                Countly.q.push(['change_id', Countly._internals.generateUUID()]);
-            } else {
-                // Sign user in
-                var login = confirm("Do you want to login ?");
-                if (login) {
-                    var userIndex = getRandomUserIndex();
-                    var user = users[userIndex];
-                    $("#welcome-user").text("Welcome " + user.name);
-                    $("#user-state").text("Sign Out");
-                    localStorage.setItem("web-demo-user", userIndex);
-                    localStorage.setItem("web-demo-login-state", true);
-
-                    // Change user's device on login - He is now an identified user
-                    Countly.q.push(['change_id', user.device_id]);
-
-                    // send user_details
-                    setUserData(user);
-                }
-            }
-        });
-
-        // widget tag info
-        const tagManagerText = "No feedback widget requested yet";
-        document.getElementById("tags-m8").value = tagManagerText;
-        document.getElementById("name-m8").value = tagManagerText;
-        document.getElementById("show-policy-m8").value = tagManagerText;
-        document.getElementById("widget-id-m8").value = tagManagerText;
-
-        //fetch nps widgets
-        $("#nps").on("click", function () {
-            Countly.q.push(["get_available_feedback_widgets", allWidgetsCallbackNPS]);
-        });
-        //fetch survey widgets
-        $("#survey").on("click", function () {
-            Countly.q.push(["get_available_feedback_widgets", allWidgetsCallbackSurvey]);
-        });
-        //fetch rating widgets
-        $("#rating").on("click", function () {
-            Countly.q.push(["get_available_feedback_widgets", allWidgetsCallbackRating]);
-        });
-        //fetch random feedback widgets
-        $("#random").on("click", function () {
-            const callbacks = [allWidgetsCallbackNPS, allWidgetsCallbackSurvey, allWidgetsCallbackRating];
-            var widget = getRandomNumber(0, callbacks.length - 1);
-            Countly.q.push(["get_available_feedback_widgets", callbacks[widget]]);
-        });
-
-        //display a rating widget with ID
-        $("#rating-enable").on("click", function () {
-            let id = prompt("Please enter widget ID");
-            if (!id) {
-                return;
-            } else {
-                Countly.enableRatingWidgets({
-                    'popups': [id.trim()]
-                });
-            }
-        });
-
-        //display multiple rating widgets with IDs
-        $("#rating-multi").on("click", function () {
-            let ids = prompt("Please enter widget IDs separated with commas");
-            if (!ids) {
-                return;
-            } else {
-                //trim whitespace
-                const idArray = ids.split(',').map(a => a.trim());
-                Countly.initializeRatingWidgets(idArray);
-            }
-        });
-
-        //fetch, display and use the remote configuration, this is an example implementation, must be changed for your own specific use case
-        $("#call-remote-config").on("click", function () {
-            Countly.fetch_remote_config(function (err, remoteConfigs) {
-                if (err) {
-                    return;
-                }
-                console.log(remoteConfigs);
-                if (remoteConfigs.header_background_color !== undefined) {
-                    $("#header").css({ 'background-color': remoteConfigs.header_background_color });
-                }
-            });
-        });
-
-        //send custom events to your hearts content
-        $("#send-custom-event").on("click", function () {
-            let eventName = prompt("Please enter event name", "new-header-is-cool");
-            if (!eventName) {
-                alert("Please provide a valid event name!!");
-                return;
-            } else {
-                Countly.q.push(['add_event', {
-                    "key": eventName,
-                    "count": 1
-                }]);
-            }
-        });
-
-        //Accept button for change ID form
-        $("#accept-btn").on("click", function () {
-            let merge = document.getElementById("merge-checkbox").checked;
-            let ID = document.getElementById("id-input").value;
-            if (!ID) {
-                alert("Please provide a valid ID!!");
-                return;
-            } else {
-                Countly.q.push(['change_id', ID, merge]);
-                document.getElementById("form-div").style.display = "block";
-            }
-
-        });
-        //cancel button for change ID form
-        $("#cancel-btn").on("click", function () {
-            document.getElementById("form-div").style.display = "none";
-        });
-        //change device ID button logic
-        $("#change-device-id").on("click", function () {
-            var id = Countly._internals.generateUUID();
-            document.getElementById("id-input").value = id;
-            document.getElementById("form-div").style.display = "block";
-        });
-
-
-
-        //tag manager
-        function evaluateFeedbackWidgetProperties(widget) {
-            const tags = widget.tg;
-            const name = widget.name;
-            const policy = widget.showPolicy;
-            const id = widget._id;
-            if (tags !== undefined && tags !== null && Array.isArray(tags)) {
-                if (tags.length === 0) {
-                    document.getElementById("tags-m8").value = '[No tags returned for this widget]';
-                } else {
-                    document.getElementById("tags-m8").value = tags.join(' ');
-                }
-                document.getElementById("tags-m8").style.backgroundColor = '#93BD2C';
-            }
-            else {
-                document.getElementById("tags-m8").value = "Tags are not returned for this widget";
-                document.getElementById("tags-m8").style.backgroundColor = '#DE1903';
-            }
-            if (!id) {
-                document.getElementById("widget-id-m8").value = "No ID returned returned for this widget";
-                document.getElementById("widget-id-m8").style.backgroundColor = '#DE1903';
-            }
-            else {
-                document.getElementById("widget-id-m8").value = id;
-                document.getElementById("widget-id-m8").style.backgroundColor = '#93BD2C';
-            }
-            if (!name) {
-                document.getElementById("name-m8").value = "No name returned returned for this widget";
-                document.getElementById("name-m8").style.backgroundColor = '#DE1903';
-            }
-            else {
-                document.getElementById("name-m8").value = name;
-                document.getElementById("name-m8").style.backgroundColor = '#93BD2C';
-            }
-            if (!policy) {
-                document.getElementById("show-policy-m8").value = "No showPolicy returned returned for this widget";
-                document.getElementById("show-policy-m8").style.backgroundColor = '#DE1903';
-            }
-            else {
-                document.getElementById("show-policy-m8").value = policy;
-                document.getElementById("show-policy-m8").style.backgroundColor = '#93BD2C';
-            }
-
+        console.log(remoteConfigs);
+        if (remoteConfigs.header_background_color !== undefined) {
+          $("#header").css({ 'background-color': remoteConfigs.header_background_color });
         }
-        function getRandomNumber(min, max) {
-            return parseInt(Math.random() * (max - min) + min);
-        }
-        $(".mormon-father").on("click", function () {
-            var current = document.getElementById("mormons").style.display;
-            if (current === 'none') {
-                document.getElementById("mormons").style.display = "block";
-            }
-            else {
-                document.getElementById("mormons").style.display = "none";
-            }
-        });
-        function deleteOldFeedbackWidget(widget, type) {
-            const id = widget._id;
-            try {
-                var anchor = document.getElementById(`csbg`);
-                var wrapper = document.getElementsByClassName('countly-ratings-wrapper')[0];
-                var overlay = document.getElementsByClassName('countly-ratings-overlay')[0];
-                var iframeR = document.getElementById('countly-ratings-iframe');
-                var iframeS = document.getElementById('countly-surveys-iframe');
-                if (anchor && wrapper) {
-                    iframeR.remove();
-                    overlay.remove();
-                    wrapper.nextSibling.remove();
-                    wrapper.remove();
-                    anchor.remove();
-                } else {
-                    anchor.style.zIndex = 5;
-                    iframeS.remove();
-                    anchor.nextSibling.remove();
-                    anchor.remove();
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        }
-        //callback to choose an nps widget from the fetched widget list, widget is the index of the desired widget in the widget list
-        function allWidgetsCallbackNPS(feedbacks, err) {
-            if (err) {
-                return console.log("error ", err);
-            }
-            //first nps widget to fetch
-            var i = 0;
-            while (i < feedbacks.length) {
-                if (feedbacks[i].type === 'nps') {
-                    deleteOldFeedbackWidget(feedbacks[i], 'nps');
-                    setTimeout(() => {
-                        Countly.present_feedback_widget(feedbacks[i], "", "");
-                        evaluateFeedbackWidgetProperties(feedbacks[i]);
-                    }, 250);
-                    break;
-                }
-                i++;
-            }
-        }
-        //callback to choose a survey widget from the fetched widget list, widget is the index of the desired widget in the widget list
-        function allWidgetsCallbackSurvey(feedbacks, err) {
-            if (err) {
-                return console.log("error ", err);
-            }
-            //first survey widget to fetch
-            var i = 0;
-            while (i < feedbacks.length) {
-                if (feedbacks[i].type === 'survey') {
-                    deleteOldFeedbackWidget(feedbacks[i], 'survey');
-                    setTimeout(() => {
-                        Countly.present_feedback_widget(feedbacks[i], "", "");
-                        evaluateFeedbackWidgetProperties(feedbacks[i]);
-                    }, 250);
-                    break;
-                }
-                i++;
-            }
-        }
+      });
+    });
 
-        //callback to choose rating widget from the fetched widget list, widget is the index of the desired widget in the widget list
-        function allWidgetsCallbackRating(feedbacks, err) {
-            if (err) {
-                return console.log("error ", err);
-            }
-            console.log(feedbacks);
-            //first rating widget to fetch
-            var i = 0;
-            while (i < feedbacks.length) {
-                if (feedbacks[i].type === 'rating') {
-                    deleteOldFeedbackWidget(feedbacks[i], 'rating');
-                    setTimeout(() => {
-                        Countly.present_feedback_widget(feedbacks[i], "", "");
-                        evaluateFeedbackWidgetProperties(feedbacks[i]);
-                    }, 250);
-                    break;
-                }
-                i++;
-            }
+    //send custom events to your hearts content
+    $("#send-custom-event").on("click", function () {
+      let eventName = prompt("Please enter event name", "new-header-is-cool");
+      if (!eventName) {
+        alert("Please provide a valid event name!!");
+        return;
+      } else {
+        Countly.q.push(['add_event', {
+          "key": eventName,
+          "count": 1
+        }]);
+      }
+    });
+
+    //Accept button for change ID form
+    $("#accept-btn").on("click", function () {
+      let merge = document.getElementById("merge-checkbox").checked;
+      let ID = document.getElementById("id-input").value;
+      if (!ID) {
+        alert("Please provide a valid ID!!");
+        return;
+      } else {
+        Countly.q.push(['change_id', ID, merge]);
+        document.getElementById("form-div").style.display = "block";
+      }
+
+    });
+    //cancel button for change ID form
+    $("#cancel-btn").on("click", function () {
+      document.getElementById("form-div").style.display = "none";
+    });
+    //change device ID button logic
+    $("#change-device-id").on("click", function () {
+      var id = Countly._internals.generateUUID();
+      document.getElementById("id-input").value = id;
+      document.getElementById("form-div").style.display = "block";
+    });
+
+
+
+    //tag manager
+    function evaluateFeedbackWidgetProperties(widget) {
+      const tags = widget.tg;
+      const name = widget.name;
+      const policy = widget.showPolicy;
+      const id = widget._id;
+      if (tags !== undefined && tags !== null && Array.isArray(tags)) {
+        if (tags.length === 0) {
+          document.getElementById("tags-m8").value = '[No tags returned for this widget]';
+        } else {
+          document.getElementById("tags-m8").value = tags.join(' ');
         }
-    </script>
+        document.getElementById("tags-m8").style.backgroundColor = '#93BD2C';
+      }
+      else {
+        document.getElementById("tags-m8").value = "Tags are not returned for this widget";
+        document.getElementById("tags-m8").style.backgroundColor = '#DE1903';
+      }
+      if (!id) {
+        document.getElementById("widget-id-m8").value = "No ID returned returned for this widget";
+        document.getElementById("widget-id-m8").style.backgroundColor = '#DE1903';
+      }
+      else {
+        document.getElementById("widget-id-m8").value = id;
+        document.getElementById("widget-id-m8").style.backgroundColor = '#93BD2C';
+      }
+      if (!name) {
+        document.getElementById("name-m8").value = "No name returned returned for this widget";
+        document.getElementById("name-m8").style.backgroundColor = '#DE1903';
+      }
+      else {
+        document.getElementById("name-m8").value = name;
+        document.getElementById("name-m8").style.backgroundColor = '#93BD2C';
+      }
+      if (!policy) {
+        document.getElementById("show-policy-m8").value = "No showPolicy returned returned for this widget";
+        document.getElementById("show-policy-m8").style.backgroundColor = '#DE1903';
+      }
+      else {
+        document.getElementById("show-policy-m8").value = policy;
+        document.getElementById("show-policy-m8").style.backgroundColor = '#93BD2C';
+      }
+
+    }
+    function getRandomNumber(min, max) {
+      return parseInt(Math.random() * (max - min) + min);
+    }
+    $(".mormon-father").on("click", function () {
+      var current = document.getElementById("mormons").style.display;
+      if (current === 'none') {
+        document.getElementById("mormons").style.display = "block";
+      }
+      else {
+        document.getElementById("mormons").style.display = "none";
+      }
+    });
+    function deleteOldFeedbackWidget(widget, type) {
+      const id = widget._id;
+      try {
+        var anchor = document.getElementById(`csbg`);
+        var wrapper = document.getElementsByClassName('countly-ratings-wrapper')[0];
+        var overlay = document.getElementsByClassName('countly-ratings-overlay')[0];
+        var iframeR = document.getElementById('countly-ratings-iframe');
+        var iframeS = document.getElementById('countly-surveys-iframe');
+        if (anchor && wrapper) {
+          iframeR.remove();
+          overlay.remove();
+          wrapper.nextSibling.remove();
+          wrapper.remove();
+          anchor.remove();
+        } else {
+          anchor.style.zIndex = 5;
+          iframeS.remove();
+          anchor.nextSibling.remove();
+          anchor.remove();
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    //callback to choose an nps widget from the fetched widget list, widget is the index of the desired widget in the widget list
+    function allWidgetsCallbackNPS(feedbacks, err) {
+      if (err) {
+        return console.log("error ", err);
+      }
+      //first nps widget to fetch
+      var i = 0;
+      while (i < feedbacks.length) {
+        if (feedbacks[i].type === 'nps') {
+          deleteOldFeedbackWidget(feedbacks[i], 'nps');
+          setTimeout(() => {
+            Countly.present_feedback_widget(feedbacks[i], "", "");
+            evaluateFeedbackWidgetProperties(feedbacks[i]);
+          }, 250);
+          break;
+        }
+        i++;
+      }
+    }
+    //callback to choose a survey widget from the fetched widget list, widget is the index of the desired widget in the widget list
+    function allWidgetsCallbackSurvey(feedbacks, err) {
+      if (err) {
+        return console.log("error ", err);
+      }
+      //first survey widget to fetch
+      var i = 0;
+      while (i < feedbacks.length) {
+        if (feedbacks[i].type === 'survey') {
+          deleteOldFeedbackWidget(feedbacks[i], 'survey');
+          setTimeout(() => {
+            Countly.present_feedback_widget(feedbacks[i], "", "");
+            evaluateFeedbackWidgetProperties(feedbacks[i]);
+          }, 250);
+          break;
+        }
+        i++;
+      }
+    }
+
+    //callback to choose rating widget from the fetched widget list, widget is the index of the desired widget in the widget list
+    function allWidgetsCallbackRating(feedbacks, err) {
+      if (err) {
+        return console.log("error ", err);
+      }
+      console.log(feedbacks);
+      //first rating widget to fetch
+      var i = 0;
+      while (i < feedbacks.length) {
+        if (feedbacks[i].type === 'rating') {
+          deleteOldFeedbackWidget(feedbacks[i], 'rating');
+          setTimeout(() => {
+            Countly.present_feedback_widget(feedbacks[i], "", "");
+            evaluateFeedbackWidgetProperties(feedbacks[i]);
+          }, 250);
+          break;
+        }
+        i++;
+      }
+    }
+  </script>
 </body>
