@@ -101,6 +101,22 @@ a {
     width: 50%;
 }
 
+#widget-info {
+    display: none;
+    text-align: right;
+    padding-right: 5%;
+    padding-bottom: 6px;
+    font-size: 12px;
+}
+
+.widget-info-lines {
+    overflow-y: scroll; 
+    width: 80%; 
+    height: 2px; 
+    scroll-behavior: auto; 
+    background-color: rgba(217, 217, 217, 0.803);
+}
+
 @media (min-width: 768px) {
   .selective-button {
     font-size: 14px;
@@ -184,12 +200,6 @@ opacity: 0.8;
 
 }
 
-#mormons {
-    display: none;
-}
-
-
-
 #buttons {
     display: grid;
     justify-items: center;
@@ -201,7 +211,7 @@ opacity: 0.8;
     border: 1px solid #AC777F;
     padding:0.5rem;
 }        
-#galactic-conquest {
+#widget-buttons {
     display: flex;
     gap: 5px;
     align-items: stretch;
@@ -223,17 +233,18 @@ opacity: 0.8;
     width: max-content;
 }      
 
-.mormon-father {
-background-color: #AC777F;
-border: none;
+#widget-info-icon {
+background-color: #30AE62;
 color: white;
-padding: 5px;
 font-size: 19px;
 cursor: pointer;
+padding: 5px;
+border-radius: 4px;
+border: none;
 }
 
-.mormon-father:hover {
-background-color: #755056;
+#widget-info-icon:hover {
+background-color: #0f5e18;
 }
 
 input {

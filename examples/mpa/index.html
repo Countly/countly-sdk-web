@@ -212,36 +212,32 @@
       <div id="new-ratings">
 
         <!-- Widget information section  -->
-        <div style="text-align: right;padding-right: 5%;" id="mormons">
-          <div style="padding-bottom: 6px;">
-            <label for="tags" style="font-size: var(--tag-size);">Tags</label>
-            <input id="tags-m8" value=""
-              style="font-size: var(--tag-size);overflow-y: scroll; width: var(--tag-width); height: var(--tag-height); scroll-behavior: auto; background-color: rgb(187, 187, 187);"
+        <div id="widget-info">
+          <div>
+            <label for="tags"">Tags</label>
+            <input id="widget-tag" value="" class="widget-info-lines"
               type="text" name="tags" readonly />
           </div>
-          <div style="padding-bottom: 6px;">
-            <label for="name" style="font-size: var(--tag-size);">Name</label>
-            <input id="name-m8" value=""
-              style="font-size: var(--tag-size);overflow-y: scroll; width:var(--tag-width); height: var(--tag-height); scroll-behavior: auto; background-color: rgb(187, 187, 187);"
+          <div>
+            <label for="name"">Name</label>
+            <input id="widget-name" value="" class="widget-info-lines"
               type="text" name="name" readonly />
           </div>
-          <div style="padding-bottom: 6px;">
-            <label for="show-policy" style="font-size: var(--tag-size);">Show Policy</label>
-            <input id="show-policy-m8" value=""
-              style="font-size: var(--tag-size);overflow-y: scroll; width: var(--tag-width); height: var(--tag-height); scroll-behavior: auto; background-color: rgb(187, 187, 187);"
+          <div>
+            <label for="show-policy"">Show Policy</label>
+            <input id="widget-show-policy" value="" class="widget-info-lines"
               type="text" name="show-policy" readonly />
           </div>
-          <div style="padding-bottom: 6px;">
-            <label for="widget-id" style="font-size: var(--tag-size);">ID</label>
-            <input id="widget-id-m8" value=""
-              style="font-size: var(--tag-size);overflow-y: scroll; width: var(--tag-width); height: var(--tag-height); scroll-behavior: auto; background-color: rgb(187, 187, 187);"
+          <div>
+            <label for="widget-id"">ID</label>
+            <input id="widget-id" value="" class="widget-info-lines"
               type="text" name="widget-id" readonly />
           </div>
         </div>
 
         <!-- Widget buttons  -->
-        <div id="galactic-conquest">
-          <button class="mormon-father" style="border-radius: 2px;border: none; padding: 5px;"><i class="fa fa-arrows-v"
+        <div id="widget-buttons">
+          <button id="widget-info-icon" ><i class="fa fa-arrows-v"
               aria-hidden="true"></i></button>
           <button id="nps" class="selective-button">
             Show NPS
@@ -367,12 +363,12 @@
       }
     });
 
-    // widget tag info
+    // widget info initial text
     const tagManagerText = "No feedback widget requested yet";
-    document.getElementById("tags-m8").value = tagManagerText;
-    document.getElementById("name-m8").value = tagManagerText;
-    document.getElementById("show-policy-m8").value = tagManagerText;
-    document.getElementById("widget-id-m8").value = tagManagerText;
+    document.getElementById("widget-tag").value = tagManagerText;
+    document.getElementById("widget-name").value = tagManagerText;
+    document.getElementById("widget-show-policy").value = tagManagerText;
+    document.getElementById("widget-id").value = tagManagerText;
 
     //fetch nps widgets
     $("#nps").on("click", function () {
@@ -478,52 +474,52 @@
       const id = widget._id;
       if (tags !== undefined && tags !== null && Array.isArray(tags)) {
         if (tags.length === 0) {
-          document.getElementById("tags-m8").value = '[No tags returned for this widget]';
+          document.getElementById("widget-tag").value = '[No tags returned for this widget]';
         } else {
-          document.getElementById("tags-m8").value = tags.join(' ');
+          document.getElementById("widget-tag").value = tags.join(' ');
         }
-        document.getElementById("tags-m8").style.backgroundColor = '#93BD2C';
+        document.getElementById("widget-tag").style.backgroundColor = '#93BD2C';
       }
       else {
-        document.getElementById("tags-m8").value = "Tags are not returned for this widget";
-        document.getElementById("tags-m8").style.backgroundColor = '#DE1903';
+        document.getElementById("widget-tag").value = "Tags are not returned for this widget";
+        document.getElementById("widget-tag").style.backgroundColor = '#DE1903';
       }
       if (!id) {
-        document.getElementById("widget-id-m8").value = "No ID returned returned for this widget";
-        document.getElementById("widget-id-m8").style.backgroundColor = '#DE1903';
+        document.getElementById("widget-id").value = "No ID returned returned for this widget";
+        document.getElementById("widget-id").style.backgroundColor = '#DE1903';
       }
       else {
-        document.getElementById("widget-id-m8").value = id;
-        document.getElementById("widget-id-m8").style.backgroundColor = '#93BD2C';
+        document.getElementById("widget-id").value = id;
+        document.getElementById("widget-id").style.backgroundColor = '#93BD2C';
       }
       if (!name) {
-        document.getElementById("name-m8").value = "No name returned returned for this widget";
-        document.getElementById("name-m8").style.backgroundColor = '#DE1903';
+        document.getElementById("widget-name").value = "No name returned returned for this widget";
+        document.getElementById("widget-name").style.backgroundColor = '#DE1903';
       }
       else {
-        document.getElementById("name-m8").value = name;
-        document.getElementById("name-m8").style.backgroundColor = '#93BD2C';
+        document.getElementById("widget-name").value = name;
+        document.getElementById("widget-name").style.backgroundColor = '#93BD2C';
       }
       if (!policy) {
-        document.getElementById("show-policy-m8").value = "No showPolicy returned returned for this widget";
-        document.getElementById("show-policy-m8").style.backgroundColor = '#DE1903';
+        document.getElementById("widget-show-policy").value = "No showPolicy returned returned for this widget";
+        document.getElementById("widget-show-policy").style.backgroundColor = '#DE1903';
       }
       else {
-        document.getElementById("show-policy-m8").value = policy;
-        document.getElementById("show-policy-m8").style.backgroundColor = '#93BD2C';
+        document.getElementById("widget-show-policy").value = policy;
+        document.getElementById("widget-show-policy").style.backgroundColor = '#93BD2C';
       }
 
     }
     function getRandomNumber(min, max) {
       return parseInt(Math.random() * (max - min) + min);
     }
-    $(".mormon-father").on("click", function () {
-      var current = document.getElementById("mormons").style.display;
+    $("#widget-info-icon").on("click", function () {
+      var current = document.getElementById("widget-info").style.display;
       if (current === 'none') {
-        document.getElementById("mormons").style.display = "block";
+        document.getElementById("widget-info").style.display = "block";
       }
       else {
-        document.getElementById("mormons").style.display = "none";
+        document.getElementById("widget-info").style.display = "none";
       }
     });
     function deleteOldFeedbackWidget(widget, type) {
