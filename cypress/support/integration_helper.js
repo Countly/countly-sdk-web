@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+
 /**
  *  Extracts the query from url and returns an object with config values
  * @param {string} query - url query

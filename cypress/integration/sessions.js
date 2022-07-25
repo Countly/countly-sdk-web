@@ -8,8 +8,8 @@ const eventObj = {
     key: "buttonClick",
     count: 1,
     segmentation: {
-        id: "id",
-    },
+        id: "id"
+    }
 };
 
 function initMain() {

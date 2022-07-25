@@ -117,7 +117,6 @@ function checkRequestsForT(queue, expectedInternalType) {
     }
 }
 
-
 /**
  *device ID type:
     *0 - device ID was set by the developer during init
@@ -129,7 +128,7 @@ var DeviceIdTypeInternalEnumsTest = {
     DEVELOPER_SUPPLIED: 0,
     SDK_GENERATED: 1,
     TEMPORARY_ID: 2,
-    URL_PROVIDED: 3,
+    URL_PROVIDED: 3
 };
 describe("Device Id tests during first init", ()=>{
     // sdk is initialized w/o custom device id, w/o offline mode, w/o utm device id
@@ -1082,4 +1081,3 @@ describe("Device Id tests during first init", ()=>{
         });
     });
 });
-

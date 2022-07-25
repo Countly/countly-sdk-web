@@ -4,10 +4,10 @@
 Countly Google Analytics Adapter is a migration tool for your web apps which has already implemented Google Analytics trackers, you can easily send your analytics data to your Countly instance too without any extra integration.
 
 ## Implementing Countly Google Analytics Adapter in your web pages
-
 There are only two step for integration.
 
 ### 1. Add Countly Web SDK integration snippet into your web page
+
 ```js
 <script type='text/javascript'>
   
@@ -40,12 +40,12 @@ Countly.q.push(['track_pageview']);
   
 // Load Countly script asynchronously
 (function() {
-	var cly = document.createElement('script'); cly.type = 'text/javascript'; 
-	cly.async = true;
-	// Enter url of script here (see below for other option)
-	cly.src = 'https://cdn.jsdelivr.net/npm/countly-sdk-web@latest/lib/countly.min.js';
-	cly.onload = function(){Countly.init()};
-	var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(cly, s);
+ var cly = document.createElement('script'); cly.type = 'text/javascript'; 
+ cly.async = true;
+ // Enter url of script here (see below for other option)
+ cly.src = 'https://cdn.jsdelivr.net/npm/countly-sdk-web@latest/lib/countly.min.js';
+ cly.onload = function(){Countly.init()};
+ var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(cly, s);
 })();
 </script>
 ```
@@ -68,6 +68,5 @@ ga('send','pageview','page.html');
 
 </script>
 ```
-
 
 That's all. Now you can track your app from your Countly instance too.

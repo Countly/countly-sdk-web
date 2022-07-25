@@ -21,44 +21,44 @@ const eventArray = [
         key: "a",
         count: 1,
         segmentation: {
-            1: "1",
-        },
+            1: "1"
+        }
     },
     // rest can be internal events
     {
         key: "[CLY]_view",
         count: 2,
         segmentation: {
-            2: "2",
-        },
+            2: "2"
+        }
     },
     {
         key: "[CLY]_nps",
         count: 3,
         segmentation: {
-            3: "3",
-        },
+            3: "3"
+        }
     },
     {
         key: "[CLY]_survey",
         count: 4,
         segmentation: {
-            4: "4",
-        },
+            4: "4"
+        }
     },
     {
         key: "[CLY]_star_rating",
         count: 5,
         segmentation: {
-            5: "5",
-        },
+            5: "5"
+        }
     },
     {
         key: "[CLY]_orientation",
         count: 6,
         segmentation: {
-            6: "6",
-        },
+            6: "6"
+        }
     }
 ];
 // event adding loop

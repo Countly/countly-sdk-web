@@ -21,8 +21,8 @@ const eventObj = {
     dur: 1000,
     segmentation: {
         app_version: "1.0",
-        country: "Tahiti",
-    },
+        country: "Tahiti"
+    }
 };
 // a timed event object
 const timedEventObj = {
@@ -30,8 +30,8 @@ const timedEventObj = {
     count: 1,
     segmentation: {
         app_version: "1.0",
-        country: "Tahiti",
-    },
+        country: "Tahiti"
+    }
 };
 
 describe("Events tests ", () => {
