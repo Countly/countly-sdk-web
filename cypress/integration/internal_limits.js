@@ -24,11 +24,11 @@ function initMain() {
         max_segmentation_values: limits.segment, // set maximum segmentation number here
         max_breadcrumb_count: limits.breadcrumb, // set maximum number of logs that will be stored before erasing old ones
         max_stack_trace_lines_per_thread: limits.line_thread, // set maximum number of lines for stack trace
-        max_stack_trace_line_length: limits.line_length, // set maximum length of a line for stack 
+        max_stack_trace_line_length: limits.line_length // set maximum length of a line for stack 
     });
 }
 const error = {
-    stack: "Lorem ipsum dolor sit amet,\n consectetur adipiscing elit, sed do eiusmod tempor\n incididunt ut labore et dolore magna\n aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n Duis aute irure dolor in reprehenderit in voluptate\n velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia\n deserunt mollit anim id\n est laborum.",
+    stack: "Lorem ipsum dolor sit amet,\n consectetur adipiscing elit, sed do eiusmod tempor\n incididunt ut labore et dolore magna\n aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n Duis aute irure dolor in reprehenderit in voluptate\n velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia\n deserunt mollit anim id\n est laborum."
 };
 const bread = {
     one: "log1",
@@ -37,7 +37,7 @@ const bread = {
     four: "log4",
     five: "log5 too many",
     six: "log6",
-    seven: "log7",
+    seven: "log7"
 };
 const customEvent = {
     key: "Enter your key here",
@@ -47,8 +47,8 @@ const customEvent = {
         "key of 2nd seg": "Value of 2nd seg",
         "key of 3rd seg": "Value of 3rd seg",
         "key of 4th seg": "Value of 4th seg",
-        "key of 5th seg": "Value of 5th seg",
-    },
+        "key of 5th seg": "Value of 5th seg"
+    }
 };
 const viewName = "a very long page name";
 
@@ -68,8 +68,8 @@ const userDetail = {
         "SEGkey 2st one": "SEGVal 2st one",
         "SEGkey 3st one": "SEGVal 3st one",
         "SEGkey 4st one": "SEGVal 4st one",
-        "SEGkey 5st one": "SEGVal 5st one",
-    },
+        "SEGkey 5st one": "SEGVal 5st one"
+    }
 };
 
 const customProperties = {
@@ -81,7 +81,7 @@ const customProperties = {
     min: ["byear", 4567890123456789],
     push: ["gender", "II Fernando Valdez"],
     push_unique: ["gender", "III Fernando Valdez"],
-    pull: ["gender", "III Fernando Valdez"],
+    pull: ["gender", "III Fernando Valdez"]
 };
 
 describe("Internal limit tests ", () => {

@@ -27,7 +27,6 @@ function getTimestampMs() {
     return new Date().getTime();
 }
 
-
 /**
  * Fine tuner for flaky tests. Retries test for  a certain amount
  * @param {number} startTime - starting time, timestamp
@@ -48,7 +47,6 @@ var waitFunction = function(startTime, waitTime, waitIncrement, continueCallback
     }
 };
 
-
 module.exports = {
     haltAndClearStorage,
     sWait,
@@ -56,5 +54,5 @@ module.exports = {
     lWait,
     appKey,
     getTimestampMs,
-    waitFunction,
+    waitFunction
 };

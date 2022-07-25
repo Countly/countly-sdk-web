@@ -22,8 +22,8 @@ const userDetailObj = {
     byear: 1987, // birth year
     custom: {
         "key1 segment": "value1 segment",
-        "key2 segment": "value2 segment",
-    },
+        "key2 segment": "value2 segment"
+    }
 };
 
 describe("User details tests ", () => {
