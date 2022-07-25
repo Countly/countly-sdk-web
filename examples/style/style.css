@@ -1,9 +1,3 @@
-:root {
-  --tag-size: 12px;
-  --tag-height: 2px;
-  --tag-width: 80%;
-}
-
 * {
   margin: 0;
   padding: 0;
@@ -26,7 +20,7 @@ a {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  background-color: #1A2A39;
+  background-color: #1a2a39;
   color: rgb(255, 255, 255);
   font-size: 12px;
 }
@@ -39,7 +33,7 @@ a {
   align-items: center;
   border-radius: 6px;
   box-sizing: border-box;
-  color: #ffffff;
+  color: #fff;
   cursor: pointer;
   font-family: Inter, sans-serif;
   justify-content: center;
@@ -58,7 +52,7 @@ a {
 }
 
 .header-button:hover {
-  box-shadow: #ffffff 0 0 0 3px, transparent 0 0 0 0;
+  box-shadow: #fff 0 0 0 3px, transparent 0 0 0 0;
 }
 
 .selective-button {
@@ -209,7 +203,7 @@ a {
 
 #new-ratings {
   width: max-content;
-  border: 1px solid #AC777F;
+  border: 1px solid #ac777F;
   padding: 0.5rem;
 }
 
@@ -222,7 +216,7 @@ a {
 
 #old-ratings {
   width: 80%;
-  border: 1px solid #AC777F;
+  border: 1px solid #ac777F;
   padding: 0.5rem;
   width: max-content;
 }
@@ -230,13 +224,12 @@ a {
 
 #miscellaneous-buttons {
   width: 80%;
-  border: 1px solid #AC777F;
+  border: 1px solid #ac777F;
   padding: 0.5rem;
-  width: max-content;
 }
 
 #widget-info-icon {
-  background-color: #30AE62;
+  background-color: #30ae62;
   color: white;
   font-size: 19px;
   cursor: pointer;
