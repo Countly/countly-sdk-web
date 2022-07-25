@@ -1,60 +1,75 @@
 <html>
+
 <head>
-<h3 id='header'></h3>
-<p><input type="button" id="optButton" onclick="testOpt()" value=""></p>
-<!--Countly script-->
-<script type='text/javascript' src='../lib/countly.js'></script>
-<script type='text/javascript'>
+    <!-- Page styling here -->
+    <link rel='stylesheet' type='text/css' href='./style/style.css'>
 
-//initializing countly with params
-Countly.init({
-	app_key: "YOUR_APP_KEY",
-	url: "https://try.count.ly", //your server goes here
-	debug:true
-})
-//track sessions automatically
-Countly.track_sessions();
+    <!--Countly script-->
+    <script type='text/javascript' src='../lib/countly.js'></script>
+    <script type='text/javascript'>
 
-//track pageviews automatically
-Countly.track_pageview();
+        //initializing countly with params
+        Countly.init({
+            app_key: "YOUR_APP_KEY",
+            url: "https://try.count.ly", //your server goes here
+            debug: true
+        })
+        //track sessions automatically
+        Countly.track_sessions();
 
-//track any clicks to webpages automatically
-Countly.track_clicks();
+        //track pageviews automatically
+        Countly.track_pageview();
 
-//track link clicks automatically
-Countly.track_links();
+        //track any clicks to webpages automatically
+        Countly.track_clicks();
 
-//track form submissions automatically
-Countly.track_forms();
+        //track link clicks automatically
+        Countly.track_links();
 
-//track javascript errors
-Countly.track_errors({jquery:"1.10", jqueryui:"1.10"});
-</script>
+        //track form submissions automatically
+        Countly.track_forms();
+
+        //track javascript errors
+        Countly.track_errors({ jquery: "1.10", jqueryui: "1.10" });
+    </script>
 </head>
+
 <body>
-<script type='text/javascript'>
-//send event on button click
-function testOpt(){
-	if(Countly.ignore_visitor){
-        Countly.opt_in();
-    }
-    else{
-        Countly.opt_out();
-    }
-    setOpt();
-}
-function setOpt(){
-    if(Countly.ignore_visitor){
-        //opted out, allow opt in
-        document.getElementById("header").innerHTML = "You are Opted Out";
-        document.getElementById("optButton").value = "Opt in";
-    }
-    else{
-        document.getElementById("header").innerHTML = "You are Opted In";
-        document.getElementById("optButton").value = "Opt out";
-    }
-}
-setOpt();
-</script>
+    <!-- Header, banner etc. Top part of your site  -->
+    <div id="header">
+        <h1>Opting Out</h1>
+        <img id="logo" src="./images/logo.png">
+    </div>
+
+    <center>
+        <img src="./images/team_countly.jpg" id="wallpaper" />
+        <h3 id='top'></h3>
+        <p><input type="button" id="optButton" onclick="testOpt()" value=""></p>
+    </center>
+    <script type='text/javascript'>
+        //send event on button click
+        function testOpt() {
+            if (Countly.ignore_visitor) {
+                Countly.opt_in();
+            }
+            else {
+                Countly.opt_out();
+            }
+            setOpt();
+        }
+        function setOpt() {
+            if (Countly.ignore_visitor) {
+                //opted out, allow opt in
+                document.getElementById("top").innerHTML = "You are Opted Out";
+                document.getElementById("optButton").value = "Opt in";
+            }
+            else {
+                document.getElementById("top").innerHTML = "You are Opted In";
+                document.getElementById("optButton").value = "Opt out";
+            }
+        }
+        setOpt();
+    </script>
 </body>
+
 </html>

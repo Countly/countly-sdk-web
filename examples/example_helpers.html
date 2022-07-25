@@ -1,68 +1,82 @@
 <html>
+
 <head>
-<!--Countly script-->
-<script type='text/javascript' src='../lib/countly.js'></script>
-<script type='text/javascript'>
+    <!-- Page styling here -->
+    <link rel='stylesheet' type='text/css' href='./style/style.css'>
+    <!--Countly script-->
+    <script type='text/javascript' src='../lib/countly.js'></script>
+    <script type='text/javascript'>
 
-//initializing countly with params
-Countly.init({
-	app_key: "YOUR_APP_KEY",
-	url: "https://try.count.ly", //your server goes here
-	debug:true
-});
+        //initializing countly with params
+        Countly.init({
+            app_key: "YOUR_APP_KEY",
+            url: "https://try.count.ly", //your server goes here
+            debug: true
+        });
 
-//track sessions automatically
-Countly.track_sessions();
+        //track sessions automatically
+        Countly.track_sessions();
 
-//track pageviews automatically
-Countly.track_pageview();
+        //track pageviews automatically
+        Countly.track_pageview();
 
-//track any clicks to webpages automatically
-Countly.track_clicks();
+        //track any clicks to webpages automatically
+        Countly.track_clicks();
 
-//track link clicks automatically
-Countly.track_links();
+        //track link clicks automatically
+        Countly.track_links();
 
-//track form submissions automatically
-Countly.track_forms();
+        //track form submissions automatically
+        Countly.track_forms();
 
-//track javascript errors
-Countly.track_errors({jquery:"1.10", jqueryui:"1.10"});
+        //track javascript errors
+        Countly.track_errors({ jquery: "1.10", jqueryui: "1.10" });
 
-//let's cause some errors
-function cause_error(){
-    undefined_function();
-}
+        //let's cause some errors
+        function cause_error() {
+            undefined_function();
+        }
 
-function unhandled_error(){
-    Countly.add_log('Pressed unhandled button'); 
-    cause_error();
-}
+        function unhandled_error() {
+            Countly.add_log('Pressed unhandled button');
+            cause_error();
+        }
 
-function handled_error(){
-    Countly.add_log('Pressed handled button'); 
-    try{
-        cause_error();
-    }catch(err){
-        Countly.log_error(err)
-    }
-}
-</script>
+        function handled_error() {
+            Countly.add_log('Pressed handled button');
+            try {
+                cause_error();
+            } catch (err) {
+                Countly.log_error(err)
+            }
+        }
+    </script>
 </head>
+
 <body>
-<form method='post' name='comments'>
-<p><input type="text" name="message" value="Message Name"></p>
-<p><textarea>Message</textarea></p>
-<p><select>
-<option value='option1'>Option1</option>
-<option value='option2'>Option2</option>
-<option value='option3'>Option3</option>
-</select></p>
-<p><input id="submit-form" type="submit" value="Submit"></p>
-</form>
-<p><button id="unhandled_error" onclick="unhandled_error()">Unhandled Error</button></p>
-<p><button id="handled_error" onclick="handled_error()">Handled Error</button></p>
-<p><a id="track_link" href='#link'>Dummy link</a></p>
-<p><a href='http://count.ly/'>Count.ly</a></p>
+    <!-- Header, banner etc. Top part of your site  -->
+    <div id="header">
+        <h1>Error Helpers</h1>
+        <img id="logo" src="./images/logo.png">
+    </div>
+
+    <center>
+        <img src="./images/team_countly.jpg" id="wallpaper" />
+        <form method='post' name='comments'>
+            <p><input type="text" name="message" value="Message Name"></p>
+            <p><textarea>Message</textarea></p>
+            <p><select>
+                    <option value='option1'>Option1</option>
+                    <option value='option2'>Option2</option>
+                    <option value='option3'>Option3</option>
+                </select></p>
+            <p><input id="submit-form" type="submit" value="Submit"></p>
+        </form>
+        <p><button id="unhandled_error" onclick="unhandled_error()">Unhandled Error</button></p>
+        <p><button id="handled_error" onclick="handled_error()">Handled Error</button></p>
+        <p><a id="track_link" href='#link'>Dummy link</a></p>
+        <p><a href='http://count.ly/'>Count.ly</a></p>
+    </center>
 </body>
+
 </html>

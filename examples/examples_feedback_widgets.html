@@ -1,42 +1,56 @@
 <html>
+
 <head>
-<!--Countly script-->
-<script type='text/javascript' src='../lib/countly.js'></script>
-<script type='text/javascript'>
+  <!-- Page styling here -->
+  <link rel='stylesheet' type='text/css' href='./style/style.css'>
+  <!--Countly script-->
+  <script type='text/javascript' src='../lib/countly.js'></script>
+  <script type='text/javascript'>
 
-//initializing Countly with params and passing require_consent config as true as feedback widget depends on consent
-Countly.init({
-	app_key: 'YOUR_APP_ID', //your app key
-	url: 'https://try.count.ly', //your server goes here
-	debug:true
-});
+    //initializing Countly with params and passing require_consent config as true as feedback widget depends on consent
+    Countly.init({
+      app_key: 'YOUR_APP_ID', //your app key
+      url: 'https://try.count.ly', //your server goes here
+      debug: true
+    });
 
-function enable(){
-//Fetch user's NPS and Survey feedbacks from the server
-Countly.get_available_feedback_widgets(feedbackWidgetsCallback);
-}
-
-//Surveys feedback callback function
-function feedbackWidgetsCallback(countlyPresentableFeedback, err) {
-    if (err) {
-      console.log(err);
-        return;
+    function enable() {
+      //Fetch user's NPS and Survey feedbacks from the server
+      Countly.get_available_feedback_widgets(feedbackWidgetsCallback);
     }
-    //The available feedback types are nps and survey, decide which one to show
-    var countlyFeedbackWidget = countlyPresentableFeedback[0];
 
-    //Define the element ID and the class name, optional
-    var selectorId = "";
-    var selectorClass = "";
-    
-    //Display the feedback widget to the end user 
-    Countly.present_feedback_widget(countlyFeedbackWidget, selectorId, selectorClass);
-}
+    //Surveys feedback callback function
+    function feedbackWidgetsCallback(countlyPresentableFeedback, err) {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      //The available feedback types are nps and survey, decide which one to show
+      var countlyFeedbackWidget = countlyPresentableFeedback[0];
 
-</script>
+      //Define the element ID and the class name, optional
+      var selectorId = "";
+      var selectorClass = "";
+
+      //Display the feedback widget to the end user 
+      Countly.present_feedback_widget(countlyFeedbackWidget, selectorId, selectorClass);
+    }
+
+  </script>
 </head>
+
 <body>
-<p><a href='http://count.ly/'>Count.ly</a></p>
-<p><button onclick="enable()">Enable Feedback Widget</button></p>
+  <!-- Header, banner etc. Top part of your site  -->
+  <div id="header">
+    <h1>Feedback Widgets</h1>
+    <img id="logo" src="./images/logo.png">
+  </div>
+
+  <center>
+    <img src="./images/team_countly.jpg" id="wallpaper" />
+    <p><a href='http://count.ly/'>Count.ly</a></p>
+    <p><button onclick="enable()">Enable Feedback Widget</button></p>
+  </center>
 </body>
+
 </html>
