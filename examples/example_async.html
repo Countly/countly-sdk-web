@@ -31,16 +31,16 @@ Countly.q.push(['track_pageview']);
 <body>
 <script type='text/javascript'>
 //send event on button click
-function clickEvent(ob){
+function clickEvent(){
 	Countly.q.push(['add_event',{
 		key:"buttonClick", 
 		"segmentation": {
-			"id": ob.id
+			"id": "id"
 		}
 	}]);
 }
 </script>
-<input type="button" id="testButton" onclick="clickEvent(this)" value="Test Button">
+<input type="button" id="testButton" onclick="clickEvent()" value="Test Button">
 <p><a href='http://count.ly/'>Count.ly</a></p>
 </body>
 </html>

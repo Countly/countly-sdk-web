@@ -8,45 +8,8 @@
 Countly.init({
 	app_key: 'YOUR_APP_ID', //your app key
 	url: 'https://try.count.ly', //your server goes here
-	debug:true,
-    require_consent: true //this true means consent is required
+	debug:true
 });
-
-
-//some general helper methods can be initiated here like:
-// Countly.track_sessions();
-// Countly.track_pageview();
-
-
-//Consent Management logic should be implemented and controlled by developer
-//this is just a simply example of what logic it could have
-if (typeof(localStorage) !== "undefined") {
-    var consents = localStorage.getItem("consents");
-    //checking if user already provided consent
-    if(consents){
-        //we already have consents from previous visit, let's just pass them to Countly
-        Countly.add_consent(JSON.parse(consents));
-        
-    }
-    else{
-        //user have not yet provided us a consent
-        //we need to display popup and ask user to give consent for specific features we want to track
-        //for example purposes, we will wait till user clicks "Give Consent" button
-        //to allow consent for enabling feedback widget
-    }
-} else {
-    // Sorry! No Web Storage support..
-    // we can fallback to cookie
-}
-
-
-
-function giveConsent(){
-    //give consent for feedback widgets to work
-    var response = ["feedback"];
-    Countly.add_consent(response);
-    localStorage.setItem("consents", JSON.stringify(response));
-}
 
 function enable(){
 //Fetch user's NPS and Survey feedbacks from the server
@@ -60,7 +23,7 @@ function feedbackWidgetsCallback(countlyPresentableFeedback, err) {
         return;
     }
     //The available feedback types are nps and survey, decide which one to show
-    var countlyFeedbackWidget = countlyPresentableFeedback;
+    var countlyFeedbackWidget = countlyPresentableFeedback[0];
 
     //Define the element ID and the class name, optional
     var selectorId = "";
@@ -70,12 +33,10 @@ function feedbackWidgetsCallback(countlyPresentableFeedback, err) {
     Countly.present_feedback_widget(countlyFeedbackWidget, selectorId, selectorClass);
 }
 
-
 </script>
 </head>
 <body>
 <p><a href='http://count.ly/'>Count.ly</a></p>
-<p><button onclick="giveConsent()">Give Feedback Consent</button></p>
 <p><button onclick="enable()">Enable Feedback Widget</button></p>
 </body>
 </html>
