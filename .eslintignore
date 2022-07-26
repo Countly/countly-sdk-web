@@ -2,7 +2,6 @@ lib/countly.min.js
 lib/countly.pack.js
 plugin/boomerang/boomerang.min.js
 plugin/ga_adapter
-examples/Angular/karma.conf.js
 node_modules
 .vscode
 .github
