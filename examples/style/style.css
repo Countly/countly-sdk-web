@@ -19,6 +19,7 @@ a {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  font-family: "Basier circle", -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   align-items: center;
   background-color: #1a2a39;
   color: rgb(255, 255, 255);
@@ -100,6 +101,13 @@ a {
   padding-right: 5%;
   padding-bottom: 6px;
   font-size: 12px;
+}
+
+#center-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .widget-info-lines {

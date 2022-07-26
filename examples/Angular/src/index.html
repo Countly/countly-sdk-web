@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Countly Angular Integration</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+	<script type='text/javascript'>
+		//some default pre init
+		var Countly = Countly || {};
+		Countly.q = Countly.q || [];
+
+		//provide countly initialization parameters
+		Countly.app_key = "YOUR_APP_KEY";
+		Countly.url = "https://try.count.ly"; //your server goes here
+		Countly.debug = true;
+
+		//start pushing function calls to queue
+		//track sessions automatically
+		Countly.q.push(['track_sessions']);
+
+		//track sessions automatically
+		Countly.q.push(['track_pageview']);
+
+		//load countly script asynchronously
+		(function () {
+			var cly = document.createElement('script'); cly.type = 'text/javascript';
+			cly.async = true;
+			//enter url of script here
+			cly.src = 'https://cdn.jsdelivr.net/npm/countly-sdk-web@latest/lib/countly.min.js';
+			cly.onload = function () { Countly.init() };
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(cly, s);
+		})();
+		//send event on button click
+		function clickEvent() {
+			Countly.q.push(['add_event', {
+				key: "buttonClick",
+				"segmentation": {
+					"id": "id"
+				}
+			}]);
+		}
+	</script>
+</head>
+<body>
+  <app-root></app-root>
+</body>
+</html>
