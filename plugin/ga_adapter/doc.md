@@ -69,4 +69,4 @@ ga('send','pageview','page.html');
 </script>
 ```
 
-That's all. Now you can track your app from your Countly instance too.
+That's all. Now you can track your app from your Countly instance too. You can check examples folder for an implementation example.
