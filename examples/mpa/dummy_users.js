@@ -1,3 +1,5 @@
+"use strict";
+
 // dummy user info
 var users = [{
     device_id: "dummy-1",

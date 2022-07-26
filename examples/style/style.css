@@ -199,7 +199,6 @@ a {
 #form-btn {
   display: flex;
   float: right;
-
 }
 
 #buttons {
@@ -210,7 +209,7 @@ a {
 
 #new-ratings {
   width: max-content;
-  border: 1px solid #ac777F;
+  border: 1px solid #ac777f;
   padding: 0.5rem;
 }
 

@@ -5,7 +5,7 @@ function getRandomUserIndex() {
 
 // random number generator
 function getRandomNumber(min, max) {
-    return parseInt(Math.random() * (max - min) + min);
+    return parseInt(Math.random() * (max - min) + min, 10);
 }
 
 // function for adding user data
