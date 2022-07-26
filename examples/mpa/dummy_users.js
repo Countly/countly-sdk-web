@@ -1,6 +1,7 @@
 "use strict";
 
 // dummy user info
+// eslint-disable-next-line no-unused-vars
 var users = [{
     device_id: "dummy-1",
     name: "User-1",
