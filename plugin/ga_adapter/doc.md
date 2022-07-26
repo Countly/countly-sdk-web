@@ -50,7 +50,13 @@ Countly.q.push(['track_pageview']);
 </script>
 ```
 
-### 2. Change your Google Analytics integration code like below
+### 2. Declare your plugin's script after integrating Countly
+
+```js
+<script src="../plugin/ga_adapter/ga_adapter.js"></script>
+```
+
+### 3. Change your Google Analytics integration code like below
 
 ```js
 <script>
