@@ -55,7 +55,7 @@ const Header = (props) => {
     }
 
     const getRandomNumber = (min, max) => {
-        return parseInt(Math.random() * (max - min) + min);
+        return parseInt(Math.random() * (max - min) + min, 10);
     }
 
     return (
