@@ -1,80 +1,54 @@
 <html>
+
 <head>
-<!--Countly script-->
-<script type='text/javascript' src='../lib/countly.js'></script>
-<script type='text/javascript'>
+    <!-- Page styling here -->
+    <link rel='stylesheet' type='text/css' href='./style/style.css'>
+    <!--Countly script-->
+    <script type='text/javascript' src='../lib/countly.js'></script>
+    <script type='text/javascript'>
 
-//initializing Countly with params and passing require_consent config as true as rating widget depends on consent
-Countly.init({
-	app_key: 'YOUR_APP_KEY', //your app key
-	url: 'https://try.count.ly', //your server goes here
-	debug:true,
-    require_consent: true //this true means consent is required
-});
+        //initializing Countly with params and passing require_consent config as true as rating widget depends on consent
+        Countly.init({
+            app_key: 'YOUR_APP_KEY', //your app key
+            url: 'https://try.count.ly', //your server goes here
+            debug: true
+        });
 
+        //To enable the rating widgets first click the give consent button. After this the widget must be automatically visible.
+        //Use Pop Widget to to popup the widget manually without clicking on the widget
+        //Use Multiple Widgets to display multiple widgets
+        //Press Enable Widget to return back to the original widget
+        function enable() {
+            //to re-enable rating widget if necessary 
+            Countly.enableRatingWidgets({ 'popups': ['YOUR_WIDGET_ID'] }); //example: {'popups':['12asd15fsgf546516a5sdf']}
+        }
+        function pop() {
+            //to manually popup the widget
+            Countly.presentRatingWidgetWithID("YOUR_WIDGET_ID"); // example: "12asd15fsgf546516a5sdf"
+        }
+        function multi() {
+            //to show multiple widgets
+            var widgets = ["YOUR_WIDGET_ID", "YOUR_WIDGET_ID"]; // example: ["12asd15fsgf546516a5sdf", "45646asd8asdweqrfg54"]
+            Countly.initializeRatingWidgets(widgets);
+        }
 
-//some general helper methods can be initiated here like:
-// Countly.track_sessions();
-// Countly.track_pageview();
-
-
-//Consent Management logic should be implemented and controlled by developer
-//this is just a simply example of what logic it could have
-if (typeof(localStorage) !== "undefined") {
-    var consents = localStorage.getItem("consents");
-    //checking if user already provided consent
-    if(consents){
-        //we already have consents from previous visit, let's just pass them to Countly
-        Countly.add_consent(JSON.parse(consents));
-        
-    }
-    else{
-        //user have not yet provided us a consent
-        //we need to display popup and ask user to give consent for specific features we want to track
-        //for example purposes, we will wait till user clicks "Give Consent" button
-        //to allow consent for enabling rating widget
-    }
-} else {
-    // Sorry! No Web Storage support..
-    // we can fallback to cookie
-}
-
-//To enable the rating widgets first click the give consent button. After this the widget must be automatically visible.
-//Use Pop Widget to to popup the widget manually without clicking on the widget
-//Use Multiple Widgets to display multiple widgets
-//Press Enable Widget to return back to the original widget
-
-function giveConsent(){
-    //give consent for rating widgets to work
-    var response = ["star-rating"];
-    Countly.add_consent(response);
-    //show rating widget directly
-    Countly.enableRatingWidgets({'popups':['YOUR_WIDGET_ID']}); //example: {'popups':['12asd15fsgf546516a5sdf']} //You can comment this off if you want to enable the widgets manually by clicking Enable Widget
-    localStorage.setItem("consents", JSON.stringify(response));
-}
-
-function enable(){
-    //to re-enable rating widget if necessary 
-    Countly.enableRatingWidgets({'popups':['YOUR_WIDGET_ID']}); //example: {'popups':['12asd15fsgf546516a5sdf']}
-}
-function pop(){
-    //to manually popup the widget
-    Countly.presentRatingWidgetWithID("YOUR_WIDGET_ID"); // example: "12asd15fsgf546516a5sdf"
-}
-function multi(){
-    //to show multiple widgets
-    var widgets = ["YOUR_WIDGET_ID", "YOUR_WIDGET_ID"]; // example: ["12asd15fsgf546516a5sdf", "45646asd8asdweqrfg54"]
-    Countly.initializeRatingWidgets(widgets);
-}
-
-
-</script>
+    </script>
 </head>
+
 <body>
-<p><a href='http://count.ly/'>Count.ly</a></p>
-<p><button onclick="giveConsent()">Give Consent and Enable Widget</button></p>
-<p><button onclick="enable()">Enable Widget</button></p>
-<p><button onclick="pop()">Pop Widget</button></p>
-<p><button onclick="multi()">Multiple Widgets</button></p>
+    <!-- Header, banner etc. Top part of your site  -->
+    <div id="header">
+        <h1>Rating Widgets</h1>
+        <img id="logo" src="./images/logo.png">
+    </div>
+
+    <center>
+        <img src="./images/team_countly.jpg" id="wallpaper" />
+        <p><a href='http://count.ly/'>Count.ly</a></p>
+        <p><button onclick="enable()">Enable Widget</button></p>
+        <p><button onclick="pop()">Pop Widget</button></p>
+        <p><button onclick="multi()">Multiple Widgets</button></p>
+    </center>
 </body>
+
 </html>

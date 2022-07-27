@@ -1,36 +1,51 @@
 <html>
-<head>
-<input type="button" id="testButton" onclick="clickEvent()" value="Test Button">
-<p><a href='http://count.ly/'>Count.ly</a></p>
-<!--Countly script-->
-<script type='text/javascript' src='../lib/countly.js'></script>
-<script type='text/javascript'>
 
-//initializing countly with params
-Countly.init({
-	app_key: "YOUR_APP_KEY",
-	url: "https://try.count.ly", //your server goes here
-	debug:true,
-	offline_mode: true
-})
-//track sessions automatically
-Countly.track_sessions();
-//track pageviews automatically
-Countly.track_pageview();
-Countly.track_errors();
-</script>
+<head>
+    <!-- Page styling here -->
+    <link rel='stylesheet' type='text/css' href='./style/style.css'>
+
+    <!--Countly script-->
+    <script type='text/javascript' src='../lib/countly.js'></script>
+    <script type='text/javascript'>
+
+        //initializing countly with params
+        Countly.init({
+            app_key: "YOUR_APP_KEY",
+            url: "https://try.count.ly", //your server goes here
+            debug: true
+        })
+        //track sessions automatically
+        Countly.track_sessions();
+        //track pageviews automatically
+        Countly.track_pageview();
+        Countly.track_errors();
+    </script>
 </head>
+
 <body>
-<script type='text/javascript' >
-//send event on button click
-function clickEvent(){
-	Countly.add_event({
-    key: "buttonClick",
-    "segmentation": {
-        "id": "id"
-    }
-});
-}
-</script>
+    <!-- Header, banner etc. Top part of your site  -->
+    <div id="header">
+        <h1>Sync Countly Implementation</h1>
+        <img id="logo" src="./images/logo.png">
+    </div>
+
+    <center>
+        <img src="./images/team_countly.jpg" id="wallpaper" />
+        <br />
+        <input type="button" id="testButton" onclick="clickEvent()" value="Test Button">
+        <p><a href='http://count.ly/'>Count.ly</a></p>
+    </center>
+    <script type='text/javascript'>
+        //send event on button click
+        function clickEvent() {
+            Countly.add_event({
+                key: "buttonClick",
+                "segmentation": {
+                    "id": "id"
+                }
+            });
+        }
+    </script>
 </body>
+
 </html>

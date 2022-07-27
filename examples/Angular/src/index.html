@@ -1,8 +1,11 @@
-<html>
-
+<!doctype html>
+<html lang="en">
 <head>
-	<!-- Page styling here -->
-	<link rel='stylesheet' type='text/css' href='./style/style.css'>
+  <meta charset="utf-8">
+  <title>Countly Angular Integration</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
 	<script type='text/javascript'>
 		//some default pre init
 		var Countly = Countly || {};
@@ -25,7 +28,7 @@
 			var cly = document.createElement('script'); cly.type = 'text/javascript';
 			cly.async = true;
 			//enter url of script here
-			cly.src = '../lib/countly.js';
+			cly.src = 'https://cdn.jsdelivr.net/npm/countly-sdk-web@latest/lib/countly.min.js';
 			cly.onload = function () { Countly.init() };
 			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(cly, s);
 		})();
@@ -40,20 +43,7 @@
 		}
 	</script>
 </head>
-
 <body>
-	<!-- Header, banner etc. Top part of your site  -->
-	<div id="header">
-		<h1>Async Countly Implementation</h1>
-		<img id="logo" src="./images/logo.png">
-	</div>
-
-	<center>
-		<img src="./images/team_countly.jpg" id="wallpaper" />
-		<br/>
-		<input type="button" id="testButton" onclick="clickEvent()" value="Test Button">
-		<p><a href='http://count.ly/'>Count.ly</a></p>
-	</center>
+  <app-root></app-root>
 </body>
-
 </html>
