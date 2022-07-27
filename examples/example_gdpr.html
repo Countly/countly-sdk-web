@@ -1,82 +1,96 @@
 <html>
+
 <head>
-<!--Countly script-->
-<script type='text/javascript' src='../lib/countly.js'></script>
-<script type='text/javascript'>
+    <!-- Page styling here -->
+    <link rel='stylesheet' type='text/css' href='./style/style.css'>
+    <!--Countly script-->
+    <script type='text/javascript' src='../lib/countly.js'></script>
+    <script type='text/javascript'>
 
-//initializing countly with params and passing require_consent config as true
-Countly.init({
-	app_key: "YOUR_APP_KEY",
-	url: "https://try.count.ly", //your server goes here
-	debug:true,
-    require_consent: true //this true means consent is required
-});
+        //initializing countly with params and passing require_consent config as true
+        Countly.init({
+            app_key: "YOUR_APP_KEY",
+            url: "https://try.count.ly", //your server goes here
+            debug: true,
+            require_consent: true //this true means consent is required
+        });
 
-//(optionally) provide custom feature tree if needed
-Countly.group_features({
-    activity:["sessions","events","views"],
-    interaction:["scrolls","clicks","forms"]
-});
+        //(optionally) provide custom feature tree if needed
+        Countly.group_features({
+            activity: ["sessions", "events", "views"],
+            interaction: ["scrolls", "clicks", "forms"]
+        });
 
-//we can call all the helper methods we want, they won't record until consent is provided for specific features
-Countly.track_sessions();
-Countly.track_pageview();
-Countly.track_clicks();
-Countly.track_links();
-Countly.track_forms();
-Countly.track_errors({jquery:"1.10", jqueryui:"1.10"});
+        //we can call all the helper methods we want, they won't record until consent is provided for specific features
+        Countly.track_sessions();
+        Countly.track_pageview();
+        Countly.track_clicks();
+        Countly.track_links();
+        Countly.track_forms();
+        Countly.track_errors({ jquery: "1.10", jqueryui: "1.10" });
 
-//Consent Management logic should be implemented and controled by developer
-//this is just a simply example of what logic it could have
-if (typeof(localStorage) !== "undefined") {
-    var consents = localStorage.getItem("consents");
-    //checking if user already provided consent
-    if(consents){
-        //we already have array with consents from previous visit, let's just pass them to Countly
-        Countly.add_consent(JSON.parse(consents));
-    }
-    else{
-        //user have not yet provided us a consent
-        //we need to display popup and ask user to give consent for specific features we want to track
-        //for example purposes, we will wait till user clicks "Give Consent" button
-        //to allow consent for "activity", "interaction", "crashes"
-    }
-} else {
-    // Sorry! No Web Storage support..
-    // we can fallback to cookie
-}
+        //Consent Management logic should be implemented and controled by developer
+        //this is just a simply example of what logic it could have
+        if (typeof (localStorage) !== "undefined") {
+            var consents = localStorage.getItem("consents");
+            //checking if user already provided consent
+            if (consents) {
+                //we already have array with consents from previous visit, let's just pass them to Countly
+                Countly.add_consent(JSON.parse(consents));
+            }
+            else {
+                //user have not yet provided us a consent
+                //we need to display popup and ask user to give consent for specific features we want to track
+                //for example purposes, we will wait till user clicks "Give Consent" button
+                //to allow consent for "activity", "interaction", "crashes"
+            }
+        } else {
+            // Sorry! No Web Storage support..
+            // we can fallback to cookie
+        }
 
-//user can then change his mind and opt out or opt back in
-//so let's provide these function to UI
-function giveConsent(){
-    //give consent to same 3 features
-    var response = ["activity", "interaction", "crashes"];
-    Countly.add_consent(response);
-    localStorage.setItem("consents", JSON.stringify(response));
-}
-function removeConsent(){
-    //remove consent from same 3 features
-    var response = ["activity", "interaction", "crashes"];
-    Countly.remove_consent(response);
-    localStorage.setItem("consents", JSON.stringify([]));
-}
-</script>
+        //user can then change his mind and opt out or opt back in
+        //so let's provide these function to UI
+        function giveConsent() {
+            //give consent to same 3 features
+            var response = ["activity", "interaction", "crashes"];
+            Countly.add_consent(response);
+            localStorage.setItem("consents", JSON.stringify(response));
+        }
+        function removeConsent() {
+            //remove consent from same 3 features
+            var response = ["activity", "interaction", "crashes"];
+            Countly.remove_consent(response);
+            localStorage.setItem("consents", JSON.stringify([]));
+        }
+    </script>
 </head>
+
 <body>
-<form method='post' name='comments' onsubmit="return false;">
-<p><input type="text" name="message" value="Message Name"></p>
-<p><textarea>Message</textarea></p>
-<p><select>
-<option value='option1'>Option1</option>
-<option value='option2'>Option2</option>
-<option value='option3'>Option3</option>
-</select></p>
-<p><input id="submit-form" type="submit" value="Submit"></p>
-</form>
-<p><button id="unhandled_error" onclick="unhandled_error()">Unhandled Error</button></p>
-<p><a id="track_link" href='#link'>Dummy link</a></p>
-<p><a href='http://count.ly/'>Count.ly</a></p>
-<p><button onclick="giveConsent()">Give Consent</button></p>
-<p><button onclick="removeConsent()">Remove Consent</button></p>
+    <!-- Header, banner etc. Top part of your site  -->
+    <div id="header">
+        <h1>GDPR Features</h1>
+        <img id="logo" src="./images/logo.png">
+    </div>
+
+    <center>
+        <img src="./images/team_countly.jpg" id="wallpaper" />
+        <form method='post' name='comments' onsubmit="return false;">
+            <p><input type="text" name="message" value="Message Name"></p>
+            <p><textarea>Message</textarea></p>
+            <p><select>
+                    <option value='option1'>Option1</option>
+                    <option value='option2'>Option2</option>
+                    <option value='option3'>Option3</option>
+                </select></p>
+            <p><input id="submit-form" type="submit" value="Submit"></p>
+        </form>
+        <p><button id="unhandled_error" onclick="unhandled_error()">Unhandled Error</button></p>
+        <p><a id="track_link" href='#link'>Dummy link</a></p>
+        <p><a href='http://count.ly/'>Count.ly</a></p>
+        <p><button onclick="giveConsent()">Give Consent</button></p>
+        <p><button onclick="removeConsent()">Remove Consent</button></p>
+    </center>
 </body>
+
 </html>

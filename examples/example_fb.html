@@ -2,49 +2,63 @@
 Example on collecting user information from FaceBook
 -->
 <html>
+
 <head>
-<!--Countly script-->
-<script type='text/javascript' src='../lib/countly.js'></script>
-<script type='text/javascript'>
+    <!-- Page styling here -->
+    <link rel='stylesheet' type='text/css' href='./style/style.css'>
+    <!--Countly script-->
+    <script type='text/javascript' src='../lib/countly.js'></script>
+    <script type='text/javascript'>
 
-//initializing countly with params
-Countly.init({
-	app_key: "YOUR_APP_KEY",
-	url: "https://try.count.ly", //your server goes here
-	debug:true
-});
-Countly.begin_session();
-</script>
+        //initializing countly with params
+        Countly.init({
+            app_key: "YOUR_APP_KEY",
+            url: "https://try.count.ly", //your server goes here
+            debug: true
+        });
+        Countly.begin_session();
+    </script>
 </head>
+
 <body>
-<script src="https://connect.facebook.net/en_US/all.js"></script>
-<script type="text/javascript">
-FB.init({
-    appId: '251676171676751',
-    status: true,
-    cookie: true,
-    oauth: true
-});
+    <!-- Header, banner etc. Top part of your site  -->
+    <div id="header">
+        <h1>Collecting Facebook Info</h1>
+        <img id="logo" src="./images/logo.png">
+    </div>
 
-function CountlyGatherFBData(){
-    Countly.collect_from_facebook({"location":"location.name", "tz":"timezone", "somekey":"none.existing.key"});
-};
+    <center>
+        <img src="./images/team_countly.jpg" id="wallpaper" />
+    </center>
+    <script src="https://connect.facebook.net/en_US/all.js"></script>
+    <script type="text/javascript">
+        FB.init({
+            appId: '251676171676751',
+            status: true,
+            cookie: true,
+            oauth: true
+        });
 
-FB.getLoginStatus(function(stsResp) {
-    if(stsResp.authResponse) {
-		//alert("is logged in");
-        CountlyGatherFBData();
-    } else {
-        FB.login(function(loginResp) {
-            if(loginResp.authResponse) {
-				//alert("authenticated");
+        function CountlyGatherFBData() {
+            Countly.collect_from_facebook({ "location": "location.name", "tz": "timezone", "somekey": "none.existing.key" });
+        };
+
+        FB.getLoginStatus(function (stsResp) {
+            if (stsResp.authResponse) {
+                //alert("is logged in");
                 CountlyGatherFBData();
             } else {
-                alert('Please authorize this application to use it!');
+                FB.login(function (loginResp) {
+                    if (loginResp.authResponse) {
+                        //alert("authenticated");
+                        CountlyGatherFBData();
+                    } else {
+                        alert('Please authorize this application to use it!');
+                    }
+                });
             }
         });
-    }
-});
-</script>
+    </script>
 </body>
+
 </html>
