@@ -1,11 +1,9 @@
-/* eslint-disable no-loop-func */
-/* eslint-disable no-console */
-/* eslint-disable no-undef */
 /* eslint-disable require-jsdoc */
-
+// TODO: fix disabled linting issues
 
 // random number generator for picking a random user
 function getRandomUserIndex() {
+    // eslint-disable-next-line no-undef
     return getRandomNumber(0, users.length - 1);
 }
 
@@ -16,6 +14,7 @@ function getRandomNumber(min, max) {
 
 // function for adding user data
 function setUserData(user) {
+    // eslint-disable-next-line no-undef
     Countly.q.push(["user_details", {
         name: user.name,
         username: user.username,
@@ -99,21 +98,25 @@ function deleteOldFeedbackWidget(widget, type) {
         }
     }
     catch (error) {
-        console.log(error);
+        // eslint-disable-next-line no-undef
+        Countly._internals.log("ERROR", "Error while deleting old feedback widget:" + error);
     }
 }
 
 // callback to choose an nps widget from the fetched widget list, widget is the index of the desired widget in the widget list
 function allWidgetsCallbackNPS(feedbacks, err) {
     if (err) {
-        return console.log("error ", err);
+        // eslint-disable-next-line no-undef
+        return Countly._internals.log("ERROR", "Error while allWidgetsCallbackNPS:" + err);
     }
     // first nps widget to fetch
     var i = 0;
     while (i < feedbacks.length) {
         if (feedbacks[i].type === "nps") {
             deleteOldFeedbackWidget(feedbacks[i], "nps");
+            // eslint-disable-next-line no-loop-func
             setTimeout(function() {
+                // eslint-disable-next-line no-undef
                 Countly.present_feedback_widget(feedbacks[i], "", "");
                 evaluateFeedbackWidgetProperties(feedbacks[i]);
             }, 250);
@@ -126,14 +129,17 @@ function allWidgetsCallbackNPS(feedbacks, err) {
 // callback to choose a survey widget from the fetched widget list, widget is the index of the desired widget in the widget list
 function allWidgetsCallbackSurvey(feedbacks, err) {
     if (err) {
-        return console.log("error ", err);
+        // eslint-disable-next-line no-undef
+        return Countly._internals.log("ERROR", "Error while allWidgetsCallbackSurvey:" + error);
     }
     // first survey widget to fetch
     var i = 0;
     while (i < feedbacks.length) {
         if (feedbacks[i].type === "survey") {
             deleteOldFeedbackWidget(feedbacks[i], "survey");
+            // eslint-disable-next-line no-loop-func
             setTimeout(function() {
+                // eslint-disable-next-line no-undef
                 Countly.present_feedback_widget(feedbacks[i], "", "");
                 evaluateFeedbackWidgetProperties(feedbacks[i]);
             }, 250);
@@ -146,15 +152,19 @@ function allWidgetsCallbackSurvey(feedbacks, err) {
 // callback to choose rating widget from the fetched widget list, widget is the index of the desired widget in the widget list
 function allWidgetsCallbackRating(feedbacks, err) {
     if (err) {
-        return console.log("error ", err);
+        // eslint-disable-next-line no-undef
+        return Countly._internals.log("ERROR", "Error while allWidgetsCallbackRating:" + err);
     }
-    console.log(feedbacks);
+    // eslint-disable-next-line no-undef
+    Countly._internals.log("INFO", "Returned feedbacks:[" + feedbacks + "]");
     // first rating widget to fetch
     var i = 0;
     while (i < feedbacks.length) {
         if (feedbacks[i].type === "rating") {
             deleteOldFeedbackWidget(feedbacks[i], "rating");
+            // eslint-disable-next-line no-loop-func
             setTimeout(function() {
+                // eslint-disable-next-line no-undef
                 Countly.present_feedback_widget(feedbacks[i], "", "");
                 evaluateFeedbackWidgetProperties(feedbacks[i]);
             }, 250);
