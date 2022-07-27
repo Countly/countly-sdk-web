@@ -193,8 +193,8 @@ Countly Adapter Library for Google Analytics
                         // ga('send', {hitType:.., ...})
                         else if (typeof o === "object") {
                             switch (o.hitType) {
-                            // ga('send', {'hitType':'event', ..})
                             case "event":
+                                // ga('send', {'hitType':'event', ..})
                                 customSegments = {
                                     category: o.eventCategory
                                 };
@@ -222,8 +222,8 @@ Countly Adapter Library for Google Analytics
                                 }
 
                                 break;
-                                // ga('send', {'hitType':'social', ..})
                             case "social":
+                                // ga('send', {'hitType':'social', ..})
                                 Countly.q.push(["add_event", {
                                     key: o.socialAction,
                                     count: 1,
@@ -247,8 +247,8 @@ Countly Adapter Library for Google Analytics
                                 }
 
                                 break;
-                                // ga('send', {'hitType':'timing', ..})
                             case "timing":
+                                // ga('send', {'hitType':'timing', ..})
                                 Countly.q.push(["add_event", {
                                     key: o.timingVar,
                                     count: 1,
@@ -267,8 +267,8 @@ Countly Adapter Library for Google Analytics
                                     }]);
                                 }
                                 break;
-                                // ga('send', {'hitType':'pageview', 'page':'page'})
                             case "pageview":
+                                // ga('send', {'hitType':'pageview', 'page':'page'})
                                 Countly.q.push(["track_pageview", o.page]);
                                 if (window.cly_ga_test_mode) {
                                     window.cly_ga_test_logs.push(["track_pageview", o.page]);

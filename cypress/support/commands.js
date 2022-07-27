@@ -161,20 +161,19 @@ Cypress.Commands.add("check_user_details", (details, userDetails, limits) => {
                 expect(keyList).to.include(key);
             }
         }
+        return;
     }
-    else {
-        expect(queue.name).to.equal(userDetails.name);
-        expect(queue.username).to.equal(userDetails.username);
-        expect(queue.email).to.equal(userDetails.email);
-        expect(queue.organization).to.equal(userDetails.organization);
-        expect(queue.phone).to.equal(userDetails.phone);
-        expect(queue.picture).to.equal(userDetails.picture);
-        expect(queue.gender).to.equal(userDetails.gender);
-        expect(queue.byear).to.equal(userDetails.byear);
-        if (userDetails.custom !== undefined) {
-            for (const key in userDetails.custom) {
-                expect(queue.custom[key]).to.equal(userDetails.custom[key]);
-            }
+    expect(queue.name).to.equal(userDetails.name);
+    expect(queue.username).to.equal(userDetails.username);
+    expect(queue.email).to.equal(userDetails.email);
+    expect(queue.organization).to.equal(userDetails.organization);
+    expect(queue.phone).to.equal(userDetails.phone);
+    expect(queue.picture).to.equal(userDetails.picture);
+    expect(queue.gender).to.equal(userDetails.gender);
+    expect(queue.byear).to.equal(userDetails.byear);
+    if (userDetails.custom !== undefined) {
+        for (const key in userDetails.custom) {
+            expect(queue.custom[key]).to.equal(userDetails.custom[key]);
         }
     }
 });
