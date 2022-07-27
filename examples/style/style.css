@@ -63,7 +63,7 @@ a {
   color: #0d172a;
   cursor: pointer;
   display: inline-block;
-  font-family: "Basier circle", -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-family: "Basier circle", "Noto Color Emoji";
   font-size: 10px;
   font-weight: 600;
   line-height: 1;

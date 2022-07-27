@@ -279,8 +279,8 @@ Countly Adapter Library for Google Analytics
                             }
                         }
                         break;
-                        // ga('create', '..')
                     case "create":
+                        // ga('create', '..')
                         // ga('create', .., 'auto', '..')
                         if (arguments.length === 4 && arguments[2] === "auto") {
                             cly._internals.store("cly_ga:id", o);

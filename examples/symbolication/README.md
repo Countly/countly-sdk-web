@@ -6,7 +6,7 @@ on their original source files.
 
 To build the main javascript file (which also produces a sourcemap file), run:
 
-```
+```bash
 npm run build
 ```
 
