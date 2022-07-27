@@ -1,7 +1,10 @@
+"use strict";
+
 /* eslint-disable require-jsdoc */
 // TODO: fix disabled linting issues
 
 // random number generator for picking a random user
+// eslint-disable-next-line no-unused-vars
 function getRandomUserIndex() {
     // eslint-disable-next-line no-undef
     return getRandomNumber(0, users.length - 1);
@@ -13,6 +16,7 @@ function getRandomNumber(min, max) {
 }
 
 // function for adding user data
+// eslint-disable-next-line no-unused-vars
 function setUserData(user) {
     // eslint-disable-next-line no-undef
     Countly.q.push(["user_details", {
@@ -75,7 +79,7 @@ function evaluateFeedbackWidgetProperties(widget) {
     }
 }
 
-
+// eslint-disable-next-line no-unused-vars
 function deleteOldFeedbackWidget(widget, type) {
     try {
         var anchor = document.getElementById("csbg");
@@ -104,6 +108,7 @@ function deleteOldFeedbackWidget(widget, type) {
 }
 
 // callback to choose an nps widget from the fetched widget list, widget is the index of the desired widget in the widget list
+// eslint-disable-next-line no-unused-vars
 function allWidgetsCallbackNPS(feedbacks, err) {
     if (err) {
         // eslint-disable-next-line no-undef
@@ -127,6 +132,7 @@ function allWidgetsCallbackNPS(feedbacks, err) {
 }
 
 // callback to choose a survey widget from the fetched widget list, widget is the index of the desired widget in the widget list
+// eslint-disable-next-line no-unused-vars
 function allWidgetsCallbackSurvey(feedbacks, err) {
     if (err) {
         // eslint-disable-next-line no-undef
@@ -150,6 +156,7 @@ function allWidgetsCallbackSurvey(feedbacks, err) {
 }
 
 // callback to choose rating widget from the fetched widget list, widget is the index of the desired widget in the widget list
+// eslint-disable-next-line no-unused-vars
 function allWidgetsCallbackRating(feedbacks, err) {
     if (err) {
         // eslint-disable-next-line no-undef
