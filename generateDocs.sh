@@ -22,7 +22,7 @@ mkdir code_docs
 cd code_docs
 
 # Get the current gh-pages branch
-git clone -b gh-pages http://github.com/$GITHUB_REPOSITORY repo
+git clone -b gh-pages "http://github.com/$GITHUB_REPOSITORY" repo
 cd repo
 
 ##### Configure git.
@@ -47,7 +47,7 @@ echo "" > .nojekyll
 ################################################################################
 ##### Generate JSDOC documents.          #####
 echo 'Generating JSDoc code documentation...'
-$DIR/node_modules/.bin/jsdoc $DIR/lib/countly.js $DIR/README.md -c  $DIR/jsdoc_conf.json -d  $DIR/code_docs/repo ;
+"$DIR/node_modules/.bin/jsdoc" "$DIR/lib/countly.js" "$DIR/README.md" -c  "$DIR/jsdoc_conf.json" -d  "$DIR/code_docs/repo" ;
 #TODO: erased plugins from here but might be back
 ################################################################################
 ##### Upload the documentation to the gh-pages branch of the repository.   #####
