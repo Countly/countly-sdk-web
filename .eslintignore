@@ -2,6 +2,8 @@ lib/countly.min.js
 lib/countly.pack.js
 plugin/boomerang/boomerang.min.js
 plugin/ga_adapter
+examples/react
+examples/symbolication
 node_modules
 .vscode
 .github
