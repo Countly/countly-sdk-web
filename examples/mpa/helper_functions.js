@@ -72,7 +72,6 @@ function evaluateFeedbackWidgetProperties(widget) {
 
 
 function deleteOldFeedbackWidget(widget, type) {
-const id = widget._id;
 try {
     var anchor = document.getElementById(`csbg`);
     var wrapper = document.getElementsByClassName('countly-ratings-wrapper')[0];
@@ -85,7 +84,7 @@ try {
     wrapper.nextSibling.remove();
     wrapper.remove();
     anchor.remove();
-    } else {
+    } else if (anchor) {
     anchor.style.zIndex = 5;
     iframeS.remove();
     anchor.nextSibling.remove();

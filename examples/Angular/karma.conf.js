@@ -1,4 +1,4 @@
-"use-strict";
+"use strict";
 
 /* eslint-disable global-require */
 // Karma configuration file, see link for more information
