@@ -1,6 +1,7 @@
 ## 22.06.0
 - Updated BoomerangJS to the latest version (1.737.0)
 - Implemented static code analysis recommendations from Codacy, Snyk and Deep Scan
+- Added an Angular integration example
 
 ## 22.02.4
 - Fixed logs that did not obey to the 'debug' flag
