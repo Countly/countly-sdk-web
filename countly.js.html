@@ -233,7 +233,7 @@
     */
     Countly.onload = Countly.onload || [];
 
-    var SDK_VERSION = "22.02.4";
+    var SDK_VERSION = "22.06.0";
     var SDK_NAME = "javascript_native_web";
 
     var urlParseRE = /^(((([^:\/#\?]+:)?(?:(\/\/)((?:(([^:@\/#\?]+)(?:\:([^:@\/#\?]+))?)@)?(([^:\/#\?\]\[]+|\[[^\/\]@#?]+\])(?:\:([0-9]+))?))?)?)?((\/?(?:[^\/\?#]+\/+)*)([^\?#]*)))?(\?[^#]+)?)(#.*)?/;
@@ -301,11 +301,11 @@
         }
 
         this.initialize = function() {
-            this.serialize = ob.serialize || Countly.serialize;
-            this.deserialize = ob.deserialize || Countly.deserialize;
-            this.getViewName = ob.getViewName || Countly.getViewName;
-            this.getViewUrl = ob.getViewUrl || Countly.getViewUrl;
-            this.getSearchQuery = ob.getSearchQuery || Countly.getSearchQuery;
+            this.serialize = getConfig("serialize", ob, Countly.serialize);
+            this.deserialize = getConfig("deserialize", ob, Countly.deserialize);
+            this.getViewName = getConfig("getViewName", ob, Countly.getViewName);
+            this.getViewUrl = getConfig("getViewUrl", ob, Countly.getViewUrl);
+            this.getSearchQuery = getConfig("getSearchQuery", ob, Countly.getSearchQuery);
             this.DeviceIdType = Countly.DeviceIdType; // it is Countly device Id type Enums for clients to use
             this.namespace = getConfig("namespace", ob, "");
             this.clearStoredId = getConfig("clear_stored_id", ob, false);
@@ -409,7 +409,7 @@
             }
 
             if (this.ignore_visitor) {
-                log(logLevelEnums.WARNING, "initialize, Ignoring this visitor");
+                log(logLevelEnums.WARNING, "initialize, ignore_visitor:[" + this.ignore_visitor + "], this user will not be tracked");
                 return;
             }
 
@@ -465,10 +465,6 @@
             if (this.remote_config) {
                 log(logLevelEnums.DEBUG, "initialize, remote_config callback provided:[" + !!this.remote_config + "]");
             }
-            // if ignore_visitor is enabled warn the user
-            if (this.ignore_visitor) {
-                log(logLevelEnums.WARNING, "initialize, ignore_visitor:[" + this.ignore_visitor + "], this user will not be tracked");
-            }
             if (this.track_domains) {
                 log(logLevelEnums.DEBUG, "initialize, tracking domain info:[" + this.track_domains + "]");
             }
@@ -476,7 +472,7 @@
                 log(logLevelEnums.DEBUG, "initialize, enableOrientationTracking:[" + this.enableOrientationTracking + "]");
             }
             if (!useSessionCookie) {
-                log(logLevelEnums.WARNING, "initialize, use_session_cookie is disabled:[" + useSessionCookie + "]");
+                log(logLevelEnums.WARNING, "initialize, use_session_cookie is enabled:[" + useSessionCookie + "]");
             }
             if (offlineMode) {
                 log(logLevelEnums.DEBUG, "initialize, offline_mode:[" + offlineMode + "], user info won't be send to the servers");
@@ -1286,10 +1282,10 @@
                 campaign_id = campaign_id || setGetValueInStorage("cly_cmp_id") || "cly_organic";
                 campaign_user_id = campaign_user_id || setGetValueInStorage("cly_cmp_uid");
 
-                if (campaign_id &amp;&amp; campaign_user_id) {
+                if (campaign_user_id) {
                     toRequestQueue({ campaign_id: campaign_id, campaign_user: campaign_user_id });
                 }
-                else if (campaign_id) {
+                else {
                     toRequestQueue({ campaign_id: campaign_id });
                 }
             }
@@ -1850,7 +1846,6 @@
             reportViewDuration();
             // truncate page name and segmentation wrt internal limits
             page = truncateSingleValue(page, self.maxKeyLength, "track_pageview", log);
-            viewSegments = truncateObject(viewSegments, self.maxKeyLength, self.maxValueSize, self.maxSegmentationValues, "track_pageview", log);
             // if the first parameter we got is an array we got the ignoreList first, assign it here
             if (page &amp;&amp; Array.isArray(page)) {
                 ignoreList = page;
@@ -1923,6 +1918,8 @@
             }
 
             if (viewSegments) {
+                viewSegments = truncateObject(viewSegments, self.maxKeyLength, self.maxValueSize, self.maxSegmentationValues, "track_pageview", log);
+
                 for (var key in viewSegments) {
                     if (typeof segments[key] === "undefined") {
                         segments[key] = viewSegments[key];
@@ -3001,8 +2998,6 @@
                 else {
                     error = err + "";
                 }
-                // truncate custom crash segment's key value pairs
-                segments = truncateObject(segments, self.maxKeyLength, self.maxValueSize, self.maxSegmentationValues, "record_error", log);
                 // character limit check
                 if (error.length > (self.maxStackTraceLineLength * self.maxStackTraceLinesPerThread)) {
                     log(logLevelEnums.DEBUG, "record_error, Error stack is too long will be truncated");
@@ -3050,6 +3045,8 @@
                 obj._view = this.getViewName();
 
                 if (typeof segments !== "undefined") {
+                    // truncate custom crash segment's key value pairs
+                    segments = truncateObject(segments, self.maxKeyLength, self.maxValueSize, self.maxSegmentationValues, "record_error", log);
                     obj._custom = segments;
                 }
 
@@ -4706,7 +4703,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.10</a> using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.11</a> using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>
