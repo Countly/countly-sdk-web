@@ -13,8 +13,10 @@ function haltAndClearStorage(callback) {
         Countly.halt();
     }
     cy.wait(sWait).then(() => {
-        // cy.clearLocalStorage();
-        callback();
+        cy.clearLocalStorage();
+        cy.wait(sWait).then(() => {
+            callback();
+        });
     });
 }
 
