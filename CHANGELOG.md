@@ -1,3 +1,8 @@
+## 22.06.1
+- Fixed a bug where heatmap files were susceptible to DOM XSS
+- Users can now input their domain whitelist for heatmaps feature during init
+- ! Minor breaking change ! If no domain whitelist is provided for the heatmaps the SDK will fallback to your server url
+
 ## 22.06.0
 - Updated BoomerangJS to the latest version (1.737.0)
 - Implemented static code analysis recommendations from Codacy, Snyk and Deep Scan
