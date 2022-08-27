@@ -2,8 +2,10 @@
 
 /* eslint-disable require-jsdoc */
 var hp = require("../support/helper");
+const clickX = 20;
+const clickY = 20;
 
-describe("Browser heatmap tests", () => {
+describe("Browser heatmap tests, scrolls", () => {
     it("Check if scrolls are sent if page url changes", () => {
         cy.visit("./cypress/fixtures/scroll_test.html");
         cy.scrollTo("bottom");
@@ -47,6 +49,76 @@ describe("Browser heatmap tests", () => {
             cy.check_scroll_event(eq[3]);
             cy.check_view_event(eq[4], "v1", 0);
             cy.check_view_event(eq[5], "v2");
+        });
+    });
+});
+describe("Browser heatmap tests, clicks", () => {
+    it("Check if the clicks are send", () => {
+        cy.visit("./cypress/fixtures/click_test.html");
+        cy.get("#click").click(clickX, clickY);
+        // its in event queue as we are checking directly after the click
+        cy.fetch_local_event_queue(hp.appKey).then((rq) => {
+            cy.log(rq);
+            expect(rq.length).to.equal(1);
+            expect(rq[0].key).to.equal("[CLY]_action");
+            cy.check_commons(rq[0]);
+
+            const seg = rq[0].segmentation;
+            expect(seg.domain).to.be.ok;
+            expect(seg.type).to.equal("click");
+            expect(seg.height).to.be.ok;
+            expect(seg.view).to.be.ok;
+            expect(seg.width).to.be.ok;
+            expect(seg.x).to.equal(clickX + 8);
+            expect(seg.y).to.equal(clickY + 8);
+        });
+        cy.fetch_local_request_queue(hp.appKey).then((rq) => {
+            cy.log(rq);
+            expect(rq.length).to.equal(2);
+        });
+    });
+    it("Check if the DOM restriction works if non targeted child clicked", () => {
+        cy.visit("./cypress/fixtures/click_test.html?dom=click2");
+        // this click must be ignored as it is not click2
+        cy.get("#click").click(clickX, clickY);
+        cy.fetch_local_event_queue(hp.appKey).then((rq) => {
+            cy.log(rq);
+            expect(rq.length).to.equal(0);
+        });
+        cy.fetch_local_request_queue(hp.appKey).then((rq) => {
+            cy.log(rq);
+            expect(rq.length).to.equal(2);
+        });
+    });
+    it("Check if the DOM restriction works only the child is clicked", () => {
+        cy.visit("./cypress/fixtures/click_test.html?dom=click2");
+        // only click2 must be perceived
+        cy.get("#click").click(clickX, clickY).wait(1000);
+        cy.get("#click2").click(clickX, clickY).wait(1000);
+        cy.get("#click3").click(clickX, clickY);
+        cy.fetch_local_event_queue(hp.appKey).then((rq) => {
+            cy.log(rq);
+            expect(rq.length).to.equal(0);
+        });
+        // as we waited the call is in request queue now
+        cy.fetch_local_request_queue(hp.appKey).then((rq) => {
+            cy.log(rq);
+            // first 2 is session and orientation
+            expect(rq.length).to.equal(3);
+            const clickEv = JSON.parse(rq[2].events);
+            // only single event must exist
+            expect(clickEv.length).to.equal(1);
+            expect(clickEv[0].key).to.equal("[CLY]_action");
+            cy.check_commons(clickEv[0]);
+
+            const seg = clickEv[0].segmentation;
+            expect(seg.domain).to.be.ok;
+            expect(seg.type).to.equal("click");
+            expect(seg.height).to.be.ok;
+            expect(seg.view).to.be.ok;
+            expect(seg.width).to.be.ok;
+            expect(seg.x).to.equal(clickX + 80);
+            expect(seg.y).to.equal(clickY + 8);
         });
     });
 });
