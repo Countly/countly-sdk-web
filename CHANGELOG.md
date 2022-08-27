@@ -1,5 +1,6 @@
-## 22.08.0
+## 22.06.1
 - [internal] Refactored storage functionality
+
 ## 22.06.0
 - Updated BoomerangJS to the latest version (1.737.0)
 - Implemented static code analysis recommendations from Codacy, Snyk and Deep Scan
