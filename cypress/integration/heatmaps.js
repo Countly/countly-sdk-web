@@ -5,6 +5,16 @@ var hp = require("../support/helper");
 const clickX = 20;
 const clickY = 20;
 
+function click_check(segmentation, offX, offY) {
+    expect(segmentation.domain).to.be.ok;
+    expect(segmentation.type).to.equal("click");
+    expect(segmentation.height).to.be.ok;
+    expect(segmentation.view).to.be.ok;
+    expect(segmentation.width).to.be.ok;
+    expect(segmentation.x).to.equal(clickX + offX);
+    expect(segmentation.y).to.equal(clickY + offY);
+}
+
 describe("Browser heatmap tests, scrolls", () => {
     it("Check if scrolls are sent if page url changes", () => {
         cy.visit("./cypress/fixtures/scroll_test.html");
@@ -64,13 +74,7 @@ describe("Browser heatmap tests, clicks", () => {
             cy.check_commons(rq[0]);
 
             const seg = rq[0].segmentation;
-            expect(seg.domain).to.be.ok;
-            expect(seg.type).to.equal("click");
-            expect(seg.height).to.be.ok;
-            expect(seg.view).to.be.ok;
-            expect(seg.width).to.be.ok;
-            expect(seg.x).to.equal(clickX + 8);
-            expect(seg.y).to.equal(clickY + 8);
+            click_check(seg, 8, 8);
         });
         cy.fetch_local_request_queue(hp.appKey).then((rq) => {
             cy.log(rq);
@@ -112,13 +116,7 @@ describe("Browser heatmap tests, clicks", () => {
             cy.check_commons(clickEv[0]);
 
             const seg = clickEv[0].segmentation;
-            expect(seg.domain).to.be.ok;
-            expect(seg.type).to.equal("click");
-            expect(seg.height).to.be.ok;
-            expect(seg.view).to.be.ok;
-            expect(seg.width).to.be.ok;
-            expect(seg.x).to.equal(clickX + 80);
-            expect(seg.y).to.equal(clickY + 8);
+            click_check(seg, 80, 8);
         });
     });
 });
