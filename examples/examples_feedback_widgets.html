@@ -9,33 +9,64 @@
 
     //initializing Countly with params and passing require_consent config as true as feedback widget depends on consent
     Countly.init({
-      app_key: 'YOUR_APP_ID', //your app key
+      app_key: 'YOUR_APP_KEY', //your app key
       url: 'https://try.count.ly', //your server goes here
       debug: true
     });
 
     function enable() {
-      //Fetch user's NPS and Survey feedbacks from the server
+      // Fetch user's NPS and Survey feedbacks from the server
       Countly.get_available_feedback_widgets(feedbackWidgetsCallback);
     }
+    // an example of getting the widget list, using it to get widget data and then recording data for an nps manually    
+    function getFeedbackData() {
+      // get the widget list
+      // 1
+      Countly.get_available_feedback_widgets(feedbackCallback);
+    }
 
-    //Surveys feedback callback function
+    
+
+    // Surveys feedback callback function
     function feedbackWidgetsCallback(countlyPresentableFeedback, err) {
       if (err) {
         console.log(err);
         return;
       }
-      //The available feedback types are nps and survey, decide which one to show
+      // The available feedback types are nps and survey, decide which one to show
       var countlyFeedbackWidget = countlyPresentableFeedback[0];
 
-      //Define the element ID and the class name, optional
+      // Define the element ID and the class name, optional
       var selectorId = "";
       var selectorClass = "";
 
-      //Display the feedback widget to the end user 
+      // Display the feedback widget to the end user 
       Countly.present_feedback_widget(countlyFeedbackWidget, selectorId, selectorClass);
     }
 
+    // Use retrieved feedback list to get their data
+    function feedbackCallback(feedbackList, err) {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      // Get data with the list
+      // 2
+      Countly.getFeedbackWidgetData(feedbackList, feedbackDataCallback);
+    }
+
+    // Log the retrieved data to console
+    function feedbackDataCallback(feedbackData, err) {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      // record data if first item among the returned widget data list is an nps widget
+      // 3
+      if(feedbackData[0].type == 'nps') {
+        Countly.recordFeedbackWidgetWithID('nps', {widget_id:feedbackData[0]._id , rating: 3});
+      }
+    }
   </script>
 </head>
 
@@ -50,6 +81,7 @@
     <img src="./images/team_countly.jpg" id="wallpaper" />
     <p><a href='http://count.ly/'>Count.ly</a></p>
     <p><button onclick="enable()">Enable Feedback Widget</button></p>
+    <p><button onclick="getFeedbackData()">Manually Record NPS Data</button></p>
   </center>
 </body>
 
