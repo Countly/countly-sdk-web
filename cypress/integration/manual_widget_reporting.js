@@ -77,21 +77,6 @@ describe("Manual rating widget recording tests ", () => {
             });
         });
     });
-    it("Checks if one of two rating recordings would be stopped", () => {
-        hp.haltAndClearStorage(() => {
-            initMain();
-            Countly.recordRatingWidgetWithID(ratingMaker("123", 1));
-            Countly.recordRatingWidgetWithID(ratingMaker("321", 3));
-            cy.fetch_local_event_queue().then((eq) => {
-                cy.log(eq);
-                expect(eq.length).to.equal(1);
-                cy.check_commons(eq[0]);
-                common_rating_check(eq, 1);
-                cy.expect(eq[0].segmentation.rating).to.equal(1);
-                cy.expect(eq[0].segmentation.widget_id).to.equal("123");
-            });
-        });
-    });
     it("Checks if rating recording without id would be stopped", () => {
         hp.haltAndClearStorage(() => {
             initMain();
@@ -155,20 +140,6 @@ describe("Manual nps recording tests ", () => {
             });
         });
     });
-    it("Checks if an nps would be omitted if 2 sent", () => {
-        hp.haltAndClearStorage(() => {
-            initMain();
-            Countly.recordSurveyNpsWithID("nps", npsMaker("123", 1));
-            Countly.recordSurveyNpsWithID("nps", npsMaker("321", 2));
-            cy.fetch_local_event_queue().then((eq) => {
-                cy.log(eq);
-                expect(eq.length).to.equal(1);
-                cy.check_commons(eq[0], 2);
-                cy.expect(eq[0].segmentation.rating).to.equal(1);
-                cy.expect(eq[0].segmentation.widget_id).to.equal("123");
-            });
-        });
-    });
     it("Checks if nps would be omitted with no id", () => {
         hp.haltAndClearStorage(() => {
             initMain();
@@ -198,22 +169,6 @@ describe("Manual survey recording tests ", () => {
         hp.haltAndClearStorage(() => {
             initMain();
             Countly.recordSurveyNpsWithID("survey", surveyMaker("123", answers));
-            cy.fetch_local_event_queue().then((eq) => {
-                cy.log(eq);
-                expect(eq.length).to.equal(1);
-                cy.check_commons(eq[0], 3);
-                cy.expect(eq[0].segmentation.widget_id).to.equal("123");
-                cy.expect(eq[0].segmentation["answ-1"]).to.equal("text");
-                cy.expect(eq[0].segmentation["answ-2"]).to.equal(7);
-                cy.expect(eq[0].segmentation["answ-3"]).to.equal("52,45");
-            });
-        });
-    });
-    it("Checks if a survey would be omitted if 2 sent", () => {
-        hp.haltAndClearStorage(() => {
-            initMain();
-            Countly.recordSurveyNpsWithID("survey", surveyMaker("123", answers));
-            Countly.recordSurveyNpsWithID("survey", surveyMaker("321", answers));
             cy.fetch_local_event_queue().then((eq) => {
                 cy.log(eq);
                 expect(eq.length).to.equal(1);
