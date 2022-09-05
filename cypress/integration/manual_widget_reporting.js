@@ -130,7 +130,7 @@ describe("Manual nps recording tests ", () => {
     it("Checks if a nps is send correctly", () => {
         hp.haltAndClearStorage(() => {
             initMain();
-            Countly.recordSurveyNpsWithID("nps", npsMaker("123", 1));
+            Countly.recordFeedbackWidgetWithID("nps", npsMaker("123", 1));
             cy.fetch_local_event_queue().then((eq) => {
                 cy.log(eq);
                 expect(eq.length).to.equal(1);
@@ -143,7 +143,7 @@ describe("Manual nps recording tests ", () => {
     it("Checks if nps would be omitted with no id", () => {
         hp.haltAndClearStorage(() => {
             initMain();
-            Countly.recordSurveyNpsWithID("nps", npsMaker(undefined, 1));
+            Countly.recordFeedbackWidgetWithID("nps", npsMaker(undefined, 1));
             cy.fetch_local_event_queue().then((eq) => {
                 cy.log(eq);
                 expect(eq.length).to.equal(0);
@@ -153,7 +153,7 @@ describe("Manual nps recording tests ", () => {
     it("Checks if rating would be curbed", () => {
         hp.haltAndClearStorage(() => {
             initMain();
-            Countly.recordSurveyNpsWithID("nps", npsMaker("123", 11));
+            Countly.recordFeedbackWidgetWithID("nps", npsMaker("123", 11));
             cy.fetch_local_event_queue().then((eq) => {
                 cy.log(eq);
                 expect(eq.length).to.equal(1);
@@ -168,7 +168,7 @@ describe("Manual survey recording tests ", () => {
     it("Checks if a survey is send correctly", () => {
         hp.haltAndClearStorage(() => {
             initMain();
-            Countly.recordSurveyNpsWithID("survey", surveyMaker("123", answers));
+            Countly.recordFeedbackWidgetWithID("survey", surveyMaker("123", answers));
             cy.fetch_local_event_queue().then((eq) => {
                 cy.log(eq);
                 expect(eq.length).to.equal(1);
@@ -183,7 +183,7 @@ describe("Manual survey recording tests ", () => {
     it("Checks if wrong answer array would be rejected", () => {
         hp.haltAndClearStorage(() => {
             initMain();
-            Countly.recordSurveyNpsWithID("survey", surveyMaker("123", []));
+            Countly.recordFeedbackWidgetWithID("survey", surveyMaker("123", []));
             cy.fetch_local_event_queue().then((eq) => {
                 cy.log(eq);
                 expect(eq.length).to.equal(0);
@@ -193,7 +193,7 @@ describe("Manual survey recording tests ", () => {
     it("Checks if no id would be rejected", () => {
         hp.haltAndClearStorage(() => {
             initMain();
-            Countly.recordSurveyNpsWithID("survey", surveyMaker(undefined, answers));
+            Countly.recordFeedbackWidgetWithID("survey", surveyMaker(undefined, answers));
             cy.fetch_local_event_queue().then((eq) => {
                 cy.log(eq);
                 expect(eq.length).to.equal(0);
