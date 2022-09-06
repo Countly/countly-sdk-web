@@ -5,9 +5,29 @@ var hp = require("../support/helper");
 
 const contactMe = true;
 const platform = "platform";
+const email = "email";
 const app_version = "app_version";
 const comment = "comment";
-const answers = [{ answer: "text", id: "1" }, { answer: 7, id: "2" }, { answer: "52,45", id: "3" }];
+const CountlyWidgetData = { true: true };
+
+function CountlyFeedbackWidgetMaker(a, b) {
+    return { _id: a, type: b };
+}
+
+function widgetResponseMakerNpsRating(a) {
+    return {
+        contactMe: contactMe, // boolean
+        rating: a, // number
+        email: email,
+        comment: comment // string
+    };
+}
+function widgetResponseMakerSurvey(a, b, c, d) {
+    return {
+        a: b,
+        c: d
+    };
+}
 
 function ratingMaker(a, b) {
     return {
@@ -16,25 +36,8 @@ function ratingMaker(a, b) {
         platform: platform, // string
         app_version: app_version, // string
         rating: b, // number
-        comment: comment // string
-    };
-}
-function npsMaker(a, b) {
-    return {
-        widget_id: a, // string
-        platform: platform, // string
-        app_version: app_version, // string
-        rating: b, // number
-        comment: comment // string
-    };
-}
-function surveyMaker(a, b) {
-    return {
-        widget_id: a, // string
-        platform: platform, // string
-        app_version: app_version, // string
-        answers: b
-
+        comment: comment, // string
+        email: email // string
     };
 }
 // num is 1 for ratings, 2 for nps, 3 for surveys
@@ -47,6 +50,7 @@ function common_rating_check(param, num) {
         cy.expect(param[0].segmentation.comment).to.equal(comment);
         if (num === 1) {
             cy.expect(param[0].segmentation.contactMe).to.equal(contactMe);
+            cy.expect(param[0].segmentation.email).to.equal(email);
         }
     }
 }
@@ -61,8 +65,8 @@ function initMain() {
 
     });
 }
-
-describe("Manual rating widget recording tests ", () => {
+// TODO: Add more tests
+describe("Manual Rating Widget recording tests, old call ", () => {
     it("Checks if a rating object is send correctly", () => {
         hp.haltAndClearStorage(() => {
             initMain();
@@ -70,7 +74,7 @@ describe("Manual rating widget recording tests ", () => {
             cy.fetch_local_event_queue().then((eq) => {
                 cy.log(eq);
                 expect(eq.length).to.equal(1);
-                cy.check_commons(eq[0]);
+                cy.check_commons(eq[0], 1);
                 common_rating_check(eq, 1);
                 cy.expect(eq[0].segmentation.rating).to.equal(1);
                 cy.expect(eq[0].segmentation.widget_id).to.equal("123");
@@ -104,8 +108,7 @@ describe("Manual rating widget recording tests ", () => {
             cy.fetch_local_event_queue().then((eq) => {
                 cy.log(eq);
                 expect(eq.length).to.equal(1);
-                cy.check_commons(eq[0]);
-                cy.expect(eq[0].key).to.equal("[CLY]_star_rating");
+                cy.check_commons(eq[0], 1);
                 cy.expect(eq[0].segmentation.rating).to.equal(1);
                 cy.expect(eq[0].segmentation.widget_id).to.equal("123");
             });
@@ -118,8 +121,7 @@ describe("Manual rating widget recording tests ", () => {
             cy.fetch_local_event_queue().then((eq) => {
                 cy.log(eq);
                 expect(eq.length).to.equal(1);
-                cy.check_commons(eq[0]);
-                cy.expect(eq[0].key).to.equal("[CLY]_star_rating");
+                cy.check_commons(eq[0], 1);
                 cy.expect(eq[0].segmentation.rating).to.equal(5);
                 cy.expect(eq[0].segmentation.widget_id).to.equal("123");
             });
@@ -130,12 +132,12 @@ describe("Manual nps recording tests ", () => {
     it("Checks if a nps is send correctly", () => {
         hp.haltAndClearStorage(() => {
             initMain();
-            Countly.recordFeedbackWidgetWithID("nps", npsMaker("123", 1));
+            Countly.reportFeedbackWidgetManually(CountlyFeedbackWidgetMaker("123", "nps"), CountlyWidgetData, widgetResponseMakerNpsRating(2));
             cy.fetch_local_event_queue().then((eq) => {
                 cy.log(eq);
                 expect(eq.length).to.equal(1);
                 cy.check_commons(eq[0], 2);
-                cy.expect(eq[0].segmentation.rating).to.equal(1);
+                cy.expect(eq[0].segmentation.rating).to.equal(2);
                 cy.expect(eq[0].segmentation.widget_id).to.equal("123");
             });
         });
@@ -143,7 +145,7 @@ describe("Manual nps recording tests ", () => {
     it("Checks if nps would be omitted with no id", () => {
         hp.haltAndClearStorage(() => {
             initMain();
-            Countly.recordFeedbackWidgetWithID("nps", npsMaker(undefined, 1));
+            Countly.reportFeedbackWidgetManually(CountlyFeedbackWidgetMaker(undefined, "nps"), CountlyWidgetData, widgetResponseMakerNpsRating(2));
             cy.fetch_local_event_queue().then((eq) => {
                 cy.log(eq);
                 expect(eq.length).to.equal(0);
@@ -153,7 +155,7 @@ describe("Manual nps recording tests ", () => {
     it("Checks if rating would be curbed", () => {
         hp.haltAndClearStorage(() => {
             initMain();
-            Countly.recordFeedbackWidgetWithID("nps", npsMaker("123", 11));
+            Countly.reportFeedbackWidgetManually(CountlyFeedbackWidgetMaker("123", "nps"), CountlyWidgetData, widgetResponseMakerNpsRating(11));
             cy.fetch_local_event_queue().then((eq) => {
                 cy.log(eq);
                 expect(eq.length).to.equal(1);
@@ -168,35 +170,87 @@ describe("Manual survey recording tests ", () => {
     it("Checks if a survey is send correctly", () => {
         hp.haltAndClearStorage(() => {
             initMain();
-            Countly.recordFeedbackWidgetWithID("survey", surveyMaker("123", answers));
+            Countly.reportFeedbackWidgetManually(CountlyFeedbackWidgetMaker("123", "survey"), CountlyWidgetData, widgetResponseMakerSurvey("a", "b", "c", 7));
             cy.fetch_local_event_queue().then((eq) => {
                 cy.log(eq);
                 expect(eq.length).to.equal(1);
                 cy.check_commons(eq[0], 3);
                 cy.expect(eq[0].segmentation.widget_id).to.equal("123");
-                cy.expect(eq[0].segmentation["answ-1"]).to.equal("text");
-                cy.expect(eq[0].segmentation["answ-2"]).to.equal(7);
-                cy.expect(eq[0].segmentation["answ-3"]).to.equal("52,45");
+                cy.expect(eq[0].segmentation.a).to.equal("b");
+                cy.expect(eq[0].segmentation.c).to.equal(7);
             });
         });
     });
-    it("Checks if wrong answer array would be rejected", () => {
+    it("Checks if null response would have closed flag", () => {
         hp.haltAndClearStorage(() => {
             initMain();
-            Countly.recordFeedbackWidgetWithID("survey", surveyMaker("123", []));
+            Countly.reportFeedbackWidgetManually(CountlyFeedbackWidgetMaker("123", "survey"), CountlyWidgetData, null);
             cy.fetch_local_event_queue().then((eq) => {
                 cy.log(eq);
-                expect(eq.length).to.equal(0);
+                expect(eq.length).to.equal(1);
+                cy.check_commons(eq[0], 3);
+                cy.expect(eq[0].segmentation.widget_id).to.equal("123");
+                cy.expect(eq[0].segmentation.closed).to.equal(1);
             });
         });
     });
     it("Checks if no id would be rejected", () => {
         hp.haltAndClearStorage(() => {
             initMain();
-            Countly.recordFeedbackWidgetWithID("survey", surveyMaker(undefined, answers));
+            Countly.reportFeedbackWidgetManually(CountlyFeedbackWidgetMaker(undefined, "survey"), CountlyWidgetData, widgetResponseMakerSurvey("a", "b", "c", 7));
             cy.fetch_local_event_queue().then((eq) => {
                 cy.log(eq);
                 expect(eq.length).to.equal(0);
+            });
+        });
+    });
+});
+describe("Manual Rating widget recording tests, new call ", () => {
+    it("Checks if a rating is send correctly", () => {
+        hp.haltAndClearStorage(() => {
+            initMain();
+            Countly.reportFeedbackWidgetManually(CountlyFeedbackWidgetMaker("123", "rating"), CountlyWidgetData, widgetResponseMakerNpsRating(3));
+            cy.fetch_local_event_queue().then((eq) => {
+                cy.log(eq);
+                expect(eq.length).to.equal(1);
+                cy.check_commons(eq[0], 1);
+                cy.expect(eq[0].segmentation.widget_id).to.equal("123");
+                cy.expect(eq[0].segmentation.rating).to.equal(3);
+            });
+        });
+    });
+    it("Checks if null response would have closed flag", () => {
+        hp.haltAndClearStorage(() => {
+            initMain();
+            Countly.reportFeedbackWidgetManually(CountlyFeedbackWidgetMaker("123", "rating"), CountlyWidgetData, null);
+            cy.fetch_local_event_queue().then((eq) => {
+                cy.log(eq);
+                expect(eq.length).to.equal(1);
+                cy.expect(eq[0].segmentation.widget_id).to.equal("123");
+                cy.expect(eq[0].segmentation.closed).to.equal(1);
+            });
+        });
+    });
+    it("Checks if no id would be rejected", () => {
+        hp.haltAndClearStorage(() => {
+            initMain();
+            Countly.reportFeedbackWidgetManually(CountlyFeedbackWidgetMaker(undefined, "rating"), CountlyWidgetData, widgetResponseMakerNpsRating(3));
+            cy.fetch_local_event_queue().then((eq) => {
+                cy.log(eq);
+                expect(eq.length).to.equal(0);
+            });
+        });
+    });
+    it("Checks if rating would be curbed", () => {
+        hp.haltAndClearStorage(() => {
+            initMain();
+            Countly.reportFeedbackWidgetManually(CountlyFeedbackWidgetMaker("123", "rating"), CountlyWidgetData, widgetResponseMakerNpsRating(6));
+            cy.fetch_local_event_queue().then((eq) => {
+                cy.log(eq);
+                expect(eq.length).to.equal(1);
+                cy.check_commons(eq[0], 1);
+                cy.expect(eq[0].segmentation.rating).to.equal(5);
+                cy.expect(eq[0].segmentation.widget_id).to.equal("123");
             });
         });
     });
