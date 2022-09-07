@@ -1,3 +1,6 @@
+## 22.06.1
+- Added SDK calls to report Feedback widgets manually
+
 ## 22.06.0
 - Updated BoomerangJS to the latest version (1.737.0)
 - Implemented static code analysis recommendations from Codacy, Snyk and Deep Scan
