@@ -1,5 +1,5 @@
 ## 22.06.1
-- Added SDK calls to report NPSs and Surveys manually
+- Added SDK calls to report Feedback widgets manually
 
 ## 22.06.0
 - Updated BoomerangJS to the latest version (1.737.0)
