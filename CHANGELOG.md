@@ -2,6 +2,7 @@
 - ! Minor breaking change ! If no domain whitelist is provided for the heatmaps the SDK will fallback to your server url
 - Fixed a bug where heatmap files were susceptible to DOM XSS
 - Users can now input their domain whitelist for heatmaps feature during init
+- Added SDK calls to report Feedback widgets manually
 
 ## 22.06.0
 - Updated BoomerangJS to the latest version (1.737.0)
