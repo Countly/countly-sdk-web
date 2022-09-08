@@ -27,7 +27,7 @@ or
 ### 3. Use a CDN (content delivery network)
 Countly web SDK is available on CDNJS. Use either
 
-[https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/22.06.1/countly.min.js](https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/22.06.1/countly.min.js)
+[https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/22.06.2/countly.min.js](https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/22.06.2/countly.min.js)
 
 or
 

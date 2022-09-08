@@ -1,7 +1,9 @@
-## 22.06.1
+## 22.06.2
 - ! Minor breaking change ! If no domain whitelist is provided for the heatmaps the SDK will fallback to your server url
 - Fixed a bug where heatmap files were susceptible to DOM XSS
 - Users can now input their domain whitelist for heatmaps feature during init
+
+## 22.06.1
 - Added SDK calls to report Feedback widgets manually
 
 ## 22.06.0
