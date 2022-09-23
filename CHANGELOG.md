@@ -1,6 +1,3 @@
-## 22.06.2
-- [internal] Moved to new remote config API
-
 ## 22.06.1
 - Added SDK calls to report Feedback widgets manually
 
