@@ -13,6 +13,8 @@
             app_key: "YOUR_APP_KEY",
             url: "https://try.count.ly", //your server goes here
             debug: true,
+            rc_optin: true, // set it to false for not opting in users for AB testing while fetching the remote config (only with latest API)
+            use_new_rc_api: false, // set it to true to use the latest API
             remote_config: function (err, configs) {
                 //handle initial remote configs here
                 console.log(err, configs);
@@ -31,17 +33,23 @@
     <center>
         <img src="./images/team_countly.jpg" id="wallpaper" />
         <br />
-        <input type="button" onclick="reloadConfig()" value="Reload Config">
+        <input type="button" onclick="fetchConfig()" value="Fetch Config">
         <input type="button" onclick="getConfig()" value="Get Config">
         <input type="button" onclick="getConfig('test')" value="Get config for key Test">
+        <input type="button" onclick="ab(['key1','key2'])" value="Enroll user to AB test">
         <p><a href='http://count.ly/'>Count.ly</a></p>
     </center>
     <script type='text/javascript'>
-        //reload configs
-        function reloadConfig(ob) {
+        // fetches all keys
+        function fetchConfig() {
             Countly.fetch_remote_config(function (err, config) {
                 alert(JSON.stringify(config));
             });
+        }
+
+        // enroll user
+        function ab(keyArray) {
+            Countly.enrollUserToAB(keyArray);
         }
 
         //get config
