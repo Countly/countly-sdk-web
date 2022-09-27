@@ -2,9 +2,10 @@
 - ! Minor breaking change ! If no domain whitelist is provided for the heatmaps the SDK will fallback to your server url
 - Fixed a bug where heatmap files were susceptible to DOM XSS
 - Users can now input their domain whitelist for heatmaps feature during init
-- Added an init time flag to enable/disable new remote config API (default: disabled)
-- Added a new call to opt in users to the A/B testing for the given keys
-- Added an init time flag to enable/disable automatically opting in users for A/B testing while fetching remote config (with new RC API)(default: enabled)
+- Implementing new Remote Config/AB testing API:
+  - Added an init time flag to enable/disable new remote config API (default: disabled)
+  - Added a new call to opt in users to the A/B testing for the given keys
+  - Added an init time flag to enable/disable automatically opting in users for A/B testing while fetching remote config (with new RC API)(default: enabled)
 
 ## 22.06.1
 - Added SDK calls to report Feedback widgets manually
