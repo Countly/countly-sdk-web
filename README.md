@@ -25,11 +25,7 @@ or
     yarn add countly-sdk-web
 
 ### 3. Use a CDN (content delivery network)
-Countly web SDK is available on CDNJS. Use either
-
-[https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/22.06.2/countly.min.js](https://cdnjs.cloudflare.com/ajax/libs/countly-sdk-web/22.06.2/countly.min.js)
-
-or
+Countly web SDK is available on CDNJS:
 
 [https://cdn.jsdelivr.net/npm/countly-sdk-web@latest/lib/countly.min.js](https://cdn.jsdelivr.net/npm/countly-sdk-web@latest/lib/countly.min.js)
 
