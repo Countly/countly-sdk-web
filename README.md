@@ -14,6 +14,8 @@ Track, measure, and take action - all without leaving Countly.
 
 * **Slack user?** [Join our community](https://slack.count.ly) to ask questions and get answers!
 * **Questions?** [Ask in our Community forum](https://support.count.ly/hc/en-us/community/topics)
+* **Interested in the Countly server?** [Countly Server community repo](https://github.com/Countly/countly-server)
+* **Looking for other SDK's?** [An overview of them can be found here](https://support.count.ly/hc/en-us/articles/360037236571-Downloading-and-Installing-SDKs#officially-supported-sdks)
 
 ## Integrating Countly SDK in your projects
 
@@ -31,15 +33,6 @@ This SDK supports the following features:
 
 ## Security
 Security is very important to us. If you discover any issue regarding security, please disclose the information responsibly by sending an email to security@count.ly and **not by creating a GitHub issue**.
-
-## Other Github resources
-Check Countly Community Edition source code here:
-
-[Countly Server](https://github.com/Countly/countly-server)
-
-To find repositories for our other SDK's look below:
-
-[Other Countly SDK's](https://support.count.ly/hc/en-us/articles/360037236571-Downloading-and-Installing-SDKs#officially-supported-sdks)
 
 ## Badges
 If you like Countly, [why not use one of our badges](https://count.ly/brand-assets) and give a link back to us, so others know about this wonderful platform?
