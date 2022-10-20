@@ -4,7 +4,7 @@
 
 # Countly Web SDK
 
-This repository contains the Countly Web SDK which can be integrated into websites.
+This repository contains the Countly Web SDK which can be integrated into websites and web applications.
 
 ## What is Countly?
 [Countly](http://count.ly) is a product analytics solution and innovation enabler that helps teams track product performance and customer journey and behavior across [mobile](https://count.ly/mobile-analytics), [web](http://count.ly/web-analytics), 
