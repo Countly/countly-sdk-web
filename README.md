@@ -27,6 +27,8 @@ You can reach minimal integration info for your website from [this section of th
 
 Countly Web SDK has JSDoc3 compatible comments, and you can generate documentation by running `npm run-script docs` or you can use [the online version](https://countly.github.io/countly-sdk-web/).
 
+For an example integration of this SDK, you can have a look [here](https://github.com/Countly/countly-sdk-web/tree/master/examples).
+
 This SDK supports the following features:
 * [Analytics](https://support.count.ly/hc/en-us/articles/4431589003545-Analytics)
 * [User Profiles](https://support.count.ly/hc/en-us/articles/4403281285913-User-Profiles)
