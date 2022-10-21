@@ -4,7 +4,7 @@
 
 # Countly Web SDK
 
-This repository contains the Countly Web SDK which can be integrated into websites and web applications. The Countly Web SDK is intended to be used with [Countly Community Edition](https://github.com/Countly/countly-server) or [Countly Enterprise Edition](https://count.ly/product).
+This repository contains the Countly Web SDK, which can be integrated into websites and web applications. The Countly Web SDK is intended to be used with [Countly Community Edition](https://github.com/Countly/countly-server) or [Countly Enterprise Edition](https://count.ly/product).
 
 ## What is Countly?
 [Countly](https://count.ly) is a product analytics solution and innovation enabler that helps teams track product performance and customer journey and behavior across [mobile](https://count.ly/mobile-analytics), [web](http://count.ly/web-analytics),
@@ -19,13 +19,13 @@ Track, measure, and take action - all without leaving Countly.
 
 ## Integrating Countly SDK in your projects
 
-Link to the script and call helper methods based on what you want to track: sessions, views, clicks, custom events, user data, etc. and for much more information check out our documentation at [https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-](https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-)
+Link to the script and call helper methods based on what you want to track: sessions, views, clicks, custom events, user data, etc. and for much more check out our documentation at [https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-](https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-)
 
 For information about how to add the SDK to your project, please check [here](https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-#adding-the-sdk-to-the-project)
 
 You can reach minimal integration info for your website from here [https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-#minimal-setup](https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-#minimal-setup)
 
-Countly Web SDK has JSDoc3 compatible comments and you can generate documentation by running `npm run-script docs` or access online version at [https://countly.github.io/countly-sdk-web/](https://countly.github.io/countly-sdk-web/)
+Countly Web SDK has JSDoc3 compatible comments, and you can generate documentation by running `npm run-script docs` or access the online version at [https://countly.github.io/countly-sdk-web/](https://countly.github.io/countly-sdk-web/)
 
 This SDK supports the following features:
 * [General analytics](https://support.count.ly/hc/en-us/articles/4431589003545-Analytics)
@@ -35,7 +35,7 @@ This SDK supports the following features:
 Security is very important to us. If you discover any issue regarding security, please disclose the information responsibly by sending an email to security@count.ly and **not by creating a GitHub issue**.
 
 ## Badges
-If you like Countly, [why not use one of our badges](https://count.ly/brand-assets) and give a link back to us, so others know about this wonderful platform?
+If you like Countly, [why not use one of our badges](https://count.ly/brand-assets) and give a link back to us so others know about this wonderful platform?
 
 <a href="https://count.ly/f/badge" rel="nofollow"><img style="width:145px;height:60px" src="https://count.ly/badges/dark.svg?v2" alt="Countly - Product Analytics" /></a>
 
@@ -50,6 +50,6 @@ If you like Countly, [why not use one of our badges](https://count.ly/brand-asse
 ```
 
 ## How can I help you with your efforts?
-Glad you asked! We need ideas, feedback and constructive comments. All your suggestions will be taken care with upmost importance. For feature requests and engaging with the community join [our Slack Community](https://slack.count.ly) or [Community Forum](https://support.count.ly/hc/en-us/community/topics).
+Glad you asked! We need ideas, feedback and constructive comments. All your suggestions will be taken care of with utmost importance. For feature requests and engaging with the community, join [our Slack Community](https://slack.count.ly) or [Community Forum](https://support.count.ly/hc/en-us/community/topics).
 
 We are on [Twitter](http://twitter.com/gocountly), [Facebook](https://www.facebook.com/Countly) and [LinkedIn](https://www.linkedin.com/company/countly) if you would like to keep up with Countly related updates.
