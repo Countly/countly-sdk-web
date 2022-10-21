@@ -28,8 +28,12 @@ You can reach minimal integration info for your website from [this section of th
 Countly Web SDK has JSDoc3 compatible comments, and you can generate documentation by running `npm run-script docs` or you can use [the online version](https://countly.github.io/countly-sdk-web/).
 
 This SDK supports the following features:
-* [General analytics](https://support.count.ly/hc/en-us/articles/4431589003545-Analytics)
-* [Crash reporting](https://support.count.ly/hc/en-us/articles/4404213566105-Crashes-Errors)
+* [Analytics](https://support.count.ly/hc/en-us/articles/4431589003545-Analytics)
+* [User Profiles](https://support.count.ly/hc/en-us/articles/4403281285913-User-Profiles)
+* [Crash Reports](https://support.count.ly/hc/en-us/articles/4404213566105-Crashes-Errors)
+* [A/B Testing](https://support.count.ly/hc/en-us/articles/4416496362393-A-B-Testing-)
+* [Performance Monitoring](https://support.count.ly/hc/en-us/articles/4734457847705-Performance)
+* [Feedback Widgets](https://support.count.ly/hc/en-us/articles/4652903481753-Feedback-Surveys-NPS-and-Ratings-)
 
 ## Security
 Security is very important to us. If you discover any issue regarding security, please disclose the information responsibly by sending an email to security@count.ly and **not by creating a GitHub issue**.
