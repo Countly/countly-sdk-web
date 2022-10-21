@@ -1,27 +1,27 @@
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/79582b7ee7ca4021a3950376402fac00)](https://www.codacy.com/gh/Countly/countly-sdk-web/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Countly/countly-sdk-web&amp;utm_campaign=Badge_Grade) 
-[![npm version](https://badge.fury.io/js/countly-sdk-web.svg)](https://badge.fury.io/js/countly-sdk-web) 
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/79582b7ee7ca4021a3950376402fac00)](https://www.codacy.com/gh/Countly/countly-sdk-web/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Countly/countly-sdk-web&amp;utm_campaign=Badge_Grade)
+[![npm version](https://badge.fury.io/js/countly-sdk-web.svg)](https://badge.fury.io/js/countly-sdk-web)
 [![js delivr](https://data.jsdelivr.com/v1/package/npm/countly-sdk-web/badge)](https://www.jsdelivr.com/package/npm/countly-sdk-web)
 
 # Countly Web SDK
 
-This repository contains the Countly Web SDK which can be integrated into websites and web applications.
+This repository contains the Countly Web SDK which can be integrated into websites and web applications. The Countly Web SDK is intended to be used with [Countly Community Edition](https://github.com/Countly/countly-server) or [Countly Enterprise Edition](https://count.ly/product).
 
 ## What is Countly?
-[Countly](http://count.ly) is a product analytics solution and innovation enabler that helps teams track product performance and customer journey and behavior across [mobile](https://count.ly/mobile-analytics), [web](http://count.ly/web-analytics), 
-and [desktop](https://count.ly/desktop-analytics) applications. [Ensuring privacy by design](https://count.ly/your-data-your-rules), Countly allows you to innovate and enhance your products to provide personalized and customized customer experiences, and meet key business and revenue goals.
+[Countly](https://count.ly) is a product analytics solution and innovation enabler that helps teams track product performance and customer journey and behavior across [mobile](https://count.ly/mobile-analytics), [web](http://count.ly/web-analytics),
+and [desktop](https://count.ly/desktop-analytics) applications. [Ensuring privacy by design](https://count.ly/privacy-by-design), Countly allows you to innovate and enhance your products to provide personalized and customized customer experiences, and meet key business and revenue goals.
 
 Track, measure, and take action - all without leaving Countly.
 
-* **Slack user?** [Join our community](https://slack.count.ly) to ask questions and get answers!
-* **Questions?** [Ask in our Community forum](https://support.count.ly/hc/en-us/community/topics)
-* **Interested in the Countly server?** [Countly Server community repo](https://github.com/Countly/countly-server)
-* **Looking for other SDK's?** [An overview of them can be found here](https://support.count.ly/hc/en-us/articles/360037236571-Downloading-and-Installing-SDKs#officially-supported-sdks)
+* **Slack user?** [Join our Slack Community](https://slack.count.ly) to engage with the community!
+* **Questions or feature requests?** [Post in our Community Forum](https://support.count.ly/hc/en-us/community/topics)
+* **Looking for the Countly Server?** [Countly Community Edition repository](https://github.com/Countly/countly-server)
+* **Looking for other Countly SDKs?** [An overview of all Countly SDKs for mobile, web and desktop](https://support.count.ly/hc/en-us/articles/360037236571-Downloading-and-Installing-SDKs#officially-supported-sdks)
 
 ## Integrating Countly SDK in your projects
 
 Link to the script and call helper methods based on what you want to track: sessions, views, clicks, custom events, user data, etc. and for much more information check out our documentation at [https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-](https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-)
 
-For information on how to add the SDK to your project, you would check [here](https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-#adding-the-sdk-to-the-project)
+For information about how to add the SDK to your project, please check [here](https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-#adding-the-sdk-to-the-project)
 
 You can reach minimal integration info for your website from here [https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-#minimal-setup](https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-#minimal-setup)
 
@@ -50,4 +50,6 @@ If you like Countly, [why not use one of our badges](https://count.ly/brand-asse
 ```
 
 ## How can I help you with your efforts?
-Glad you asked. We need ideas, feedbacks and constructive comments. All your suggestions will be taken care with upmost importance. We are on [Twitter](http://twitter.com/gocountly) and [Facebook](https://www.facebook.com/Countly) if you would like to keep up with our fast progress!
+Glad you asked! We need ideas, feedback and constructive comments. All your suggestions will be taken care with upmost importance. For feature requests and engaging with the community join [our Slack Community](https://slack.count.ly) or [Community Forum](https://support.count.ly/hc/en-us/community/topics).
+
+We are on [Twitter](http://twitter.com/gocountly), [Facebook](https://www.facebook.com/Countly) and [LinkedIn](https://www.linkedin.com/company/countly) if you would like to keep up with Countly related updates.
