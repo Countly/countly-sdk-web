@@ -12,20 +12,20 @@ and [desktop](https://count.ly/desktop-analytics) applications. [Ensuring privac
 
 Track, measure, and take action - all without leaving Countly.
 
-* **Slack user?** [Join our Slack Community](https://slack.count.ly) to engage with the community!
+* **Slack user?** [Join our Slack Community](https://slack.count.ly)
 * **Questions or feature requests?** [Post in our Community Forum](https://support.count.ly/hc/en-us/community/topics)
 * **Looking for the Countly Server?** [Countly Community Edition repository](https://github.com/Countly/countly-server)
 * **Looking for other Countly SDKs?** [An overview of all Countly SDKs for mobile, web and desktop](https://support.count.ly/hc/en-us/articles/360037236571-Downloading-and-Installing-SDKs#officially-supported-sdks)
 
 ## Integrating Countly SDK in your projects
 
-Link to the script and call helper methods based on what you want to track: sessions, views, clicks, custom events, user data, etc. and for much more check out our documentation at [https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-](https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-)
+Link to the script and call helper methods based on what you want to track: sessions, views, clicks, custom events, user data, etc. and for much more [check out our documentation](https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-).
 
-For information about how to add the SDK to your project, please check [here](https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-#adding-the-sdk-to-the-project)
+For information about how to add the SDK to your project, please check [this section of the documentation](https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-#adding-the-sdk-to-the-project).
 
-You can reach minimal integration info for your website from here [https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-#minimal-setup](https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-#minimal-setup)
+You can reach minimal integration info for your website from [this section of the documentation](https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-#minimal-setup).
 
-Countly Web SDK has JSDoc3 compatible comments, and you can generate documentation by running `npm run-script docs` or access the online version at [https://countly.github.io/countly-sdk-web/](https://countly.github.io/countly-sdk-web/)
+Countly Web SDK has JSDoc3 compatible comments, and you can generate documentation by running `npm run-script docs` or you can use [the online version](https://countly.github.io/countly-sdk-web/).
 
 This SDK supports the following features:
 * [General analytics](https://support.count.ly/hc/en-us/articles/4431589003545-Analytics)
