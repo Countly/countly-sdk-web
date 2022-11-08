@@ -1,3 +1,5 @@
+## 22.06.3
+- Fixed an issue where some gateways stripped userAgent string during a crash report
 ## 22.06.2
 - ! Minor breaking change ! If no domain whitelist is provided for the heatmaps the SDK will fallback to your server url
 - Fixed a bug where heatmap files were susceptible to DOM XSS
