@@ -41,9 +41,11 @@ Cypress.Commands.add("check_crash", (testObject, appKey) => {
     appKey = appKey || hp.appKey;
     const metrics = JSON.parse(testObject.metrics);
     const crash = JSON.parse(testObject.crash);
+    const metricKeys = Object.keys(metrics);
     cy.check_request_commons(testObject, appKey);
     cy.check_commons(testObject);
     expect(metrics._ua).to.be.exist;
+    expect(metricKeys.length).to.equal(1);
     expect(crash._app_version).to.be.exist;
     expect(crash._background).to.be.exist;
     expect(crash._error).to.be.exist;
