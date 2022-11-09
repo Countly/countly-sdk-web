@@ -34,6 +34,32 @@ Cypress.Commands.add("check_request_commons", (testObject, appKey) => {
 });
 
 /**
+ * Checks a crash request for valid/correct formation
+ * @param {Object} testObject - crash object to be checked
+ */
+Cypress.Commands.add("check_crash", (testObject, appKey) => {
+    appKey = appKey || hp.appKey;
+    const metrics = JSON.parse(testObject.metrics);
+    const crash = JSON.parse(testObject.crash);
+    const metricKeys = Object.keys(metrics);
+    cy.check_request_commons(testObject, appKey);
+    cy.check_commons(testObject);
+    expect(metrics._ua).to.be.exist;
+    expect(metricKeys.length).to.equal(1);
+    expect(crash._app_version).to.be.exist;
+    expect(crash._background).to.be.exist;
+    expect(crash._error).to.be.exist;
+    expect(crash._javascript).to.be.exist;
+    expect(crash._nonfatal).to.be.exist;
+    expect(crash._not_os_specific).to.be.exist;
+    expect(crash._online).to.be.exist;
+    expect(crash._opengl).to.be.exist;
+    expect(crash._resolution).to.be.exist;
+    expect(crash._run).to.be.exist;
+    expect(crash._view).to.be.exist;
+});
+
+/**
  * Checks a queue object for valid/correct begin session, end session and session extension values 
  * @param {Object} queue - queue object to check
  * @param {Number} duration - session extension or end session duration to validate
