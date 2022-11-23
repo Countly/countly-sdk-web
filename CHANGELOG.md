@@ -1,3 +1,6 @@
+## 22.06.4
+- Fixed an issue with remote configs not working without a parameter
+
 ## 22.06.3
 - Fixed an issue that arose when sending crashes through a gateway. User agent information is now sent as part of the request.
 
