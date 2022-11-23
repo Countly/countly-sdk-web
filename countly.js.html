@@ -233,7 +233,7 @@
     */
     Countly.onload = Countly.onload || [];
 
-    var SDK_VERSION = "22.06.3";
+    var SDK_VERSION = "22.06.4";
     var SDK_NAME = "javascript_native_web";
 
     var urlParseRE = /^(((([^:\/#\?]+:)?(?:(\/\/)((?:(([^:@\/#\?]+)(?:\:([^:@\/#\?]+))?)@)?(([^:\/#\?\]\[]+|\[[^\/\]@#?]+\])(?:\:([0-9]+))?))?)?)?((\/?(?:[^\/\?#]+\/+)*)([^\?#]*)))?(\?[^#]+)?)(#.*)?/;
@@ -1740,11 +1740,11 @@
                 method: "rc"
             };
             // check if keys were provided
-            if (keys.length > 0) {
+            if (keys) {
                 request.keys = JSON.stringify(keys);
             }
             // check if omit_keys were provided
-            if (omit_keys.length > 0) {
+            if (omit_keys) {
                 request.omit_keys = JSON.stringify(omit_keys);
             }
             var providedCall;
