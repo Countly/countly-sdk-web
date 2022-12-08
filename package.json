@@ -33,7 +33,7 @@
   },
   "homepage": "https://count.ly/",
   "devDependencies": {
-    "cypress": "^9.5.0",
+    "cypress": "^12.0.2",
     "cypress-localstorage-commands": "^1.7.0",
     "docdash": "^1.2.0",
     "eslint": "^8.2.0",
