@@ -35,7 +35,7 @@
   "devDependencies": {
     "cypress": "^9.5.0",
     "cypress-localstorage-commands": "^1.7.0",
-    "docdash": "^1.2.0",
+    "docdash": "^2.0.1",
     "eslint": "^8.2.0",
     "eslint-config-airbnb": "^15.0.0",
     "eslint-plugin-chai-friendly": "^0.7.2",
