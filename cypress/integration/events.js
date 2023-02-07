@@ -62,4 +62,20 @@ describe("Events tests ", () => {
             });
         });
     });
+    it("Checks if interrupt timed events works", () => {
+        const eventKey = "interrupt_event_key";
+        hp.haltAndClearStorage(() => {
+            initMain();
+            // start the timer
+            Countly.start_event(eventKey);
+            // wait for a while
+            cy.wait(3000).then(() => {
+                // end the event and check duration
+                Countly.interrupt_event(eventKey);
+                cy.fetch_local_event_queue().then((eq) => {
+                    expect(eq.length).to.equal(0);
+                });
+            });
+        });
+    });
 });
