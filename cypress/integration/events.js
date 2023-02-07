@@ -70,7 +70,7 @@ describe("Events tests ", () => {
             Countly.start_event(eventKey);
             // wait for a while
             cy.wait(3000).then(() => {
-                // end the event and check duration
+                // interrupt the event and check event queue
                 Countly.interrupt_event(eventKey);
                 cy.fetch_local_event_queue().then((eq) => {
                     expect(eq.length).to.equal(0);
