@@ -15,7 +15,7 @@ Track, measure, and take action - all without leaving Countly.
 * **Slack user?** [Join our Slack Community](https://slack.count.ly)
 * **Questions or feature requests?** [Post in our Community Forum](https://support.count.ly/hc/en-us/community/topics)
 * **Looking for the Countly Server?** [Countly Community Edition repository](https://github.com/Countly/countly-server)
-* **Looking for other Countly SDKs?** [An overview of all Countly SDKs for mobile, web and desktop](https://support.c                                                ount.ly/hc/en-us/articles/360037236571-Downloading-and-Installing-SDKs#officially-supported-sdks)
+* **Looking for other Countly SDKs?** [An overview of all Countly SDKs for mobile, web and desktop](https://support.count.ly/hc/en-us/articles/360037236571-Downloading-and-Installing-SDKs#officially-supported-sdks)
 
 ## Integrating Countly SDK in your projects
 
