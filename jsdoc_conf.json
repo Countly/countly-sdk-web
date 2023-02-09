@@ -49,7 +49,7 @@
         "removeQuotes": "all",
         "menu":{
             "Countly":{
-                "href":"https://count.ly/"
+                "href":"https://countly.com/"
             },
             "Web SDK Docs":{
                 "href":"https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript-"

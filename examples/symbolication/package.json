@@ -2,7 +2,7 @@
   "name": "countly-sdk-web-sample-app",
   "version": "1.0.0",
   "description": "A sample web app to try Countly SDK features",
-  "author": "Countly (https://count.ly/)",
+  "author": "Countly (https://countly.com/)",
   "license": "MIT",
   "main": "src/index.js",
   "scripts": {
