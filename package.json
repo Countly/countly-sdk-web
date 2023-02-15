@@ -26,12 +26,12 @@
     "Analytics",
     "Web"
   ],
-  "author": "Countly <hello@count.ly> (https://count.ly/)",
+  "author": "Countly <hello@count.ly> (https://countly.com/)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Countly/countly-sdk-web/issues"
   },
-  "homepage": "https://count.ly/",
+  "homepage": "https://countly.com/",
   "devDependencies": {
     "cypress": "^9.5.0",
     "cypress-localstorage-commands": "^1.7.0",
