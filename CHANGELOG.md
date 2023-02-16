@@ -1,3 +1,6 @@
+## 22.06.5
+- Added a method to cancel timed events manually
+
 ## 22.06.4
 - Fixed an issue with remote configs not working without a parameter
 
