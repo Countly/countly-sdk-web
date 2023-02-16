@@ -1,3 +1,6 @@
+## 22.06.5
+- SDK now adds userAgent string to each request to prevent proxy related issues
+
 ## 22.06.4
 - Fixed an issue with remote configs not working without a parameter
 
