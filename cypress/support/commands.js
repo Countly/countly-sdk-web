@@ -24,9 +24,8 @@ Cypress.Commands.add("check_commons", (testObject) => {
 /**
  * Checks a queue object for valid app key, device id, sdk name and sdk version
  * @param {Object} testObject - object to be checked
- * @param {boolean} isBeginSession - begin session requests checks metric values somewhere else
 */
-Cypress.Commands.add("check_request_commons", (testObject, appKey, isBeginSession) => {
+Cypress.Commands.add("check_request_commons", (testObject, appKey) => {
     appKey = appKey || hp.appKey;
     expect(testObject.app_key).to.equal(appKey);
     expect(testObject.device_id).to.be.ok;
