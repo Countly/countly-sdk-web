@@ -7,7 +7,6 @@ node_modules
 .vscode
 .github
 .gitignore
-bower.json
 CHANGELOG.md
 cypress.json
 generateDocs.sh
