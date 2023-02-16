@@ -20,7 +20,12 @@ function initMain() {
         test_mode: true
     });
 }
-const dummyQueue = [{ begin_session: 1, metrics: "{\"_app_version\":\"0.0\",\"_ua\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:96.0) Gecko/20100101 Firefox/96.0\",\"_resolution\":\"1568x882\",\"_density\":1.2244897959183674,\"_locale\":\"en-US\"}", app_key: "YOUR_APP_KEY", device_id: "55669b9b-f9d7-4ed5-bc77-ec5ebb65ddd8", sdk_name: "javascript_native_web", sdk_version: "21.11.0", timestamp: 1644909864950, hour: 10, dow: 2 }, { events: "[{\"key\":\"[CLY]_orientation\",\"count\":1,\"segmentation\":{\"mode\":\"portrait\"},\"timestamp\":1644909864949,\"hour\":10,\"dow\":2}]", app_key: "YOUR_APP_KEY", device_id: "55669b9b-f9d7-4ed5-bc77-ec5ebb65ddd8", sdk_name: "javascript_native_web", sdk_version: "21.11.0", timestamp: 1644909864958, hour: 10, dow: 2 }, { session_duration: 4, app_key: "YOUR_APP_KEY", device_id: "55669b9b-f9d7-4ed5-bc77-ec5ebb65ddd8", sdk_name: "javascript_native_web", sdk_version: "21.11.0", timestamp: 1644909868015, hour: 10, dow: 2 }, { end_session: 1, session_duration: 10, app_key: "YOUR_APP_KEY", device_id: "55669b9b-f9d7-4ed5-bc77-ec5ebb65ddd8", sdk_name: "javascript_native_web", sdk_version: "21.11.0", timestamp: 1644909869459, hour: 10, dow: 2 }];
+const dummyQueue = [
+    { begin_session: 1, metrics: "{\"_app_version\":\"0.0\",\"_ua\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:96.0) Gecko/20100101 Firefox/96.0\",\"_resolution\":\"1568x882\",\"_density\":1.2244897959183674,\"_locale\":\"en-US\"}", app_key: "YOUR_APP_KEY", device_id: "55669b9b-f9d7-4ed5-bc77-ec5ebb65ddd8", sdk_name: "javascript_native_web", sdk_version: "21.11.0", timestamp: 1644909864950, hour: 10, dow: 2 },
+    { events: "[{\"key\":\"[CLY]_orientation\",\"count\":1,\"segmentation\":{\"mode\":\"portrait\"},\"timestamp\":1644909864949,\"hour\":10,\"dow\":2}]", app_key: "YOUR_APP_KEY", device_id: "55669b9b-f9d7-4ed5-bc77-ec5ebb65ddd8", sdk_name: "javascript_native_web", sdk_version: "21.11.0", timestamp: 1644909864958, hour: 10, dow: 2 },
+    { session_duration: 4, metrics: "{\"_ua\":\"hey\"}", app_key: "YOUR_APP_KEY", device_id: "55669b9b-f9d7-4ed5-bc77-ec5ebb65ddd8", sdk_name: "javascript_native_web", sdk_version: "21.11.0", timestamp: 1644909868015, hour: 10, dow: 2 },
+    { end_session: 1, session_duration: 10, metrics: "{\"_ua\":\"hey\"}", app_key: "YOUR_APP_KEY", device_id: "55669b9b-f9d7-4ed5-bc77-ec5ebb65ddd8", sdk_name: "javascript_native_web", sdk_version: "21.11.0", timestamp: 1644909869459, hour: 10, dow: 2 }
+];
 
 describe("Session tests ", () => {
     it("Checks if session start, extension and ending works with a dummy queue", () => {
@@ -191,6 +196,39 @@ describe("Browser session tests, manual 2, no cookie", () => {
             cy.check_event(JSON.parse(rq[3].events)[0], eventObj);
             // fifth object of the queue should be about session extension, also input the expected duration
             cy.check_session(rq[4], 1, true, app_key);
+        });
+    });
+});
+describe("Check request related functions", () => {
+    it("Check if prepareRequest forms a proper request object", () => {
+        hp.haltAndClearStorage(() => {
+        // initialize countly
+            initMain();
+            let reqObject = {};
+            Countly._internals.prepareRequest(reqObject);
+            cy.check_commons(reqObject);
+            cy.check_request_commons(reqObject);
+        });
+    });
+    it("Check if prepareRequest forms a proper request object from a bad one ", () => {
+        hp.haltAndClearStorage(() => {
+        // initialize countly
+            initMain();
+            let reqObject = { app_key: null, device_id: null };
+            Countly._internals.prepareRequest(reqObject);
+            cy.check_commons(reqObject);
+            cy.check_request_commons(reqObject);
+        });
+    });
+    it("Check if prepareRequest forms a proper request object and not erase an extra value ", () => {
+        hp.haltAndClearStorage(() => {
+        // initialize countly
+            initMain();
+            let reqObject = { extraKey: "value" };
+            Countly._internals.prepareRequest(reqObject);
+            expect(reqObject.extraKey).to.equal("value");
+            cy.check_commons(reqObject);
+            cy.check_request_commons(reqObject);
         });
     });
 });
