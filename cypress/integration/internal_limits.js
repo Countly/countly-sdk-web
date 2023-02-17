@@ -147,7 +147,7 @@ describe("Internal limit tests ", () => {
             Countly.userData.save();
             cy.fetch_local_request_queue().then((rq) => {
                 expect(rq.length).to.equal(1);
-                cy.check_custom_properties(rq[0], customProperties, limits);
+                cy.check_custom_properties_limit(rq[0], customProperties, limits);
             });
         });
     });
