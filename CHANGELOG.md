@@ -1,4 +1,5 @@
 ## 22.06.5
+- Added a method to cancel timed events manually
 - Fixed a race condition bug where a recorded event would have the wrong user properties in the drill database on the server. Now event queue is emptied (formed into a request) before recording any user profile changes
 
 ## 22.06.4
