@@ -1,38 +1,38 @@
 version: 2
 updates:
-- package-ecosystem: npm
-  directory: "/"
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 10
-  reviewers:
-  - turtledreams
-  assignees:
-  - turtledreams
-  labels:
-  - dependencies
-  versioning-strategy: increase-if-necessary
-- package-ecosystem: npm
-  directory: "/examples/symbolication/"
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 10
-  reviewers:
-  - turtledreams
-  assignees:
-  - turtledreams
-  labels:
-  - dependencies
-  versioning-strategy: increase-if-necessary
-- package-ecosystem: npm
-  directory: "/examples/react/"
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 10
-  reviewers:
-  - turtledreams
-  assignees:
-  - turtledreams
-  labels:
-  - dependencies
-  versioning-strategy: increase-if-necessary
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 10
+    reviewers:
+      - turtledreams
+    assignees:
+      - turtledreams
+    labels:
+      - dependencies
+    versioning-strategy: increase-if-necessary
+  - package-ecosystem: npm
+    directory: "/examples/symbolication/"
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 10
+    reviewers:
+      - turtledreams
+    assignees:
+      - turtledreams
+    labels:
+      - dependencies
+    versioning-strategy: increase-if-necessary
+  - package-ecosystem: npm
+    directory: "/examples/react/"
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 10
+    reviewers:
+      - turtledreams
+    assignees:
+      - turtledreams
+    labels:
+      - dependencies
+    versioning-strategy: increase-if-necessary
