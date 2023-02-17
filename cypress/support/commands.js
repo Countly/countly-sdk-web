@@ -24,13 +24,15 @@ Cypress.Commands.add("check_commons", (testObject) => {
 /**
  * Checks a queue object for valid app key, device id, sdk name and sdk version
  * @param {Object} testObject - object to be checked
- */
+*/
 Cypress.Commands.add("check_request_commons", (testObject, appKey) => {
     appKey = appKey || hp.appKey;
     expect(testObject.app_key).to.equal(appKey);
     expect(testObject.device_id).to.be.ok;
     expect(testObject.sdk_name).to.be.exist;
     expect(testObject.sdk_version).to.be.ok;
+    const metrics = JSON.parse(testObject.metrics);
+    expect(metrics._ua).to.be.ok;
 });
 
 /**
@@ -66,7 +68,7 @@ Cypress.Commands.add("check_crash", (testObject, appKey) => {
  * @param {Boolean} isSessionEnd - a boolean to mark this check is intended for end_session validation
  */
 Cypress.Commands.add("check_session", (queue, duration, isSessionEnd, appKey) => {
-    if (!duration) {
+    if (!duration) { // if duration is not given that means its begin session
         expect(queue.begin_session).to.equal(1);
         const metrics = JSON.parse(queue.metrics);
         expect(metrics._app_version).to.be.ok;
