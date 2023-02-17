@@ -292,7 +292,7 @@ Cypress.Commands.add("check_error_limit", (queue, limits) => {
  * @param {Object} limits - optional, if internal limits are going to be checked this should be provided as an object like this (values can change):
  * {key: 8, value: 8, segment: 3, breadcrumb: 2, line_thread: 3, line_length: 10};
  */
-Cypress.Commands.add("check_custom_properties", (properties, customProperties, limits) => {
+Cypress.Commands.add("check_custom_properties_limit", (properties, customProperties, limits) => {
     const obj = properties;
     cy.check_commons(obj);
     cy.check_request_commons(obj);
