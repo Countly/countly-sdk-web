@@ -1,3 +1,6 @@
+## 22.06.5
+- Fixed a bug where event queue was not emptied before sending user details
+
 ## 22.06.4
 - Fixed an issue with remote configs not working without a parameter
 
