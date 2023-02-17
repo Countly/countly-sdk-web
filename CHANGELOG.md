@@ -1,5 +1,5 @@
 ## 22.06.5
-- Fixed a bug where event queue was not emptied before sending user details
+- Fixed a race condition bug where a recorded event would have the wrong user properties in the drill database on the server. Now event queue is emptied (formed into a request) before recordgin any user profile changes
 
 ## 22.06.4
 - Fixed an issue with remote configs not working without a parameter
