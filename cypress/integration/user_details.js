@@ -55,13 +55,13 @@ describe("User details tests ", () => {
             Countly.add_event(eventObj);
             cy.fetch_local_event_queue().then((eq) => { // event should be in event queue
                 expect(eq.length).to.equal(1);
-                cy.check_event(eq[0], eventObj);
+                cy.check_event(eq[0], eventObj, undefined, false);
             });
             cy.wait(1000).then(() => {
                 Countly.user_details(userDetailObj);
                 cy.fetch_local_request_queue().then((rq) => { // events and user details must be here
                     expect(rq.length).to.equal(2);
-                    cy.check_event(JSON.parse(rq[0].events)[0], eventObj);
+                    cy.check_event(JSON.parse(rq[0].events)[0], eventObj, undefined, false);
                     cy.check_user_details(rq[1], userDetailObj);
                 });
                 cy.fetch_local_event_queue().then((eq) => { // event queue should be empty
@@ -427,7 +427,7 @@ describe("User details tests ", () => {
             Countly.add_event(eventObj);
             cy.fetch_local_event_queue().then((eq) => { // event should be in event queue
                 expect(eq.length).to.equal(1);
-                cy.check_event(eq[0], eventObj);
+                cy.check_event(eq[0], eventObj, undefined, false);
             });
             cy.wait(1000).then(() => {
                 Countly.userData.set("key", "value");
@@ -436,7 +436,7 @@ describe("User details tests ", () => {
                 });
                 cy.fetch_local_event_queue().then((eq) => { // event should be in event queue
                     expect(eq.length).to.equal(1);
-                    cy.check_event(eq[0], eventObj);
+                    cy.check_event(eq[0], eventObj, undefined, false);
                 });
             });
         });
@@ -447,7 +447,7 @@ describe("User details tests ", () => {
             Countly.add_event(eventObj);
             cy.fetch_local_event_queue().then((eq) => { // event should be in event queue
                 expect(eq.length).to.equal(1);
-                cy.check_event(eq[0], eventObj);
+                cy.check_event(eq[0], eventObj, undefined, false);
             });
             cy.wait(1000).then(() => {
                 Countly.userData.set("key", "value");
@@ -455,7 +455,7 @@ describe("User details tests ", () => {
 
                 cy.fetch_local_request_queue().then((rq) => {
                     expect(rq.length).to.equal(2);
-                    cy.check_event(JSON.parse(rq[0].events)[0], eventObj);
+                    cy.check_event(JSON.parse(rq[0].events)[0], eventObj, undefined, false);
                     const custom = JSON.parse(rq[1].user_details).custom;
                     expect(Object.keys(custom).length).to.equal(1);
                     expect(custom.key).to.equal("value");

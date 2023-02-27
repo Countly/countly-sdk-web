@@ -3,6 +3,11 @@
 <head>
 	<!-- Page styling here -->
 	<link rel='stylesheet' type='text/css' href='./style/style.css'>
+
+	<!-- polyfill for older browsers -->
+	<script src='https://polyfill.io/v3/polyfill.min.js'></script>
+
+	<!--Countly script-->
 	<script type='text/javascript'>
 		//some default pre init
 		var Countly = Countly || {};
@@ -50,7 +55,7 @@
 
 	<center>
 		<img src="./images/team_countly.jpg" id="wallpaper" />
-		<br/>
+		<br />
 		<input type="button" id="testButton" onclick="clickEvent()" value="Test Button">
 		<p><a href='https://countly.com/'>Countly</a></p>
 	</center>

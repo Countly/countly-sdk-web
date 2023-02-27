@@ -99,9 +99,13 @@ describe("Internal limit tests ", () => {
         hp.haltAndClearStorage(() => {
             initMain();
             Countly.track_pageview(viewName);
-            cy.fetch_local_event_queue().then((eq) => {
+            cy.fetch_local_event_queue().then((eq) => { // TODO: when view event is truncated we provide cvid instead of pvid. fix this
+                cy.log(eq);
                 expect(eq.length).to.equal(1);
                 cy.check_view_event_limit(eq[0], viewName, limits);
+                expect(eq[0].id).to.be.ok;
+                expect(eq[0].id.length).to.equal(21);
+                expect(eq[0].pvid).to.equal("");
             });
         });
     });

@@ -94,8 +94,17 @@ Cypress.Commands.add("check_session", (queue, duration, isSessionEnd, appKey) =>
  * @param {Object} eventObject - an event object to compare with queue values
  * @param {Number} duration - timed event duration to validate
  */
-Cypress.Commands.add("check_event", (queue, eventObject, duration) => {
+Cypress.Commands.add("check_event", (queue, eventObject, duration, hasCvid) => {
     expect(queue.key).to.equal(eventObject.key);
+    expect(queue.id).to.be.ok;
+    expect(queue.id.length).to.equal(21);
+    if (hasCvid) {
+        expect(queue.cvid).to.be.ok;
+        expect(queue.id.length).to.equal(21);
+    }
+    else {
+        expect(queue.cvid).to.equal("");
+    }
     if (eventObject.count === undefined) {
         expect(queue.count).to.equal(1);
     }
@@ -125,8 +134,17 @@ Cypress.Commands.add("check_event", (queue, eventObject, duration) => {
  * @param {string} name - a view name
  * @param {Number} duration - view event duration to validate
  */
-Cypress.Commands.add("check_view_event", (queue, name, duration) => {
+Cypress.Commands.add("check_view_event", (queue, name, duration, hasPvid) => {
     expect(queue.key).to.equal("[CLY]_view");
+    expect(queue.id).to.be.ok;
+    expect(queue.id.length).to.equal(21);
+    if (hasPvid) {
+        expect(queue.pvid).to.be.ok;
+        expect(queue.pvid.length).to.equal(21);
+    }
+    else {
+        expect(queue.pvid).to.equal("");
+    }
     expect(queue.count).to.equal(1);
     if (duration === undefined) {
         expect(queue.segmentation.visit).to.equal(1);
