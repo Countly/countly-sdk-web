@@ -1,3 +1,6 @@
+## 23.02.0
+- Fixed a bug where previous session cookie persisted even when the 'clear_stored_id' flag was set to true
+
 ## 22.06.5
 - SDK now adds userAgent string to each request to prevent proxy related issues
 - Added a method to cancel timed events manually
