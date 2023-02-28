@@ -9,7 +9,7 @@ function initMain() {
         url: "https://try.count.ly",
         session_update: 3,
         test_mode: true,
-        max_events: -1,
+        test_mode_eq: true,
         debug: true
     });
 }

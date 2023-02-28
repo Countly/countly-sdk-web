@@ -10,7 +10,7 @@ function initMain(consent) {
         require_consent: consent,
         device_id: "György Ligeti",
         test_mode: true,
-        max_events: -1,
+        test_mode_eq: true,
         debug: true
     });
 }
