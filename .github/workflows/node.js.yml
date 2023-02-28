@@ -10,15 +10,26 @@ on:
     branches: [master, staging]
 
 jobs:
-  build:
+  build-and-test:
+    strategy:
+      matrix:
+        node-version: [12.x, 14.x, 16.x]
+
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
+
       - name: Install Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "16.x"
-      - run: npm install --legacy-peer-deps
-      - run: npm run build --if-present
-      - run: npm test
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Build project (if present)
+        run: npm run build --if-present
+
+      - name: Run tests
+        run: npm test
