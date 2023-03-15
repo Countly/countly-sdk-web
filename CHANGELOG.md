@@ -1,3 +1,6 @@
+## 22.09.0
+- Mitigated an issue that caused the device changes after init to not reflect on memory
+
 ## 22.06.5
 - SDK now adds userAgent string to each request to prevent proxy related issues
 - Added a method to cancel timed events manually
