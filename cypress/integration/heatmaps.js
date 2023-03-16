@@ -45,22 +45,26 @@ describe("Browser heatmap tests, scrolls", () => {
         cy.scrollTo("bottom");
         // click button that triggers view change
         cy.get("#b2").click();
-        // 2 request with 1 session and 1 events
-        cy.fetch_local_request_queue(hp.appKey).then((rq) => {
-            cy.log(rq);
-            expect(rq.length).to.equal(2);
-            cy.check_session(rq[0], undefined, undefined, hp.appKey);
-            cy.check_view_event(JSON.parse(rq[1].events)[1], "/cypress/fixtures/scroll_test_3.html", undefined, false);
-        });
-        // 6 events with 4 views and 2 scrolls must be here
-        cy.fetch_local_event_queue(hp.appKey).then((eq) => {
-            cy.log(eq);
-            cy.check_scroll_event(eq[0]);
-            cy.check_view_event(eq[1], "/cypress/fixtures/scroll_test_3.html", 0, false);
-            cy.check_view_event(eq[2], "v1", undefined, true);
-            cy.check_scroll_event(eq[3]);
-            cy.check_view_event(eq[4], "v1", 0, true);
-            cy.check_view_event(eq[5], "v2", undefined, true);
+        // There should be 3 requests: session -> event batch 1 -> event batch 2
+        hp.waitFunction(hp.getTimestampMs(), 1000, 100, () => {
+            cy.fetch_local_request_queue(hp.appKey).then((rq) => {
+                expect(rq.length).to.equal(3);
+
+                cy.check_session(rq[0], undefined, undefined, hp.appKey);
+
+                const eventBatch1 = JSON.parse(rq[1].events); // 0 is orientation, 1 is view
+                expect(eventBatch1[0].key).to.equal("[CLY]_orientation");
+                expect(eventBatch1[0].segmentation.mode).to.be.ok;
+                cy.check_view_event(eventBatch1[1], "/cypress/fixtures/scroll_test_3.html", undefined, false);
+
+                const eventBatch2 = JSON.parse(rq[2].events); // 0 is view, 1 is scroll, 2 is view, 3 is scroll
+                cy.check_scroll_event(eventBatch2[0]);
+                cy.check_view_event(eventBatch2[1], "/cypress/fixtures/scroll_test_3.html", 0, false);
+                cy.check_view_event(eventBatch2[2], "v1", undefined, true);
+                cy.check_scroll_event(eventBatch2[3]);
+                cy.check_view_event(eventBatch2[4], "v1", 0, true);
+                cy.check_view_event(eventBatch2[5], "v2", undefined, true);
+            });
         });
     });
 });

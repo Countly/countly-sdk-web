@@ -63,14 +63,14 @@ Cypress.Commands.add("check_crash", (testObject, appKey) => {
 
 /**
  * Checks a queue object for valid/correct begin session, end session and session extension values 
- * @param {Object} queue - queue object to check
+ * @param {Object} queueObject - queue object to check
  * @param {Number} duration - session extension or end session duration to validate
  * @param {Boolean} isSessionEnd - a boolean to mark this check is intended for end_session validation
  */
-Cypress.Commands.add("check_session", (queue, duration, isSessionEnd, appKey) => {
+Cypress.Commands.add("check_session", (queueObject, duration, isSessionEnd, appKey) => {
     if (!duration) { // if duration is not given that means its begin session
-        expect(queue.begin_session).to.equal(1);
-        const metrics = JSON.parse(queue.metrics);
+        expect(queueObject.begin_session).to.equal(1);
+        const metrics = JSON.parse(queueObject.metrics);
         expect(metrics._app_version).to.be.ok;
         expect(metrics._ua).to.be.ok;
         expect(metrics._resolution).to.be.ok;
@@ -78,112 +78,112 @@ Cypress.Commands.add("check_session", (queue, duration, isSessionEnd, appKey) =>
         expect(metrics._locale).to.be.ok;
     }
     else if (!isSessionEnd) {
-        expect(queue.session_duration).to.be.within(duration, duration + 1);
+        expect(queueObject.session_duration).to.be.within(duration, duration + 1);
     }
     else {
-        expect(queue.end_session).to.equal(1);
-        expect(queue.session_duration).to.be.within(duration, duration + 1);
+        expect(queueObject.end_session).to.equal(1);
+        expect(queueObject.session_duration).to.be.within(duration, duration + 1);
     }
-    cy.check_request_commons(queue, appKey);
-    cy.check_commons(queue);
+    cy.check_request_commons(queueObject, appKey);
+    cy.check_commons(queueObject);
 });
 
 /**
  * Checks a queue object for valid/correct event values 
- * @param {Object} queue - queue object to check
- * @param {Object} eventObject - an event object to compare with queue values
+ * @param {Object} queueObject - queue object to check
+ * @param {Object} comparisonObject - an event object to compare with queue values
  * @param {Number} duration - timed event duration to validate
  */
-Cypress.Commands.add("check_event", (queue, eventObject, duration, hasCvid) => {
-    expect(queue.key).to.equal(eventObject.key);
-    expect(queue.id).to.be.ok;
-    expect(queue.id.length).to.equal(21);
+Cypress.Commands.add("check_event", (queueObject, comparisonObject, duration, hasCvid) => {
+    expect(queueObject.key).to.equal(comparisonObject.key);
+    expect(queueObject.id).to.be.ok;
+    expect(queueObject.id.length).to.equal(21);
     if (hasCvid) {
-        expect(queue.cvid).to.be.ok;
-        expect(queue.id.length).to.equal(21);
+        expect(queueObject.cvid).to.be.ok;
+        expect(queueObject.id.length).to.equal(21);
     }
     else {
-        expect(queue.cvid).to.equal("");
+        expect(queueObject.cvid).to.equal("");
     }
-    if (eventObject.count === undefined) {
-        expect(queue.count).to.equal(1);
+    if (comparisonObject.count === undefined) {
+        expect(queueObject.count).to.equal(1);
     }
     else {
-        expect(queue.count).to.equal(eventObject.count);
+        expect(queueObject.count).to.equal(comparisonObject.count);
     }
-    if (eventObject.sum !== undefined) {
-        expect(queue.sum).to.equal(eventObject.sum);
+    if (comparisonObject.sum !== undefined) {
+        expect(queueObject.sum).to.equal(comparisonObject.sum);
     }
-    if (eventObject.dur !== undefined || duration !== undefined) {
+    if (comparisonObject.dur !== undefined || duration !== undefined) {
         if (duration !== undefined) {
-            eventObject.dur = duration;
+            comparisonObject.dur = duration;
         }
-        expect(queue.dur).to.be.within(eventObject.dur, eventObject.dur + 1);
+        expect(queueObject.dur).to.be.within(comparisonObject.dur, comparisonObject.dur + 1);
     }
-    if (eventObject.segmentation !== undefined) {
-        for (var key in eventObject.segmentation) {
-            expect(queue.segmentation[key]).to.equal(eventObject.segmentation[key]);
+    if (comparisonObject.segmentation !== undefined) {
+        for (var key in comparisonObject.segmentation) {
+            expect(queueObject.segmentation[key]).to.equal(comparisonObject.segmentation[key]);
         }
     }
-    cy.check_commons(queue);
+    cy.check_commons(queueObject);
 });
 
 /**
  * Checks a queue object for valid/correct view event values 
- * @param {Object} queue - queue object to check
+ * @param {Object} queueObject - queue object to check
  * @param {string} name - a view name
  * @param {Number} duration - view event duration to validate
  */
-Cypress.Commands.add("check_view_event", (queue, name, duration, hasPvid) => {
-    expect(queue.key).to.equal("[CLY]_view");
-    expect(queue.id).to.be.ok;
-    expect(queue.id.length).to.equal(21);
+Cypress.Commands.add("check_view_event", (queueObject, name, duration, hasPvid) => {
+    expect(queueObject.key).to.equal("[CLY]_view");
+    expect(queueObject.id).to.be.ok;
+    expect(queueObject.id.length).to.equal(21);
     if (hasPvid) {
-        expect(queue.pvid).to.be.ok;
-        expect(queue.pvid.length).to.equal(21);
+        expect(queueObject.pvid).to.be.ok;
+        expect(queueObject.pvid.length).to.equal(21);
     }
     else {
-        expect(queue.pvid).to.equal("");
+        expect(queueObject.pvid).to.equal("");
     }
-    expect(queue.count).to.equal(1);
+    expect(queueObject.count).to.equal(1);
     if (duration === undefined) {
-        expect(queue.segmentation.visit).to.equal(1);
-        expect(queue.segmentation.view).to.be.ok;
-        expect(queue.segmentation.domain).to.be.ok;
+        expect(queueObject.segmentation.visit).to.equal(1);
+        expect(queueObject.segmentation.view).to.be.ok;
+        expect(queueObject.segmentation.domain).to.be.ok;
         // expect(queue.segmentation.start).to.be.ok; // TODO: this is only for manual tracking?
     }
     else {
-        expect(queue.dur).to.be.within(duration, duration + 1);
+        expect(queueObject.dur).to.be.within(duration, duration + 1);
     }
-    expect(queue.segmentation.name).to.equal(name);
-    cy.check_commons(queue);
+    expect(queueObject.segmentation.name).to.equal(name);
+    cy.check_commons(queueObject);
 });
 
 // TODO: make scroll tests better
 /**
  * Checks a queue object for valid/correct scroll event values 
- * @param {Object} queue - queue object to check
+ * @param {Object} queueObject - queue object to check
  */
-Cypress.Commands.add("check_scroll_event", (queue) => {
-    expect(queue.key).to.equal("[CLY]_action");
-    expect(queue.segmentation.domain).to.be.ok;
-    expect(queue.segmentation.height).to.be.ok;
-    expect(queue.segmentation.type).to.equal("scroll");
-    expect(queue.segmentation.view).to.be.ok;
-    expect(queue.segmentation.width).to.be.ok;
-    expect(queue.segmentation.y).to.be.ok;
-    cy.check_commons(queue);
+Cypress.Commands.add("check_scroll_event", (queueObject) => {
+    expect(queueObject.key).to.equal("[CLY]_action");
+    expect(queueObject.segmentation.domain).to.be.ok;
+    expect(queueObject.segmentation.height).to.be.ok;
+    expect(queueObject.segmentation.type).to.equal("scroll");
+    expect(queueObject.segmentation.view).to.be.ok;
+    expect(queueObject.segmentation.width).to.be.ok;
+    expect(queueObject.segmentation.y).to.be.ok;
+    cy.check_commons(queueObject);
 });
 
 /**
  * Checks a queue object for valid/correct user details values/limits 
- * @param {Object} details - queue object to check
+ * @param {Object} detailsObject - queue object to check
  * @param {Object} userDetails - user details object to compare queue values with
  * @param {Object} limits - optional, if internal limits are going to be checked this should be provided as an object like this (values can change):
  * {key: 8, value: 8, segment: 3, breadcrumb: 2, line_thread: 3, line_length: 10};
  */
-Cypress.Commands.add("check_user_details", (details, userDetails, limits) => {
-    const obj = details;
+Cypress.Commands.add("check_user_details", (detailsObject, userDetails, limits) => {
+    const obj = detailsObject;
     cy.check_commons(obj);
     cy.check_request_commons(obj);
     const queue = JSON.parse(obj.user_details);
@@ -226,13 +226,13 @@ Cypress.Commands.add("check_user_details", (details, userDetails, limits) => {
 
 /**
  * Checks a queue object for valid/correct custom event values/limits 
- * @param {Object} queue - queue object to check
+ * @param {Object} queueObject - queue object to check
  * @param {Object} customEvent - custom event object to compare queue values with
  * @param {Object} limits - a limits object that has internal limits like this (values can change):
  * {key: 8, value: 8, segment: 3, breadcrumb: 2, line_thread: 3, line_length: 10};
  */
-Cypress.Commands.add("check_custom_event_limit", (queue, customEvent, limits) => {
-    const obj = queue;
+Cypress.Commands.add("check_custom_event_limit", (queueObject, customEvent, limits) => {
+    const obj = queueObject;
     cy.check_commons(obj);
     // check key
     expect(obj.key).to.equal((customEvent.key).substring(0, limits.key));
@@ -253,13 +253,13 @@ Cypress.Commands.add("check_custom_event_limit", (queue, customEvent, limits) =>
 
 /**
  * Checks a queue object for valid/correct view event values/limits 
- * @param {Object} queue - queue object to check
+ * @param {Object} queueObject - queue object to check
  * @param {Object} viewName - view name to compare queue values with
  * @param {Object} limits - a limits object that has internal limits like this (values can change):
  * {key: 8, value: 8, segment: 3, breadcrumb: 2, line_thread: 3, line_length: 10};
  */
-Cypress.Commands.add("check_view_event_limit", (queue, viewName, limits) => {
-    const obj = queue;
+Cypress.Commands.add("check_view_event_limit", (queueObject, viewName, limits) => {
+    const obj = queueObject;
     cy.check_commons(obj);
     // check key
     expect(obj.key).to.equal("[CLY]_view");
@@ -270,12 +270,12 @@ Cypress.Commands.add("check_view_event_limit", (queue, viewName, limits) => {
 
 /**
  * Checks a queue object for valid/correct error logging values/limits 
- * @param {Object} queue - queue object to check
+ * @param {Object} queueObject - queue object to check
  * @param {Object} limits - a limits object that has internal limits like this (values can change):
  * {key: 8, value: 8, segment: 3, breadcrumb: 2, line_thread: 3, line_length: 10};
  */
-Cypress.Commands.add("check_error_limit", (queue, limits) => {
-    const obj = queue;
+Cypress.Commands.add("check_error_limit", (queueObject, limits) => {
+    const obj = queueObject;
     const crash = JSON.parse(obj.crash);
     cy.check_commons(obj);
     cy.check_request_commons(obj);
@@ -305,13 +305,13 @@ Cypress.Commands.add("check_error_limit", (queue, limits) => {
 
 /**
  * Checks a queue object for valid/correct custom property values/limits 
- * @param {Object} properties - queue object to check
+ * @param {Object} propertiesObject - queue object to check
  * @param {Object} customProperties - custom properties object to compare queue values with
  * @param {Object} limits - optional, if internal limits are going to be checked this should be provided as an object like this (values can change):
  * {key: 8, value: 8, segment: 3, breadcrumb: 2, line_thread: 3, line_length: 10};
  */
-Cypress.Commands.add("check_custom_properties_limit", (properties, customProperties, limits) => {
-    const obj = properties;
+Cypress.Commands.add("check_custom_properties_limit", (propertiesObject, customProperties, limits) => {
+    const obj = propertiesObject;
     cy.check_commons(obj);
     cy.check_request_commons(obj);
     const queue = JSON.parse(obj.user_details).custom;
