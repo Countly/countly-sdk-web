@@ -1,4 +1,4 @@
-## 22.09.0
+## 23.02.0
 - Mitigated an issue that caused the device changes after init to not reflect on memory
 
 ## 22.06.5
