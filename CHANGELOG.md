@@ -1,5 +1,6 @@
 ## 23.02.0
 - Events are now recorded with an internal ID.
+- Mitigated an issue where users could have truncate an internal event key
 
 ## 22.06.5
 - SDK now adds userAgent string to each request to prevent proxy related issues

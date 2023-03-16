@@ -262,7 +262,7 @@ Cypress.Commands.add("check_view_event_limit", (queue, viewName, limits) => {
     const obj = queue;
     cy.check_commons(obj);
     // check key
-    expect(obj.key).to.equal(("[CLY]_view").substring(0, limits.key));
+    expect(obj.key).to.equal("[CLY]_view");
     expect(obj.segmentation.name).to.equal(viewName.substring(0, limits.value));
     expect(obj.segmentation.visit).to.equal(1);
     expect(obj.segmentation.view.length).to.be.within(0, limits.value);
