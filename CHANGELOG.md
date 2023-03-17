@@ -2,6 +2,7 @@
 - Events are now recorded with an internal ID.
 - Mitigated an issue where users could have truncate an internal event key
 - Mitigated an issue where SDK was reporting empty scroll values
+- Mitigated an issue that caused the device changes, after init, to not reflect on memory
 
 ## 22.06.5
 - SDK now adds userAgent string to each request to prevent proxy related issues
