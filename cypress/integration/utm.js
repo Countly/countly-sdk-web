@@ -7,7 +7,7 @@ function initMulti(appKey, searchQuery, utmStuff) {
         app_key: appKey,
         url: "https://try.count.ly",
         test_mode: true,
-        max_events: -1,
+        test_mode_eq: true,
         utm: utmStuff,
         getSearchQuery: function() {
             return searchQuery;
