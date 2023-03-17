@@ -365,3 +365,15 @@ Cypress.Commands.add("fetch_local_event_queue", (appKey) => {
         });
     });
 });
+
+/**
+ * fetches values from local storage 
+ */
+Cypress.Commands.add("fetch_from_storage", (appKey, key) => {
+    cy.wait(hp.sWait).then(() => {
+        appKey = appKey || hp.appKey;
+        cy.getLocalStorage(`${hp.appKey}/${key}`).then((e) => {
+            return JSON.parse(e);
+        });
+    });
+});
