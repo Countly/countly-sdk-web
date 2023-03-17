@@ -53,7 +53,7 @@ describe("Events tests ", () => {
             Countly.add_event(eventObj);
             cy.fetch_local_event_queue().then((eq) => {
                 expect(eq.length).to.equal(1);
-                cy.check_event(eq[0], eventObj);
+                cy.check_event(eq[0], eventObj, undefined, false);
             });
         });
     });
@@ -74,7 +74,7 @@ describe("Events tests ", () => {
                     cy.fetch_local_event_queue().then((eq) => {
                         expect(eq.length).to.equal(1);
                         // we waited 3000 milliseconds so duration must be 3 to 4
-                        cy.check_event(eq[0], timedEventObj, 4);
+                        cy.check_event(eq[0], timedEventObj, 4, false);
                     });
                 });
             });
@@ -97,7 +97,7 @@ describe("Events tests ", () => {
                     cy.fetch_local_event_queue().then((eq) => {
                         expect(eq.length).to.equal(1);
                         // we waited 3000 milliseconds so duration must be 3 to 4
-                        cy.check_event(eq[0], timedEventObjLong, 4);
+                        cy.check_event(eq[0], timedEventObjLong, 4, false);
                     });
                 });
             });
@@ -150,7 +150,7 @@ describe("Events tests ", () => {
                 cy.fetch_local_event_queue().then((eq) => {
                     expect(eq.length).to.equal(1);
                     // we waited 3000 milliseconds so duration must be 3 to 4
-                    cy.check_event(eq[0], timedEventObj, 3);
+                    cy.check_event(eq[0], timedEventObj, 3, false);
                 });
             });
         });
@@ -168,7 +168,7 @@ describe("Events tests ", () => {
                 cy.fetch_local_event_queue().then((eq) => {
                     expect(eq.length).to.equal(1);
                     // we waited 3000 milliseconds so duration must be 3 to 4
-                    cy.check_event(eq[0], timedEventObj, 3);
+                    cy.check_event(eq[0], timedEventObj, 3, false);
                 });
             });
         });
@@ -202,7 +202,7 @@ describe("Events tests ", () => {
                 cy.fetch_local_event_queue().then((eq) => {
                     expect(eq.length).to.equal(1);
                     // we waited 3000 milliseconds so duration must be 3 to 4
-                    cy.check_event(eq[0], timedEventObjLong, 3);
+                    cy.check_event(eq[0], timedEventObjLong, 3, false);
                 });
             });
         });
