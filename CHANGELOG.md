@@ -1,4 +1,5 @@
 ## 23.02.0
+- Fixed a bug where previous session cookie persisted even when the 'clear_stored_id' flag was set to true
 - Mitigated an issue that caused the device changes, after init, to not reflect on memory
 
 ## 22.06.5

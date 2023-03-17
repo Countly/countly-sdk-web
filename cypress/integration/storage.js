@@ -6,7 +6,7 @@ function initMain(val) {
     Countly.init({
         app_key: "YOUR_APP_KEY",
         url: "https://try.count.ly",
-        max_events: -1,
+        test_mode_eq: true,
         test_mode: true,
         debug: true,
         storage: val
