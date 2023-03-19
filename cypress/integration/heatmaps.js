@@ -165,7 +165,7 @@ describe("Browser heatmap tests, clicks", () => {
                 expect(eventBatch2[0].key).to.equal("[CLY]_action");
                 cy.check_commons(eventBatch2[0]);
                 const seg = eventBatch2[0].segmentation;
-                click_check(seg, 79, 8);
+                click_check(seg, 80, 8);
             });
         });
     });
