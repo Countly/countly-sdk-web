@@ -48,6 +48,79 @@ var waitFunction = function(startTime, waitTime, waitIncrement, continueCallback
     }
 };
 
+// gathered events. count and segmentation key/values must be consistent
+const eventArray = [
+    // first event must be custom event
+    {
+        key: "a",
+        count: 1,
+        segmentation: {
+            1: "1"
+        }
+    },
+    // rest can be internal events
+    {
+        key: "[CLY]_view",
+        count: 2,
+        segmentation: {
+            2: "2"
+        }
+    },
+    {
+        key: "[CLY]_nps",
+        count: 3,
+        segmentation: {
+            3: "3"
+        }
+    },
+    {
+        key: "[CLY]_survey",
+        count: 4,
+        segmentation: {
+            4: "4"
+        }
+    },
+    {
+        key: "[CLY]_star_rating",
+        count: 5,
+        segmentation: {
+            5: "5"
+        }
+    },
+    {
+        key: "[CLY]_orientation",
+        count: 6,
+        segmentation: {
+            6: "6"
+        }
+    },
+    {
+        key: "[CLY]_action",
+        count: 7,
+        segmentation: {
+            7: "7"
+        }
+    }
+
+];
+// event adding loop
+/**
+ * adds events to the queue
+ * @param {Array} omitList - events to omit from the queue. If not provided, all events will be added. Must be an array of string key values
+ */
+function events(omitList) {
+    for (var i = 0, len = eventArray.length; i < len; i++) {
+        if (omitList) {
+            if (omitList.indexOf(eventArray[i].key) === -1) {
+                Countly.add_event(eventArray[i]);
+            }
+        }
+        else {
+            Countly.add_event(eventArray[i]);
+        }
+    }
+}
+
 module.exports = {
     haltAndClearStorage,
     sWait,
@@ -55,5 +128,7 @@ module.exports = {
     lWait,
     appKey,
     getTimestampMs,
-    waitFunction
+    waitFunction,
+    events,
+    eventArray
 };
