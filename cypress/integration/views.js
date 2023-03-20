@@ -13,18 +13,22 @@ function initMain() {
 }
 
 /** 
- * Checks if the cvid is the same for all events in the queue but ids are different ()
+ * Checks if the cvid is the same for all events in the queue but ids are different and pvid is undefined
  * @param {string} expectedCvid - expected view id
  * @param {Array} eventQ - events queue
  * @param {number} startIndex - start index of the queue
  * @param {number} endIndex - end index of the queue
 */
 function listIdChecker(expectedCvid, eventQ, startIndex, endIndex) {
+    if (!endIndex || !startIndex || endIndex < startIndex) { // prevent infinite loop
+        cy.log("Wrong index information");
+        return;
+    }
     var i = startIndex;
-    var lastIdList = [];
+    var lastIdList = []; // pool of ids
     while (i < endIndex) {
         expect(eventQ[i].cvid).to.equal(expectedCvid);
-        expect(eventQ[i].pvid).to.be.undefined; // there should be pvid
+        expect(eventQ[i].pvid).to.be.undefined; // there should not be pvid
         if (lastIdList.length > 0) {
             expect(lastIdList.indexOf(eventQ[i].id)).to.equal(-1); // we check this id against all ids in the list
         }
@@ -119,7 +123,7 @@ describe("View ID tests ", () => {
     // view B's id and event B's cvid are same. Also view B's pvid and view A's id are same
     // view C's id and event C's cvid are same. Also view C's pvid and view B's id are same
     //
-    // request order: view A start -> event A -> view A end -> view B start -> event B -> view B end -> view C start -> event C  
+    // request order: view A start -> internal can custom events -> event A -> view A end -> view B start -> internal can custom events -> event B -> view B end -> view C start -> internal can custom events -> event C  
     // ===========================
     it("Checks a sequence of events and page views", () => {
         hp.haltAndClearStorage(() => {
@@ -162,6 +166,21 @@ describe("View ID tests ", () => {
         });
     });
 
+    // ===========================
+    //  Confirms:                           CVID    |   PVID    |   ID
+    //                                    ++--------+-----------+-------++  
+    // record events before first view =>     ""      undefined    rnd
+    // record A view                   =>  undefined     ""        idA    
+    // record events under view A      =>    idA      undefined    rnd
+    // record A view (close)           =>  undefined     ""        idA
+    // record B view                   =>  undefined     idA       idB
+    // record events under view B      =>    idB      undefined    rnd  //TODO: confirm this
+    // record B view (close)           =>  undefined     idA       idB
+    // record C view                   =>  undefined     idB       idC
+    // record events under view C      =>     idC     undefined    rnd
+    //                                   ++--------+-----------+-------++
+    // request order: internal can custom events -> view A start -> event A -> view A end -> view B start -> internal can custom events -> event B -> view B end -> view C start -> internal can custom events -> event C
+    // ===========================
     it("Checks a sequence of events and page views, with events before first view", () => {
         hp.haltAndClearStorage(() => {
             initMain();
