@@ -223,4 +223,83 @@ describe("View ID tests ", () => {
             });
         });
     });
+
+    // check end_session usage
+    it("Checks a sequence of events and page views, with end_session, no session started", () => {
+        hp.haltAndClearStorage(() => {
+            initMain();
+            hp.events(["[CLY]_view"]); // first events
+            Countly.end_session(); // no session started must be ignored
+            Countly.track_view("A");
+            Countly.add_event({ key: "A" });
+
+            cy.fetch_local_event_queue().then((eq) => {
+                expect(eq.length).to.equal(8);
+                cy.log(eq);
+
+                listIdChecker("", eq, 0, 6); // check all internal events before view A
+
+                // event A and view A
+                cy.check_view_event(eq[6], "A", undefined, false); // no pvid
+                const idA = eq[6].id; // idA
+                cy.check_event(eq[7], { key: "A" }, undefined, idA); // cvid should be idA
+            });
+        });
+    });
+    it("Checks a sequence of events and page views, with end_session, with session started", () => {
+        hp.haltAndClearStorage(() => {
+            initMain();
+            Countly.track_sessions();
+            hp.events(["[CLY]_view"]); // first events
+            Countly.end_session(); // no view started so must be ignored
+            Countly.track_view("A");
+            Countly.add_event({ key: "A" });
+
+            cy.fetch_local_event_queue().then((eq) => {
+                expect(eq.length).to.equal(9); // orientation added
+                cy.log(eq);
+
+                cy.check_event(eq[0], { key: "[CLY]_orientation" }, undefined, ""); // internal event
+
+                listIdChecker("", eq, 1, 7); // check all internal events before view A
+
+                // event A and view A
+                cy.check_view_event(eq[7], "A", undefined, false); // no pvid
+                const idA = eq[7].id; // idA
+                cy.check_event(eq[8], { key: "A" }, undefined, idA); // cvid should be idA
+            });
+        });
+    });
+    it("Checks a sequence of events and page views, with end_session, with session started and called after view", () => {
+        hp.haltAndClearStorage(() => {
+            initMain();
+            Countly.track_sessions();
+            hp.events(["[CLY]_view"]); // first events
+            Countly.track_view("A");
+            Countly.end_session(); // no view started so must be ignored
+            Countly.add_event({ key: "A" });
+
+            Countly.track_view("B");
+            hp.events(["[CLY]_view"]);
+
+            cy.fetch_local_event_queue().then((eq) => {
+                expect(eq.length).to.equal(17); // orientation added
+                cy.log(eq);
+
+                cy.check_event(eq[0], { key: "[CLY]_orientation" }, undefined, ""); // internal event
+
+                listIdChecker("", eq, 1, 7); // check all internal events before view A
+
+                // event A and view A
+                cy.check_view_event(eq[7], "A", undefined, false); // no pvid
+                const idA = eq[7].id; // idA
+                cy.check_view_event(eq[8], "A", 0, false); // no pvid
+                cy.check_event(eq[9], { key: "A" }, undefined, idA); // cvid should be idA
+
+                cy.check_view_event(eq[10], "B", undefined, idA); // pvid is idA
+                const idB = eq[10].id; // idB
+                listIdChecker(idB, eq, 11, 17); // check all internal events in view B 
+            });
+        });
+    });
 });
