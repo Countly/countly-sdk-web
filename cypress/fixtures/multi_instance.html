@@ -1,0 +1,161 @@
+<html>
+<head>
+    <script type='text/javascript' src='../../lib/countly.js'></script>
+    <script type='text/javascript' src='../support/integration_helper.js'></script>
+    <script type='text/javascript'>
+        // here we implement a cookie and localStorage clearing logic
+        const deleteAllCookies = () => {
+            const cookies = document.cookie.split(";");
+            for (const cookie of cookies) {
+                const eqPos = cookie.indexOf("=");
+                const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+                document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+            }
+        }
+        window.localStorage.clear();
+        deleteAllCookies();
+        console.error("cleared the storage");
+
+        // ==================================================
+        // synchronously
+        // ==================================================
+        //initializing first instance, which will be global Countly
+        Countly.init({
+            app_key: "YOUR_APP_KEY1",
+            url: "https://try.count.ly",
+            test_mode: true
+        })
+        Countly.remove_consent();
+        Countly.disable_offline_mode();
+        Countly.add_event({ key: "test", count: 1, sum: 1, dur: 1, segmentation: { test: "test" } });
+        Countly.start_event("test");
+        Countly.cancel_event("gobbledygook");
+        Countly.end_event("test");
+        Countly.report_conversion("camp_id", "camp_user_id");
+        Countly.recordDirectAttribution("camp_id", "camp_user_id");
+        Countly.user_details({ name: "name" });
+        Countly.userData.set("set", "set");
+        Countly.userData.save();
+        Countly.report_trace({ name: "name", stz: 1, type: "type" });
+        Countly.log_error({ error: "error", stack: "stack" });
+        Countly.add_log("error");
+        Countly.fetch_remote_config();
+        Countly.enrollUserToAb();
+        Countly.track_sessions();
+        Countly.track_pageview();
+        Countly.track_errors();
+        Countly.track_clicks();
+        Countly.track_scrolls();
+        Countly.track_links();
+        Countly.track_forms();
+        Countly.collect_from_forms();
+        Countly.collect_from_facebook();
+        Countly.opt_in();
+
+        //initialize second instance for another app synchronously
+        var Countly2 = Countly.init({
+            app_key: "YOUR_APP_KEY2", //must have different APP key
+            url: "https://try.count.ly",
+            test_mode: true
+
+        });
+        Countly2.remove_consent();
+        Countly2.disable_offline_mode();
+        Countly2.add_event({ key: "test", count: 1, sum: 1, dur: 1, segmentation: { test: "test" } });
+        Countly2.start_event("test");
+        Countly2.cancel_event("gobbledygook");
+        Countly2.end_event("test");
+        Countly2.report_conversion("camp_id", "camp_user_id");
+        Countly2.recordDirectAttribution("camp_id", "camp_user_id");
+        Countly2.user_details({ name: "name" });
+        Countly2.userData.set("set", "set");
+        Countly2.userData.save();
+        Countly2.report_trace({ name: "name", stz: 1, type: "type" });
+        Countly2.log_error({ error: "error", stack: "stack" });
+        Countly2.add_log("error");
+        Countly2.fetch_remote_config();
+        Countly2.enrollUserToAb();
+        Countly2.track_sessions();
+        Countly2.track_pageview();
+        Countly2.track_errors();
+        Countly2.track_clicks();
+        Countly2.track_scrolls();
+        Countly2.track_links();
+        Countly2.track_forms();
+        Countly2.collect_from_forms();
+        Countly2.collect_from_facebook();
+        Countly2.opt_in();
+
+        // ==================================================
+        // asynchronously
+        // ==================================================
+        //initialize third instance for another app asynchronously
+        Countly.q.push(["init", {
+            app_key: "YOUR_APP_KEY3", //must have different APP key
+            url: "https://try.count.ly",
+            test_mode: true
+
+        }])
+        Countly.q.push(["YOUR_APP_KEY3", "remove_consent"]);
+        Countly.q.push(["YOUR_APP_KEY3", "disable_offline_mode"]);
+        Countly.q.push(["YOUR_APP_KEY3", "add_event", { key: "test", count: 1, sum: 1, dur: 1, segmentation: { test: "test" } }]);
+        Countly.q.push(["YOUR_APP_KEY3", "start_event", "test"]);
+        Countly.q.push(["YOUR_APP_KEY3", "cancel_event", "gobbledygook"]);
+        Countly.q.push(["YOUR_APP_KEY3", "end_event", "test"]);
+        Countly.q.push(["YOUR_APP_KEY3", "report_conversion", "camp_id", "camp_user_id"]);
+        Countly.q.push(["YOUR_APP_KEY3", "recordDirectAttribution", "camp_id", "camp_user_id"]);
+        Countly.q.push(["YOUR_APP_KEY3", "user_details", { name: "name" }]);
+        Countly.q.push(["YOUR_APP_KEY3", "userData.set", "set", "set"]);
+        Countly.q.push(["YOUR_APP_KEY3", "userData.save"]);
+        Countly.q.push(["YOUR_APP_KEY3", "report_trace", { name: "name", stz: 1, type: "type" }]);
+        Countly.q.push(["YOUR_APP_KEY3", "log_error", { error: "error", stack: "stack" }]);
+        Countly.q.push(["YOUR_APP_KEY3", "add_log", "error"]);
+        Countly.q.push(["YOUR_APP_KEY3", "fetch_remote_config"]);
+        Countly.q.push(["YOUR_APP_KEY3", "enrollUserToAb"]);
+        Countly.q.push(["YOUR_APP_KEY3", "track_sessions"]);
+        Countly.q.push(["YOUR_APP_KEY3", "track_pageview"]);
+        Countly.q.push(["YOUR_APP_KEY3", "track_errors"]);
+        Countly.q.push(["YOUR_APP_KEY3", "track_clicks"]);
+        Countly.q.push(["YOUR_APP_KEY3", "track_scrolls"]);
+        Countly.q.push(["YOUR_APP_KEY3", "track_links"]);
+        Countly.q.push(["YOUR_APP_KEY3", "track_forms"]);
+        Countly.q.push(["YOUR_APP_KEY3", "collect_from_forms"]);
+        Countly.q.push(["YOUR_APP_KEY3", "collect_from_facebook"]);
+        Countly.q.push(["YOUR_APP_KEY3", "opt_in"]);
+
+        //initialize fourth instance for another app asynchronously
+        Countly.q.push(["init", {
+            app_key: "YOUR_APP_KEY4", //must have different APP key
+            url: "https://try.count.ly",
+            test_mode: true
+
+        }])
+        Countly.q.push(["YOUR_APP_KEY4", "remove_consent"]);
+        Countly.q.push(["YOUR_APP_KEY4", "disable_offline_mode"]);
+        Countly.q.push(["YOUR_APP_KEY4", "add_event", { key: "test", count: 1, sum: 1, dur: 1, segmentation: { test: "test" } }]);
+        Countly.q.push(["YOUR_APP_KEY4", "start_event", "test"]);
+        Countly.q.push(["YOUR_APP_KEY4", "cancel_event", "gobbledygook"]);
+        Countly.q.push(["YOUR_APP_KEY4", "end_event", "test"]);
+        Countly.q.push(["YOUR_APP_KEY4", "report_conversion", "camp_id", "camp_user_id"]);
+        Countly.q.push(["YOUR_APP_KEY4", "recordDirectAttribution", "camp_id", "camp_user_id"]);
+        Countly.q.push(["YOUR_APP_KEY4", "user_details", { name: "name" }]);
+        Countly.q.push(["YOUR_APP_KEY4", "userData.set", "set", "set"]);
+        Countly.q.push(["YOUR_APP_KEY4", "userData.save"]);
+        Countly.q.push(["YOUR_APP_KEY4", "report_trace", { name: "name", stz: 1, type: "type" }]);
+        Countly.q.push(["YOUR_APP_KEY4", "log_error", { error: "error", stack: "stack" }]);
+        Countly.q.push(["YOUR_APP_KEY4", "add_log", "error"]);
+        Countly.q.push(["YOUR_APP_KEY4", "fetch_remote_config"]);
+        Countly.q.push(["YOUR_APP_KEY4", "enrollUserToAb"]);
+        Countly.q.push(["YOUR_APP_KEY4", "track_sessions"]);
+        Countly.q.push(["YOUR_APP_KEY4", "track_pageview"]);
+        Countly.q.push(["YOUR_APP_KEY4", "track_errors"]);
+        Countly.q.push(["YOUR_APP_KEY4", "track_clicks"]);
+        Countly.q.push(["YOUR_APP_KEY4", "track_scrolls"]);
+        Countly.q.push(["YOUR_APP_KEY4", "track_links"]);
+        Countly.q.push(["YOUR_APP_KEY4", "track_forms"]);
+        Countly.q.push(["YOUR_APP_KEY4", "collect_from_forms"]);
+        Countly.q.push(["YOUR_APP_KEY4", "collect_from_facebook"]);
+        Countly.q.push(["YOUR_APP_KEY4", "opt_in"]);
+    </script>
+</head>
+</html>
