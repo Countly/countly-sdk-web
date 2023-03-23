@@ -8,15 +8,14 @@
     <script type='text/javascript' src='../lib/countly.js'></script>
     <script type='text/javascript'>
 
-        //initializing Countly with params and passing require_consent config as true as rating widget depends on consent
         Countly.init({
             app_key: 'YOUR_APP_KEY', //your app key
             url: 'https://try.count.ly', //your server goes here
             debug: true
         });
 
-        //To enable the rating widgets first click the give consent button. After this the widget must be automatically visible.
-        //Use Pop Widget to to popup the widget manually without clicking on the widget
+        // Below you have to fill YOUR_WIDGET_ID with the widget ID you get from the server after creating your widget
+        //Use Pop Widget to popup the widget manually without clicking on the widget
         //Use Multiple Widgets to display multiple widgets
         //Press Enable Widget to return back to the original widget
         function enable() {

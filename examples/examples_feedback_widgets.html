@@ -8,24 +8,27 @@
   <script type='text/javascript' src='../lib/countly.js'></script>
   <script type='text/javascript'>
 
-    //initializing Countly with params and passing require_consent config as true as feedback widget depends on consent
     Countly.init({
       app_key: 'YOUR_APP_KEY', //your app key
       url: 'https://try.count.ly', //your server goes here
       debug: true
     });
 
+    //=================================================
+    // Fetching and displaying feedback widgets
+    //=================================================
     function fetchAndDisplayWidget() {
-      // Fetch user's NPS and Survey feedbacks from the server
+      // Fetch user's feedbacks widgets from the server (must have been created at server first)
       Countly.get_available_feedback_widgets(feedbackWidgetsCallback);
     }
-    // Surveys feedback callback function
+
+    // Callback function to execute after fetching the feedback widgets
     function feedbackWidgetsCallback(countlyPresentableFeedback, err) {
-      if (err) {
+      if (err) { // error handling
         console.log(err);
         return;
       }
-      // Decide which which widget to show. Here first one is selected:
+      // Decide which which widget to show. Here the first one is selected. Check the below implementation for a more elaborate version.
       var countlyFeedbackWidget = countlyPresentableFeedback[0];
 
       // Define the element ID and the class name (optional)
@@ -37,6 +40,9 @@
     }
 
 
+    //=================================================
+    // Fetching and reporting feedback widgets manually
+    //=================================================
     var CountlyFeedbackWidget;
     var CountlyWidgetData;
     // an example of getting the widget list, using it to get widget data and then recording data for it manually. widgetType can be 'nps', 'survey' or 'rating'    
@@ -45,10 +51,12 @@
       Countly.get_available_feedback_widgets(
         // callback function, 1st param is the feedback widget list
         function (feedbackList, err) {
-          if (err) {
+          if (err) { // error handling
             console.log(err);
             return;
           }
+
+          // find the widget object with the given widget type. This or a similar implementation can be used while using fetchAndDisplayWidget() as well
           var i = feedbackList.length - 1;
           while (i--) {
             if (feedbackList[i].type === widgetType) {
@@ -56,15 +64,18 @@
               break;
             }
           }
+
+          // if the widget object is found
           if (CountlyFeedbackWidget) {
             // Get data with the widget object
             Countly.getFeedbackWidgetData(CountlyFeedbackWidget,
               // callback function, 1st param is the feedback widget data
               function (feedbackData, err) {
-                if (err) {
+                if (err) { // error handling
                   console.log(err);
                   return;
                 }
+
                 CountlyWidgetData = feedbackData;
                 // record data according to the widget type
                 if (CountlyWidgetData.type === 'nps') {
