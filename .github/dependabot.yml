@@ -3,10 +3,10 @@ updates:
   - package-ecosystem: npm
     directory: "/"
     schedule:
-      interval: monthly
-    ignore:
-      - dependency-type: "development"
-        security: true
+      interval: daily
+    # ignore:
+    #   - dependency-type: "development"
+    #     security: true
     open-pull-requests-limit: 10
     reviewers:
       - turtledreams
@@ -18,10 +18,10 @@ updates:
   - package-ecosystem: npm
     directory: "/examples/symbolication/"
     schedule:
-      interval: monthly
-    ignore:
-      - dependency-type: "development"
-        security: true
+      interval: daily
+    # ignore:
+    #   - dependency-type: "development"
+    #     security: true
     open-pull-requests-limit: 10
     reviewers:
       - turtledreams
@@ -33,10 +33,10 @@ updates:
   - package-ecosystem: npm
     directory: "/examples/react/"
     schedule:
-      interval: monthly
-    ignore:
-      - dependency-type: "development"
-        security: true
+      interval: daily
+    # ignore:
+    #   - dependency-type: "development"
+    #     security: true
     open-pull-requests-limit: 10
     reviewers:
       - turtledreams
