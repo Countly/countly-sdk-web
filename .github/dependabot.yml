@@ -4,9 +4,6 @@ updates:
     directory: "/"
     schedule:
       interval: daily
-    # ignore:
-    #   - dependency-type: "development"
-    #     security: true
     open-pull-requests-limit: 10
     reviewers:
       - turtledreams
@@ -19,9 +16,6 @@ updates:
     directory: "/examples/symbolication/"
     schedule:
       interval: daily
-    # ignore:
-    #   - dependency-type: "development"
-    #     security: true
     open-pull-requests-limit: 10
     reviewers:
       - turtledreams
@@ -34,9 +28,6 @@ updates:
     directory: "/examples/react/"
     schedule:
       interval: daily
-    # ignore:
-    #   - dependency-type: "development"
-    #     security: true
     open-pull-requests-limit: 10
     reviewers:
       - turtledreams
