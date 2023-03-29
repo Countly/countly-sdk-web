@@ -1,3 +1,6 @@
+## 23.02.1
+- Mitigated an issue that could have caused view IDs to be terminated prematurely when using manual sessions and end_session was called abruptly 
+
 ## 23.02.0
 - Events are now recorded with an internal ID.
 - Mitigated an issue where users could have truncate an internal event key
