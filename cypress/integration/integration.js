@@ -13,7 +13,7 @@ function initMain() {
     });
 }
 
-describe("first", () => {
+describe("Integration test", () => {
     it("int, no consent, no offline_mode", () => {
         initMain();
         const idType = Countly.get_device_id_type();
