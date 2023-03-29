@@ -97,6 +97,7 @@ Cypress.Commands.add("check_session", (queueObject, duration, isSessionEnd, appK
 Cypress.Commands.add("check_event", (queueObject, comparisonObject, duration, hasCvid) => {
     expect(queueObject.key).to.equal(comparisonObject.key);
     expect(queueObject.id).to.be.ok;
+    expect(queueObject.pvid).to.be.undefined;
     expect(queueObject.id.length).to.equal(21);
     if (hasCvid) {
         expect(queueObject.cvid).to.be.ok;
@@ -137,6 +138,7 @@ Cypress.Commands.add("check_event", (queueObject, comparisonObject, duration, ha
 Cypress.Commands.add("check_view_event", (queueObject, name, duration, hasPvid) => {
     expect(queueObject.key).to.equal("[CLY]_view");
     expect(queueObject.id).to.be.ok;
+    expect(queueObject.cvid).to.be.undefined;
     expect(queueObject.id.length).to.equal(21);
     if (hasPvid) {
         expect(queueObject.pvid).to.be.ok;

@@ -7,7 +7,7 @@ function initMain() {
     Countly.init({
         app_key: "YOUR_APP_KEY",
         url: "https://try.count.ly",
-        max_events: -1
+        test_mode_eq: true
     });
 }
 // TODO: Make tests browser specific as all browsers does not support userAgentData yet.

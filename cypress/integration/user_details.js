@@ -7,7 +7,8 @@ function initMain() {
     Countly.init({
         app_key: "YOUR_APP_KEY",
         url: "https://try.count.ly",
-        max_events: -1
+        test_mode_eq: true,
+        test_mode: true
     });
 }
 
@@ -31,7 +32,7 @@ const eventObj = {
     key: "in_app_purchase",
     count: 3,
     sum: 2.97,
-    dur: 1000,
+    dur: 300,
     segmentation: {
         app_version: "1.0",
         country: "Tahiti"
@@ -57,7 +58,7 @@ describe("User details tests ", () => {
                 expect(eq.length).to.equal(1);
                 cy.check_event(eq[0], eventObj, undefined, false);
             });
-            cy.wait(1000).then(() => {
+            cy.wait(300).then(() => {
                 Countly.user_details(userDetailObj);
                 cy.fetch_local_request_queue().then((rq) => { // events and user details must be here
                     expect(rq.length).to.equal(2);
@@ -75,11 +76,13 @@ describe("User details tests ", () => {
             initMain();
             Countly.userData.set("key", "value");
             Countly.userData.save();
-            cy.fetch_local_request_queue().then((rq) => {
-                expect(rq.length).to.equal(1);
-                const custom = JSON.parse(rq[0].user_details).custom;
-                expect(custom.key).to.equal("value");
-                expect(Object.keys(custom).length).to.equal(1);
+            hp.waitFunction(hp.getTimestampMs(), 300, 100, () => {
+                cy.fetch_local_request_queue().then((rq) => {
+                    expect(rq.length).to.equal(1);
+                    const custom = JSON.parse(rq[0].user_details).custom;
+                    expect(custom.key).to.equal("value");
+                    expect(Object.keys(custom).length).to.equal(1);
+                });
             });
         });
     });
@@ -88,11 +91,13 @@ describe("User details tests ", () => {
             initMain();
             Countly.userData.set("key", ["value"]);
             Countly.userData.save();
-            cy.fetch_local_request_queue().then((rq) => {
-                expect(rq.length).to.equal(1);
-                const custom = JSON.parse(rq[0].user_details).custom;
-                expect(custom.key).to.eql(["value"]); // eql is deepequal
-                expect(Object.keys(custom).length).to.equal(1);
+            hp.waitFunction(hp.getTimestampMs(), 300, 100, () => {
+                cy.fetch_local_request_queue().then((rq) => {
+                    expect(rq.length).to.equal(1);
+                    const custom = JSON.parse(rq[0].user_details).custom;
+                    expect(custom.key).to.eql(["value"]); // eql is deepequal
+                    expect(Object.keys(custom).length).to.equal(1);
+                });
             });
         });
     });
@@ -101,11 +106,13 @@ describe("User details tests ", () => {
             initMain();
             Countly.userData.unset("key"); // unset works by sending an empty string with the key
             Countly.userData.save();
-            cy.fetch_local_request_queue().then((rq) => {
-                expect(rq.length).to.equal(1);
-                const custom = JSON.parse(rq[0].user_details).custom;
-                expect(custom.key).to.equal("");
-                expect(Object.keys(custom).length).to.equal(1);
+            hp.waitFunction(hp.getTimestampMs(), 300, 100, () => {
+                cy.fetch_local_request_queue().then((rq) => {
+                    expect(rq.length).to.equal(1);
+                    const custom = JSON.parse(rq[0].user_details).custom;
+                    expect(custom.key).to.equal("");
+                    expect(Object.keys(custom).length).to.equal(1);
+                });
             });
         });
     });
@@ -114,11 +121,13 @@ describe("User details tests ", () => {
             initMain();
             Countly.userData.set_once("key", "value");
             Countly.userData.save();
-            cy.fetch_local_request_queue().then((rq) => {
-                expect(rq.length).to.equal(1);
-                const custom = JSON.parse(rq[0].user_details).custom;
-                expect(custom.key).to.eql({ $setOnce: "value" });
-                expect(Object.keys(custom).length).to.equal(1);
+            hp.waitFunction(hp.getTimestampMs(), 300, 100, () => {
+                cy.fetch_local_request_queue().then((rq) => {
+                    expect(rq.length).to.equal(1);
+                    const custom = JSON.parse(rq[0].user_details).custom;
+                    expect(custom.key).to.eql({ $setOnce: "value" });
+                    expect(Object.keys(custom).length).to.equal(1);
+                });
             });
         });
     });
@@ -127,11 +136,13 @@ describe("User details tests ", () => {
             initMain();
             Countly.userData.increment("key");
             Countly.userData.save();
-            cy.fetch_local_request_queue().then((rq) => {
-                expect(rq.length).to.equal(1);
-                const custom = JSON.parse(rq[0].user_details).custom;
-                expect(custom.key).to.eql({ $inc: 1 });
-                expect(Object.keys(custom).length).to.equal(1);
+            hp.waitFunction(hp.getTimestampMs(), 300, 100, () => {
+                cy.fetch_local_request_queue().then((rq) => {
+                    expect(rq.length).to.equal(1);
+                    const custom = JSON.parse(rq[0].user_details).custom;
+                    expect(custom.key).to.eql({ $inc: 1 });
+                    expect(Object.keys(custom).length).to.equal(1);
+                });
             });
         });
     });
@@ -140,11 +151,13 @@ describe("User details tests ", () => {
             initMain();
             Countly.userData.increment_by("key", 10);
             Countly.userData.save();
-            cy.fetch_local_request_queue().then((rq) => {
-                expect(rq.length).to.equal(1);
-                const custom = JSON.parse(rq[0].user_details).custom;
-                expect(custom.key).to.eql({ $inc: 10 });
-                expect(Object.keys(custom).length).to.equal(1);
+            hp.waitFunction(hp.getTimestampMs(), 300, 100, () => {
+                cy.fetch_local_request_queue().then((rq) => {
+                    expect(rq.length).to.equal(1);
+                    const custom = JSON.parse(rq[0].user_details).custom;
+                    expect(custom.key).to.eql({ $inc: 10 });
+                    expect(Object.keys(custom).length).to.equal(1);
+                });
             });
         });
     });
@@ -153,11 +166,13 @@ describe("User details tests ", () => {
             initMain();
             Countly.userData.increment_by("key", -10);
             Countly.userData.save();
-            cy.fetch_local_request_queue().then((rq) => {
-                expect(rq.length).to.equal(1);
-                const custom = JSON.parse(rq[0].user_details).custom;
-                expect(custom.key).to.eql({ $inc: -10 }); // eql is deepequal
-                expect(Object.keys(custom).length).to.equal(1);
+            hp.waitFunction(hp.getTimestampMs(), 300, 100, () => {
+                cy.fetch_local_request_queue().then((rq) => {
+                    expect(rq.length).to.equal(1);
+                    const custom = JSON.parse(rq[0].user_details).custom;
+                    expect(custom.key).to.eql({ $inc: -10 }); // eql is deepequal
+                    expect(Object.keys(custom).length).to.equal(1);
+                });
             });
         });
     });
@@ -166,11 +181,13 @@ describe("User details tests ", () => {
             initMain();
             Countly.userData.increment_by("key", "10");
             Countly.userData.save();
-            cy.fetch_local_request_queue().then((rq) => {
-                expect(rq.length).to.equal(1);
-                const custom = JSON.parse(rq[0].user_details).custom;
-                expect(custom.key).to.eql({ $inc: "10" });
-                expect(Object.keys(custom).length).to.equal(1);
+            hp.waitFunction(hp.getTimestampMs(), 300, 100, () => {
+                cy.fetch_local_request_queue().then((rq) => {
+                    expect(rq.length).to.equal(1);
+                    const custom = JSON.parse(rq[0].user_details).custom;
+                    expect(custom.key).to.eql({ $inc: "10" });
+                    expect(Object.keys(custom).length).to.equal(1);
+                });
             });
         });
     });
@@ -179,11 +196,13 @@ describe("User details tests ", () => {
             initMain();
             Countly.userData.multiply("key", 10);
             Countly.userData.save();
-            cy.fetch_local_request_queue().then((rq) => {
-                expect(rq.length).to.equal(1);
-                const custom = JSON.parse(rq[0].user_details).custom;
-                expect(custom.key).to.eql({ $mul: 10 });
-                expect(Object.keys(custom).length).to.equal(1);
+            hp.waitFunction(hp.getTimestampMs(), 300, 100, () => {
+                cy.fetch_local_request_queue().then((rq) => {
+                    expect(rq.length).to.equal(1);
+                    const custom = JSON.parse(rq[0].user_details).custom;
+                    expect(custom.key).to.eql({ $mul: 10 });
+                    expect(Object.keys(custom).length).to.equal(1);
+                });
             });
         });
     });
@@ -192,11 +211,13 @@ describe("User details tests ", () => {
             initMain();
             Countly.userData.multiply("key", -10);
             Countly.userData.save();
-            cy.fetch_local_request_queue().then((rq) => {
-                expect(rq.length).to.equal(1);
-                const custom = JSON.parse(rq[0].user_details).custom;
-                expect(custom.key).to.eql({ $mul: -10 });
-                expect(Object.keys(custom).length).to.equal(1);
+            hp.waitFunction(hp.getTimestampMs(), 300, 100, () => {
+                cy.fetch_local_request_queue().then((rq) => {
+                    expect(rq.length).to.equal(1);
+                    const custom = JSON.parse(rq[0].user_details).custom;
+                    expect(custom.key).to.eql({ $mul: -10 });
+                    expect(Object.keys(custom).length).to.equal(1);
+                });
             });
         });
     });
@@ -205,11 +226,13 @@ describe("User details tests ", () => {
             initMain();
             Countly.userData.multiply("key", "10");
             Countly.userData.save();
-            cy.fetch_local_request_queue().then((rq) => {
-                expect(rq.length).to.equal(1);
-                const custom = JSON.parse(rq[0].user_details).custom;
-                expect(custom.key).to.eql({ $mul: "10" });
-                expect(Object.keys(custom).length).to.equal(1);
+            hp.waitFunction(hp.getTimestampMs(), 300, 100, () => {
+                cy.fetch_local_request_queue().then((rq) => {
+                    expect(rq.length).to.equal(1);
+                    const custom = JSON.parse(rq[0].user_details).custom;
+                    expect(custom.key).to.eql({ $mul: "10" });
+                    expect(Object.keys(custom).length).to.equal(1);
+                });
             });
         });
     });
@@ -218,11 +241,13 @@ describe("User details tests ", () => {
             initMain();
             Countly.userData.max("key", 10);
             Countly.userData.save();
-            cy.fetch_local_request_queue().then((rq) => {
-                expect(rq.length).to.equal(1);
-                const custom = JSON.parse(rq[0].user_details).custom;
-                expect(custom.key).to.eql({ $max: 10 });
-                expect(Object.keys(custom).length).to.equal(1);
+            hp.waitFunction(hp.getTimestampMs(), 300, 100, () => {
+                cy.fetch_local_request_queue().then((rq) => {
+                    expect(rq.length).to.equal(1);
+                    const custom = JSON.parse(rq[0].user_details).custom;
+                    expect(custom.key).to.eql({ $max: 10 });
+                    expect(Object.keys(custom).length).to.equal(1);
+                });
             });
         });
     });
@@ -231,11 +256,13 @@ describe("User details tests ", () => {
             initMain();
             Countly.userData.max("key", "10");
             Countly.userData.save();
-            cy.fetch_local_request_queue().then((rq) => {
-                expect(rq.length).to.equal(1);
-                const custom = JSON.parse(rq[0].user_details).custom;
-                expect(custom.key).to.eql({ $max: "10" });
-                expect(Object.keys(custom).length).to.equal(1);
+            hp.waitFunction(hp.getTimestampMs(), 300, 100, () => {
+                cy.fetch_local_request_queue().then((rq) => {
+                    expect(rq.length).to.equal(1);
+                    const custom = JSON.parse(rq[0].user_details).custom;
+                    expect(custom.key).to.eql({ $max: "10" });
+                    expect(Object.keys(custom).length).to.equal(1);
+                });
             });
         });
     });
@@ -244,11 +271,13 @@ describe("User details tests ", () => {
             initMain();
             Countly.userData.min("key", 10);
             Countly.userData.save();
-            cy.fetch_local_request_queue().then((rq) => {
-                expect(rq.length).to.equal(1);
-                const custom = JSON.parse(rq[0].user_details).custom;
-                expect(custom.key).to.eql({ $min: 10 });
-                expect(Object.keys(custom).length).to.equal(1);
+            hp.waitFunction(hp.getTimestampMs(), 300, 100, () => {
+                cy.fetch_local_request_queue().then((rq) => {
+                    expect(rq.length).to.equal(1);
+                    const custom = JSON.parse(rq[0].user_details).custom;
+                    expect(custom.key).to.eql({ $min: 10 });
+                    expect(Object.keys(custom).length).to.equal(1);
+                });
             });
         });
     });
@@ -257,11 +286,13 @@ describe("User details tests ", () => {
             initMain();
             Countly.userData.min("key", "10");
             Countly.userData.save();
-            cy.fetch_local_request_queue().then((rq) => {
-                expect(rq.length).to.equal(1);
-                const custom = JSON.parse(rq[0].user_details).custom;
-                expect(custom.key).to.eql({ $min: "10" });
-                expect(Object.keys(custom).length).to.equal(1);
+            hp.waitFunction(hp.getTimestampMs(), 300, 100, () => {
+                cy.fetch_local_request_queue().then((rq) => {
+                    expect(rq.length).to.equal(1);
+                    const custom = JSON.parse(rq[0].user_details).custom;
+                    expect(custom.key).to.eql({ $min: "10" });
+                    expect(Object.keys(custom).length).to.equal(1);
+                });
             });
         });
     });
@@ -270,11 +301,13 @@ describe("User details tests ", () => {
             initMain();
             Countly.userData.push("key", 10);
             Countly.userData.save();
-            cy.fetch_local_request_queue().then((rq) => {
-                expect(rq.length).to.equal(1);
-                const custom = JSON.parse(rq[0].user_details).custom;
-                expect(custom.key).to.eql({ $push: [10] });
-                expect(Object.keys(custom).length).to.equal(1);
+            hp.waitFunction(hp.getTimestampMs(), 300, 100, () => {
+                cy.fetch_local_request_queue().then((rq) => {
+                    expect(rq.length).to.equal(1);
+                    const custom = JSON.parse(rq[0].user_details).custom;
+                    expect(custom.key).to.eql({ $push: [10] });
+                    expect(Object.keys(custom).length).to.equal(1);
+                });
             });
         });
     });
@@ -283,11 +316,13 @@ describe("User details tests ", () => {
             initMain();
             Countly.userData.push("key", "10");
             Countly.userData.save();
-            cy.fetch_local_request_queue().then((rq) => {
-                expect(rq.length).to.equal(1);
-                const custom = JSON.parse(rq[0].user_details).custom;
-                expect(custom.key).to.eql({ $push: ["10"] });
-                expect(Object.keys(custom).length).to.equal(1);
+            hp.waitFunction(hp.getTimestampMs(), 300, 100, () => {
+                cy.fetch_local_request_queue().then((rq) => {
+                    expect(rq.length).to.equal(1);
+                    const custom = JSON.parse(rq[0].user_details).custom;
+                    expect(custom.key).to.eql({ $push: ["10"] });
+                    expect(Object.keys(custom).length).to.equal(1);
+                });
             });
         });
     });
@@ -296,11 +331,13 @@ describe("User details tests ", () => {
             initMain();
             Countly.userData.push_unique("key", 10);
             Countly.userData.save();
-            cy.fetch_local_request_queue().then((rq) => {
-                expect(rq.length).to.equal(1);
-                const custom = JSON.parse(rq[0].user_details).custom;
-                expect(custom.key).to.eql({ $addToSet: [10] });
-                expect(Object.keys(custom).length).to.equal(1);
+            hp.waitFunction(hp.getTimestampMs(), 300, 100, () => {
+                cy.fetch_local_request_queue().then((rq) => {
+                    expect(rq.length).to.equal(1);
+                    const custom = JSON.parse(rq[0].user_details).custom;
+                    expect(custom.key).to.eql({ $addToSet: [10] });
+                    expect(Object.keys(custom).length).to.equal(1);
+                });
             });
         });
     });
@@ -309,11 +346,13 @@ describe("User details tests ", () => {
             initMain();
             Countly.userData.push_unique("key", "10");
             Countly.userData.save();
-            cy.fetch_local_request_queue().then((rq) => {
-                expect(rq.length).to.equal(1);
-                const custom = JSON.parse(rq[0].user_details).custom;
-                expect(custom.key).to.eql({ $addToSet: ["10"] });
-                expect(Object.keys(custom).length).to.equal(1);
+            hp.waitFunction(hp.getTimestampMs(), 300, 100, () => {
+                cy.fetch_local_request_queue().then((rq) => {
+                    expect(rq.length).to.equal(1);
+                    const custom = JSON.parse(rq[0].user_details).custom;
+                    expect(custom.key).to.eql({ $addToSet: ["10"] });
+                    expect(Object.keys(custom).length).to.equal(1);
+                });
             });
         });
     });
@@ -322,11 +361,13 @@ describe("User details tests ", () => {
             initMain();
             Countly.userData.pull("key", 10);
             Countly.userData.save();
-            cy.fetch_local_request_queue().then((rq) => {
-                expect(rq.length).to.equal(1);
-                const custom = JSON.parse(rq[0].user_details).custom;
-                expect(custom.key).to.eql({ $pull: [10] });
-                expect(Object.keys(custom).length).to.equal(1);
+            hp.waitFunction(hp.getTimestampMs(), 300, 100, () => {
+                cy.fetch_local_request_queue().then((rq) => {
+                    expect(rq.length).to.equal(1);
+                    const custom = JSON.parse(rq[0].user_details).custom;
+                    expect(custom.key).to.eql({ $pull: [10] });
+                    expect(Object.keys(custom).length).to.equal(1);
+                });
             });
         });
     });
@@ -335,11 +376,13 @@ describe("User details tests ", () => {
             initMain();
             Countly.userData.pull("key", "10");
             Countly.userData.save();
-            cy.fetch_local_request_queue().then((rq) => {
-                expect(rq.length).to.equal(1);
-                const custom = JSON.parse(rq[0].user_details).custom;
-                expect(custom.key).to.eql({ $pull: ["10"] });
-                expect(Object.keys(custom).length).to.equal(1);
+            hp.waitFunction(hp.getTimestampMs(), 300, 100, () => {
+                cy.fetch_local_request_queue().then((rq) => {
+                    expect(rq.length).to.equal(1);
+                    const custom = JSON.parse(rq[0].user_details).custom;
+                    expect(custom.key).to.eql({ $pull: ["10"] });
+                    expect(Object.keys(custom).length).to.equal(1);
+                });
             });
         });
     });
@@ -358,21 +401,23 @@ describe("User details tests ", () => {
             Countly.userData.push_unique("key10", 7);
             Countly.userData.pull("key11", 8);
             Countly.userData.save();
-            cy.fetch_local_request_queue().then((rq) => {
-                expect(rq.length).to.equal(1);
-                const custom = JSON.parse(rq[0].user_details).custom;
-                expect(Object.keys(custom).length).to.equal(11);
-                expect(custom.key).to.equal("value");
-                expect(custom.key2).to.equal("");
-                expect(custom.key3).to.eql({ $setOnce: 1 });
-                expect(custom.key4).to.eql({ $inc: 1 });
-                expect(custom.key5).to.eql({ $inc: 2 });
-                expect(custom.key6).to.eql({ $mul: 3 });
-                expect(custom.key7).to.eql({ $max: 4 });
-                expect(custom.key8).to.eql({ $min: 5 });
-                expect(custom.key9).to.eql({ $push: [6] });
-                expect(custom.key10).to.eql({ $addToSet: [7] });
-                expect(custom.key11).to.eql({ $pull: [8] });
+            hp.waitFunction(hp.getTimestampMs(), 300, 100, () => {
+                cy.fetch_local_request_queue().then((rq) => {
+                    expect(rq.length).to.equal(1);
+                    const custom = JSON.parse(rq[0].user_details).custom;
+                    expect(Object.keys(custom).length).to.equal(11);
+                    expect(custom.key).to.equal("value");
+                    expect(custom.key2).to.equal("");
+                    expect(custom.key3).to.eql({ $setOnce: 1 });
+                    expect(custom.key4).to.eql({ $inc: 1 });
+                    expect(custom.key5).to.eql({ $inc: 2 });
+                    expect(custom.key6).to.eql({ $mul: 3 });
+                    expect(custom.key7).to.eql({ $max: 4 });
+                    expect(custom.key8).to.eql({ $min: 5 });
+                    expect(custom.key9).to.eql({ $push: [6] });
+                    expect(custom.key10).to.eql({ $addToSet: [7] });
+                    expect(custom.key11).to.eql({ $pull: [8] });
+                });
             });
         });
     });
@@ -391,14 +436,16 @@ describe("User details tests ", () => {
             Countly.userData.push("key9", 6);
             Countly.userData.push_unique("key10", 7);
             Countly.userData.pull("key11", 8);
-            cy.fetch_local_request_queue().then((rq) => {
-                expect(rq.length).to.equal(1);
-                const custom = JSON.parse(rq[0].user_details).custom;
-                expect(Object.keys(custom).length).to.equal(4);
-                expect(custom.key).to.equal("value");
-                expect(custom.key2).to.equal("");
-                expect(custom.key3).to.eql({ $setOnce: 1 });
-                expect(custom.key4).to.eql({ $inc: 1 });
+            hp.waitFunction(hp.getTimestampMs(), 300, 100, () => {
+                cy.fetch_local_request_queue().then((rq) => {
+                    expect(rq.length).to.equal(1);
+                    const custom = JSON.parse(rq[0].user_details).custom;
+                    expect(Object.keys(custom).length).to.equal(4);
+                    expect(custom.key).to.equal("value");
+                    expect(custom.key2).to.equal("");
+                    expect(custom.key3).to.eql({ $setOnce: 1 });
+                    expect(custom.key4).to.eql({ $inc: 1 });
+                });
             });
         });
     });
@@ -429,7 +476,7 @@ describe("User details tests ", () => {
                 expect(eq.length).to.equal(1);
                 cy.check_event(eq[0], eventObj, undefined, false);
             });
-            cy.wait(1000).then(() => {
+            cy.wait(300).then(() => {
                 Countly.userData.set("key", "value");
                 cy.fetch_local_request_queue().then((rq) => {
                     expect(rq.length).to.equal(0);
@@ -449,7 +496,7 @@ describe("User details tests ", () => {
                 expect(eq.length).to.equal(1);
                 cy.check_event(eq[0], eventObj, undefined, false);
             });
-            cy.wait(1000).then(() => {
+            cy.wait(300).then(() => {
                 Countly.userData.set("key", "value");
                 Countly.userData.save();
 
