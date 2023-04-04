@@ -1,5 +1,4 @@
 lib/countly.min.js
-lib/countly.pack.js
 plugin/boomerang/boomerang.min.js
 examples/react
 examples/symbolication
@@ -10,7 +9,5 @@ node_modules
 CHANGELOG.md
 cypress.json
 generateDocs.sh
-inch.json
 jsdoc_conf.json
 LICENSE
-webpack.config.js
