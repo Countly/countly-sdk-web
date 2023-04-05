@@ -34,7 +34,7 @@
   "homepage": "https://countly.com/",
   "devDependencies": {
     "cypress": "^9.5.0",
-    "cypress-localstorage-commands": "^1.7.0",
+    "cypress-localstorage-commands": "^2.2.3",
     "eslint": "^8.37.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-chai-friendly": "^0.7.2",
