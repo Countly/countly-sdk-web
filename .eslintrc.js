@@ -18,6 +18,7 @@ module.exports = {
         "comma-dangle": "off",
         "no-restricted-globals": "off",
         "no-restricted-properties": "off",
+        strict: "off",
         //
         "no-unused-vars": "warn",
         "no-var": "off",
