@@ -160,9 +160,12 @@ describe("Browser session tests, auto, no cookie", () => {
 describe("Browser session tests, manual 1, no cookie", () => {
     it("Single bounce test with manual sessions with no cookies", () => {
         cy.visit("./cypress/fixtures/session_test_manual_1.html");
-        cy.contains("Start").click().wait(waitTime);
-        cy.contains("Event").click().wait(300);
-        cy.contains("End").click().wait(300);
+        cy.contains("Start").click();
+        cy.wait(waitTime);
+        cy.contains("Event").click();
+        cy.wait(300);
+        cy.contains("End").click();
+        cy.wait(300);
         cy.visit("./cypress/fixtures/base.html");
         cy.fetch_local_request_queue(app_key).then((rq) => {
             cy.log(rq);

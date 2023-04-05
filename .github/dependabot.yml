@@ -3,7 +3,7 @@ updates:
   - package-ecosystem: npm
     directory: "/"
     schedule:
-      interval: daily
+      interval: monthly
     open-pull-requests-limit: 10
     reviewers:
       - turtledreams
@@ -15,7 +15,7 @@ updates:
   - package-ecosystem: npm
     directory: "/examples/symbolication/"
     schedule:
-      interval: daily
+      interval: monthly
     open-pull-requests-limit: 10
     reviewers:
       - turtledreams
@@ -27,7 +27,7 @@ updates:
   - package-ecosystem: npm
     directory: "/examples/react/"
     schedule:
-      interval: daily
+      interval: monthly
     open-pull-requests-limit: 10
     reviewers:
       - turtledreams
