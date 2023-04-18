@@ -1,3 +1,6 @@
+## xx.xx.xx
+- Default max segmentation value count changed from 30 to 100
+
 ## 23.02.1
 - Mitigated an issue that could have caused view IDs to be terminated prematurely when using manual sessions and end_session was called abruptly 
 
