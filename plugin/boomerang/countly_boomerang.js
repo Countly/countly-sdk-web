@@ -18,6 +18,9 @@ Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
             if (!Countly.track_performance && Countly.i) {
                 Countly.track_performance = Countly.i[Countly.app_key].track_performance;
             }
+            else {
+                console.warn("Countly instance is not defined.");
+            }
         });
     }
     /**
