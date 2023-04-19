@@ -7,8 +7,7 @@ Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
 */
 (function cly_load_track_performance() {
     if (!window.Countly) {
-        // eslint-disable-next-line no-console
-        console.error("Countly is not defined. Boomerang will not be loaded. Check the load order of Countly and Boomerang scripts.");
+        // "Countly is not defined. Boomerang will not be loaded. Check the load order of Countly and Boomerang scripts.";
         return;
     }
     Countly = Countly || {}; // eslint-disable-line no-global-assign
@@ -18,10 +17,6 @@ Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
             cly_load_track_performance();
             if (!Countly.track_performance && Countly.i) {
                 Countly.track_performance = Countly.i[Countly.app_key].track_performance;
-            }
-            else {
-                // eslint-disable-next-line no-console
-                console.warn("Countly instance is not defined.");
             }
         });
     }
