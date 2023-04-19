@@ -131,14 +131,18 @@
       cly.src = '../../lib/countly.js';
       cly.onload = function () {
         // Boomerang related configuration
+        // Create boomerang script
         var boomerangScript = document.createElement('script');
         var countlyBoomerangScript = document.createElement('script');
+        // Set boomerang script attributes
         boomerangScript.async = true;
         countlyBoomerangScript.async = true;
 
-        boomerangScript.src = '../../plugin/boomerang/boomerang.min.js';
+        // Set boomerang script source either locally or from CDN
+        boomerangScript.src = 'https://cdn.jsdelivr.net/npm/countly-sdk-web@latest/plugin/boomerang/boomerang.min.js';
         countlyBoomerangScript.src = '../../plugin/boomerang/countly_boomerang.js';
 
+        // Append boomerang script to the head
         document.getElementsByTagName('head')[0].appendChild(boomerangScript);
         document.getElementsByTagName('head')[0].appendChild(countlyBoomerangScript);
         countlyBoomerangScript.onload = function () {
