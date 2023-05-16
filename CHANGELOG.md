@@ -1,4 +1,4 @@
-## xx.xx.xx
+## 23.2.2
 - Default max segmentation value count changed from 30 to 100
 
 ## 23.02.1
