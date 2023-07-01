@@ -10,7 +10,7 @@
     "build": "webpack"
   },
   "devDependencies": {
-    "@babel/preset-env": "7.21.4",
+    "@babel/preset-env": "7.22.5",
     "@babel/core": "7.21.4",
     "babel-loader": "8.2.5",
     "babel-plugin-syntax-dynamic-import": "6.18.0",
