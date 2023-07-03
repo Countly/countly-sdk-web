@@ -1,3 +1,6 @@
+## X.X.X
+- Added initWithAPM call for enabling performance monitoring
+
 ## 23.2.2
 - Default max segmentation value count changed from 30 to 100
 

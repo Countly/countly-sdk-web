@@ -28,8 +28,17 @@
         console.log(err);
         return;
       }
-      // Decide which which widget to show. Here the first one is selected. Check the below implementation for a more elaborate version.
+
+      // Decide which which widget to show. Here the first rating widget is selected. 
+      var i = countlyPresentableFeedback.length - 1;
       var countlyFeedbackWidget = countlyPresentableFeedback[0];
+      while (i--) {
+        // You can change 'rating' to 'nps' or 'survey'. Or you can create your own logic here.
+        if (countlyPresentableFeedback[i].type === 'rating') {
+          countlyFeedbackWidget = countlyPresentableFeedback[i];
+          break;
+        }
+      }
 
       // Define the element ID and the class name (optional)
       var selectorId = "";

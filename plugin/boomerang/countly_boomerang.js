@@ -23,7 +23,27 @@ Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
      */
     Countly.CountlyClass.prototype.track_performance = function(config) {
         var self = this;
-        config = config || {};
+        config = config || {
+            // page load timing
+            RT: {},
+            // required for automated networking traces
+            instrument_xhr: true,
+            captureXhrRequestResponse: true,
+            AutoXHR: {
+                alwaysSendXhr: true,
+                monitorFetch: true,
+                captureXhrRequestResponse: true
+            },
+            // required for screen freeze traces
+            Continuity: {
+                enabled: true,
+                monitorLongTasks: true,
+                monitorPageBusy: true,
+                monitorFrameRate: true,
+                monitorInteractions: true,
+                afterOnload: true
+            }
+        };
         var initedBoomr = false;
         /**
          *  Initialize Boomerang

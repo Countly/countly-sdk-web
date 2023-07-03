@@ -11,7 +11,7 @@
 		<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'"></meta>
 	-->
   <!-- jquery-3 -->
-  <script src="https://code.jquery.com/jquery-3.5.1.min.js"
+  <script src="https://code.jquery.com/jquery-3.6.1.min.js"
     integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
   <!-- mobile view info -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"
@@ -25,41 +25,6 @@
   <script src="helper_functions.js"></script>
   <!-- Async Countly init logic here -->
   <script type='text/javascript'>
-    // load BoomerangJS scripts after Countly is initiated this way 
-    syncScripts();
-    function syncScripts() {
-      // Here we should refer to the 'boomerang.min.js' and 'countly_boomerang.js' scripts' path in this order inside scripts array
-      // in your production implementation you would most likely have something like this:
-      // var scripts = ['../plugin/boomerang/boomerang.min.js', '../plugin/boomerang/countly_boomerang.js'];
-      //
-      // For ones with a keen eye, they might notice that these paths differ from the ones in the documentation, reason being that we would like to keep a single copy of these files
-      // in our repo so we directly refer to them from our plugin folder. 
-      //
-      // If you would like to use this example stand alone, you would need to copy those files and refer to their
-      // correct paths here. Like creating a folder and pasting them there and then referring to that folder. Folder name 
-      // does not matter as long as you provide them correctly in to the scripts array
-      var scripts = ['../../plugin/boomerang/boomerang.min.js', '../../plugin/boomerang/countly_boomerang.js'];
-      var i = 0;
-      function loopScriptList(scripts) {
-        recursiveScriptMaker(scripts[i], function () {
-          i++;
-          if (i < scripts.length) {
-            loopScriptList(scripts);
-          }
-        });
-      }
-      loopScriptList(scripts);
-    }
-    function recursiveScriptMaker(source, callback) {
-      var script = document.createElement('script');
-      script.onload = function () {
-        console.log('Successfully loaded the source: ' + source)
-        callback();
-      }
-      script.src = source;
-      document.getElementsByTagName('head')[0].appendChild(script);
-    }
-
     // Countly Related Settings
     var Countly = Countly || {};
     Countly.q = Countly.q || [];
@@ -127,36 +92,8 @@
     // Countly.q.push(['track_forms']);
     // Countly.q.push(['recordDirectAttribution']);
 
-    // APM related configuration
-    Countly.q.push(["track_performance", {
-      RT: {
-        enabled: true
-      },
-      instrument_xhr: true,
-      AutoXHR: {
-        enabled: true,
-        alwaysSendXhr: true,
-        monitorFetch: true,
-        captureXhrRequestResponse: true
-      },
-      Continuity: {
-        enabled: true,
-        monitorLongTasks: true,
-        monitorPageBusy: true,
-        monitorFrameRate: true,
-        monitorInteractions: true,
-        afterOnload: true
-      },
-      NavigationTiming: {
-        enabled: true
-      },
-      ResourceTiming: {
-        enabled: true,
-        clearOnBeacon: true,
-        urlLimit: 2000,
-        splitAtPath: true
-      }
-    }]);
+    // enable APM
+    Countly.q.push(["track_performance"]);
 
     // init Countly
     (function () {
@@ -166,7 +103,7 @@
       // provide the correct path according to your project structure
       cly.src = '../../lib/countly.js';
       cly.onload = function () {
-        Countly.init();
+        Countly.initWithAPM();
       };
       var s = document.getElementsByTagName('script')[0];
       s.parentNode.insertBefore(cly, s);
@@ -198,7 +135,7 @@
     <img src="../images/team_countly.jpg" id="wallpaper" />
 
     <!-- Welcome Text. With user name. -->
-    <h2 id="welcome-user"">No User is Signed In</h2>
+    <h2 id="welcome-user">No User is Signed In</h2>
         <br />
 
     <!-- Button Group  -->
@@ -210,22 +147,22 @@
         <!-- Widget information section  -->
         <div id="widget-info">
           <div>
-            <label for="tags"">Tags</label>
+            <label for="tags">Tags</label>
             <input id="widget-tag" value="" class="widget-info-lines"
               type="text" name="tags" readonly />
           </div>
           <div>
-            <label for="name"">Name</label>
+            <label for="name">Name</label>
             <input id="widget-name" value="" class="widget-info-lines"
               type="text" name="name" readonly />
           </div>
           <div>
-            <label for="show-policy"">Show Policy</label>
+            <label for="show-policy">Show Policy</label>
             <input id="widget-show-policy" value="" class="widget-info-lines"
               type="text" name="show-policy" readonly />
           </div>
           <div>
-            <label for="widget-id"">ID</label>
+            <label for="widget-id">ID</label>
             <input id="widget-id" value="" class="widget-info-lines"
               type="text" name="widget-id" readonly />
           </div>
