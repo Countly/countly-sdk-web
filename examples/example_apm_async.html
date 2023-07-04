@@ -14,6 +14,9 @@
 		Countly.app_key = "YOUR_APP_KEY";
 		Countly.url = "https://try.count.ly"; //your server goes here
 		Countly.debug = true;
+		Countly.apm = true;
+		// Countly.boomSRC = "../somewhere/boomerang.min.js";
+		// Countly.clyBoomSRC = "../somewhere/countly_boomerang.js";
 
 		//start pushing function calls to queue:
 		
@@ -36,7 +39,7 @@
 			// other possible flags:
 			// boomSrc - BoomerangJS script directory.If not provided latest CDN is source used. Current supported version is 1.0.0
 			// clyBoomSrc - Countly's BoomerangJS script directory. If not provided latest CDN source is used.
-			cly.onload = function () { Countly.init({apm:true}) };
+			cly.onload = function () { Countly.init() };
 			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(cly, s);
 		})();
 		//send event on button click
