@@ -34,6 +34,7 @@
     Countly.session_update = 30; //Time interval for session extend
     Countly.use_session_cookie = false; //if false, begin_session on every app open, be it in new tab
     Countly.debug = true;
+    Countly.apm = true;
     Countly.require_consent = false;
     Countly.namespace = "demo";
     Countly.inactivity_time = 1; //User will marked inactive after 1 min, i.e. stop_time and no extend session or end session
@@ -103,7 +104,7 @@
       // provide the correct path according to your project structure
       cly.src = '../../lib/countly.js';
       cly.onload = function () {
-        Countly.initWithAPM();
+        Countly.init();
       };
       var s = document.getElementsByTagName('script')[0];
       s.parentNode.insertBefore(cly, s);
