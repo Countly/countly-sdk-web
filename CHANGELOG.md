@@ -1,6 +1,5 @@
 ## X.X.X
-- Async SDK implementations can now enable APM feature with Countly object flags
-  - Setting 'Countly.apm' to true would now load the APM related scripts automatically
+- Added a new flag, 'loadAPMScriptsAsync', which can load the APM related scripts automatically for Async implementations
 
 ## 23.2.2
 - Default max segmentation value count changed from 30 to 100
