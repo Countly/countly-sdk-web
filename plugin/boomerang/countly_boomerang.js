@@ -6,12 +6,12 @@ Countly APM based on Boomerang JS
 Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
 */
 (function cly_load_track_performance() {
-    Countly = Countly || {}; // eslint-disable-line no-global-assign
+    var Countly = Countly || {};
     Countly.onload = Countly.onload || [];
     if (typeof Countly.CountlyClass === "undefined") {
         return Countly.onload.push(function() {
             cly_load_track_performance();
-            if (!Countly.track_performance) {
+            if (!Countly.track_performance && Countly.i) {
                 Countly.track_performance = Countly.i[Countly.app_key].track_performance;
             }
         });
