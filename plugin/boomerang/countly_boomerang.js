@@ -6,12 +6,12 @@ Countly APM based on Boomerang JS
 Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
 */
 (function cly_load_track_performance() {
-    Countly = Countly || {}; // eslint-disable-line no-global-assign
+    var Countly = Countly || {};
     Countly.onload = Countly.onload || [];
     if (typeof Countly.CountlyClass === "undefined") {
         return Countly.onload.push(function() {
             cly_load_track_performance();
-            if (!Countly.track_performance) {
+            if (!Countly.track_performance && Countly.i) {
                 Countly.track_performance = Countly.i[Countly.app_key].track_performance;
             }
         });
@@ -23,7 +23,27 @@ Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
      */
     Countly.CountlyClass.prototype.track_performance = function(config) {
         var self = this;
-        config = config || {};
+        config = config || {
+            // page load timing
+            RT: {},
+            // required for automated networking traces
+            instrument_xhr: true,
+            captureXhrRequestResponse: true,
+            AutoXHR: {
+                alwaysSendXhr: true,
+                monitorFetch: true,
+                captureXhrRequestResponse: true
+            },
+            // required for screen freeze traces
+            Continuity: {
+                enabled: true,
+                monitorLongTasks: true,
+                monitorPageBusy: true,
+                monitorFrameRate: true,
+                monitorInteractions: true,
+                afterOnload: true
+            }
+        };
         var initedBoomr = false;
         /**
          *  Initialize Boomerang

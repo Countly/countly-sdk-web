@@ -9,7 +9,7 @@ module.exports = {
         "cypress/no-assigning-return-values": "error",
         "cypress/no-unnecessary-waiting": "off",
         "cypress/assertion-before-screenshot": "warn",
-        "cypress/unsafe-to-chain-command": "warn",
+        "cypress/unsafe-to-chain-command": "off",
         "cypress/no-force": "warn",
         "cypress/no-async-tests": "error",
         "cypress/no-pause": "error",

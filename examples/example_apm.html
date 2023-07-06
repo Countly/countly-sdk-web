@@ -10,44 +10,18 @@
   <script type='text/javascript' src="../plugin/boomerang/boomerang.min.js"></script>
   <script type='text/javascript'>
 
-    //initializing countly with params
+    // initializing countly with params
     Countly.init({
       app_key: "YOUR_APP_KEY",
       url: "https://try.count.ly", //your server goes here
       debug: true
     })
+
+    // enable sessions
     Countly.track_sessions();
 
-    //Calling APM plugin method
-    Countly.track_performance({
-      RT: {
-        enabled: true
-      },
-      instrument_xhr: true,
-      AutoXHR: {
-        enabled: true,
-        alwaysSendXhr: true,
-        monitorFetch: true,
-        captureXhrRequestResponse: true
-      },
-      Continuity: {
-        enabled: true,
-        monitorLongTasks: true,
-        monitorPageBusy: true,
-        monitorFrameRate: true,
-        monitorInteractions: true,
-        afterOnload: true
-      },
-      NavigationTiming: {
-        enabled: true
-      },
-      ResourceTiming: {
-        enabled: true,
-        clearOnBeacon: true,
-        urlLimit: 2000,
-        splitAtPath: true
-      }
-    });
+    // enable APM
+    Countly.track_performance();
   </script>
 </head>
 
