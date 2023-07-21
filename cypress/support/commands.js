@@ -31,6 +31,8 @@ Cypress.Commands.add("check_request_commons", (testObject, appKey) => {
     expect(testObject.device_id).to.be.ok;
     expect(testObject.sdk_name).to.be.exist;
     expect(testObject.sdk_version).to.be.ok;
+    expect(testObject.t).to.be.ok;
+    expect(testObject.rr).to.be.ok;
     const metrics = JSON.parse(testObject.metrics);
     expect(metrics._ua).to.be.ok;
 });
