@@ -48,6 +48,30 @@ var waitFunction = function(startTime, waitTime, waitIncrement, continueCallback
     }
 };
 
+/**
+ * This intercepts the request the SDK makes and returns the request parameters to the callback function
+ * @param {String} requestType - GET, POST, PUT, DELETE
+ * @param {String} requestUrl - request url (https://try.count.ly)
+ * @param {String} endPoint - endpoint (/i)
+ * @param {String} requestParams - request parameters (?begin_session=**)
+ * @param {String} alias - alias for the request
+ * @param {Function} callback - callback function
+ */
+function interceptAndCheckRequests(requestType, requestUrl, endPoint, requestParams, alias, callback) {
+    requestType = requestType || "GET";
+    requestUrl = requestUrl || "https://try.count.ly";
+    endPoint = endPoint || "/i";
+    requestParams = requestParams || "?**";
+    alias = alias || "getXhr";
+
+    cy.intercept(requestType, requestUrl + endPoint + requestParams).as(alias);
+    cy.wait("@" + alias).then((xhr) => {
+        const url = new URL(xhr.request.url);
+        const searchParams = url.searchParams;
+        callback(searchParams);
+    });
+}
+
 // gathered events. count and segmentation key/values must be consistent
 const eventArray = [
     // first event must be custom event
@@ -192,5 +216,6 @@ module.exports = {
     waitFunction,
     events,
     eventArray,
-    testNormalFlow
+    testNormalFlow,
+    interceptAndCheckRequests
 };

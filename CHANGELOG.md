@@ -1,5 +1,7 @@
 ## X.X.X
 - Added a new flag, 'loadAPMScriptsAsync', which can load the APM related scripts automatically for Async implementations
+- Adding remaining request queue size information to every request
+- Fixed a bug where unnecessary device ID merge information was sent to the server
 
 ## 23.2.2
 - Default max segmentation value count changed from 30 to 100
