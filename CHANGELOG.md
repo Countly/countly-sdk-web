@@ -1,5 +1,6 @@
 ## X.X.X
 - Added a new flag, 'loadAPMScriptsAsync', which can load the APM related scripts automatically for Async implementations
+- Adding SDK health check requests after init
 - Adding remaining request queue size information to every request
 - Fixed a bug where unnecessary device ID merge information was sent to the server
 
