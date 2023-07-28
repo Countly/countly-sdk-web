@@ -59,12 +59,12 @@ var waitFunction = function(startTime, waitTime, waitIncrement, continueCallback
  */
 function interceptAndCheckRequests(requestType, requestUrl, endPoint, requestParams, alias, callback) {
     requestType = requestType || "GET";
-    requestUrl = requestUrl || "https://try.count.ly";
+    requestUrl = requestUrl || "https://try.count.ly"; // TODO: might be needed in the future but not yet
     endPoint = endPoint || "/i";
     requestParams = requestParams || "?**";
     alias = alias || "getXhr";
 
-    cy.intercept(requestType, requestUrl + endPoint + requestParams).as(alias);
+    cy.intercept(requestType, endPoint + requestParams).as(alias);
     cy.wait("@" + alias).then((xhr) => {
         const url = new URL(xhr.request.url);
         const searchParams = url.searchParams;
