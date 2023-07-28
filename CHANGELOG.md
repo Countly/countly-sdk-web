@@ -1,4 +1,4 @@
-## X.X.X
+## 23.6.0
 - Added a new flag, 'loadAPMScriptsAsync', which can load the APM related scripts automatically for Async implementations
 - Adding SDK health check requests after init
 - Adding remaining request queue size information to every request

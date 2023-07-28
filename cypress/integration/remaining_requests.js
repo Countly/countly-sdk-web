@@ -16,26 +16,32 @@ describe("Remaining requests tests ", () => {
         hp.haltAndClearStorage(() => {
             initMain(false);
 
-            // Create a session and end it
-            Countly.begin_session();
-            Countly.end_session(undefined, true);
-
-            // We expect 3 requests: begin_session, end_session, orientation
-            hp.interceptAndCheckRequests(undefined, undefined, undefined, undefined, "begin_session", (requestParams) => {
-                expect(requestParams.get("begin_session")).to.equal("1");
-                expect(requestParams.get("rr")).to.equal("3");
+            // We will expect 4 requests: health check, begin_session, end_session, orientation
+            hp.interceptAndCheckRequests(undefined, undefined, undefined, "?hc=*", "hc", (requestParams) => {
+                expect(requestParams.get("hc")).to.equal(JSON.stringify({ el: 0, wl: 0, sc: -1, em: "\"\"" }));
+                expect(requestParams.get("rr")).to.equal(null);
             });
-            hp.interceptAndCheckRequests(undefined, undefined, undefined, undefined, "end_session", (requestParams) => {
-                expect(requestParams.get("end_session")).to.equal("1");
-                expect(requestParams.get("rr")).to.equal("2");
-            });
-            hp.interceptAndCheckRequests(undefined, undefined, undefined, undefined, "orientation", (requestParams) => {
-                expect(JSON.parse(requestParams.get("events"))[0].key).to.equal("[CLY]_orientation");
-                expect(requestParams.get("rr")).to.equal("1");
-            });
-            cy.wait(100).then(() => {
-                cy.fetch_local_request_queue().then((rq) => {
-                    expect(rq.length).to.equal(0);
+            cy.wait(1000).then(() => {
+                // Create a session
+                Countly.begin_session();
+                hp.interceptAndCheckRequests(undefined, undefined, undefined, "?begin_session=*", "begin_session", (requestParams) => {
+                    expect(requestParams.get("begin_session")).to.equal("1");
+                    expect(requestParams.get("rr")).to.equal("3");
+                });
+                // End the session
+                Countly.end_session(undefined, true);
+                hp.interceptAndCheckRequests(undefined, undefined, undefined, undefined, "end_session", (requestParams) => {
+                    expect(requestParams.get("end_session")).to.equal("1");
+                    expect(requestParams.get("rr")).to.equal("2");
+                });
+                hp.interceptAndCheckRequests(undefined, undefined, undefined, undefined, "orientation", (requestParams) => {
+                    expect(JSON.parse(requestParams.get("events"))[0].key).to.equal("[CLY]_orientation");
+                    expect(requestParams.get("rr")).to.equal("1");
+                });
+                cy.wait(100).then(() => {
+                    cy.fetch_local_request_queue().then((rq) => {
+                        expect(rq.length).to.equal(0);
+                    });
                 });
             });
         });
@@ -48,7 +54,7 @@ describe("Remaining requests tests ", () => {
             Countly.begin_session();
             Countly.end_session(undefined, true);
             cy.fetch_local_request_queue().then((rq) => {
-                // We expect 3 requests in queue: begin_session, end_session, orientation
+                // We expect 3 requests in queue: begin_session, end_session, orientation. health check was not in the queue
                 expect(rq.length).to.equal(3);
                 expect(rq[0].rr).to.equal(3);
                 expect(rq[1].rr).to.equal(undefined);
