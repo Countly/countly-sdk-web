@@ -1,3 +1,6 @@
+## X.X.X
+- Mitigated an issue where numerical device IDs were parsed at the initialization
+
 ## 23.6.0
 - Added a new flag, 'loadAPMScriptsAsync', which can load the APM related scripts automatically for Async implementations
 - Adding SDK health check requests after init
