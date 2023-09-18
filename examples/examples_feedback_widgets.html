@@ -14,6 +14,10 @@
       debug: true
     });
 
+  // add feedback widget segmentation
+  const segmentation = {page: "home_page"};
+  Countly.addFeedbackWidgetSegmentation(segmentation);
+
     //=================================================
     // Fetching and displaying feedback widgets
     //=================================================
@@ -30,7 +34,7 @@
       }
 
       // Decide which which widget to show. Here the first rating widget is selected. 
-      var i = countlyPresentableFeedback.length - 1;
+      var i = countlyPresentableFeedback.length;
       var countlyFeedbackWidget = countlyPresentableFeedback[0];
       while (i--) {
         // You can change 'rating' to 'nps' or 'survey'. Or you can create your own logic here.
@@ -47,7 +51,6 @@
       // Display the feedback widget to the end user 
       Countly.present_feedback_widget(countlyFeedbackWidget, selectorId, selectorClass);
     }
-
 
     //=================================================
     // Fetching and reporting feedback widgets manually

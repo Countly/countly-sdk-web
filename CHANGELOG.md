@@ -1,3 +1,6 @@
+## X.X.X
+- Added a new method ('addFeedbackWidgetSegmentation') to send segmentation with Feedback Widgets
+
 ## 23.6.0
 - Added a new flag, 'loadAPMScriptsAsync', which can load the APM related scripts automatically for Async implementations
 - Adding SDK health check requests after init
