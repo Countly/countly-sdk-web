@@ -14,10 +14,6 @@
       debug: true
     });
 
-    // add feedback widget segmentation
-    const segmentation = { page: "home_page" };
-    Countly.addFeedbackWidgetSegmentation(segmentation);
-
     //=================================================
     // Fetching and displaying feedback widgets
     //=================================================
@@ -48,8 +44,11 @@
       var selectorId = "";
       var selectorClass = "";
 
+      // Define the segmentation (optional)
+      const segmentation = { page: "home_page" };
+
       // Display the feedback widget to the end user 
-      Countly.present_feedback_widget(countlyFeedbackWidget, selectorId, selectorClass);
+      Countly.present_feedback_widget(countlyFeedbackWidget, selectorId, selectorClass, segmentation);
     }
 
     //=================================================

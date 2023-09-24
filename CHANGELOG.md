@@ -1,5 +1,5 @@
 ## X.X.X
-- Added a new method ('addFeedbackWidgetSegmentation') to send segmentation with Feedback Widgets
+- You can now add a segmentation while presenting a widget
 
 ## 23.6.0
 - Added a new flag, 'loadAPMScriptsAsync', which can load the APM related scripts automatically for Async implementations
