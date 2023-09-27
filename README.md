@@ -4,7 +4,7 @@
 
 # Countly Web SDK
 
-This repository contains the Countly Web SDK, which can be integrated into websites and web applications. The Countly Web SDK is intended to be used with [Countly Lite](https://github.com/Countly/countly-server), [Countly Flex](https://countly.com/flex) [Countly Enterprise](https://countly.com/enterprise).
+This repository contains the Countly Web SDK, which can be integrated into websites and web applications. The Countly Web SDK is intended to be used with [Countly Lite](https://countly.com/lite), [Countly Flex](https://countly.com/flex) [Countly Enterprise](https://countly.com/enterprise).
 
 ## What is Countly?
 [Countly](https://countly.com) is a product analytics solution and innovation enabler that helps teams track product performance and customer journey and behavior across [mobile](https://countly.com/mobile-analytics), [web](https://countly.com/web-analytics),
