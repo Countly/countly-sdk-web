@@ -1,4 +1,4 @@
-## X.X.X
+## 23.6.1
 - Mitigated an issue where numerical device IDs were parsed at the initialization
 
 ## 23.6.0
