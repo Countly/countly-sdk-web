@@ -1,4 +1,6 @@
 ## X.X.X
+- Mitigated an issue where numerical device IDs were parsed at the initialization
+
 - You can now add segmentation while presenting a widget
 
 ## 23.6.0
