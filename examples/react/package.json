@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "countly-sdk-web": "^23.6.0"
+    "countly-sdk-web": "^23.6.1"
   },
   "devDependencies": {
     "react": "^18.2.0",
