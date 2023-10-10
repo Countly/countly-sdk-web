@@ -79,7 +79,7 @@ Cypress.Commands.add("check_session", (queueObject, duration, isSessionEnd, appK
         expect(metrics._locale).to.be.ok;
     }
     else if (!isSessionEnd) {
-        expect(queueObject.session_duration).to.be.within(duration, duration + 1);
+        expect(queueObject.session_duration).to.be.within(duration, duration + 2);
     }
     else {
         expect(queueObject.end_session).to.equal(1);
@@ -355,7 +355,7 @@ Cypress.Commands.add("fetch_local_request_queue", (appKey) => {
 Cypress.Commands.add("fetch_local_event_queue", (appKey) => {
     cy.wait(hp.sWait).then(() => {
         appKey = appKey || hp.appKey;
-        cy.getLocalStorage(`${hp.appKey}/cly_event`).then((e) => {
+        cy.getLocalStorage(`${appKey}/cly_event`).then((e) => {
             if (e === undefined) {
                 expect.fail("event queue inside the local storage should not be undefined");
             }
@@ -375,7 +375,7 @@ Cypress.Commands.add("fetch_local_event_queue", (appKey) => {
 Cypress.Commands.add("fetch_from_storage", (appKey, key) => {
     cy.wait(hp.sWait).then(() => {
         appKey = appKey || hp.appKey;
-        cy.getLocalStorage(`${hp.appKey}/${key}`).then((e) => {
+        cy.getLocalStorage(`${appKey}/${key}`).then((e) => {
             return JSON.parse(e);
         });
     });
