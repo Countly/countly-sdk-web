@@ -206,6 +206,50 @@ function testNormalFlow(rq, viewName, countlyAppKey) {
     });
 }
 
+/**
+ * Validates utm tags in the request queue/given object
+ * You can pass undefined if you want to check if utm tags do not exist
+ * 
+ * @param {*} aq - object to check
+ * @param {*} source - utm_source
+ * @param {*} medium - utm_medium
+ * @param {*} campaign - utm_campaign
+ * @param {*} term - utm_term
+ * @param {*} content - utm_content
+ */
+function validateDefaultUtmTags(aq, source, medium, campaign, term, content) {
+    if (typeof source === "string") {
+        expect(aq.utm_source).to.eq(source);
+    }
+    else {
+        expect(aq.utm_source).to.not.exist;
+    }
+    if (typeof medium === "string") {
+        expect(aq.utm_medium).to.eq(medium);
+    }
+    else {
+        expect(aq.utm_medium).to.not.exist;
+    }
+    if (typeof campaign === "string") {
+        expect(aq.utm_campaign).to.eq(campaign);
+    }
+    else {
+        expect(aq.utm_campaign).to.not.exist;
+    }
+    if (typeof term === "string") {
+        expect(aq.utm_term).to.eq(term);
+    }
+    else {
+        expect(aq.utm_term).to.not.exist;
+    }
+    if (typeof content === "string") {
+        expect(aq.utm_content).to.eq(content);
+    }
+    else {
+        expect(aq.utm_content).to.not.exist;
+    }
+}
+
 module.exports = {
     haltAndClearStorage,
     sWait,
@@ -217,5 +261,6 @@ module.exports = {
     events,
     eventArray,
     testNormalFlow,
-    interceptAndCheckRequests
+    interceptAndCheckRequests,
+    validateDefaultUtmTags
 };

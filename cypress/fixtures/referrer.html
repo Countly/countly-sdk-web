@@ -1,0 +1,20 @@
+<html>
+<head>
+<script type='text/javascript' src='../../lib/countly.js'></script>
+<script type='text/javascript'>
+Countly.init({
+	app_key: "YOUR_APP_KEY",
+	url: "https://try.count.ly",
+	utm: { aa: true },
+	test_mode: true,
+	test_mode_eq: true,
+	getSearchQuery: function () {
+		return "?utm_aa=hehe&utm_bb=hehe2";
+	}
+});
+Countly.track_pageview();
+</script>
+</head>
+<body>
+</body>
+</html>
