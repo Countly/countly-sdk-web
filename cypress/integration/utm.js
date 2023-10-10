@@ -14,38 +14,6 @@ function initMulti(appKey, searchQuery, utmStuff) {
         }
     });
 }
-function validateDefaultUtmTags(aq, source, medium, campaign, term, content) {
-    if (typeof source === "string") {
-        expect(aq.utm_source).to.eq(source);
-    }
-    else {
-        expect(aq.utm_source).to.not.exist;
-    }
-    if (typeof medium === "string") {
-        expect(aq.utm_medium).to.eq(medium);
-    }
-    else {
-        expect(aq.utm_medium).to.not.exist;
-    }
-    if (typeof campaign === "string") {
-        expect(aq.utm_campaign).to.eq(campaign);
-    }
-    else {
-        expect(aq.utm_campaign).to.not.exist;
-    }
-    if (typeof term === "string") {
-        expect(aq.utm_term).to.eq(term);
-    }
-    else {
-        expect(aq.utm_term).to.not.exist;
-    }
-    if (typeof content === "string") {
-        expect(aq.utm_content).to.eq(content);
-    }
-    else {
-        expect(aq.utm_content).to.not.exist;
-    }
-}
 
 describe("UTM tests ", () => {
     it("Checks if a single default utm tag works", () => {
@@ -54,7 +22,7 @@ describe("UTM tests ", () => {
             cy.fetch_local_request_queue().then((rq) => {
                 cy.log(rq);
                 const custom = JSON.parse(rq[0].user_details).custom;
-                validateDefaultUtmTags(custom, "hehe", "", "", "", "");
+                hp.validateDefaultUtmTags(custom, "hehe", "", "", "", "");
             });
         });
     });
@@ -64,7 +32,7 @@ describe("UTM tests ", () => {
             cy.fetch_local_request_queue().then((rq) => {
                 cy.log(rq);
                 const custom = JSON.parse(rq[0].user_details).custom;
-                validateDefaultUtmTags(custom, "hehe", "hehe1", "hehe2", "hehe3", "hehe4");
+                hp.validateDefaultUtmTags(custom, "hehe", "hehe1", "hehe2", "hehe3", "hehe4");
             });
         });
     });
@@ -74,7 +42,7 @@ describe("UTM tests ", () => {
             cy.fetch_local_request_queue().then((rq) => {
                 cy.log(rq);
                 const custom = JSON.parse(rq[0].user_details).custom;
-                validateDefaultUtmTags(custom, undefined, undefined, undefined, undefined, undefined);
+                hp.validateDefaultUtmTags(custom, undefined, undefined, undefined, undefined, undefined);
                 expect(custom.utm_aa).to.eq("hehe");
                 expect(custom.utm_bb).to.eq("");
             });
@@ -86,7 +54,7 @@ describe("UTM tests ", () => {
             cy.fetch_local_request_queue().then((rq) => {
                 cy.log(rq);
                 const custom = JSON.parse(rq[0].user_details).custom;
-                validateDefaultUtmTags(custom, undefined, undefined, undefined, undefined, undefined);
+                hp.validateDefaultUtmTags(custom, undefined, undefined, undefined, undefined, undefined);
                 expect(custom.utm_aa).to.eq("hehe");
                 expect(custom.utm_bb).to.eq("hoho");
             });
@@ -112,19 +80,19 @@ describe("UTM tests ", () => {
             // check original
             cy.fetch_local_request_queue().then((rq) => {
                 const custom = JSON.parse(rq[0].user_details).custom;
-                validateDefaultUtmTags(custom, "hehe", "", "", "", "");
+                hp.validateDefaultUtmTags(custom, "hehe", "", "", "", "");
             });
 
             // check if custom utm tags works
             cy.fetch_local_request_queue("Countly_2").then((rq) => {
                 const custom = JSON.parse(rq[0].user_details).custom;
-                validateDefaultUtmTags(custom, undefined, undefined, undefined, undefined, undefined);
+                hp.validateDefaultUtmTags(custom, undefined, undefined, undefined, undefined, undefined);
                 expect(custom.utm_ss).to.eq("hehe2");
             });
             // check if default utm tags works
             cy.fetch_local_request_queue("Countly_3").then((rq) => {
                 const custom = JSON.parse(rq[0].user_details).custom;
-                validateDefaultUtmTags(custom, "hehe3", "", "", "", "");
+                hp.validateDefaultUtmTags(custom, "hehe3", "", "", "", "");
             });
             // check if no utm tag in request queue if the query is wrong
             cy.fetch_local_request_queue("Countly_4").then((rq) => {
@@ -159,32 +127,32 @@ describe("UTM tests ", () => {
             // check original
             cy.fetch_local_request_queue().then((rq) => {
                 const custom = JSON.parse(rq[0].user_details).custom;
-                validateDefaultUtmTags(custom, "hehe", "", "", "", "");
+                hp.validateDefaultUtmTags(custom, "hehe", "", "", "", "");
             });
 
             // check if custom utm tags works for multi 1
             cy.fetch_local_request_queue("Countly_multi_1").then((rq) => {
                 const custom = JSON.parse(rq[0].user_details).custom;
-                validateDefaultUtmTags(custom, "hehe", "hehe1", "hehe2", "hehe3", "hehe4");
+                hp.validateDefaultUtmTags(custom, "hehe", "hehe1", "hehe2", "hehe3", "hehe4");
             });
 
             // check if custom utm tags works for multi 2
             cy.fetch_local_request_queue("Countly_multi_2").then((rq) => {
                 const custom = JSON.parse(rq[0].user_details).custom;
-                validateDefaultUtmTags(custom, "hehe", undefined, undefined, "hehe3", undefined);
+                hp.validateDefaultUtmTags(custom, "hehe", undefined, undefined, "hehe3", undefined);
                 expect(custom.utm_sthelse).to.eq("hehe5");
             });
 
             // check if custom utm tags works for multi 3
             cy.fetch_local_request_queue("Countly_multi_3").then((rq) => {
                 const custom = JSON.parse(rq[0].user_details).custom;
-                validateDefaultUtmTags(custom, "hehe", "", "", "", "");
+                hp.validateDefaultUtmTags(custom, "hehe", "", "", "", "");
             });
 
             // check if custom utm tags works for multi 4
             cy.fetch_local_request_queue("Countly_multi_4").then((rq) => {
                 const custom = JSON.parse(rq[0].user_details).custom;
-                validateDefaultUtmTags(custom, "hehe", "hehe1", "hehe2", "hehe3", "hehe4");
+                hp.validateDefaultUtmTags(custom, "hehe", "hehe1", "hehe2", "hehe3", "hehe4");
                 expect(custom.utm_next).to.eq("hehe5");
             });
 
@@ -211,7 +179,7 @@ describe("UTM tests ", () => {
             // check original
             cy.fetch_local_request_queue().then((rq) => {
                 const custom = JSON.parse(rq[0].user_details).custom;
-                validateDefaultUtmTags(custom, "hehe", "", "", "", "");
+                hp.validateDefaultUtmTags(custom, "hehe", "", "", "", "");
             });
 
             // check if custom utm tags works for multi 1
@@ -227,7 +195,7 @@ describe("UTM tests ", () => {
             // check if custom utm tags works for multi 3
             cy.fetch_local_request_queue("Countly_multi_next_3").then((rq) => {
                 const custom = JSON.parse(rq[0].user_details).custom;
-                validateDefaultUtmTags(custom, undefined, undefined, undefined, undefined, undefined);
+                hp.validateDefaultUtmTags(custom, undefined, undefined, undefined, undefined, undefined);
                 expect(custom.utm_sauce).to.eq("hehe");
                 expect(custom.utm_pan).to.eq("hehe2");
             });
