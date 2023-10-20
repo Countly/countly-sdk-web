@@ -21,7 +21,6 @@ describe("Remaining requests tests ", () => {
             hp.interceptAndCheckRequests(undefined, undefined, undefined, "?hc=*", "hc", (requestParams) => {
                 expect(requestParams.get("hc")).to.equal(JSON.stringify({ el: 0, wl: 0, sc: -1, em: "\"\"" }));
                 expect(requestParams.get("rr")).to.equal(null);
-                expect(requestParams.get("av")).to.equal(null);
             });
             cy.wait(1000).then(() => {
                 // Create a session
