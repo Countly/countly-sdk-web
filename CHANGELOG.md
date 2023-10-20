@@ -1,3 +1,6 @@
+## 23.6.2
+- Mitigated an issue where if a long numerical device ID was changed while SDK was running at multiple tabs, it was parsed
+
 ## 23.6.1
 - Mitigated an issue where numerical device IDs were parsed at the initialization
 

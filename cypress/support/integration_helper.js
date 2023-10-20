@@ -17,3 +17,20 @@ function queryExtractor(query) {
     }
     return returnVal;
 }
+
+/**
+ * Sets a value to local storage and triggers a storage event
+ * @param {*} key - storage key
+ * @param {*} value - storage value
+ */
+function triggerStorageChange(key, value) {
+    localStorage.setItem(key, value);
+    const storageEvent = new StorageEvent("storage", {
+        key: key,
+        newValue: value
+    });
+
+    window.dispatchEvent(storageEvent);
+}
+
+export { queryExtractor, triggerStorageChange };
