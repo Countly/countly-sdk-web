@@ -6,11 +6,12 @@ function initMain(shouldStopRequests) {
     Countly.init({
         app_key: "YOUR_APP_KEY",
         url: "https://try.count.ly",
+        app_version: "1.0",
         // would prevent requests from being sent to the server if true
         test_mode: shouldStopRequests
     });
 }
-
+const av = "1.0";
 describe("Remaining requests tests ", () => {
     it("Checks the requests for rr", () => {
         hp.haltAndClearStorage(() => {
@@ -27,16 +28,19 @@ describe("Remaining requests tests ", () => {
                 hp.interceptAndCheckRequests(undefined, undefined, undefined, "?begin_session=*", "begin_session", (requestParams) => {
                     expect(requestParams.get("begin_session")).to.equal("1");
                     expect(requestParams.get("rr")).to.equal("3");
+                    expect(requestParams.get("av")).to.equal(av);
                 });
                 // End the session
                 Countly.end_session(undefined, true);
                 hp.interceptAndCheckRequests(undefined, undefined, undefined, undefined, "end_session", (requestParams) => {
                     expect(requestParams.get("end_session")).to.equal("1");
                     expect(requestParams.get("rr")).to.equal("2");
+                    expect(requestParams.get("av")).to.equal(av);
                 });
                 hp.interceptAndCheckRequests(undefined, undefined, undefined, undefined, "orientation", (requestParams) => {
                     expect(JSON.parse(requestParams.get("events"))[0].key).to.equal("[CLY]_orientation");
                     expect(requestParams.get("rr")).to.equal("1");
+                    expect(requestParams.get("av")).to.equal(av);
                 });
                 cy.wait(100).then(() => {
                     cy.fetch_local_request_queue().then((rq) => {

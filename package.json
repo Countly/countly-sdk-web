@@ -1,6 +1,6 @@
 {
   "name": "countly-sdk-web",
-  "version": "23.6.1",
+  "version": "23.6.2",
   "description": "Countly Web SDK",
   "main": "lib/countly.js",
   "directories": {

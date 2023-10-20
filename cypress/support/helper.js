@@ -21,6 +21,25 @@ function haltAndClearStorage(callback) {
 }
 
 /**
+ * user details object for user details tests (used in user_details.js and storage_change.js)
+ * @type {Object}
+ */
+const userDetailObj = {
+    name: "Barturiana Sosinsiava",
+    username: "bar2rawwen",
+    email: "test@test.com",
+    organization: "Dukely",
+    phone: "+123456789",
+    picture: "https://ps.timg.com/profile_images/52237/011_n_400x400.jpg",
+    gender: "Non-binary",
+    byear: 1987,
+    custom: {
+        "key1 segment": "value1 segment",
+        "key2 segment": "value2 segment"
+    }
+};
+
+/**
  * get timestamp
  * @returns {number} -timestamp
  */
@@ -262,5 +281,6 @@ module.exports = {
     eventArray,
     testNormalFlow,
     interceptAndCheckRequests,
-    validateDefaultUtmTags
+    validateDefaultUtmTags,
+    userDetailObj
 };
