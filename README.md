@@ -1,4 +1,4 @@
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/79582b7ee7ca4021a3950376402fac00)](https://www.codacy.com/gh/Countly/countly-sdk-web/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Countly/countly-sdk-web&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/79582b7ee7ca4021a3950376402fac00)](https://app.codacy.com/gh/Countly/countly-sdk-web/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![npm version](https://badge.fury.io/js/countly-sdk-web.svg)](https://badge.fury.io/js/countly-sdk-web)
 [![js delivr](https://data.jsdelivr.com/v1/package/npm/countly-sdk-web/badge)](https://www.jsdelivr.com/package/npm/countly-sdk-web)
 
