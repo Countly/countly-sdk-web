@@ -1,7 +1,7 @@
 ## 23.6.1
 - Mitigated an issue where numerical device IDs were parsed at the initialization
 
-- You can now add segmentation while presenting a widget
+- You can now add segmentation while presenting a widget with 'present_feedback_widget'
 
 ## 23.6.0
 - Added a new flag, 'loadAPMScriptsAsync', which can load the APM related scripts automatically for Async implementations
