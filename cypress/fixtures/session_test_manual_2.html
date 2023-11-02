@@ -3,8 +3,8 @@
 <head>
 <!--Countly script-->
 <script type='text/javascript' src='../../lib/countly.js'></script>
-<script type='text/javascript' src='../support/integration_helper.js'></script>
-<script type='text/javascript'>
+<script type='module'>
+import { queryExtractor } from '../support/integration_helper.js';
 // here we implement a cookie and localStorage clearing logic
 const deleteAllCookies = () => {
 const cookies = document.cookie.split(";");

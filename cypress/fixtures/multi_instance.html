@@ -1,8 +1,8 @@
 <html>
 <head>
     <script type='text/javascript' src='../../lib/countly.js'></script>
-    <script type='text/javascript' src='../support/integration_helper.js'></script>
-    <script type='text/javascript'>
+    <script type='module'>
+        import { triggerStorageChange } from '../support/integration_helper.js';
         // here we implement a cookie and localStorage clearing logic
         const deleteAllCookies = () => {
             const cookies = document.cookie.split(";");
@@ -27,6 +27,8 @@
         })
         Countly.remove_consent();
         Countly.disable_offline_mode();
+        triggerStorageChange("YOUR_APP_KEY1/cly_id", "id1");
+        triggerStorageChange("YOUR_APP_KEY3/cly_id", "id3");
         Countly.add_event({ key: "test", count: 1, sum: 1, dur: 1, segmentation: { test: "test" } });
         Countly.start_event("test");
         Countly.cancel_event("gobbledygook");

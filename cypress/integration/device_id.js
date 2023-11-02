@@ -303,4 +303,11 @@ describe("Device ID init tests for request state", ()=>{
             });
         });
     });
+    it("Start with a long numerical device ID", () => {
+        hp.haltAndClearStorage(() => {
+            localStorage.setItem("YOUR_APP_KEY/cly_id", "12345678901234567890123456789012345678901234567890123456789012345678901234567890");
+            initMain(undefined, false, undefined, false, true, true);
+            expect(Countly.get_device_id()).to.equal("12345678901234567890123456789012345678901234567890123456789012345678901234567890");
+        });
+    });
 });
