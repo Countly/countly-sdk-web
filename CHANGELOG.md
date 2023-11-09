@@ -1,3 +1,6 @@
+## 23.6.3
+- You can now add segmentation while presenting a widget with 'present_feedback_widget'
+
 ## 23.6.2
 - Adding app version information to every request
 
