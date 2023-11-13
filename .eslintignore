@@ -1,7 +1,6 @@
 lib/countly.min.js
 plugin/boomerang/boomerang.min.js
-examples/react
-examples/symbolication
+examples/
 node_modules
 .vscode
 .github
