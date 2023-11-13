@@ -1,8 +1,8 @@
 importScripts("../lib/countly.js");
 
 Countly.init({
-    app_key: "support",
-    url: "https://master.count.ly",
+    app_key: "YOUR_APP_KEY",
+    url: "https://try.count.ly",
     debug: true,
     getViewUrl : function () {
         return "https://my.url.ly";
