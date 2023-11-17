@@ -68,15 +68,17 @@ Cypress.Commands.add("check_crash", (testObject, appKey) => {
  * @param {Number} duration - session extension or end session duration to validate
  * @param {Boolean} isSessionEnd - a boolean to mark this check is intended for end_session validation
  */
-Cypress.Commands.add("check_session", (queueObject, duration, isSessionEnd, appKey) => {
-    if (!duration) { // if duration is not given that means its begin session
+Cypress.Commands.add("check_session", (queueObject, duration, isSessionEnd, appKey, worker) => {
+    if (duration === undefined) { // if duration is not given that means its begin session
         expect(queueObject.begin_session).to.equal(1);
         const metrics = JSON.parse(queueObject.metrics);
         expect(metrics._app_version).to.be.ok;
         expect(metrics._ua).to.be.ok;
-        expect(metrics._resolution).to.be.ok;
-        expect(metrics._density).to.be.ok;
         expect(metrics._locale).to.be.ok;
+        if (!worker) {
+            expect(metrics._resolution).to.be.ok;
+            expect(metrics._density).to.be.ok;
+        }
     }
     else if (!isSessionEnd) {
         expect(queueObject.session_duration).to.be.within(duration, duration + 2);
@@ -152,7 +154,9 @@ Cypress.Commands.add("check_view_event", (queueObject, name, duration, hasPvid) 
     if (duration === undefined) {
         expect(queueObject.segmentation.visit).to.equal(1);
         expect(queueObject.segmentation.view).to.be.ok;
-        expect(queueObject.segmentation.domain).to.be.ok;
+        if (queueObject.segmentation.view !== "web_worker") {
+            expect(queueObject.segmentation.domain).to.be.ok;
+        }
         // expect(queue.segmentation.start).to.be.ok; // TODO: this is only for manual tracking?
     }
     else {

@@ -1,0 +1,55 @@
+<html>
+
+<head>
+    <!-- Page styling here -->
+    <link rel='stylesheet' type='text/css' href='./style/style.css'>
+
+    <!--Countly script-->
+    <script type='text/javascript'>
+        const myWorker = new Worker("worker.js");
+        myWorker.onmessage = (e) => {
+            console.log(e);
+        };
+    </script>
+</head>
+
+<body>
+    <!-- Header, banner etc. Top part of your site  -->
+    <div id="header">
+        <h1>Sync Countly Implementation</h1>
+        <img id="logo" src="./images/logo.png">
+    </div>
+
+    <center>
+        <img src="./images/team_countly.jpg" id="wallpaper" />
+        <br />
+        <input type="button" id="Record Event" onclick="clickEvent()" value="Record Event">
+        <input type="button" id="Record View" onclick="recordView()" value="Record View">
+        <input type="button" id="Begin Session" onclick="beginSession()" value="Begin Session">
+        <input type="button" id="End Session" onclick="endSession()" value="End Session">
+        <br />
+    </center>
+    <script type='text/javascript'>
+        const myEvent = {
+            key: "buttonClick",
+            "segmentation": {
+                "id": "id"
+            }
+        }
+        //send event on button click
+        function clickEvent() {
+            myWorker.postMessage({ type: "event", data: myEvent });
+        }
+        function recordView() {
+            myWorker.postMessage({ type: "view", data: "home_page" });
+        }
+        function beginSession() {
+            myWorker.postMessage({ type: "session", data: "begin_session" });
+        }
+        function endSession() {
+            myWorker.postMessage({ type: "session", data: "end_session" });
+        }
+    </script>
+</body>
+
+</html>
