@@ -30,24 +30,24 @@
         <br />
     </center>
     <script type='text/javascript'>
+        const myEvent = {
+            key: "buttonClick",
+            "segmentation": {
+                "id": "id"
+            }
+        }
         //send event on button click
         function clickEvent() {
-            const myEvent = {
-                key: "buttonClick",
-                "segmentation": {
-                    "id": "id"
-                }
-            }
-            myWorker.postMessage([myEvent, "event"]);
+            myWorker.postMessage({ type: "event", data: myEvent });
         }
         function recordView() {
-            myWorker.postMessage(["home_page", "view"]);
+            myWorker.postMessage({ type: "view", data: "home_page" });
         }
         function beginSession() {
-            myWorker.postMessage(["begin_session", "begin_session"]);
+            myWorker.postMessage({ type: "session", data: "begin_session" });
         }
         function endSession() {
-            myWorker.postMessage(["end_session", "end_session"]);
+            myWorker.postMessage({ type: "session", data: "end_session" });
         }
     </script>
 </body>
