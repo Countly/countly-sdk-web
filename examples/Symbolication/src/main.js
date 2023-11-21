@@ -1,4 +1,4 @@
-import Countly from "../../../lib/countly.js"
+import Countly from "countly-sdk-web";
 
 Countly.init({
   app_key: "YOUR_APP_KEY",
