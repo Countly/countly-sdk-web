@@ -1,3 +1,6 @@
+## X.X.X
+- You can now provide custom storage methods to the SDK
+
 ## 23.6.3
 - You can now add segmentation while presenting a widget with 'present_feedback_widget'
 
