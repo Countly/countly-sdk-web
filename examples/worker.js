@@ -1,9 +1,22 @@
 importScripts("../lib/countly.js");
 
+const STORE={}; // in-memory storage for worker
+
 Countly.init({
     app_key: "YOUR_APP_KEY",
     url: "https://try.count.ly",
-    debug: true
+    debug: true,
+    storage: {
+        getItem: function (key) {
+            return STORE[key];
+        },
+        setItem: function (key, value) {
+            STORE[key] = value;
+        },
+        removeItem: function (key) {
+            delete STORE[key];
+        }
+    }
 });
 
 onmessage = function (e) {
