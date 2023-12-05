@@ -4,7 +4,7 @@
 
 # Countly Web SDK
 
-This SDK depends on the modular [Countly JavaScript SDK](https://github.com/Countly/countly-sdk-js).
+This SDK is bundled from the modular [Countly JavaScript SDK](https://github.com/Countly/countly-sdk-js).
 
 This repository contains the Countly Web SDK, which can be integrated into websites and web applications. The Countly Web SDK is intended to be used with [Countly Lite](https://countly.com/lite), [Countly Flex](https://countly.com/flex) [Countly Enterprise](https://countly.com/enterprise).
 
