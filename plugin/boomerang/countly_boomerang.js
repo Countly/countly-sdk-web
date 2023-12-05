@@ -6,7 +6,10 @@ Countly APM based on Boomerang JS
 Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
 */
 (function cly_load_track_performance() {
-    var Countly = Countly || {};
+    if (typeof window === "undefined") {
+        return; // apm plugin needs window to be defined due to boomerang.js. Can't be used in webworkers
+    }
+    var Countly = window.Countly || {};
     Countly.onload = Countly.onload || [];
     if (typeof Countly.CountlyClass === "undefined") {
         return Countly.onload.push(function() {

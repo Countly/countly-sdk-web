@@ -22,8 +22,8 @@ describe("Web Worker Request Intercepting Tests", () => {
         cy.intercept("GET", "**/i?**", (req) => {
             const { url } = req;
 
-            // check url starts with https://try.count.ly/i?
-            assert.isTrue(url.startsWith("https://try.count.ly/i?"));
+            // check url starts with https://your.domain.count.ly/i?
+            assert.isTrue(url.startsWith("https://your.domain.count.ly/i?"));
 
             // turn query string into object
             const paramsObject = turnSearchStringToObject(url.split("?")[1]);

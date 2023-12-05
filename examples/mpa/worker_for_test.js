@@ -2,7 +2,7 @@ importScripts("../../lib/countly.js");
 
 Countly.init({
     app_key: "YOUR_APP_KEY",
-    url: "https://try.count.ly",
+    url: "https://your.domain.count.ly",
     debug: true,
     test_mode: true
 });

@@ -5,7 +5,7 @@ var hp = require("../support/helper");
 function initMain(deviceId, offline, searchQuery, clear, rq, eq) {
     Countly.init({
         app_key: "YOUR_APP_KEY",
-        url: "https://try.count.ly",
+        url: "https://your.domain.count.ly",
         device_id: deviceId,
         test_mode: rq,
         test_mode_eq: eq,

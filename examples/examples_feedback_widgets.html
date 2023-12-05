@@ -10,7 +10,7 @@
 
     Countly.init({
       app_key: 'YOUR_APP_KEY', //your app key
-      url: 'https://try.count.ly', //your server goes here
+      url: 'https://your.domain.count.ly', //your server goes here
       debug: true
     });
 
@@ -70,7 +70,7 @@
           }
 
           // Get data with the widget object
-          Countly.getFeedbackWidgetData(CountlyFeedbackWidget,
+          Countly.getFeedbackWidgetData(countlyFeedbackWidget,
             // callback function, 1st param is the feedback widget data
             function (feedbackData, err) {
               if (err) { // error handling
@@ -81,14 +81,14 @@
               const CountlyWidgetData = feedbackData;
               // record data according to the widget type
               if (CountlyWidgetData.type === 'nps') {
-                Countly.reportFeedbackWidgetManually(CountlyFeedbackWidget, CountlyWidgetData, { rating: 3, comment: "comment" });
+                Countly.reportFeedbackWidgetManually(countlyFeedbackWidget, CountlyWidgetData, { rating: 3, comment: "comment" });
               } else if (CountlyWidgetData.type === 'survey') {
                 var widgetResponse = {};
                 // form the key/value pairs according to data
                 widgetResponse["answ-" + CountlyWidgetData.questions[0].id] = CountlyWidgetData.questions[0].type === "rating" ? 3 : "answer";
-                Countly.reportFeedbackWidgetManually(CountlyFeedbackWidget, CountlyWidgetData, widgetResponse);
+                Countly.reportFeedbackWidgetManually(countlyFeedbackWidget, CountlyWidgetData, widgetResponse);
               } else if (CountlyWidgetData.type === 'rating') {
-                Countly.reportFeedbackWidgetManually(CountlyFeedbackWidget, CountlyWidgetData, { rating: 3, comment: "comment", email: "email", contactMe: true });
+                Countly.reportFeedbackWidgetManually(countlyFeedbackWidget, CountlyWidgetData, { rating: 3, comment: "comment", email: "email", contactMe: true });
               }
             }
 
