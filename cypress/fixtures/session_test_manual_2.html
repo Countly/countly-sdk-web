@@ -24,7 +24,7 @@ const confObj = queryExtractor(window.location.search);
 //initializing countly with params
 Countly.init({
 	app_key: "YOUR_APP_KEY",
-	url: "https://try.count.ly",
+	url: "https://your.domain.count.ly",
   device_id: "manual_2",
   session_update: 5,
   test_mode: true,
@@ -34,7 +34,7 @@ Countly.init({
 Countly.begin_session();
 // event listener to end session
 window.addEventListener("beforeunload", function () {
-    Countly.end_session();
+    Countly.end_session(undefined, true);
 })
 </script>
 </head>

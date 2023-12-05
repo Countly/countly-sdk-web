@@ -5,7 +5,7 @@ var hp = require("../support/helper");
 function initMain(shouldStopRequests) {
     Countly.init({
         app_key: "YOUR_APP_KEY",
-        url: "https://try.count.ly",
+        url: "https://your.domain.count.ly",
         app_version: "1.0",
         // would prevent requests from being sent to the server if true
         test_mode: shouldStopRequests

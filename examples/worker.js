@@ -4,7 +4,7 @@ const STORE={}; // in-memory storage for worker
 
 Countly.init({
     app_key: "YOUR_APP_KEY",
-    url: "https://try.count.ly",
+    url: "https://your.domain.count.ly",
     debug: true,
     storage: {
         getItem: function (key) {
