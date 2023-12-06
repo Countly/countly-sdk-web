@@ -77,7 +77,6 @@ var waitFunction = function(startTime, waitTime, waitIncrement, continueCallback
  * @param {Function} callback - callback function
  */
 function interceptAndCheckRequests(requestType, requestUrl, endPoint, requestParams, alias, callback) {
-    requestType = requestType || "GET";
     requestUrl = requestUrl || "https://your.domain.countly"; // TODO: might be needed in the future but not yet
     endPoint = endPoint || "/i";
     requestParams = requestParams || "?**";
