@@ -5,7 +5,7 @@ var hp = require("../support/helper");
 function init(appKey, searchQuery, utmStuff) {
     Countly.init({
         app_key: appKey,
-        url: "https://your.domain.count.ly",
+        url: "https://your.domain.countly",
         test_mode: true,
         test_mode_eq: true,
         utm: utmStuff, // utm object provided in init
@@ -166,7 +166,7 @@ describe("View with utm and referrer tests ", () => {
             // default (original) init with no custom tags and default query
             var C1 = Countly.init({
                 app_key: "YOUR_APP_KEY",
-                url: "https://your.domain.count.ly",
+                url: "https://your.domain.countly",
                 test_mode: true,
                 test_mode_eq: true,
                 utm: undefined, // utm object provided in init
@@ -179,7 +179,7 @@ describe("View with utm and referrer tests ", () => {
             // utm object provided with appropriate query
             var C2 = Countly.init({
                 app_key: "Countly_2",
-                url: "https://your.domain.count.ly",
+                url: "https://your.domain.countly",
                 test_mode: true,
                 test_mode_eq: true,
                 utm: { ss: true }, // utm object provided in init
@@ -278,7 +278,7 @@ describe("isReferrerUsable tests", () => {
         hp.haltAndClearStorage(() => {
             Countly.init({
                 app_key: "YOUR_APP_KEY",
-                url: "https://your.domain.count.ly",
+                url: "https://your.domain.countly",
                 ignore_referrers: ["http://example.com"]
             });
             const result = Countly._internals.isReferrerUsable("http://example.com/something");

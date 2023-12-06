@@ -5,7 +5,7 @@ var hp = require("../support/helper");
 function initMulti(appKey, searchQuery, utmStuff) {
     Countly.init({
         app_key: appKey,
-        url: "https://your.domain.count.ly",
+        url: "https://your.domain.countly",
         test_mode: true,
         test_mode_eq: true,
         utm: utmStuff,

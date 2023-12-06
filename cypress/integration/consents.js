@@ -6,7 +6,7 @@ var hp = require("../support/helper");
 function initMain(consent) {
     Countly.init({
         app_key: "YOUR_APP_KEY",
-        url: "https://your.domain.count.ly",
+        url: "https://your.domain.countly",
         require_consent: consent,
         device_id: "György Ligeti",
         test_mode: true,

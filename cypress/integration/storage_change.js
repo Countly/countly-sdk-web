@@ -6,7 +6,7 @@ import { triggerStorageChange } from "../support/integration_helper";
 function initMain(val) {
     Countly.init({
         app_key: "YOUR_APP_KEY",
-        url: "https://your.domain.count.ly",
+        url: "https://your.domain.countly",
         device_id: 0, // provide number
         test_mode_eq: true,
         test_mode: true,
@@ -78,7 +78,7 @@ describe("Multi tab storage change test", () => {
         hp.haltAndClearStorage(() => {
             let firstIns = Countly.init({
                 app_key: "YOUR_APP_KEY1",
-                url: "https://your.domain.count.ly",
+                url: "https://your.domain.countly",
                 device_id: 0,
                 test_mode_eq: true,
                 test_mode: true,
@@ -87,7 +87,7 @@ describe("Multi tab storage change test", () => {
             });
             let secondIns = Countly.init({
                 app_key: "YOUR_APP_KEY2",
-                url: "https://your.domain.count.ly",
+                url: "https://your.domain.countly",
                 device_id: -1,
                 test_mode_eq: true,
                 test_mode: true,

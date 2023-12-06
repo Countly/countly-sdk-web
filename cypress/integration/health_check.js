@@ -5,7 +5,7 @@ var hp = require("../support/helper");
 function initMain() {
     Countly.init({
         app_key: "YOUR_APP_KEY",
-        url: "https://your.domain.count.ly",
+        url: "https://your.domain.countly",
         test_mode: true
     });
 }
@@ -14,7 +14,7 @@ describe("Health Check tests ", () => {
     it("Check if health check is sent at the beginning", () => {
         hp.haltAndClearStorage(() => {
             initMain();
-            cy.intercept("https://your.domain.count.ly/i?*").as("getXhr");
+            cy.intercept("https://your.domain.countly/i?*").as("getXhr");
             cy.wait("@getXhr").then((xhr) => {
                 const url = new URL(xhr.request.url);
 

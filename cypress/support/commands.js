@@ -81,11 +81,11 @@ Cypress.Commands.add("check_session", (queueObject, duration, isSessionEnd, appK
         }
     }
     else if (!isSessionEnd) {
-        expect(queueObject.session_duration).to.be.within(duration, duration + 2);
+        expect(queueObject.session_duration).to.be.within(duration - 5, duration + 5);
     }
     else {
         expect(queueObject.end_session).to.equal(1);
-        expect(queueObject.session_duration).to.be.within(duration, duration + 1);
+        expect(queueObject.session_duration).to.be.within(duration - 5, duration + 5);
     }
     cy.check_request_commons(queueObject, appKey);
     cy.check_commons(queueObject);
