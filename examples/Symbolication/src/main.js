@@ -3,7 +3,7 @@ import Countly from "countly-sdk-web";
 Countly.init({
   app_key: "YOUR_APP_KEY",
   app_version: "1.0",
-  url: "https://your.domain.count.ly",
+  url: "https://your.domain.countly",
   debug: true
 });
 

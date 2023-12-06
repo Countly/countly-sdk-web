@@ -70,7 +70,7 @@ var waitFunction = function(startTime, waitTime, waitIncrement, continueCallback
 /**
  * This intercepts the request the SDK makes and returns the request parameters to the callback function
  * @param {String} requestType - GET, POST, PUT, DELETE
- * @param {String} requestUrl - request url (https://your.domain.count.ly)
+ * @param {String} requestUrl - request url (https://your.domain.countly)
  * @param {String} endPoint - endpoint (/i)
  * @param {String} requestParams - request parameters (?begin_session=**)
  * @param {String} alias - alias for the request
@@ -78,7 +78,7 @@ var waitFunction = function(startTime, waitTime, waitIncrement, continueCallback
  */
 function interceptAndCheckRequests(requestType, requestUrl, endPoint, requestParams, alias, callback) {
     requestType = requestType || "GET";
-    requestUrl = requestUrl || "https://your.domain.count.ly"; // TODO: might be needed in the future but not yet
+    requestUrl = requestUrl || "https://your.domain.countly"; // TODO: might be needed in the future but not yet
     endPoint = endPoint || "/i";
     requestParams = requestParams || "?**";
     alias = alias || "getXhr";

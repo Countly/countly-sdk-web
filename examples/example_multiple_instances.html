@@ -16,7 +16,7 @@
 		//initializing first instance, which will be global Countly
 		Countly.init({
 			app_key: "YOUR_APP_KEY1",
-			url: "https://your.domain.count.ly", //your server goes here
+			url: "https://your.domain.countly", //your server goes here
 			debug: true
 		})
 		//report event to first app
@@ -29,7 +29,7 @@
 		//initialize second instance for another app synchronously
 		var Countly2 = Countly.init({
 			app_key: "YOUR_APP_KEY2", //must have different APP key
-			url: "https://your.domain.count.ly", //your server goes here
+			url: "https://your.domain.countly", //your server goes here
 			debug: true
 		});
 		//report event to second app
@@ -42,7 +42,7 @@
 		//initialize third instance for another app asynchronously
 		Countly.q.push(["init", {
 			app_key: "YOUR_APP_KEY3", //must have different APP key
-			url: "https://your.domain.count.ly", //your server goes here
+			url: "https://your.domain.countly", //your server goes here
 			debug: true
 		}])
 		//report event to third app asynchronously by passing app key as first arg
