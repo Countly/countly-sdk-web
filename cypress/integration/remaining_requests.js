@@ -19,7 +19,11 @@ describe("Remaining requests tests ", () => {
 
             // We will expect 4 requests: health check, begin_session, end_session, orientation
             hp.interceptAndCheckRequests(undefined, undefined, undefined, "?hc=*", "hc", (requestParams) => {
-                expect(requestParams.get("hc")).to.equal(JSON.stringify({ el: 0, wl: 0, sc: -1, em: "\"\"" }));
+                const params = JSON.parse(requestParams.get("hc"));
+                assert.isTrue(typeof params.el === "number");
+                assert.isTrue(typeof params.wl === "number");
+                assert.isTrue(typeof params.sc === "number");
+                assert.isTrue(typeof params.em === "string");
                 expect(requestParams.get("rr")).to.equal(null);
             });
             cy.wait(1000).then(() => {

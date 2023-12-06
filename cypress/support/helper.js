@@ -83,7 +83,11 @@ function interceptAndCheckRequests(requestType, requestUrl, endPoint, requestPar
     requestParams = requestParams || "?**";
     alias = alias || "getXhr";
 
-    cy.intercept(requestType, endPoint + requestParams).as(alias);
+    cy.intercept(requestUrl + endPoint + requestParams, (req) => {
+        req.reply(200, { result: "Success" }, {
+            "x-countly-rr": "2"
+        });
+    }).as(alias);
     cy.wait("@" + alias).then((xhr) => {
         const url = new URL(xhr.request.url);
         const searchParams = url.searchParams;
