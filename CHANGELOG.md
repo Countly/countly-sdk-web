@@ -1,7 +1,7 @@
 ## 23.12.0
 - You can now provide custom storage methods to the SDK
 - You can now use the SDK in web workers
-- From this version on the SDK is bundled from Countly JavaScript SDK
+- From this version on the SDK is bundled from the Countly JavaScript SDK
 
 ## 23.6.3
 - You can now add segmentation while presenting a widget with 'present_feedback_widget'
