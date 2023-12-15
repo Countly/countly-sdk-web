@@ -1,3 +1,6 @@
+## 23.12.1
+- Added TS type declerations to the SDK
+
 ## 23.12.0
 - You can now provide custom storage methods to the SDK
 - You can now use the SDK in web workers
