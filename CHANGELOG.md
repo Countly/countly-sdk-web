@@ -1,5 +1,5 @@
 ## 23.12.1
-- Added TS type declerations to the SDK
+- Added methods for bridged SDK usage
 
 ## 23.12.0
 - You can now provide custom storage methods to the SDK
