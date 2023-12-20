@@ -1,3 +1,6 @@
+## 23.12.2
+- Improved bot detection capabilities
+
 ## 23.12.1
 - Added methods for bridged SDK usage
 
