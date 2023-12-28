@@ -1,3 +1,8 @@
+## 23.12.3
+- Added bot detection for workers
+- Added the ability to clear stored device IDs in the workers
+- Mitigated an issue where utm naming could have been affected if 'searchQuery' did not return '?'
+
 ## 23.12.2
 - Improved bot detection capabilities
 

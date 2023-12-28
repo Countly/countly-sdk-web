@@ -58,6 +58,8 @@ describe("User Agent tests ", () => {
             expect(Countly._internals.userAgentSearchBotDetection("123")).to.equal(false);
             expect(Countly._internals.userAgentSearchBotDetection("Googlebot")).to.equal(true);
             expect(Countly._internals.userAgentSearchBotDetection("Google")).to.equal(false);
+            expect(Countly._internals.userAgentSearchBotDetection("HeadlessChrome")).to.equal(true);
+            expect(Countly._internals.userAgentSearchBotDetection("Chrome-Lighthouse")).to.equal(true);
         });
     });
 });

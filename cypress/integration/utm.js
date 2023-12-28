@@ -38,7 +38,7 @@ describe("UTM tests ", () => {
     });
     it("Checks if a single custom utm tag works", () => {
         hp.haltAndClearStorage(() => {
-            initMulti("YOUR_APP_KEY", "?utm_aa=hehe", { aa: true, bb: true });
+            initMulti("YOUR_APP_KEY", "utm_aa=hehe", { aa: true, bb: true });
             cy.fetch_local_request_queue().then((rq) => {
                 cy.log(rq);
                 const custom = JSON.parse(rq[0].user_details).custom;
@@ -50,7 +50,7 @@ describe("UTM tests ", () => {
     });
     it("Checks if custom utm tags works", () => {
         hp.haltAndClearStorage(() => {
-            initMulti("YOUR_APP_KEY", "?utm_aa=hehe&utm_bb=hoho", { aa: true, bb: true });
+            initMulti("YOUR_APP_KEY", "utm_aa=hehe&utm_bb=hoho", { aa: true, bb: true });
             cy.fetch_local_request_queue().then((rq) => {
                 cy.log(rq);
                 const custom = JSON.parse(rq[0].user_details).custom;
@@ -72,7 +72,7 @@ describe("UTM tests ", () => {
             initMulti("Countly_3", "?utm_source=hehe3", undefined);
 
             // utm object not provided with inappropriate query
-            initMulti("Countly_5", "?utm_ss=hehe5", undefined);
+            initMulti("Countly_5", "utm_ss=hehe5", undefined);
 
             // default (original) init with no custom tags and default query
             initMulti("YOUR_APP_KEY", "?utm_source=hehe", undefined);
@@ -116,7 +116,7 @@ describe("UTM tests ", () => {
             initMulti("Countly_multi_2", "?utm_source=hehe&utm_medium=hehe1&utm_campaign=hehe2&utm_term=hehe3&utm_content=hehe4&utm_sthelse=hehe5&fdsjhflkjhsdlkfjhsdlkjfhksdjhfkj+dsf;jsdlkjflk+=skdjflksjd=fksdfl;sd=sdkfmk&&&", { source: true, term: true, sthelse: true });
 
             // empty init, garbage query + 1 default
-            initMulti("Countly_multi_3", "?dasdashdjkhaslkjdhsakj=dasmndlask=asdkljska&&utm_source=hehe", undefined);
+            initMulti("Countly_multi_3", "dasdashdjkhaslkjdhsakj=dasmndlask=asdkljska&&utm_source=hehe", undefined);
 
             // full default utm obj + custom 1, full query + 1
             initMulti("Countly_multi_4", "?utm_source=hehe&utm_medium=hehe1&utm_campaign=hehe2&utm_term=hehe3&utm_content=hehe4&utm_next=hehe5", { source: true, medium: true, campaign: true, term: true, content: true, next: true });

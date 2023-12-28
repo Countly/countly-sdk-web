@@ -42,7 +42,7 @@ describe("View with utm and referrer tests ", () => {
     // we record 2 views and check if both have the same utm tag
     it("Checks if a single default utm tag is at view segmentation of both views", () => {
         hp.haltAndClearStorage(() => {
-            init("YOUR_APP_KEY", "?utm_source=hehe", undefined);
+            init("YOUR_APP_KEY", "utm_source=hehe", undefined);
             Countly.track_view(pageNameOne); // first view
             Countly.track_view(pageNameTwo); // second view
             // View event should have the utm tag
