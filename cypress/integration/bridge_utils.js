@@ -16,7 +16,7 @@ function initMain(name, version) {
 }
 
 const SDK_NAME = "javascript_native_web";
-const SDK_VERSION = "23.12.3";
+const SDK_VERSION = "23.12.4";
 
 // tests
 describe("Bridged SDK Utilities Tests", () => {
