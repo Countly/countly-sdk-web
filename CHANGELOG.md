@@ -1,3 +1,6 @@
+## 23.12.4
+- Enhanced userAgentData detection for bot filtering
+
 ## 23.12.3
 - Added bot detection for workers
 - Added the ability to clear stored device IDs in the workers
