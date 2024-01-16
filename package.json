@@ -33,6 +33,7 @@
   },
   "homepage": "https://countly.com/",
   "devDependencies": {
+    "crypto-js": "^4.2.0",
     "cypress": "^9.5.0",
     "cypress-localstorage-commands": "^1.7.0",
     "eslint": "^8.37.0",
@@ -42,8 +43,8 @@
     "eslint-plugin-import": "^2.27.5",
     "jsdoc": "^4.0.2",
     "markdownlint": "^0.29.0",
-    "stylelint": "14.9.1",
-    "stylelint-config-standard": "28.0.0"
+    "stylelint": "^14.9.1",
+    "stylelint-config-standard": "^28.0.0"
   },
   "npmName": "countly-sdk-web",
   "npmFileMap": [
