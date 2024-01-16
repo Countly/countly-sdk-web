@@ -1,4 +1,4 @@
 /node_modules/
 .vscode/*
 package-lock.json
-
+.DS_Store
