@@ -1,4 +1,4 @@
-importScripts("../../lib/countly.js");
+importScripts("../../lib/countly.min.js");
 
 Countly.init({
     app_key: "YOUR_APP_KEY",

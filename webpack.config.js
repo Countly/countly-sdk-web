@@ -4,6 +4,6 @@ module.exports = {
   entry: "./lib/countly",
   output: {
     path: path.resolve(__dirname, "./lib"),
-    filename: "countly.with.salt.min.js",
+    filename: "countly.min.js",
   },
 };

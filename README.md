@@ -42,7 +42,7 @@ This SDK supports the following features:
 
 ## Integrating Countly SDK in your projects with salt
 
-As this origin SDK cannot work with salt, So need to fixe. You can check out the branch at https://github.com/leewenbil/countly-sdk-web/tree/add-salt, then you can also reach the minified SDK [countly.with.salt.min.js](https://github.com/leewenbil/countly-sdk-web/blob/add-salt/lib/countly.with.salt.min.js)
+As this origin SDK cannot work with salt, So need to do some improvements. You can check out the branch at https://github.com/leewenbil/countly-sdk-web/tree/add-salt, then you can also reach the minified SDK [countly.with.salt.min.js](https://github.com/leewenbil/countly-sdk-web/blob/add-salt/lib/countly.min.js)
 
 ## Security
 

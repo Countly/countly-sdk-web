@@ -1,4 +1,4 @@
-importScripts("../lib/countly.js");
+importScripts("../lib/countly.min.js");
 
 const STORE={}; // in-memory storage for worker
 

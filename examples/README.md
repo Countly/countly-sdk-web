@@ -7,7 +7,7 @@ For all projects you should change 'YOUR_APP_KEY' value with your own applicatio
 
 If you have not separated 'examples' folder from the 'COUNTLY-SDK-WEB' project folder nor made some changes to file names in the periphery, any path to countly.js or the plugins must be still correct. 
 
-But if you did make some changes you should check if the paths, like '../lib/countly.js', are correct or not inside the example files.
+But if you did make some changes you should check if the paths, like '../lib/countly.min.js', are correct or not inside the example files.
 
 ## Generating Examples
 
