@@ -9,9 +9,16 @@
     <script type='text/javascript'>
 
         //initializing countly with params and remote config
+        const COUNTLY_SERVER_KEY = "https://your.server.ly";
+        const COUNTLY_APP_KEY = "YOUR_APP_KEY";
+
+        if(COUNTLY_APP_KEY === "YOUR_APP_KEY" || COUNTLY_SERVER_KEY === "https://your.server.ly"){
+            throw new Error("Please do not use default set of app key and server url")
+        }
+        // initializing countly with params
         Countly.init({
-            app_key: "YOUR_APP_KEY",
-            url: "https://your.domain.countly", //your server goes here
+            app_key: COUNTLY_APP_KEY,
+            url: COUNTLY_SERVER_KEY, //your server goes here
             debug: true,
             rc_automatic_optin_for_ab: true, // set it to false for not opting in users for AB testing while fetching the remote config (only with latest API)
             use_explicit_rc_api: false, // set it to true to use the latest API

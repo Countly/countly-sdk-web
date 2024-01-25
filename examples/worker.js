@@ -2,9 +2,16 @@ importScripts("../lib/countly.js");
 
 const STORE={}; // in-memory storage for worker
 
+const COUNTLY_SERVER_KEY = "https://your.server.ly";
+const COUNTLY_APP_KEY = "YOUR_APP_KEY";
+
+if(COUNTLY_APP_KEY === "YOUR_APP_KEY" || COUNTLY_SERVER_KEY === "https://your.server.ly"){
+    throw new Error("Please do not use default set of app key and server url")
+}
+
 Countly.init({
-    app_key: "YOUR_APP_KEY",
-    url: "https://your.domain.countly",
+    app_key: COUNTLY_APP_KEY,
+    url: COUNTLY_SERVER_KEY,
     debug: true,
     clear_stored_id: true, // Resets the stored device ID on init
     storage: {

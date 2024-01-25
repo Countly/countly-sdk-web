@@ -11,8 +11,12 @@
 		Countly.onload = Countly.onload || [];
 		//provide countly initialization parameters
 		Countly.app_key = "YOUR_APP_KEY";
+		Countly.url = "https://your.server.ly"; //your server goes here
+
+		if(Countly.app_key === "YOUR_APP_KEY" || Countly.url === "https://your.server.ly"){
+    		throw new Error("Please do not use default set of app key and server url")
+		}
 		Countly.debug = true;
-		Countly.url = "https://your.domain.countly"; //your server goes here
 		window.cly_ga_test_mode = true;
 		Countly.test_logs = [];
 		//start pushing function calls to queue
