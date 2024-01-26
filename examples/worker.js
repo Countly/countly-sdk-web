@@ -6,7 +6,7 @@ const COUNTLY_SERVER_KEY = "https://your.server.ly";
 const COUNTLY_APP_KEY = "YOUR_APP_KEY";
 
 if(COUNTLY_APP_KEY === "YOUR_APP_KEY" || COUNTLY_SERVER_KEY === "https://your.server.ly"){
-    throw new Error("Please do not use default set of app key and server url")
+    console.warn("Please do not use default set of app key and server url")
 }
 
 Countly.init({
