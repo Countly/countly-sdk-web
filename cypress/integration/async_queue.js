@@ -88,55 +88,7 @@ describe("Test Countly.q related methods and processes", () => {
             });
         });
     });
-    // This test is same with the one above but this time we only use sendEventsForced which alredy includes processAsyncQueue inside
-    it("Check sendEventsForced works as expected", () => {
-        hp.haltAndClearStorage(() => {
-            // Disable heartbeat and init the SDK
-            Countly.noHeartBeat = true;
-            Countly.q = [];
-            initMain();
-            cy.wait(1000);
-
-            // Check that the .q is empty
-            expect(Countly.q.length).to.equal(0);
-
-            // Add 4 events to the .q
-            Countly.q.push(["add_event", event(1)]);
-            Countly.q.push(["add_event", event(2)]);
-            Countly.q.push(["add_event", event(3)]);
-            Countly.q.push(["add_event", event(4)]);
-            // Check that the .q has 4 events
-            expect(Countly.q.length).to.equal(4);
-
-            cy.fetch_local_event_queue().then((rq) => {
-                // Check that the event queue is empty
-                expect(rq.length).to.equal(0);
-
-                // Check that events are still in .q
-                expect(Countly.q.length).to.equal(4);
-
-                // Send events from .q to event queue and then to request queue
-                Countly._internals.sendEventsForced();
-
-                // Check that the .q is empty
-                expect(Countly.q.length).to.equal(0);
-                cy.fetch_local_event_queue().then((eq) => {
-                    // Check that event queue is empty
-                    expect(eq.length).to.equal(0);
-                    cy.fetch_local_request_queue().then((rq_2) => {
-                        // Check that events are now in request queue
-                        expect(rq_2.length).to.equal(1);
-                        const eventsArray = JSON.parse(rq_2[0].events);
-                        expect(eventsArray[0].key).to.equal("event_1");
-                        expect(eventsArray[1].key).to.equal("event_2");
-                        expect(eventsArray[2].key).to.equal("event_3");
-                        expect(eventsArray[3].key).to.equal("event_4");
-                    });
-                });
-            });
-        });
-    });
-    // This test is same with the ones above but this time we use change_id to trigger sendEventsForced
+    // This test is same with the ones above but this time we use change_id to trigger processAsyncQueue
     it("Check changing device ID without merge empties the .q", () => {
         hp.haltAndClearStorage(() => {
             // Disable heartbeat and init the SDK
@@ -163,7 +115,7 @@ describe("Test Countly.q related methods and processes", () => {
                 // Check that events are still in .q
                 expect(Countly.q.length).to.equal(4);
 
-                // Trigger sendEventsForced by changing device ID without merge
+                // Trigger processAsyncQueue by changing device ID without merge
                 Countly.change_id("new_user_id", false);
 
                 // Check that the .q is empty
@@ -187,7 +139,7 @@ describe("Test Countly.q related methods and processes", () => {
             });
         });
     });
-    // This test checks if clear_stored_id set to true during init we call sendEventsForced (it sends events from .q to event queue and then to request queue)
+    // This test checks if clear_stored_id set to true during init we call processAsyncQueue (it sends events from .q to event queue and then to request queue)
     it("Check clear_stored_id set to true empties the .q", () => {
         hp.haltAndClearStorage(() => {
             // Disable heartbeat
@@ -212,7 +164,7 @@ describe("Test Countly.q related methods and processes", () => {
             expect(Countly.q.length).to.equal(0);
 
             cy.fetch_local_event_queue().then((rq) => {
-                // Check that the event queue is empty because sendEventsForced sends events from .q to event queue and then to request queue
+                // Check that the event queue is empty because processAsyncQueue sends events from .q to event queue and then to request queue
                 expect(rq.length).to.equal(0);
 
                 cy.fetch_local_request_queue().then((rq_2) => {
@@ -227,7 +179,7 @@ describe("Test Countly.q related methods and processes", () => {
             });
         });
     });
-    // This test checks if calling user_details triggers sendEventsForced (it sends events from .q to event queue and then to request queue)
+    // This test checks if calling user_details triggers processAsyncQueue (it sends events from .q to event queue and then to request queue)
     it("Check sending user details empties .q", () => {
         hp.haltAndClearStorage(() => {
             // Disable heartbeat and init the SDK
@@ -254,7 +206,7 @@ describe("Test Countly.q related methods and processes", () => {
                 // Check that events are still in .q
                 expect(Countly.q.length).to.equal(4);
 
-                // Trigger sendEventsForced by adding user details
+                // Trigger processAsyncQueue by adding user details
                 Countly.user_details({ name: "test_user" });
 
                 // Check that the .q is empty
@@ -278,7 +230,7 @@ describe("Test Countly.q related methods and processes", () => {
             });
         });
     });
-    // This Test checks if calling userData.save triggers sendEventsForced (it sends events from .q to event queue and then to request queue)
+    // This Test checks if calling userData.save triggers processAsyncQueue (it sends events from .q to event queue and then to request queue)
     it("Check sending custom user info empties .q", () => {
         hp.haltAndClearStorage(() => {
             // Disable heartbeat and init the SDK
@@ -305,7 +257,7 @@ describe("Test Countly.q related methods and processes", () => {
                 // Check that events are still in .q
                 expect(Countly.q.length).to.equal(4);
 
-                // Trigger sendEventsForced by saving UserData
+                // Trigger processAsyncQueue by saving UserData
                 Countly.userData.set("name", "test_user");
                 Countly.userData.save();
 
