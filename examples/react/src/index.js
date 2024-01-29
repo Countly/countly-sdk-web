@@ -17,9 +17,9 @@ if(COUNTLY_APP_KEY === "YOUR_APP_KEY" || COUNTLY_SERVER_KEY === "https://your.se
 }
 // initializing countly with params
 Countly.init({
-    app_key: COUNTLY_APP_KEY,
-    url: COUNTLY_SERVER_KEY, //your server goes here
-    debug: true
+  app_key: COUNTLY_APP_KEY,
+  url: COUNTLY_SERVER_KEY, //your server goes here
+  debug: true
 });
 
 Countly.q.push(['track_sessions']);
