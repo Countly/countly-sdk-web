@@ -12,16 +12,16 @@
 		Countly.q = Countly.q || [];
 
 		//initializing first instance, which will be global Countly
-        const COUNTLY_SERVER_KEY = "https://your.server.ly";
-        const COUNTLY_APP_KEY = "YOUR_APP_KEY";
+		const COUNTLY_SERVER_KEY = "https://your.server.ly";
+		const COUNTLY_APP_KEY = "YOUR_APP_KEY";
 
-        if(COUNTLY_APP_KEY === "YOUR_APP_KEY" || COUNTLY_SERVER_KEY === "https://your.server.ly"){
-            console.warn("Please do not use default set of app key and server url")
-        }
-        // initializing countly with params
-        Countly.init({
-            app_key: COUNTLY_APP_KEY,
-            url: COUNTLY_SERVER_KEY, //your server goes here
+		if (COUNTLY_APP_KEY === "YOUR_APP_KEY" || COUNTLY_SERVER_KEY === "https://your.server.ly") {
+			console.warn("Please do not use default set of app key and server url")
+		}
+		// initializing countly with params
+		Countly.init({
+			app_key: COUNTLY_APP_KEY,
+			url: COUNTLY_SERVER_KEY, //your server goes here
 			debug: true
 		})
 		//report event to first app
@@ -32,16 +32,16 @@
 
 
 		//initialize second instance for another app synchronously
-        const COUNTLY_SERVER_KEY2 = "https://your.server.ly";
-        const COUNTLY_APP_KEY2 = "YOUR_APP_KEY2";
+		const COUNTLY_SERVER_KEY2 = "https://your.server.ly";
+		const COUNTLY_APP_KEY2 = "YOUR_APP_KEY2";
 
-        if(COUNTLY_APP_KEY2 === "YOUR_APP_KEY2" || COUNTLY_SERVER_KEY2 === "https://your.server.ly"){
-            console.warn("Please do not use default set of app key and server url")
-        }
-        // initializing countly with params
-        var Countly2 = Countly.init({
-            app_key: COUNTLY_APP_KEY2,
-            url: COUNTLY_SERVER_KEY2, //your server goes here
+		if (COUNTLY_APP_KEY2 === "YOUR_APP_KEY2" || COUNTLY_SERVER_KEY2 === "https://your.server.ly") {
+			console.warn("Please do not use default set of app key and server url")
+		}
+		// initializing countly with params
+		var Countly2 = Countly.init({
+			app_key: COUNTLY_APP_KEY2,
+			url: COUNTLY_SERVER_KEY2, //your server goes here
 			debug: true
 		});
 
@@ -51,11 +51,11 @@
 		});
 
 		const COUNTLY_SERVER_KEY3 = "https://your.server.ly";
-        const COUNTLY_APP_KEY3 = "YOUR_APP_KEY3";
+		const COUNTLY_APP_KEY3 = "YOUR_APP_KEY3";
 
-        if(COUNTLY_APP_KEY3 === "YOUR_APP_KEY3" || COUNTLY_SERVER_KEY2 === "https://your.server.ly"){
-            console.warn("Please do not use default set of app key and server url")
-        }
+		if (COUNTLY_APP_KEY3 === "YOUR_APP_KEY3" || COUNTLY_SERVER_KEY2 === "https://your.server.ly") {
+			console.warn("Please do not use default set of app key and server url")
+		}
 
 		//initialize third instance for another app asynchronously
 		Countly.q.push(["init", {
