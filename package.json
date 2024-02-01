@@ -42,7 +42,7 @@
     "eslint-plugin-import": "^2.27.5",
     "jsdoc": "^4.0.2",
     "markdownlint": "^0.29.0",
-    "stylelint": "14.9.1",
+    "stylelint": "16.2.1",
     "stylelint-config-standard": "28.0.0"
   },
   "npmName": "countly-sdk-web",
