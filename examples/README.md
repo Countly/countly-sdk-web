@@ -3,7 +3,7 @@
 This folder is filled with examples of Countly implementations to help you to get an idea
 how to integrate Countly into your own personal project too.
 
-For all projects you should change 'YOUR_APP_KEY' value with your own application's app key, 'https://your.domain.countly' value with your own server url. 
+For all projects you should change 'YOUR_APP_KEY' value with your own application's app key, 'https://your.server.ly' value with your own server url. 
 
 If you have not separated 'examples' folder from the 'COUNTLY-SDK-WEB' project folder nor made some changes to file names in the periphery, any path to countly.js or the plugins must be still correct. 
 
