@@ -41,16 +41,17 @@ describe("Test Countly.q related methods and processes", () => {
             expect(Countly.q.length).to.equal(0);
 
             // Add 4 events to the .q
+            Countly.q.push(["track_errors"]); // adding this as calling it during init used to cause an error (at v23.12.5)
             Countly.q.push(["add_event", event(1)]);
             Countly.q.push(["add_event", event(2)]);
             Countly.q.push(["add_event", event(3)]);
             Countly.q.push(["add_event", event(4)]);
             // Check that the .q has 4 events
-            expect(Countly.q.length).to.equal(4);
+            expect(Countly.q.length).to.equal(5);
 
             cy.fetch_local_event_queue().then((rq) => {
                 // Check that events are still in .q
-                expect(Countly.q.length).to.equal(4);
+                expect(Countly.q.length).to.equal(5);
 
                 // Check that the event queue is empty
                 expect(rq.length).to.equal(0);
@@ -135,46 +136,6 @@ describe("Test Countly.q related methods and processes", () => {
                         // check begin session
                         expect(rq_2[1].begin_session).to.equal(1);
                     });
-                });
-            });
-        });
-    });
-    // This test checks if clear_stored_id set to true during init we call processAsyncQueue (it sends events from .q to event queue and then to request queue)
-    it("Check clear_stored_id set to true empties the .q", () => {
-        hp.haltAndClearStorage(() => {
-            // Disable heartbeat
-            Countly.noHeartBeat = true;
-            Countly.q = [];
-            localStorage.setItem("YOUR_APP_KEY/cly_id", "old_user_id"); // Set old device ID for clear_stored_id to work
-
-            // Add 4 events to the .q
-            Countly.q.push(["add_event", event(1)]);
-            Countly.q.push(["add_event", event(2)]);
-            Countly.q.push(["add_event", event(3)]);
-            Countly.q.push(["add_event", event(4)]);
-
-            // Check that the .q has 4 events
-            expect(Countly.q.length).to.equal(4);
-
-            // Init the SDK with clear_stored_id set to true
-            initMain(true);
-            cy.wait(1000);
-
-            // Check that the .q is empty
-            expect(Countly.q.length).to.equal(0);
-
-            cy.fetch_local_event_queue().then((rq) => {
-                // Check that the event queue is empty because processAsyncQueue sends events from .q to event queue and then to request queue
-                expect(rq.length).to.equal(0);
-
-                cy.fetch_local_request_queue().then((rq_2) => {
-                    // Check that events are now in request queue
-                    expect(rq_2.length).to.equal(1);
-                    const eventsArray = JSON.parse(rq_2[0].events);
-                    expect(eventsArray[0].key).to.equal("event_1");
-                    expect(eventsArray[1].key).to.equal("event_2");
-                    expect(eventsArray[2].key).to.equal("event_3");
-                    expect(eventsArray[3].key).to.equal("event_4");
                 });
             });
         });

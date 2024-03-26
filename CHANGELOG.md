@@ -1,3 +1,6 @@
+## 23.12.6
+- Mitigated an issue where error tracking could prevent SDK initialization in async mode
+
 ## 23.12.5
 - Mitigated an issue where the SDK was not emptying the async queue explicity when closing a browser
 

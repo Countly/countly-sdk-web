@@ -19,6 +19,7 @@ describe("UTM tests ", () => {
     it("Checks if a single default utm tag works", () => {
         hp.haltAndClearStorage(() => {
             initMulti("YOUR_APP_KEY", "?utm_source=hehe", undefined);
+            Countly.q.push(["track_errors"]); // adding this as calling it during init used to cause an error (at v23.12.5)
             cy.fetch_local_request_queue().then((rq) => {
                 cy.log(rq);
                 const custom = JSON.parse(rq[0].user_details).custom;
