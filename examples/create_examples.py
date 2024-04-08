@@ -23,7 +23,7 @@ def setup_react_example():
 
 def setup_angular_example():
     print("Creating Angular example...")
-    os.system("npx @angular/cli new angular-example --defaults")
+    os.system("npx @angular/cli@next new angular-example --defaults")
 
     # Copy contents of Angular folder over to Angular example
     shutil.copytree("Angular", "angular-example/src", dirs_exist_ok=True)
