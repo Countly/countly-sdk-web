@@ -1,3 +1,6 @@
+# 23.12.7
+- Improved Health Check feature stability
+
 ## 23.12.6
 - Mitigated an issue where error tracking could prevent SDK initialization in async mode
 
