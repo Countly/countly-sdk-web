@@ -1,4 +1,5 @@
 ## 24.4.0
+- Improved Health Check feature stability
 - Added support for Feedback Widget terms and conditions
 
 ## 23.12.6
