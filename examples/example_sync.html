@@ -9,8 +9,8 @@
     <script type='text/javascript'>
 
         //initializing countly with params
-        const COUNTLY_SERVER_KEY = "https://your.server.ly";
-        const COUNTLY_APP_KEY = "YOUR_APP_KEY";
+        const COUNTLY_SERVER_KEY = "https://master.count.ly";
+        const COUNTLY_APP_KEY = "dte_web";
 
         if (COUNTLY_APP_KEY === "YOUR_APP_KEY" || COUNTLY_SERVER_KEY === "https://your.server.ly") {
             console.warn("Please do not use default set of app key and server url")
@@ -19,7 +19,8 @@
         Countly.init({
             app_key: COUNTLY_APP_KEY,
             url: COUNTLY_SERVER_KEY, //your server goes here
-            debug: true
+            debug: true,
+            salt: "web_salt",
         })
         //track sessions automatically
         Countly.track_sessions();
@@ -46,7 +47,7 @@
         //send event on button click
         function clickEvent() {
             Countly.add_event({
-                key: "buttonClick",
+                key: [123,12312],
                 "segmentation": {
                     "id": "id"
                 }

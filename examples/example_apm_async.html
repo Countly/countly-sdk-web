@@ -11,8 +11,8 @@
 		Countly.q = Countly.q || [];
 
 		//provide countly initialization parameters
-		Countly.app_key = "YOUR_APP_KEY";
-		Countly.url = "https://your.server.ly"; //your server goes here
+		Countly.app_key = "dte_web";
+		Countly.url = "https://master.count.ly"; //your server goes here
 
 		if (Countly.app_key === "YOUR_APP_KEY" || Countly.url === "https://your.server.ly") {
 			console.warn("Please do not use default set of app key and server url")
@@ -20,6 +20,7 @@
 
 		Countly.debug = true;
 		Countly.loadAPMScriptsAsync = true;
+		Countly.salt = "web_salt";
 		// Countly.customSourceBoomerang = "../somewhere/boomerang.min.js";
 		// Countly.customSourceCountlyBoomerang = "../somewhere/countly_boomerang.js";
 
@@ -33,6 +34,7 @@
 
 		// enable APM
 		Countly.q.push(['track_performance']);
+		Countly.q.push(['track_errors']);
 
 		//load countly script asynchronously
 		(function () {

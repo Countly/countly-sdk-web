@@ -272,6 +272,46 @@ function validateDefaultUtmTags(aq, source, medium, campaign, term, content) {
     }
 }
 
+/**
+ *  Check common params for all requests
+ * @param {Object} paramsObject - object from search string
+ */
+function check_commons(paramsObject) {
+    expect(paramsObject.timestamp).to.be.ok;
+    expect(paramsObject.timestamp.toString().length).to.equal(13);
+    expect(paramsObject.hour).to.be.within(0, 23);
+    expect(paramsObject.dow).to.be.within(0, 7);
+    expect(paramsObject.app_key).to.equal(appKey);
+    expect(paramsObject.device_id).to.be.ok;
+    expect(paramsObject.sdk_name).to.equal("javascript_native_web");
+    expect(paramsObject.sdk_version).to.be.ok;
+    expect(paramsObject.t).to.be.within(0, 3);
+    expect(paramsObject.av).to.equal(0); // av is 0 as we parsed parsable things
+    if (!paramsObject.hc) { // hc is direct request
+        expect(paramsObject.rr).to.be.above(-1);
+    }
+    expect(paramsObject.metrics._ua).to.be.ok;
+}
+
+/**
+ *  Turn search string into object with values parsed
+ * @param {String} searchString - search string
+ * @returns {object} - object from search string
+ */
+function turnSearchStringToObject(searchString) {
+    const searchParams = new URLSearchParams(searchString);
+    const paramsObject = {};
+    for (const [key, value] of searchParams.entries()) {
+        try {
+            paramsObject[key] = JSON.parse(decodeURIComponent(value)); // try to parse value
+        }
+        catch (e) {
+            paramsObject[key] = decodeURIComponent(value);
+        }
+    }
+    return paramsObject;
+}
+
 module.exports = {
     haltAndClearStorage,
     sWait,
@@ -285,5 +325,7 @@ module.exports = {
     testNormalFlow,
     interceptAndCheckRequests,
     validateDefaultUtmTags,
-    userDetailObj
+    userDetailObj,
+    check_commons,
+    turnSearchStringToObject
 };

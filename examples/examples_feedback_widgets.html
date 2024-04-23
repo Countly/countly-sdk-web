@@ -8,8 +8,8 @@
   <script type='text/javascript' src='../lib/countly.js'></script>
   <script type='text/javascript'>
 
-    const COUNTLY_SERVER_KEY = "https://your.server.ly";
-    const COUNTLY_APP_KEY = "YOUR_APP_KEY";
+    const COUNTLY_SERVER_KEY = "https://master.count.ly";
+    const COUNTLY_APP_KEY = "dte_web";
 
     if (COUNTLY_APP_KEY === "YOUR_APP_KEY" || COUNTLY_SERVER_KEY === "https://your.server.ly") {
       console.warn("Please do not use default set of app key and server url")
@@ -37,7 +37,7 @@
       }
 
       // Decide which which widget to show. Here the first rating widget is selected. 
-      const widgetType = "rating";
+      const widgetType = "survey";
       const countlyFeedbackWidget = countlyPresentableFeedback.find(widget => widget.type === widgetType);
       if (!countlyFeedbackWidget) {
         console.error(`[Countly] No ${widgetType} widget found`);
