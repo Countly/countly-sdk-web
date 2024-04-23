@@ -1,3 +1,6 @@
+## 24.4.0
+- Added support for Feedback Widget terms and conditions
+
 ## 23.12.6
 - Mitigated an issue where error tracking could prevent SDK initialization in async mode
 
