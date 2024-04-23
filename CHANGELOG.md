@@ -1,4 +1,4 @@
-## 23.12.7
+## 24.4.0
 - Added support for Feedback Widget terms and conditions
 
 ## 23.12.6
