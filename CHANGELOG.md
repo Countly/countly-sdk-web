@@ -1,4 +1,7 @@
 ## 24.4.0
+! Minor breaking change ! For implementations using `salt` the browser compatability is tied to SubtleCrypto's `digest` method support
+
+- Added the `salt` init config flag to add checksums to requests (for secure contexts only)
 - Improved Health Check feature stability
 - Added support for Feedback Widget terms and conditions
 
