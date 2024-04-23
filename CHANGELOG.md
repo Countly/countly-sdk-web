@@ -1,4 +1,4 @@
-# 23.12.7
+# 24.4.0
 - Improved Health Check feature stability
 
 ## 23.12.6
