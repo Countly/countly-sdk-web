@@ -1,8 +1,15 @@
 importScripts("../../lib/countly.js");
 
+const COUNTLY_SERVER_KEY = "https://your.server.ly";
+const COUNTLY_APP_KEY = "YOUR_APP_KEY";
+
+if(COUNTLY_APP_KEY === "YOUR_APP_KEY" || COUNTLY_SERVER_KEY === "https://your.server.ly"){
+    console.warn("Please do not use default set of app key and server url")
+}
+// initializing countly with params
 Countly.init({
-    app_key: "YOUR_APP_KEY",
-    url: "https://your.domain.countly",
+    app_key: COUNTLY_APP_KEY,
+    url: COUNTLY_SERVER_KEY, //your server goes here
     debug: true,
     test_mode: true
 });

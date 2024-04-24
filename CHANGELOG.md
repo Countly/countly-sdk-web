@@ -1,3 +1,16 @@
+## 24.4.0
+! Minor breaking change ! For implementations using `salt` the browser compatability is tied to SubtleCrypto's `digest` method support
+
+- Added the `salt` init config flag to add checksums to requests (for secure contexts only)
+- Improved Health Check feature stability
+- Added support for Feedback Widget terms and conditions
+
+## 23.12.6
+- Mitigated an issue where error tracking could prevent SDK initialization in async mode
+
+## 23.12.5
+- Mitigated an issue where the SDK was not emptying the async queue explicity when closing a browser
+
 ## 23.12.4
 - Enhanced userAgentData detection for bot filtering
 

@@ -12,14 +12,19 @@
 
 		//provide countly initialization parameters
 		Countly.app_key = "YOUR_APP_KEY";
-		Countly.url = "https://your.domain.countly"; //your server goes here
+		Countly.url = "https://your.server.ly"; //your server goes here
+
+		if (Countly.app_key === "YOUR_APP_KEY" || Countly.url === "https://your.server.ly") {
+			console.warn("Please do not use default set of app key and server url")
+		}
+
 		Countly.debug = true;
 		Countly.loadAPMScriptsAsync = true;
 		// Countly.customSourceBoomerang = "../somewhere/boomerang.min.js";
 		// Countly.customSourceCountlyBoomerang = "../somewhere/countly_boomerang.js";
 
 		//start pushing function calls to queue:
-		
+
 		// track sessions automatically
 		Countly.q.push(['track_sessions']);
 

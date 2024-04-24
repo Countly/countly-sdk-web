@@ -21,7 +21,7 @@ describe("Health Check tests ", () => {
                 // Test the 'hc' parameter
                 const hcParam = url.searchParams.get("hc");
                 const hcParamObj = JSON.parse(hcParam);
-                expect(hcParamObj).to.eql({ el: 0, wl: 0, sc: -1, em: "\"\"" });
+                expect(hcParamObj).to.eql({ el: 0, wl: 0, sc: -1, em: "" });
 
                 // Test the 'metrics' parameter
                 const metricsParam = url.searchParams.get("metrics");
