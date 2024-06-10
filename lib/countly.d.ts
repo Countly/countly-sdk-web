@@ -1,42 +1,41 @@
-declare module 'countly-sdk-web' {
-
+declare module "countly-sdk-web" {
   namespace Countly {
     /**
      * It initializes the SDK and exposes it to the window object. It should be called before any other SDK methods in sync implementations.
      * @param {object} config - Configuration object. Determines the SDK behavior. Some essential keys are:
-     * 
+     *
      * app_key : "app key" from your Countly server application. (MANDATORY!)
-     * 
+     *
      * url : Your Countly server URL. You may also use your own server URL or IP here. (MANDATORY!)
-     * 
+     *
      * debug : Enables SDK logs to be printed into the browser console. (default: false)
-     * 
+     *
      * For the full list of configuration options, see https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript#h_01HABTQ439HZN7Y6A6F07Y6G0K
      */
     function init(config: object): void;
 
     /**
-    * Modify feature groups for consent management. Allows you to group multiple features under one feature group
-    * @param {object} features - object to define feature name as key and core features as value
-    * @example <caption>Adding all features under one group</caption>
-    * Countly.group_features({all:["sessions","events","views","scrolls","clicks","forms","crashes","attribution","users"]});
-    * //After this call Countly.add_consent("all") to allow all features
-    * @example <caption>Grouping features</caption>
-    * Countly.group_features({
-    *    activity:["sessions","events","views"],
-    *    interaction:["scrolls","clicks","forms"]
-    * });
-    * //After this call Countly.add_consent("activity") to allow "sessions","events","views"
-    * //or call Countly.add_consent("interaction") to allow "scrolls","clicks","forms"
-    * //or call Countly.add_consent("crashes") to allow some separate feature
-    */
+     * Modify feature groups for consent management. Allows you to group multiple features under one feature group
+     * @param {object} features - object to define feature name as key and core features as value
+     * @example <caption>Adding all features under one group</caption>
+     * Countly.group_features({all:["sessions","events","views","scrolls","clicks","forms","crashes","attribution","users"]});
+     * //After this call Countly.add_consent("all") to allow all features
+     * @example <caption>Grouping features</caption>
+     * Countly.group_features({
+     *    activity:["sessions","events","views"],
+     *    interaction:["scrolls","clicks","forms"]
+     * });
+     * //After this call Countly.add_consent("activity") to allow "sessions","events","views"
+     * //or call Countly.add_consent("interaction") to allow "scrolls","clicks","forms"
+     * //or call Countly.add_consent("crashes") to allow some separate feature
+     */
     function group_features(features: object): void;
 
     /**
-    * Check if consent is given for specific feature (either core feature of from custom feature group)
-    * @param {string} feature - name of the feature, possible values, "sessions","events","views","scrolls","clicks","forms","crashes","attribution","users" or custom provided through {@link Countly.group_features}
-    * @returns {Boolean} true if consent was given for the feature or false if it was not
-    */
+     * Check if consent is given for specific feature (either core feature of from custom feature group)
+     * @param {string} feature - name of the feature, possible values, "sessions","events","views","scrolls","clicks","forms","crashes","attribution","users" or custom provided through {@link Countly.group_features}
+     * @returns {Boolean} true if consent was given for the feature or false if it was not
+     */
     function check_consent(feature: string): boolean;
 
     enum DeviceIdType {
@@ -65,21 +64,21 @@ declare module 'countly-sdk-web' {
     let q: any[];
 
     /**
-    * Checks and return the current device id type
-    * @returns {DeviceIdType|number} a number that indicates the device id type (or -1 if not set)
-    */
+     * Checks and return the current device id type
+     * @returns {DeviceIdType|number} a number that indicates the device id type (or -1 if not set)
+     */
     function get_device_id_type(): DeviceIdType;
 
     /**
-    * Gives the current device id (of the CountlyClass instance)
-    * @returns {string} device id
-    */
+     * Gives the current device id (of the CountlyClass instance)
+     * @returns {string} device id
+     */
     function get_device_id(): string;
 
     /**
-    * Add consent for specific feature, meaning, user allowed to track that data (either core feature or from custom feature group)
-    * @param {string | string[]} feature - name of the feature, possible values: "sessions", "events", "views", "scrolls", "clicks", "forms", "crashes", "attribution", "users", etc. or custom provided through {@link Countly.group_features}
-    */
+     * Add consent for specific feature, meaning, user allowed to track that data (either core feature or from custom feature group)
+     * @param {string | string[]} feature - name of the feature, possible values: "sessions", "events", "views", "scrolls", "clicks", "forms", "crashes", "attribution", "users", etc. or custom provided through {@link Countly.group_features}
+     */
     function add_consent(feature: string | string[]): void;
 
     /**
@@ -105,7 +104,6 @@ declare module 'countly-sdk-web' {
      * @param {boolean} force - force begin session request even if session cookie is enabled
      */
     function begin_session(noHeartBeat: boolean, force: boolean): void;
-
 
     /**
      * Report session duration
@@ -162,20 +160,27 @@ declare module 'countly-sdk-web' {
      * End timed event
      * @param {string | Object} event - event key if string or Countly event same as passed to {@link Countly.add_event}
      */
-    function end_event(event: string | {
-      key: string;
-      count?: number;
-      sum?: number;
-      dur?: number;
-      segmentation?: { [key: string]: any };
-    }): void;
+    function end_event(
+      event:
+        | string
+        | {
+            key: string;
+            count?: number;
+            sum?: number;
+            dur?: number;
+            segmentation?: { [key: string]: any };
+          }
+    ): void;
 
     /**
      * Report user conversion to the server (when user signup or made a purchase, or whatever your conversion is), if there is no campaign data, user will be reported as organic
      * @param {string} [campaign_id] - id of campaign, or will use the one that is stored after campaign link click
      * @param {string} [campaign_user_id] - id of user's click on campaign, or will use the one that is stored after campaign link click
      */
-    function recordDirectAttribution(campaign_id?: string, campaign_user_id?: string): void;
+    function recordDirectAttribution(
+      campaign_id?: string,
+      campaign_user_id?: string
+    ): void;
 
     /**
      * Provide information about user
@@ -285,15 +290,15 @@ declare module 'countly-sdk-web' {
     }
 
     /**
- * Report performance trace
- * @param {Object} trace - apm trace object
- * @param {string} trace.type - device or network
- * @param {string} trace.name - url or view of the trace
- * @param {number} trace.stz - start timestamp
- * @param {number} trace.etz - end timestamp
- * @param {Object} trace.app_metrics - key/value metrics like duration, to report with trace where value is number
- * @param {Object} [trace.apm_attr] - object profiling attributes (not yet supported)
- */
+     * Report performance trace
+     * @param {Object} trace - apm trace object
+     * @param {string} trace.type - device or network
+     * @param {string} trace.name - url or view of the trace
+     * @param {number} trace.stz - start timestamp
+     * @param {number} trace.etz - end timestamp
+     * @param {Object} trace.app_metrics - key/value metrics like duration, to report with trace where value is number
+     * @param {Object} [trace.apm_attr] - object profiling attributes (not yet supported)
+     */
     function report_trace(trace: {
       type: string;
       name: string;
@@ -328,7 +333,11 @@ declare module 'countly-sdk-web' {
      * @param {string[]} [omit_keys] - Array of keys to omit, if provided will fetch all keys except provided ones
      * @param {Function} [callback] - Callback to notify with first param error and second param remote config object
      */
-    function fetch_remote_config(keys?: string[], omit_keys?: string[], callback?: (error: any, config: any) => void): void;
+    function fetch_remote_config(
+      keys?: string[],
+      omit_keys?: string[],
+      callback?: (error: any, config: any) => void
+    ): void;
 
     /**
      * AB testing key provider, opts the user in for the selected keys
@@ -354,7 +363,11 @@ declare module 'countly-sdk-web' {
      * @param {string[]} [ignoreList] - optional array of strings or regexps to test for the url/view name to ignore and not report
      * @param {object} [viewSegments] - optional key value object with segments to report with the view
      */
-    function track_pageview(page?: string, ignoreList?: (string)[], viewSegments?: object): void;
+    function track_pageview(
+      page?: string,
+      ignoreList?: string[],
+      viewSegments?: object
+    ): void;
 
     /**
      * Track all clicks on this page
@@ -422,12 +435,17 @@ declare module 'countly-sdk-web' {
      *   }
      */
     function reportFeedbackWidgetManually(
-      CountlyFeedbackWidget: { _id: string, type: string },
+      CountlyFeedbackWidget: { _id: string; type: string },
       CountlyWidgetData: object,
       widgetResult:
-        | { rating: number, comment?: string }
+        | { rating: number; comment?: string }
         | { [key: string]: string | number }
-        | { rating: number, email?: string, contactMe?: boolean, comment?: string }
+        | {
+            rating: number;
+            email?: string;
+            contactMe?: boolean;
+            comment?: string;
+          }
         | null
     ): void;
 
@@ -437,7 +455,10 @@ declare module 'countly-sdk-web' {
      * @returns {void}
      */
     function get_available_feedback_widgets(
-      callback: (widgets: Array<{ _id: string, type: string, name: string }>, error: Error | null) => void
+      callback: (
+        widgets: Array<{ _id: string; type: string; name: string }>,
+        error: Error | null
+      ) => void
     ): void;
 
     /**
@@ -450,8 +471,8 @@ declare module 'countly-sdk-web' {
      * @returns {void}
      */
     function getFeedbackWidgetData(
-      CountlyFeedbackWidget: { _id: string, type: string, name: string },
-      callback: (widgetData: Object, error: Error | null,) => void
+      CountlyFeedbackWidget: { _id: string; type: string; name: string },
+      callback: (widgetData: Object, error: Error | null) => void
     ): void;
 
     /**
