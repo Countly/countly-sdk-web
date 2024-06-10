@@ -1,3 +1,6 @@
+## 24.4.1
+- Added types for the SDK
+
 ## 24.4.0
 ! Minor breaking change ! For implementations using `salt` the browser compatability is tied to SubtleCrypto's `digest` method support
 
