@@ -145,6 +145,14 @@ describe("Device ID change tests ", ()=>{
             });
         });
     });
+    it("Check init time temp mode with set_id", () => {
+        hp.haltAndClearStorage(() => {
+            initMain(true); // init in offline mode
+            testDeviceIdInReqs(() => {
+                Countly.set_id("new ID");
+            });
+        });
+    });
 
     // ========================================
     // default init configuration tests
@@ -206,6 +214,62 @@ describe("Device ID change tests ", ()=>{
                 Countly.user_details({ name: "name2" }); // record user details
                 cy.wait(1000); // wait for the request to be sent
                 Countly.enable_offline_mode();
+            });
+        });
+    });
+});
+
+describe("Set ID change tests ", () => {
+    it("set_id should be non merge as there was dev provided id", () => {
+        hp.haltAndClearStorage(() => {
+            Countly.init({
+                app_key: "YOUR_APP_KEY",
+                url: "https://your.domain.count.ly",
+                test_mode: true,
+                debug: true,
+                device_id: "old ID"
+            });
+            Countly.add_event(eventObj("1")); // record an event.
+            cy.wait(500); // wait for the request to be sent
+            cy.fetch_local_request_queue().then((eq) => {
+                expect(eq[0].device_id).to.equal("old ID");
+                Countly.set_id("new ID");
+                Countly.add_event(eventObj("2")); // record another event
+                cy.wait(500); // wait for the request to be sent
+                cy.fetch_local_request_queue().then((eq2) => {
+                    expect(eq2.length).to.equal(3); // no merge request
+                    expect(eq2[0].device_id).to.equal("old ID");
+                    expect(eq2[0].events).to.contains("\"key\":\"1\"");
+                    expect(eq2[1].device_id).to.equal("new ID");
+                    expect(eq2[1].begin_session).to.equal(1);
+                    expect(eq2[2].device_id).to.equal("new ID");
+                    expect(eq2[2].events).to.contains("\"key\":\"2\"");
+                });
+            });
+        });
+    });
+    it("set_id should be merge as there was sdk generated id", () => {
+        hp.haltAndClearStorage(() => {
+            initMain(false); // init normally
+            Countly.add_event(eventObj("1")); // record an event.
+            cy.wait(500); // wait for the request to be sent
+            let generatedID;
+            cy.fetch_local_request_queue().then((eq) => {
+                cy.log(eq);
+                generatedID = eq[0].device_id; // get the new id from first item in the queue
+                Countly.set_id("new ID");
+                Countly.add_event(eventObj("2")); // record another event
+                cy.wait(500); // wait for the request to be sent
+                cy.fetch_local_request_queue().then((eq2) => {
+                    cy.log(eq2);
+                    expect(eq2.length).to.equal(3); // merge request
+                    expect(eq2[0].device_id).to.equal(generatedID);
+                    expect(eq2[0].events).to.contains("\"key\":\"1\"");
+                    expect(eq2[1].device_id).to.equal("new ID");
+                    expect(eq2[1].old_device_id).to.equal(generatedID);
+                    expect(eq2[2].device_id).to.equal("new ID");
+                    expect(eq2[2].events).to.contains("\"key\":\"2\"");
+                });
             });
         });
     });
