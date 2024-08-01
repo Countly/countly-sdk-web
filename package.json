@@ -38,7 +38,7 @@
     "eslint": "^8.37.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-chai-friendly": "^0.7.2",
-    "eslint-plugin-cypress": "^2.13.2",
+    "eslint-plugin-cypress": "^3.4.0",
     "eslint-plugin-import": "^2.27.5",
     "jsdoc": "^4.0.2",
     "markdownlint": "^0.29.0",
