@@ -81,6 +81,18 @@ Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
                         if (typeof beaconData["c.fid"] !== "undefined") {
                             trace.apm_metrics.first_input_delay = beaconData["c.fid"];
                         }
+                        for (var key in trace.apm_metrics) {
+                            var newTrace = {};
+                            newTrace.type = trace.type;
+                            newTrace.name = key;
+                            newTrace.apm_metrics = {};
+                            newTrace.apm_metrics.duration = trace.apm_metrics[key];
+                            newTrace.apm_metrics.url = (beaconData.u + "").split("//").pop().split("?")[0];
+                            newTrace.apm_metrics.ts = Date.now();
+                            newTrace.stz = beaconData["rt.tstart"];
+                            newTrace.etz = beaconData["rt.end"];
+                            self.report_trace(newTrace);
+                        }
                     }
                     else if (beaconData["http.initiator"] && ["xhr", "spa", "spa_hard"].indexOf(beaconData["http.initiator"]) !== -1) {
                         var responseTime; var responsePayloadSize; var requestPayloadSize; var
@@ -124,9 +136,6 @@ Plugin being used - RT, AutoXHR, Continuity, NavigationTiming, ResourceTiming
                             request_payload_size: requestPayloadSize,
                             response_code: responseCode
                         };
-                    }
-
-                    if (trace.type) {
                         trace.name = (beaconData.u + "").split("//").pop().split("?")[0];
                         trace.stz = beaconData["rt.tstart"];
                         trace.etz = beaconData["rt.end"];
