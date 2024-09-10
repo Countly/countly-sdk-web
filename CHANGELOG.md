@@ -1,6 +1,8 @@
 ## 24.4.1
 - Added types for the SDK
-- Added a new method `set_id(newDeviceId)` for managing device id changes according to the device ID Type
+- Added a new method `set_id(newDeviceId)` for managing device ID changes according to the device ID Type
+
+- Mitigated an issue that could have prevented automatic Device Traces to not show up in server
 
 ## 24.4.0
 ! Minor breaking change ! For implementations using `salt` the browser compatability is tied to SubtleCrypto's `digest` method support
