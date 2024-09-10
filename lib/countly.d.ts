@@ -119,6 +119,7 @@ declare module "countly-sdk-web" {
     function end_session(sec: number, force: boolean): void;
 
     /**
+     * USING set_id INSTEAD IS RECOMMENDED
      * Change current user/device id (use set_id instead if you are not sure about the merge operation)
      * @param {string} newId - new user/device ID to use. Must be a non-empty string value. Invalid values (like null, empty string or undefined) will be rejected
      * @param {boolean} merge - move data from old ID to new ID on server
