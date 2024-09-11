@@ -1,4 +1,5 @@
-lib
+lib/countly.js
+lib/countly.min.js
 plugin/boomerang/boomerang.min.js
 examples/
 node_modules
