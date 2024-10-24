@@ -5,7 +5,7 @@ var hp = require("../support/helper");
 function initMain() {
     Countly.init({
         app_key: "YOUR_APP_KEY",
-        url: "https://your.domain.countly",
+        url: "https://your.domain.count.ly",
         test_mode: true
     });
 }
@@ -26,7 +26,7 @@ describe("Crashes tests ", () => {
             catch (err) {
                 Countly.log_error(err);
             }
-            cy.wait(3000).then(() => {
+            cy.wait(1000).then(() => {
                 cy.fetch_local_request_queue().then((rq) => {
                     cy.check_crash(rq[0], hp.appKey);
                 });

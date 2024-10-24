@@ -5,7 +5,7 @@ var hp = require("../support/helper");
 function initMain(val) {
     Countly.init({
         app_key: "YOUR_APP_KEY",
-        url: "https://your.domain.countly",
+        url: "https://your.domain.count.ly",
         test_mode_eq: true,
         test_mode: true,
         debug: true,
@@ -37,7 +37,7 @@ for (let i = 0; i < 5; i++) {
                         }
                         else if (isNone) {
                             expect(value).to.equal(null);
-                            expect(document.cookie).to.equal("");
+                            expect(document.cookie).to.equal("__cypress.initial=true"); // since cypress 13.6
                         }
                         else {
                             expect(value).to.equal(valueToStore);
@@ -49,7 +49,7 @@ for (let i = 0; i < 5; i++) {
                 hp.haltAndClearStorage(() => {
                     initMain(flag);
                     if (isNone) {
-                        expect(document.cookie).to.equal("");
+                        expect(document.cookie).to.equal("__cypress.initial=true");  // since cypress 13.6
                     }
                     Countly._internals.setValueInStorage(key, valueToStore);
                     expect(isNone ? undefined : valueToStore).to.equal(Countly._internals.getValueFromStorage(key));
@@ -65,7 +65,7 @@ for (let i = 0; i < 5; i++) {
                 hp.haltAndClearStorage(() => {
                     initMain(flag);
                     if (isNone) {
-                        expect(document.cookie).to.equal("");
+                        expect(document.cookie).to.equal("__cypress.initial=true"); // since cypress 13.6
                     }
                     Countly._internals.setValueInStorage(key, valueToStore);
                     expect(isNone ? undefined : valueToStore).to.equal(Countly._internals.getValueFromStorage(key));
@@ -85,7 +85,7 @@ for (let i = 0; i < 5; i++) {
                         expect(value).to.equal(null);
                     });
                     if (isNone || isLocal) {
-                        expect(document.cookie).to.equal("");
+                        expect(document.cookie).to.equal("__cypress.initial=true"); // since cypress 13.6
                     }
                     else {
                         expect(document.cookie).to.include(`${hp.appKey}/${key}=${valueToStore}`);

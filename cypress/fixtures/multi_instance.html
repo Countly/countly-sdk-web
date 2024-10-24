@@ -22,7 +22,7 @@
         //initializing first instance, which will be global Countly
         Countly.init({
             app_key: "YOUR_APP_KEY1",
-            url: "https://your.domain.countly",
+            url: "https://your.domain.count.ly",
             test_mode: true
         })
         Countly.remove_consent();
@@ -57,7 +57,7 @@
         //initialize second instance for another app synchronously
         var Countly2 = Countly.init({
             app_key: "YOUR_APP_KEY2", //must have different APP key
-            url: "https://your.domain.countly",
+            url: "https://your.domain.count.ly",
             test_mode: true
 
         });
@@ -94,7 +94,7 @@
         //initialize third instance for another app asynchronously
         Countly.q.push(["init", {
             app_key: "YOUR_APP_KEY3", //must have different APP key
-            url: "https://your.domain.countly",
+            url: "https://your.domain.count.ly",
             test_mode: true
 
         }])
@@ -128,7 +128,7 @@
         //initialize fourth instance for another app asynchronously
         Countly.q.push(["init", {
             app_key: "YOUR_APP_KEY4", //must have different APP key
-            url: "https://your.domain.countly",
+            url: "https://your.domain.count.ly",
             test_mode: true
 
         }])

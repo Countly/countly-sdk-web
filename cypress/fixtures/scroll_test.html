@@ -2,7 +2,7 @@
 <head>
     <script type='text/javascript' src='../../lib/countly.js'></script>
     <script type='text/javascript'>
-      // here we implement a cookie and localStorage clearing logic
+  // here we implement a cookie and localStorage clearing logic
   const deleteAllCookies = () => {
   const cookies = document.cookie.split(";");
   for (const cookie of cookies) {
@@ -16,7 +16,7 @@
   console.error("cleared the storage");
   Countly.init({
     app_key: "YOUR_APP_KEY",
-    url: "https://your.domain.countly",
+    url: "https://your.domain.count.ly",
     debug:true,
     test_mode: true
   })

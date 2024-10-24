@@ -1,7 +1,7 @@
 describe("Web Worker Local Queue Tests", () => {
     it("Verify queues for all features", () => {
         // create a worker
-        const myWorker = new Worker("../../examples/mpa/worker_for_test.js");
+        const myWorker = new Worker("../../test_workers/worker_for_test.js", { type: "module" });
 
         // send an event to worker
         myWorker.postMessage({ data: { key: "key" }, type: "event" });
