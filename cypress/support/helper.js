@@ -77,14 +77,14 @@ var waitFunction = function(startTime, waitTime, waitIncrement, continueCallback
  * @param {Function} callback - callback function
  */
 function interceptAndCheckRequests(requestType, requestUrl, endPoint, requestParams, alias, callback) {
-    requestType = requestType || "GET";
+    // requestType = requestType || "GET";
     requestUrl = requestUrl || "https://your.domain.count.ly"; // TODO: might be needed in the future but not yet
     endPoint = endPoint || "/i";
     requestParams = requestParams || "?*";
     alias = alias || "getXhr";
 
     cy.intercept(requestUrl + endPoint + requestParams, (req) => {
-        const { url } = req;
+        // const { url } = req;
         req.reply(200, {result: "Success"}, {
             "x-countly-rr": "2"
         });
