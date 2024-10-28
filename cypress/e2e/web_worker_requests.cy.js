@@ -32,7 +32,7 @@ describe("Web Worker Request Intercepting Tests", () => {
             check_commons(paramsObject);
 
             // we expect 4 requests: begin_session, end_session, healthcheck, event(event includes view and buttonClick)
-            let expectedRequests = 4;
+            var expectedRequests = 4;
             if (paramsObject.hc) {
                 // check hc params types, values can change
                 assert.isTrue(typeof paramsObject.hc.el === "number");
