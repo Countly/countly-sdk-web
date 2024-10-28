@@ -1,5 +1,6 @@
 import { turnSearchStringToObject, check_commons } from "../support/helper";
 
+var expectedRequests = 4;
 const myEvent = {
     key: "buttonClick",
     segmentation: {
@@ -32,7 +33,6 @@ describe("Web Worker Request Intercepting Tests", () => {
             check_commons(paramsObject);
 
             // we expect 4 requests: begin_session, end_session, healthcheck, event(event includes view and buttonClick)
-            var expectedRequests = 4;
             if (paramsObject.hc) {
                 // check hc params types, values can change
                 assert.isTrue(typeof paramsObject.hc.el === "number");
