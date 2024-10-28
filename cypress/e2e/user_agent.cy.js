@@ -6,7 +6,7 @@ var hp = require("../support/helper");
 function initMain() {
     Countly.init({
         app_key: "YOUR_APP_KEY",
-        url: "https://your.domain.countly",
+        url: "https://your.domain.count.ly",
         test_mode_eq: true
     });
 }
@@ -62,6 +62,12 @@ describe("User Agent tests ", () => {
             expect(Countly._internals.userAgentSearchBotDetection("HeadlessChrome")).to.equal(true);
             expect(Countly._internals.userAgentSearchBotDetection("Chrome-Lighthouse")).to.equal(true);
             expect(Countly._internals.userAgentSearchBotDetection("Lighthouse")).to.equal(true);
+        });
+    });
+    // userAgentData is not supported by all browsers yet so it is hard to test with consistency
+    it("Check if currentUserAgentDataString override works", () => {
+        hp.haltAndClearStorage(() => {
+            expect(Countly._internals.currentUserAgentDataString('123')).to.equal("123");
         });
     });
 });

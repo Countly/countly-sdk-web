@@ -1,2 +1,2 @@
 import "./commands";
-import "../../lib/countly";
+import "../../lib/countly.js";

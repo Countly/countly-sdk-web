@@ -1,5 +1,5 @@
 var Countly = require("../../lib/countly");
-var hp = require("../support/helper");
+var hp = require("../support/helper.js");
 
 // ========================================
 // Device ID change tests 
@@ -14,7 +14,7 @@ var hp = require("../support/helper");
 function initMain(offline) {
     Countly.init({
         app_key: "YOUR_APP_KEY",
-        url: "https://your.domain.countly",
+        url: "https://your.domain.count.ly",
         test_mode: true,
         debug: true,
         offline_mode: offline
@@ -220,7 +220,7 @@ describe("Device ID change tests ", ()=>{
 });
 
 describe("Set ID change tests ", () => {
-    it("set_id should be non merge as there was dev provided id", () => {
+    it('set_id should be non merge as there was dev provided id', () => {
         hp.haltAndClearStorage(() => {
             Countly.init({
                 app_key: "YOUR_APP_KEY",
@@ -239,16 +239,16 @@ describe("Set ID change tests ", () => {
                 cy.fetch_local_request_queue().then((eq2) => {
                     expect(eq2.length).to.equal(3); // no merge request
                     expect(eq2[0].device_id).to.equal("old ID");
-                    expect(eq2[0].events).to.contains("\"key\":\"1\"");
+                    expect(eq2[0].events).to.contains('"key\":\"1\"');
                     expect(eq2[1].device_id).to.equal("new ID");
                     expect(eq2[1].begin_session).to.equal(1);
                     expect(eq2[2].device_id).to.equal("new ID");
-                    expect(eq2[2].events).to.contains("\"key\":\"2\"");
+                    expect(eq2[2].events).to.contains('"key\":\"2\"');
                 });
             });
         });
     });
-    it("set_id should be merge as there was sdk generated id", () => {
+    it('set_id should be merge as there was sdk generated id', () => {
         hp.haltAndClearStorage(() => {
             initMain(false); // init normally
             Countly.add_event(eventObj("1")); // record an event.
@@ -264,13 +264,14 @@ describe("Set ID change tests ", () => {
                     cy.log(eq2);
                     expect(eq2.length).to.equal(3); // merge request
                     expect(eq2[0].device_id).to.equal(generatedID);
-                    expect(eq2[0].events).to.contains("\"key\":\"1\"");
+                    expect(eq2[0].events).to.contains('"key\":\"1\"');
                     expect(eq2[1].device_id).to.equal("new ID");
                     expect(eq2[1].old_device_id).to.equal(generatedID);
                     expect(eq2[2].device_id).to.equal("new ID");
-                    expect(eq2[2].events).to.contains("\"key\":\"2\"");
+                    expect(eq2[2].events).to.contains('"key\":\"2\"');
                 });
             });
         });
     });
+
 });

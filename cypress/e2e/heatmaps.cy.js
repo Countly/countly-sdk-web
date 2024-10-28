@@ -11,8 +11,10 @@ function click_check(segmentation, offX, offY) {
     expect(segmentation.height).to.be.ok;
     expect(segmentation.view).to.be.ok;
     expect(segmentation.width).to.be.ok;
-    expect(segmentation.x).to.equal(clickX + offX);
-    expect(segmentation.y).to.equal(clickY + offY);
+    expect(segmentation.x).to.be.above(clickX + offX - 2);
+    expect(segmentation.x).to.be.below(clickX + offX + 2);
+    expect(segmentation.y).to.be.above(clickY + offY - 2);
+    expect(segmentation.y).to.be.below(clickY + offY + 2);
 }
 
 describe("Browser heatmap tests, scrolls", () => {

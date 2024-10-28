@@ -2,7 +2,7 @@
 <head>
   <script type='text/javascript' src='../../lib/countly.js'></script>
   <script type='text/javascript'>
-    // here we implement a cookie and localStorage clearing logic
+// here we implement a cookie and localStorage clearing logic
 const deleteAllCookies = () => {
 const cookies = document.cookie.split(";");
 for (const cookie of cookies) {
@@ -14,9 +14,9 @@ for (const cookie of cookies) {
 window.localStorage.clear();
 deleteAllCookies();
 console.error("cleared the storage");
-  Countly.init({
+Countly.init({
     app_key: "YOUR_APP_KEY",
-    url: "https://your.domain.countly",
+    url: "https://your.domain.count.ly",
     debug:true,
     test_mode: true
   })
@@ -26,7 +26,7 @@ console.error("cleared the storage");
   </script>
 </head>
 <body>
-  <script type='text/javascript'>
+<script type='text/javascript'>
   function view1(){
     Countly.track_pageview("v1");
     console.log("scroll test, v1 triggered");

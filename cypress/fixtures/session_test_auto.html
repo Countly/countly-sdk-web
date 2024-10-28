@@ -24,9 +24,9 @@ const confObj = queryExtractor(window.location.search);
 //initializing countly with params
 Countly.init({
 	app_key: "YOUR_APP_KEY",
-	url: "https://your.domain.countly",
+	url: "https://your.domain.count.ly",
   device_id: "auto",
-  session_update: 4,
+  session_update: 5,
   test_mode: true,
   use_session_cookie: confObj.use_session_cookie || false,
 	debug:true
@@ -38,7 +38,7 @@ Countly.track_sessions();
 <body>
 <script type='text/javascript' >
 function clickEvent(){
-	Countly.add_event({
+	window.Countly.add_event({
     key: "buttonClick",
     "segmentation": {
         "id": "id"

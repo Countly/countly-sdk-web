@@ -1,5 +1,6 @@
-import { appKey } from "../support/helper";
+import { turnSearchStringToObject, check_commons } from "../support/helper";
 
+var expectedRequests = 4;
 const myEvent = {
     key: "buttonClick",
     segmentation: {
@@ -10,7 +11,7 @@ const myEvent = {
 describe("Web Worker Request Intercepting Tests", () => {
     it("SDK able to send requests for most basic calls", () => {
         // create a worker
-        const myWorker = new Worker("../../examples/worker.js");
+        const myWorker = new Worker("../../test_workers/worker.js", { type: "module" });
 
         // send an event to worker
         myWorker.postMessage({ data: myEvent, type: "event" });
@@ -22,8 +23,8 @@ describe("Web Worker Request Intercepting Tests", () => {
         cy.intercept("GET", "**/i?**", (req) => {
             const { url } = req;
 
-            // check url starts with https://your.domain.countly/i?
-            assert.isTrue(url.startsWith("https://your.domain.countly/i?"));
+            // check url starts with https://your.domain.count.ly/i?
+            assert.isTrue(url.startsWith("https://your.domain.count.ly/i?"));
 
             // turn query string into object
             const paramsObject = turnSearchStringToObject(url.split("?")[1]);
@@ -32,7 +33,6 @@ describe("Web Worker Request Intercepting Tests", () => {
             check_commons(paramsObject);
 
             // we expect 4 requests: begin_session, end_session, healthcheck, event(event includes view and buttonClick)
-            let expectedRequests = 4;
             if (paramsObject.hc) {
                 // check hc params types, values can change
                 assert.isTrue(typeof paramsObject.hc.el === "number");
@@ -83,43 +83,3 @@ describe("Web Worker Request Intercepting Tests", () => {
         });
     });
 });
-
-/**
- *  Check common params for all requests
- * @param {Object} paramsObject - object from search string
- */
-function check_commons(paramsObject) {
-    expect(paramsObject.timestamp).to.be.ok;
-    expect(paramsObject.timestamp.toString().length).to.equal(13);
-    expect(paramsObject.hour).to.be.within(0, 23);
-    expect(paramsObject.dow).to.be.within(0, 7);
-    expect(paramsObject.app_key).to.equal(appKey);
-    expect(paramsObject.device_id).to.be.ok;
-    expect(paramsObject.sdk_name).to.equal("javascript_native_web");
-    expect(paramsObject.sdk_version).to.be.ok;
-    expect(paramsObject.t).to.be.within(0, 3);
-    expect(paramsObject.av).to.equal(0); // av is 0 as we parsed parsable things
-    if (!paramsObject.hc) { // hc is direct request
-        expect(paramsObject.rr).to.be.above(-1);
-    }
-    expect(paramsObject.metrics._ua).to.be.ok;
-}
-
-/**
- *  Turn search string into object with values parsed
- * @param {String} searchString - search string
- * @returns {object} - object from search string
- */
-function turnSearchStringToObject(searchString) {
-    const searchParams = new URLSearchParams(searchString);
-    const paramsObject = {};
-    for (const [key, value] of searchParams.entries()) {
-        try {
-            paramsObject[key] = JSON.parse(value); // try to parse value
-        }
-        catch (e) {
-            paramsObject[key] = value;
-        }
-    }
-    return paramsObject;
-}

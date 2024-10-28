@@ -5,7 +5,7 @@ var hp = require("../support/helper");
 function init(appKey, searchQuery, utmStuff) {
     Countly.init({
         app_key: appKey,
-        url: "https://your.domain.countly",
+        url: "https://your.domain.count.ly",
         test_mode: true,
         test_mode_eq: true,
         utm: utmStuff, // utm object provided in init
@@ -113,7 +113,7 @@ describe("View with utm and referrer tests ", () => {
     // we check if multiple custom utm tags are recorded in the view event if they are in the utm object
     it("Checks if multiple custom utm tags appears in view", () => {
         hp.haltAndClearStorage(() => {
-            init("YOUR_APP_KEY", "?utm_aa=hehe&utm_bb=hoho", { aa: true, bb: true });
+            init("YOUR_APP_KEY", "utm_aa=hehe&utm_bb=hoho", { aa: true, bb: true });
             Countly.track_view(pageNameOne);
             cy.fetch_local_event_queue().then((eq) => {
                 cy.check_view_event(eq[0], pageNameOne, undefined, false);
@@ -166,7 +166,7 @@ describe("View with utm and referrer tests ", () => {
             // default (original) init with no custom tags and default query
             var C1 = Countly.init({
                 app_key: "YOUR_APP_KEY",
-                url: "https://your.domain.countly",
+                url: "https://your.domain.count.ly",
                 test_mode: true,
                 test_mode_eq: true,
                 utm: undefined, // utm object provided in init
@@ -179,12 +179,12 @@ describe("View with utm and referrer tests ", () => {
             // utm object provided with appropriate query
             var C2 = Countly.init({
                 app_key: "Countly_2",
-                url: "https://your.domain.countly",
+                url: "https://your.domain.count.ly",
                 test_mode: true,
                 test_mode_eq: true,
                 utm: { ss: true }, // utm object provided in init
                 getSearchQuery: function() { // override default search query
-                    return "?utm_ss=hehe2";
+                    return "utm_ss=hehe2";
                 }
             });
             C2.track_view(pageNameOne);
@@ -278,7 +278,7 @@ describe("isReferrerUsable tests", () => {
         hp.haltAndClearStorage(() => {
             Countly.init({
                 app_key: "YOUR_APP_KEY",
-                url: "https://your.domain.countly",
+                url: "https://your.domain.count.ly",
                 ignore_referrers: ["http://example.com"]
             });
             const result = Countly._internals.isReferrerUsable("http://example.com/something");
