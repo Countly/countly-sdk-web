@@ -7,7 +7,7 @@ node_modules
 .github
 .gitignore
 CHANGELOG.md
-cypress.config.mjs
+cypress.config.js
 generateDocs.sh
 jsdoc_conf.json
 LICENSE
