@@ -5,7 +5,7 @@ var hp = require("../support/helper");
 function initMulti(appKey, searchQuery, utmStuff) {
     Countly.init({
         app_key: appKey,
-        url: "https://your.domain.countly",
+        url: "https://your.domain.count.ly",
         test_mode: true,
         test_mode_eq: true,
         utm: utmStuff,
@@ -19,7 +19,7 @@ describe("UTM tests ", () => {
     it("Checks if a single default utm tag works", () => {
         hp.haltAndClearStorage(() => {
             initMulti("YOUR_APP_KEY", "?utm_source=hehe", undefined);
-            Countly.q.push(["track_errors"]); // adding this as calling it during init used to cause an error (at v23.12.5)
+            Countly.q.push(['track_errors']);  // adding this as calling it during init used to cause an error (at v23.12.5)
             cy.fetch_local_request_queue().then((rq) => {
                 cy.log(rq);
                 const custom = JSON.parse(rq[0].user_details).custom;
@@ -29,7 +29,7 @@ describe("UTM tests ", () => {
     });
     it("Checks if default utm tags works", () => {
         hp.haltAndClearStorage(() => {
-            initMulti("YOUR_APP_KEY", "?utm_source=hehe&utm_medium=hehe1&utm_campaign=hehe2&utm_term=hehe3&utm_content=hehe4", undefined);
+            initMulti("YOUR_APP_KEY", "utm_source=hehe&utm_medium=hehe1&utm_campaign=hehe2&utm_term=hehe3&utm_content=hehe4", undefined);
             cy.fetch_local_request_queue().then((rq) => {
                 cy.log(rq);
                 const custom = JSON.parse(rq[0].user_details).custom;
@@ -39,7 +39,7 @@ describe("UTM tests ", () => {
     });
     it("Checks if a single custom utm tag works", () => {
         hp.haltAndClearStorage(() => {
-            initMulti("YOUR_APP_KEY", "utm_aa=hehe", { aa: true, bb: true });
+            initMulti("YOUR_APP_KEY", "?utm_aa=hehe", { aa: true, bb: true });
             cy.fetch_local_request_queue().then((rq) => {
                 cy.log(rq);
                 const custom = JSON.parse(rq[0].user_details).custom;
@@ -70,13 +70,13 @@ describe("UTM tests ", () => {
             initMulti("Countly_4", "?utm_source=hehe4", { ss: true });
 
             // utm object not provided with default query
-            initMulti("Countly_3", "?utm_source=hehe3", undefined);
+            initMulti("Countly_3", "utm_source=hehe3", undefined);
 
             // utm object not provided with inappropriate query
-            initMulti("Countly_5", "utm_ss=hehe5", undefined);
+            initMulti("Countly_5", "?utm_ss=hehe5", undefined);
 
             // default (original) init with no custom tags and default query
-            initMulti("YOUR_APP_KEY", "?utm_source=hehe", undefined);
+            initMulti("YOUR_APP_KEY", "utm_source=hehe", undefined);
 
             // check original
             cy.fetch_local_request_queue().then((rq) => {
@@ -111,7 +111,7 @@ describe("UTM tests ", () => {
             initMulti("YOUR_APP_KEY", "?utm_source=hehe", undefined);
 
             // utm object not provided with full +  weird query
-            initMulti("Countly_multi_1", "?utm_source=hehe&utm_medium=hehe1&utm_campaign=hehe2&utm_term=hehe3&utm_content=hehe4&fdsjhflkjhsdlkfjhsdlkjfhksdjhfkj+dsf;jsdlkjflk+=skdjflksjd=fksdfl;sd=sdkfmk&&&", undefined);
+            initMulti("Countly_multi_1", "utm_source=hehe&utm_medium=hehe1&utm_campaign=hehe2&utm_term=hehe3&utm_content=hehe4&fdsjhflkjhsdlkfjhsdlkjfhksdjhfkj+dsf;jsdlkjflk+=skdjflksjd=fksdfl;sd=sdkfmk&&&", undefined);
 
             // utm object given that includes 2 default 1 custom, full plus custom query + gabledeboop
             initMulti("Countly_multi_2", "?utm_source=hehe&utm_medium=hehe1&utm_campaign=hehe2&utm_term=hehe3&utm_content=hehe4&utm_sthelse=hehe5&fdsjhflkjhsdlkfjhsdlkjfhksdjhfkj+dsf;jsdlkjflk+=skdjflksjd=fksdfl;sd=sdkfmk&&&", { source: true, term: true, sthelse: true });
@@ -172,7 +172,7 @@ describe("UTM tests ", () => {
             initMulti("Countly_multi_next_1", "?utm_sourcer=hehe&utm_mediumr=hehe1&utm_campaignr=hehe2&utm_rterm=hehe3&utm_corntent=hehe4&fdsjhflkjhsdlkfjhsdlkjfhksdjhfkj+dsf;jsdlkjflk+=skdjflksjd=fksdfl;sd=sdkfmk&&&", undefined);
 
             // utm object default, custom query + gabledeboop
-            initMulti("Countly_multi_next_2", "?utm_sourcer=hehe&utm_mediumr=hehe1&utm_campaignr=hehe2&utm_rterm=hehe3&utm_corntent=hehe4&fdsjhflkjhsdlkfjhsdlkjfhksdjhfkj+dsf;jsdlkjflk+=skdjflksjd=fksdfl;sd=sdkfmk&&&", { source: true, medium: true, campaign: true, term: true, content: true });
+            initMulti("Countly_multi_next_2", "utm_sourcer=hehe&utm_mediumr=hehe1&utm_campaignr=hehe2&utm_rterm=hehe3&utm_corntent=hehe4&fdsjhflkjhsdlkfjhsdlkjfhksdjhfkj+dsf;jsdlkjflk+=skdjflksjd=fksdfl;sd=sdkfmk&&&", { source: true, medium: true, campaign: true, term: true, content: true });
 
             // custom utm object, custom query + gabledeboop
             initMulti("Countly_multi_next_3", "?utm_sauce=hehe&utm_pan=hehe2&dasdashdjkhaslkjdhsakj=dasmndlask=asdkljska&&utm_source=hehe", { sauce: true, pan: true });

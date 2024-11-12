@@ -1,9 +1,8 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 /* eslint-disable require-jsdoc */
 var Countly = require("../../lib/countly");
-// import * as Countly from "../../dist/countly_umd.js";
 var hp = require("../support/helper.js");
-const crypto = require("crypto");
+const crypto = require('crypto');
 
 function initMain(salt) {
     Countly.init({
@@ -49,7 +48,7 @@ describe("Salt Tests", () => {
         hp.haltAndClearStorage(() => {
             initMain(salt);
             var rqArray = [];
-            hp.events();
+            hp.events();    
             cy.intercept("GET", "**/i?**", (req) => {
                 const { url } = req;
                 rqArray.push(url.split("?")[1]);
@@ -81,7 +80,7 @@ describe("Salt Tests", () => {
  * @returns {string} - sha256 hash
  */
 function sha256(data) {
-    const hash = crypto.createHash("sha256");
+    const hash = crypto.createHash('sha256');
     hash.update(data);
-    return hash.digest("hex");
+    return hash.digest('hex');
 }

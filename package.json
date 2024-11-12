@@ -1,6 +1,6 @@
 {
   "name": "countly-sdk-web",
-  "version": "24.4.1",
+  "version": "24.11.0",
   "description": "Countly Web SDK",
   "main": "lib/countly.js",
   "types": "lib/countly.d.ts",
@@ -34,8 +34,8 @@
   },
   "homepage": "https://countly.com/",
   "devDependencies": {
-    "cypress": "^9.5.0",
-    "cypress-localstorage-commands": "^1.7.0",
+    "cypress": "^13.6.0",
+    "cypress-localstorage-commands": "^2.2.5",
     "eslint": "^8.37.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-chai-friendly": "^0.7.2",

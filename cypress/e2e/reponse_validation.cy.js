@@ -10,7 +10,7 @@ var hp = require("../support/helper");
 function initMain() {
     Countly.init({
         app_key: "YOUR_APP_KEY",
-        url: "https://your.domain.countly",
+        url: "https://your.domain.count.ly",
         test_mode: true,
         test_mode_eq: true,
         debug: true

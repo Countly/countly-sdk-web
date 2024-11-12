@@ -1,12 +1,13 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 /* eslint-disable require-jsdoc */
 var Countly = require("../../lib/countly");
-var hp = require("../support/helper");
+// import * as Countly from "../../dist/countly_umd.js";
+var hp = require("../support/helper.js");
 
 function initMain(consent) {
     Countly.init({
         app_key: "YOUR_APP_KEY",
-        url: "https://your.domain.countly",
+        url: "https://your.domain.count.ly",
         require_consent: consent,
         device_id: "György Ligeti",
         test_mode: true,

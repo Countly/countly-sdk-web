@@ -1,8 +1,6 @@
-/* eslint-disable cypress/no-unnecessary-waiting */
 /* eslint-disable require-jsdoc */
 var Countly = require("../../lib/countly");
-// import * as Countly from "../../dist/countly_umd.js";
-var hp = require("../support/helper.js");
+var hp = require("../support/helper");
 
 function initMain(clear) {
     Countly.init({
@@ -62,22 +60,22 @@ describe("Test Countly.q related methods and processes", () => {
                 // Check that the .q is empty
                 expect(Countly.q.length).to.equal(0);
 
-                cy.fetch_local_request_queue().then((rq_2) => {
+                cy.fetch_local_request_queue().then((rq) => {
                     // Check that nothing sent to request queue
-                    expect(rq_2.length).to.equal(0);
+                    expect(rq.length).to.equal(0);
                     cy.fetch_local_event_queue().then((eq) => {
                         // Check that events are now in event queue
                         expect(eq.length).to.equal(4);
 
                         // Send events from event queue to request queue
                         Countly._internals.sendEventsForced();
-                        cy.fetch_local_event_queue().then((eq_2) => {
+                        cy.fetch_local_event_queue().then((eq) => {
                             // Check that event queue is empty
-                            expect(eq_2.length).to.equal(0);
-                            cy.fetch_local_request_queue().then((rq_3) => {
+                            expect(eq.length).to.equal(0);
+                            cy.fetch_local_request_queue().then((rq) => {
                                 // Check that events are now in request queue
-                                expect(rq_3.length).to.equal(1);
-                                const eventsArray = JSON.parse(rq_3[0].events);
+                                expect(rq.length).to.equal(1);
+                                const eventsArray = JSON.parse(rq[0].events);
                                 expect(eventsArray[0].key).to.equal("event_1");
                                 expect(eventsArray[1].key).to.equal("event_2");
                                 expect(eventsArray[2].key).to.equal("event_3");
@@ -125,16 +123,16 @@ describe("Test Countly.q related methods and processes", () => {
                     // Check that event queue has new device ID's orientation event
                     expect(eq.length).to.equal(1);
                     expect(eq[0].key).to.equal("[CLY]_orientation");
-                    cy.fetch_local_request_queue().then((rq_2) => {
+                    cy.fetch_local_request_queue().then((rq) => {
                         // Check that events are now in request queue (second request is begin session for new device ID)
-                        expect(rq_2.length).to.equal(2);
-                        const eventsArray = JSON.parse(rq_2[0].events);
+                        expect(rq.length).to.equal(2);
+                        const eventsArray = JSON.parse(rq[0].events);
                         expect(eventsArray[0].key).to.equal("event_1");
                         expect(eventsArray[1].key).to.equal("event_2");
                         expect(eventsArray[2].key).to.equal("event_3");
                         expect(eventsArray[3].key).to.equal("event_4");
                         // check begin session
-                        expect(rq_2[1].begin_session).to.equal(1);
+                        expect(rq[1].begin_session).to.equal(1);
                     });
                 });
             });
@@ -175,16 +173,16 @@ describe("Test Countly.q related methods and processes", () => {
                 cy.fetch_local_event_queue().then((eq) => {
                     // Check that event queue is empty
                     expect(eq.length).to.equal(0);
-                    cy.fetch_local_request_queue().then((rq_2) => {
+                    cy.fetch_local_request_queue().then((rq) => {
                         // Check that events are now in request queue (second request is user details)
-                        expect(rq_2.length).to.equal(2);
-                        const eventsArray = JSON.parse(rq_2[0].events);
+                        expect(rq.length).to.equal(2);
+                        const eventsArray = JSON.parse(rq[0].events);
                         expect(eventsArray[0].key).to.equal("event_1");
                         expect(eventsArray[1].key).to.equal("event_2");
                         expect(eventsArray[2].key).to.equal("event_3");
                         expect(eventsArray[3].key).to.equal("event_4");
                         // check user details
-                        const user_details = JSON.parse(rq_2[1].user_details);
+                        const user_details = JSON.parse(rq[1].user_details);
                         expect(user_details.name).to.equal("test_user");
                     });
                 });
@@ -227,16 +225,16 @@ describe("Test Countly.q related methods and processes", () => {
                 cy.fetch_local_event_queue().then((eq) => {
                     // Check that event queue is empty
                     expect(eq.length).to.equal(0);
-                    cy.fetch_local_request_queue().then((rq_2) => {
+                    cy.fetch_local_request_queue().then((rq) => {
                         // Check that events are now in request queue (second request is user details)
-                        expect(rq_2.length).to.equal(2);
-                        const eventsArray = JSON.parse(rq_2[0].events);
+                        expect(rq.length).to.equal(2);
+                        const eventsArray = JSON.parse(rq[0].events);
                         expect(eventsArray[0].key).to.equal("event_1");
                         expect(eventsArray[1].key).to.equal("event_2");
                         expect(eventsArray[2].key).to.equal("event_3");
                         expect(eventsArray[3].key).to.equal("event_4");
                         // check user data
-                        const user_details = JSON.parse(rq_2[1].user_details);
+                        const user_details = JSON.parse(rq[1].user_details);
                         expect(user_details.custom.name).to.equal("test_user");
                     });
                 });
@@ -267,15 +265,15 @@ describe("Test Countly.q related methods and processes", () => {
                     expect(Countly.q.length).to.equal(4);
                     // Wait for heartBeat to process the .q
                     cy.wait(1500).then(() => {
-                        // Check that the .q is empty
+                    // Check that the .q is empty
                         expect(Countly.q.length).to.equal(0);
-                        cy.fetch_local_event_queue().then((eq_2) => {
-                            // Check that event queue is empty as all must be in request queue
-                            expect(eq_2.length).to.equal(0);
-                            cy.fetch_local_request_queue().then((rq_2) => {
-                                // Check that events are now in request queue
-                                expect(rq_2.length).to.equal(1);
-                                const eventsArray = JSON.parse(rq_2[0].events);
+                        cy.fetch_local_event_queue().then((eq) => {
+                        // Check that event queue is empty as all must be in request queue
+                            expect(eq.length).to.equal(0);
+                            cy.fetch_local_request_queue().then((rq) => {
+                            // Check that events are now in request queue
+                                expect(rq.length).to.equal(1);
+                                const eventsArray = JSON.parse(rq[0].events);
                                 expect(eventsArray[0].key).to.equal("event_1");
                                 expect(eventsArray[1].key).to.equal("event_2");
                                 expect(eventsArray[2].key).to.equal("event_3");

@@ -15,7 +15,7 @@ const limits = {
 function initMain() {
     Countly.init({
         app_key: "YOUR_APP_KEY",
-        url: "https://your.domain.countly",
+        url: "https://your.domain.count.ly",
         test_mode_eq: true,
         test_mode: true,
         debug: true,

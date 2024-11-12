@@ -5,7 +5,7 @@ var hp = require("../support/helper");
 function initMain(shouldStopRequests) {
     Countly.init({
         app_key: "YOUR_APP_KEY",
-        url: "https://your.domain.countly",
+        url: "https://your.domain.count.ly",
         app_version: "1.0",
         // would prevent requests from being sent to the server if true
         test_mode: shouldStopRequests
@@ -18,7 +18,7 @@ describe("Remaining requests tests ", () => {
             initMain(false);
 
             // We will expect 4 requests: health check, begin_session, end_session, orientation
-            hp.interceptAndCheckRequests(undefined, undefined, undefined, "?hc=*", "hc", (requestParams) => {
+            hp.interceptAndCheckRequests("POST", undefined, undefined, "?hc=*", "hc", (requestParams) => {
                 const params = JSON.parse(requestParams.get("hc"));
                 assert.isTrue(typeof params.el === "number");
                 assert.isTrue(typeof params.wl === "number");
@@ -29,19 +29,19 @@ describe("Remaining requests tests ", () => {
             cy.wait(1000).then(() => {
                 // Create a session
                 Countly.begin_session();
-                hp.interceptAndCheckRequests(undefined, undefined, undefined, "?begin_session=*", "begin_session", (requestParams) => {
+                hp.interceptAndCheckRequests("POST", undefined, undefined, "?begin_session=*", "begin_session", (requestParams) => {
                     expect(requestParams.get("begin_session")).to.equal("1");
                     expect(requestParams.get("rr")).to.equal("3");
                     expect(requestParams.get("av")).to.equal(av);
                 });
                 // End the session
                 Countly.end_session(undefined, true);
-                hp.interceptAndCheckRequests(undefined, undefined, undefined, undefined, "end_session", (requestParams) => {
+                hp.interceptAndCheckRequests("POST", undefined, undefined, "?end_session=*", "end", (requestParams) => {
                     expect(requestParams.get("end_session")).to.equal("1");
                     expect(requestParams.get("rr")).to.equal("2");
                     expect(requestParams.get("av")).to.equal(av);
                 });
-                hp.interceptAndCheckRequests(undefined, undefined, undefined, undefined, "orientation", (requestParams) => {
+                hp.interceptAndCheckRequests("POST", undefined, undefined, undefined, "orientation", (requestParams) => {
                     expect(JSON.parse(requestParams.get("events"))[0].key).to.equal("[CLY]_orientation");
                     expect(requestParams.get("rr")).to.equal("1");
                     expect(requestParams.get("av")).to.equal(av);

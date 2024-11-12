@@ -7,7 +7,7 @@ var hp = require("../support/helper");
 function initMain() {
     Countly.init({
         app_key: "YOUR_APP_KEY",
-        url: "https://your.domain.countly",
+        url: "https://your.domain.count.ly",
         debug: true,
         test_mode: true
     });
@@ -50,7 +50,7 @@ describe("Integration test", () => {
         // TODO: make better
         cy.fetch_local_request_queue().then((rq) => {
             cy.log(rq);
-            hp.testNormalFlow(rq, "/__cypress/iframes/integration%2Fintegration.js", hp.appKey);
+            hp.testNormalFlow(rq, "/__cypress/iframes/cypress%5Ce2e%5Cintegration.cy.js", hp.appKey);
             expect(consentStatus).to.equal(true); // no consent necessary
             expect(remote).to.eql({}); // deepEqual
             expect(rq[0].device_id).to.equal(id);

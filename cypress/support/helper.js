@@ -68,29 +68,43 @@ var waitFunction = function(startTime, waitTime, waitIncrement, continueCallback
 };
 
 /**
- * This intercepts the request the SDK makes and returns the request parameters to the callback function
- * @param {String} requestType - GET, POST, PUT, DELETE
- * @param {String} requestUrl - request url (https://your.domain.countly)
- * @param {String} endPoint - endpoint (/i)
- * @param {String} requestParams - request parameters (?begin_session=**)
+ * Intercepts SDK requests and returns request parameters to the callback function.
+ * @param {String} requestType - GET or POST
+ * @param {String} requestUrl - base URL (e.g., https://your.domain.count.ly)
+ * @param {String} endPoint - endpoint (e.g., /i)
+ * @param {String} aliasParam - parameter to match in requests (e.g., "hc", "begin_session")
  * @param {String} alias - alias for the request
- * @param {Function} callback - callback function
+ * @param {Function} callback - callback function for parsed parameters
  */
-function interceptAndCheckRequests(requestType, requestUrl, endPoint, requestParams, alias, callback) {
-    requestUrl = requestUrl || "https://your.domain.countly"; // TODO: might be needed in the future but not yet
+function interceptAndCheckRequests(requestType, requestUrl, endPoint, aliasParam, alias, callback) {
+    requestType = requestType || "GET";
+    requestUrl = requestUrl || "https://your.domain.count.ly";
     endPoint = endPoint || "/i";
-    requestParams = requestParams || "?**";
     alias = alias || "getXhr";
 
-    cy.intercept(requestUrl + endPoint + requestParams, (req) => {
+    // Intercept requests
+    cy.intercept(requestType, requestUrl + endPoint + "*", (req) => {
+        if (requestType === "POST" && req.body) {
+            // Parse URL-encoded body for POST requests
+            const params = new URLSearchParams(req.body);
+            callback(params);
+        } else {
+            // Parse URL parameters for GET requests
+            const url = new URL(req.url);
+            const params = url.searchParams;
+            callback(params);
+        }
         req.reply(200, { result: "Success" }, {
             "x-countly-rr": "2"
         });
     }).as(alias);
+
+    // Wait for the request alias to be triggered
     cy.wait("@" + alias).then((xhr) => {
-        const url = new URL(xhr.request.url);
-        const searchParams = url.searchParams;
-        callback(searchParams);
+        const params = requestType === "POST" && xhr.request.body
+            ? new URLSearchParams(xhr.request.body)
+            : new URL(xhr.request.url).searchParams;
+        callback(params);
     });
 }
 

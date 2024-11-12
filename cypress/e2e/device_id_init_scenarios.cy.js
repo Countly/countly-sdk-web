@@ -8,21 +8,21 @@
  * |   device ID     |   generated    |   mode was    | device ID  |  device ID  |         |    not    |          |
  * |    was set      |       ID       |   enabled     | provided   |  enabled    |         |    set    |   set    |
  * +--------------------------------------------------+------------------------------------+----------------------+
- * |                     First init                   |      -     |      -      |    -    |    1      |    -     |
+ * |                     First init                   |      -     |      -      |    -    |    1      |    65    |
  * +--------------------------------------------------+------------------------------------+----------------------+
- * |                     First init                   |      x     |      -      |    -    |    2      |    -     |
+ * |                     First init                   |      x     |      -      |    -    |    2      |    66    |
  * +--------------------------------------------------+------------------------------------+----------------------+
- * |                     First init                   |      -     |      x      |    -    |    3      |    -     |
+ * |                     First init                   |      -     |      x      |    -    |    3      |    67    |
  * +--------------------------------------------------+------------------------------------+----------------------+
- * |                     First init                   |      -     |      -      |    x    |    4      |    -     |
+ * |                     First init                   |      -     |      -      |    x    |    4      |    68    |
  * +--------------------------------------------------+------------------------------------+----------------------+
- * |                     First init                   |      x     |      x      |    -    |    5      |    -     |
+ * |                     First init                   |      x     |      x      |    -    |    5      |    69    |
  * +--------------------------------------------------+------------------------------------+----------------------+
- * |                     First init                   |      x     |      -      |    x    |    6      |    -     |
+ * |                     First init                   |      x     |      -      |    x    |    6      |    70    |
  * +--------------------------------------------------+------------------------------------+----------------------+
- * |                     First init                   |      -     |      x      |    x    |    7      |    -     |
+ * |                     First init                   |      -     |      x      |    x    |    7      |    71    |
  * +--------------------------------------------------+------------------------------------+----------------------+
- * |                     First init                   |      x     |      x      |    x    |    8      |    -     |
+ * |                     First init                   |      x     |      x      |    x    |    8      |    72    |
  * +--------------------------------------------------+------------------------------------+----------------------+
  * |        x        |        -       |       -       |      -     |      -      |    -    |    17     |    33    |
  * +--------------------------------------------------+------------------------------------+----------------------+
@@ -90,7 +90,7 @@ var hp = require("../support/helper");
 function initMain(deviceId, offline, searchQuery, clear) {
     Countly.init({
         app_key: "YOUR_APP_KEY",
-        url: "https://your.domain.countly",
+        url: "https://your.domain.count.ly",
         device_id: deviceId,
         test_mode: true,
         debug: true,
@@ -130,11 +130,11 @@ var DeviceIdTypeInternalEnumsTest = {
     TEMPORARY_ID: 2,
     URL_PROVIDED: 3
 };
-describe("Device Id tests during first init", ()=>{
+describe("Device Id tests during first init", () => {
     // sdk is initialized w/o custom device id, w/o offline mode, w/o utm device id
 
     // we provide no device id information sdk should generate the id
-    it("1-SDK is initialized without custom device id, without offline mode, without utm device id", ()=>{
+    it("1-SDK is initialized without custom device id, without offline mode, without utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain(undefined, false, undefined);
             expect(Countly.get_device_id_type()).to.eq(Countly.DeviceIdType.SDK_GENERATED);
@@ -147,7 +147,7 @@ describe("Device Id tests during first init", ()=>{
         });
     });
     // we provide device id information sdk should use it
-    it("2-SDK is initialized with custom device id, without offline mode, without utm device id", ()=>{
+    it("2-SDK is initialized with custom device id, without offline mode, without utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("gerwutztreimer", false, undefined);
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
@@ -160,7 +160,7 @@ describe("Device Id tests during first init", ()=>{
         });
     });
     // we provide no device id information sdk should generate the id
-    it("3-SDK is initialized without custom device id, with offline mode, without utm device id", ()=>{
+    it("3-SDK is initialized without custom device id, with offline mode, without utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain(undefined, true, undefined);
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.TEMPORARY_ID);
@@ -172,7 +172,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("4-SDK is initialized without custom device id, without offline mode, with utm device id", ()=>{
+    it("4-SDK is initialized without custom device id, without offline mode, with utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain(undefined, false, "?cly_device_id=abab");
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
@@ -184,7 +184,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("5-SDK is initialized with custom device id, with offline mode, without utm device id", ()=>{
+    it("5-SDK is initialized with custom device id, with offline mode, without utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("customID", true, undefined);
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
@@ -196,7 +196,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("6-SDK is initialized with custom device id, without offline mode, with utm device id", ()=>{
+    it("6-SDK is initialized with custom device id, without offline mode, with utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("customID2", false, "?cly_device_id=someID");
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
@@ -208,7 +208,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("7-SDK is initialized without custom device id, with offline mode, with utm device id", ()=>{
+    it("7-SDK is initialized without custom device id, with offline mode, with utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain(undefined, true, "?cly_device_id=someID");
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
@@ -220,7 +220,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("8-SDK is initialized with custom device id, with offline mode, with utm device id", ()=>{
+    it("8-SDK is initialized with custom device id, with offline mode, with utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("customID3", true, "?cly_device_id=someID2");
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
@@ -235,7 +235,7 @@ describe("Device Id tests during first init", ()=>{
 
     // Here tests focus the device id change and offline mode
     // first pair
-    it("9-SDK is initialized with no device id, not offline mode, not utm device id", ()=>{
+    it("9-SDK is initialized with no device id, not offline mode, not utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain(undefined, false, undefined);
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.SDK_GENERATED);
@@ -251,7 +251,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("10-SDK is initialized with no device id, not offline mode, not utm device id, but then offline", ()=>{
+    it("10-SDK is initialized with no device id, not offline mode, not utm device id, but then offline", () => {
         hp.haltAndClearStorage(() => {
             initMain(undefined, false, undefined);
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.SDK_GENERATED);
@@ -269,7 +269,7 @@ describe("Device Id tests during first init", ()=>{
         });
     });
     // second pair
-    it("11-SDK is initialized with user defined device id, not offline mode, not utm device id", ()=>{
+    it("11-SDK is initialized with user defined device id, not offline mode, not utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("userID", false, undefined);
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
@@ -285,7 +285,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("12-SDK is initialized with user defined device id, not offline mode, not utm device id, but then offline", ()=>{
+    it("12-SDK is initialized with user defined device id, not offline mode, not utm device id, but then offline", () => {
         hp.haltAndClearStorage(() => {
             initMain("userID", false, undefined);
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
@@ -303,7 +303,7 @@ describe("Device Id tests during first init", ()=>{
         });
     });
     // third pair
-    it("13-SDK is initialized with no device id, not offline mode, with utm device id", ()=>{
+    it("13-SDK is initialized with no device id, not offline mode, with utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain(undefined, false, "?cly_device_id=abab");
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
@@ -319,7 +319,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("14-SDK is initialized with no device id, not offline mode, with utm device id, but then offline", ()=>{
+    it("14-SDK is initialized with no device id, not offline mode, with utm device id, but then offline", () => {
         hp.haltAndClearStorage(() => {
             initMain(undefined, false, "?cly_device_id=abab");
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
@@ -337,7 +337,7 @@ describe("Device Id tests during first init", ()=>{
         });
     });
     // fourth pair
-    it("15-SDK is initialized with no device id, with offline mode, no utm device id", ()=>{
+    it("15-SDK is initialized with no device id, with offline mode, no utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain(undefined, true, undefined);
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.TEMPORARY_ID);
@@ -353,7 +353,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("16-SDK is initialized with no device id, with offline mode, no utm device id, but then offline", ()=>{
+    it("16-SDK is initialized with no device id, with offline mode, no utm device id, but then offline", () => {
         hp.haltAndClearStorage(() => {
             initMain(undefined, true, undefined);
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.TEMPORARY_ID);
@@ -372,7 +372,7 @@ describe("Device Id tests during first init", ()=>{
     });
 
     // Auto generated or developer set device ID was present in the local storage before initialization
-    it("17-Stored ID precedence, SDK is initialized with no device id, not offline mode, no utm device id", ()=>{
+    it("17-Stored ID precedence, SDK is initialized with no device id, not offline mode, no utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("storedID", false, undefined);
             Countly.halt();
@@ -386,7 +386,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("18-Stored ID precedence, SDK is initialized with device id, not offline mode, no utm device id", ()=>{
+    it("18-Stored ID precedence, SDK is initialized with device id, not offline mode, no utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("storedID", false, undefined);
             Countly.halt();
@@ -400,7 +400,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("19-Stored ID precedence, SDK is initialized with no device id, offline mode, no utm device id", ()=>{
+    it("19-Stored ID precedence, SDK is initialized with no device id, offline mode, no utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("storedID", false, undefined);
             Countly.halt();
@@ -414,7 +414,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("20-Stored ID precedence, SDK is initialized with no device id, no offline mode, utm device id", ()=>{
+    it("20-Stored ID precedence, SDK is initialized with no device id, no offline mode, utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("storedID", false, undefined);
             Countly.halt();
@@ -428,7 +428,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("21-Stored ID precedence, SDK is initialized with device id, offline mode, no utm device id", ()=>{
+    it("21-Stored ID precedence, SDK is initialized with device id, offline mode, no utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("storedID", false, undefined);
             Countly.halt();
@@ -442,7 +442,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("22-Stored ID precedence, SDK is initialized with device id, no offline mode, utm device id", ()=>{
+    it("22-Stored ID precedence, SDK is initialized with device id, no offline mode, utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("storedID", false, undefined);
             Countly.halt();
@@ -456,7 +456,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("23-Stored ID precedence, SDK is initialized no device id, offline mode, utm device id", ()=>{
+    it("23-Stored ID precedence, SDK is initialized no device id, offline mode, utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("storedID", false, undefined);
             Countly.halt();
@@ -470,7 +470,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("24-Stored ID precedence, SDK is initialized with device id, offline mode, utm device id", ()=>{
+    it("24-Stored ID precedence, SDK is initialized with device id, offline mode, utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("storedID", false, undefined);
             Countly.halt();
@@ -486,7 +486,7 @@ describe("Device Id tests during first init", ()=>{
     });
 
     // Temporary ID  was present in the local storage before initialization
-    it("25-Stored temp ID precedence, SDK is initialized with no device id, not offline mode, no utm device id", ()=>{
+    it("25-Stored temp ID precedence, SDK is initialized with no device id, not offline mode, no utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("[CLY]_temp_id", false, undefined);
             Countly.halt();
@@ -500,7 +500,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("26-Stored temp ID precedence, SDK is initialized with device id, not offline mode, no utm device id", ()=>{
+    it("26-Stored temp ID precedence, SDK is initialized with device id, not offline mode, no utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("[CLY]_temp_id", false, undefined);
             Countly.halt();
@@ -514,7 +514,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("27-Stored temp ID precedence, SDK is initialized with no device id, offline mode, no utm device id", ()=>{
+    it("27-Stored temp ID precedence, SDK is initialized with no device id, offline mode, no utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("[CLY]_temp_id", false, undefined);
             Countly.halt();
@@ -528,7 +528,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("28-Stored temp ID precedence, SDK is initialized with no device id, no offline mode, utm device id", ()=>{
+    it("28-Stored temp ID precedence, SDK is initialized with no device id, no offline mode, utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("[CLY]_temp_id", false, undefined);
             Countly.halt();
@@ -542,7 +542,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("29-Stored temp ID precedence, SDK is initialized with device id, offline mode, no utm device id", ()=>{
+    it("29-Stored temp ID precedence, SDK is initialized with device id, offline mode, no utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("[CLY]_temp_id", false, undefined);
             Countly.halt();
@@ -556,7 +556,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("30-Stored temp ID precedence, SDK is initialized with device id, no offline mode, utm device id", ()=>{
+    it("30-Stored temp ID precedence, SDK is initialized with device id, no offline mode, utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("[CLY]_temp_id", false, undefined);
             Countly.halt();
@@ -570,7 +570,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("31-Stored temp ID precedence, SDK is initialized with no device id, offline mode, utm device id", ()=>{
+    it("31-Stored temp ID precedence, SDK is initialized with no device id, offline mode, utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("[CLY]_temp_id", false, undefined);
             Countly.halt();
@@ -584,7 +584,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("32-Stored temp ID precedence, SDK is initialized with device id, offline mode, utm device id", ()=>{
+    it("32-Stored temp ID precedence, SDK is initialized with device id, offline mode, utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("[CLY]_temp_id", false, undefined);
             Countly.halt();
@@ -601,7 +601,7 @@ describe("Device Id tests during first init", ()=>{
 
     // Same tests with clear device ID flag set to true
     // Auto generated or developer set device ID was present in the local storage before initialization
-    it("33-Cleared ID precedence, SDK is initialized with no device id, not offline mode, no utm device id", ()=>{
+    it("33-Cleared ID precedence, SDK is initialized with no device id, not offline mode, no utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("storedID", false, undefined);
             Countly.halt();
@@ -615,7 +615,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("34-Cleared ID precedence, SDK is initialized with device id, not offline mode, no utm device id", ()=>{
+    it("34-Cleared ID precedence, SDK is initialized with device id, not offline mode, no utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("storedID", false, undefined);
             Countly.halt();
@@ -629,7 +629,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("35-Cleared ID precedence, SDK is initialized with no device id, offline mode, no utm device id", ()=>{
+    it("35-Cleared ID precedence, SDK is initialized with no device id, offline mode, no utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("storedID", false, undefined);
             Countly.halt();
@@ -643,7 +643,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("36-Cleared ID precedence, SDK is initialized with no device id, no offline mode, utm device id", ()=>{
+    it("36-Cleared ID precedence, SDK is initialized with no device id, no offline mode, utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("storedID", false, undefined);
             Countly.halt();
@@ -657,7 +657,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("37-Cleared ID precedence, SDK is initialized with device id, offline mode, no utm device id", ()=>{
+    it("37-Cleared ID precedence, SDK is initialized with device id, offline mode, no utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("storedID", false, undefined);
             Countly.halt();
@@ -671,7 +671,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("38-Cleared ID precedence, SDK is initialized with device id, no offline mode, utm device id", ()=>{
+    it("38-Cleared ID precedence, SDK is initialized with device id, no offline mode, utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("storedID", false, undefined);
             Countly.halt();
@@ -685,7 +685,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("39-Cleared ID precedence, SDK is initialized with no device id, offline mode, utm device id", ()=>{
+    it("39-Cleared ID precedence, SDK is initialized with no device id, offline mode, utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("storedID", false, undefined);
             Countly.halt();
@@ -699,7 +699,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("40-Cleared ID precedence, SDK is initialized with device id, offline mode, utm device id", ()=>{
+    it("40-Cleared ID precedence, SDK is initialized with device id, offline mode, utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("storedID", false, undefined);
             Countly.halt();
@@ -715,21 +715,21 @@ describe("Device Id tests during first init", ()=>{
     });
 
     // Temporary ID  was present in the local storage before initialization
-    it("41-Cleared temp ID precedence, SDK is initialized with no device id, not offline mode, no utm device id", ()=>{
+    it("41-Cleared temp ID precedence, SDK is initialized with no device id, not offline mode, no utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("[CLY]_temp_id", false, undefined);
             Countly.halt();
             initMain(undefined, false, undefined, true);
-            expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.SDK_GENERATED);
-            validateSdkGeneratedId(Countly.get_device_id());
-            validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.SDK_GENERATED);
+            expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.TEMPORARY_ID);
+            expect(Countly.get_device_id()).to.eq("[CLY]_temp_id");
+            validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.TEMPORARY_ID);
             Countly.begin_session();
             cy.fetch_local_request_queue().then((eq) => {
-                checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.SDK_GENERATED);
+                checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.TEMPORARY_ID);
             });
         });
     });
-    it("42-Cleared temp ID precedence, SDK is initialized with device id, not offline mode, no utm device id", ()=>{
+    it("42-Cleared temp ID precedence, SDK is initialized with device id, not offline mode, no utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("[CLY]_temp_id", false, undefined);
             Countly.halt();
@@ -743,7 +743,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("43-Cleared temp ID precedence, SDK is initialized with no device id, offline mode, no utm device id", ()=>{
+    it("43-Cleared temp ID precedence, SDK is initialized with no device id, offline mode, no utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("[CLY]_temp_id", false, undefined);
             Countly.halt();
@@ -757,7 +757,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("44-Cleared temp ID precedence, SDK is initialized with no device id, no offline mode, utm device id", ()=>{
+    it("44-Cleared temp ID precedence, SDK is initialized with no device id, no offline mode, utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("[CLY]_temp_id", false, undefined);
             Countly.halt();
@@ -771,7 +771,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("45-Cleared temp ID precedence, SDK is initialized with device id, offline mode, no utm device id", ()=>{
+    it("45-Cleared temp ID precedence, SDK is initialized with device id, offline mode, no utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("[CLY]_temp_id", false, undefined);
             Countly.halt();
@@ -785,7 +785,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("46-Cleared temp ID precedence, SDK is initialized with device id, no offline mode, utm device id", ()=>{
+    it("46-Cleared temp ID precedence, SDK is initialized with device id, no offline mode, utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("[CLY]_temp_id", false, undefined);
             Countly.halt();
@@ -799,7 +799,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("47-Cleared temp ID precedence, SDK is initialized with no device id, offline mode, utm device id", ()=>{
+    it("47-Cleared temp ID precedence, SDK is initialized with no device id, offline mode, utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("[CLY]_temp_id", false, undefined);
             Countly.halt();
@@ -813,7 +813,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("48-Cleared temp ID precedence, SDK is initialized with device id, offline mode, utm device id", ()=>{
+    it("48-Cleared temp ID precedence, SDK is initialized with device id, offline mode, utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain("[CLY]_temp_id", false, undefined);
             Countly.halt();
@@ -829,7 +829,7 @@ describe("Device Id tests during first init", ()=>{
     });
 
     // SDK generated ID was present prior the second init
-    it("49-Stored UUID precedence, SDK is initialized with no device id, not offline mode, no utm device id", ()=>{
+    it("49-Stored UUID precedence, SDK is initialized with no device id, not offline mode, no utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain(undefined, false, undefined);
             var oldUUID = Countly.get_device_id();
@@ -845,7 +845,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("50-Stored UUID precedence, SDK is initialized with device id, not offline mode, no utm device id", ()=>{
+    it("50-Stored UUID precedence, SDK is initialized with device id, not offline mode, no utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain(undefined, false, undefined);
             var oldUUID = Countly.get_device_id();
@@ -861,7 +861,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("51-Stored UUID precedence, SDK is initialized with no device id, offline mode, no utm device id", ()=>{
+    it("51-Stored UUID precedence, SDK is initialized with no device id, offline mode, no utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain(undefined, false, undefined);
             var oldUUID = Countly.get_device_id();
@@ -877,7 +877,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("52-Stored UUID precedence, SDK is initialized with no device id, no offline mode, utm device id", ()=>{
+    it("52-Stored UUID precedence, SDK is initialized with no device id, no offline mode, utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain(undefined, false, undefined);
             var oldUUID = Countly.get_device_id();
@@ -893,7 +893,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("53-Stored UUID precedence, SDK is initialized with device id, offline mode, no utm device id", ()=>{
+    it("53-Stored UUID precedence, SDK is initialized with device id, offline mode, no utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain(undefined, false, undefined);
             var oldUUID = Countly.get_device_id();
@@ -909,7 +909,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("54-Stored UUID precedence, SDK is initialized with device id, no offline mode, utm device id", ()=>{
+    it("54-Stored UUID precedence, SDK is initialized with device id, no offline mode, utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain(undefined, false, undefined);
             var oldUUID = Countly.get_device_id();
@@ -925,7 +925,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("55-Stored UUID precedence, SDK is initialized no device id, offline mode, utm device id", ()=>{
+    it("55-Stored UUID precedence, SDK is initialized no device id, offline mode, utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain(undefined, false, undefined);
             var oldUUID = Countly.get_device_id();
@@ -941,7 +941,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("56-Stored UUID precedence, SDK is initialized with device id, offline mode, utm device id", ()=>{
+    it("56-Stored UUID precedence, SDK is initialized with device id, offline mode, utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain(undefined, false, undefined);
             var oldUUID = Countly.get_device_id();
@@ -959,7 +959,7 @@ describe("Device Id tests during first init", ()=>{
     });
 
     // SDK generated ID was present prior the second init (same tests with flag set to true)
-    it("57-Stored UUID precedence, SDK is initialized with no device id, not offline mode, no utm device id", ()=>{
+    it("57-Stored UUID precedence, SDK is initialized with no device id, not offline mode, no utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain(undefined, false, undefined);
             var oldUUID = Countly.get_device_id();
@@ -975,7 +975,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("58-Stored UUID precedence, SDK is initialized with device id, not offline mode, no utm device id", ()=>{
+    it("58-Stored UUID precedence, SDK is initialized with device id, not offline mode, no utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain(undefined, false, undefined);
             var oldUUID = Countly.get_device_id();
@@ -990,7 +990,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("59-Stored UUID precedence, SDK is initialized with no device id, offline mode, no utm device id", ()=>{
+    it("59-Stored UUID precedence, SDK is initialized with no device id, offline mode, no utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain(undefined, false, undefined);
             var oldUUID = Countly.get_device_id();
@@ -1005,7 +1005,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("60-Stored UUID precedence, SDK is initialized with no device id, no offline mode, utm device id", ()=>{
+    it("60-Stored UUID precedence, SDK is initialized with no device id, no offline mode, utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain(undefined, false, undefined);
             var oldUUID = Countly.get_device_id();
@@ -1020,7 +1020,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("61-Stored UUID precedence, SDK is initialized with device id, offline mode, no utm device id", ()=>{
+    it("61-Stored UUID precedence, SDK is initialized with device id, offline mode, no utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain(undefined, false, undefined);
             var oldUUID = Countly.get_device_id();
@@ -1035,7 +1035,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("62-Stored UUID precedence, SDK is initialized with device id, no offline mode, utm device id", ()=>{
+    it("62-Stored UUID precedence, SDK is initialized with device id, no offline mode, utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain(undefined, false, undefined);
             var oldUUID = Countly.get_device_id();
@@ -1050,7 +1050,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("63-Stored UUID precedence, SDK is initialized no device id, offline mode, utm device id", ()=>{
+    it("63-Stored UUID precedence, SDK is initialized no device id, offline mode, utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain(undefined, false, undefined);
             var oldUUID = Countly.get_device_id();
@@ -1065,7 +1065,7 @@ describe("Device Id tests during first init", ()=>{
             });
         });
     });
-    it("64-Stored UUID precedence, SDK is initialized with device id, offline mode, utm device id", ()=>{
+    it("64-Stored UUID precedence, SDK is initialized with device id, offline mode, utm device id", () => {
         hp.haltAndClearStorage(() => {
             initMain(undefined, false, undefined);
             var oldUUID = Countly.get_device_id();
@@ -1073,6 +1073,106 @@ describe("Device Id tests during first init", ()=>{
             initMain("counterID", true, "?cly_device_id=abab", true);
             expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
             expect(Countly.get_device_id()).to.not.eq(oldUUID);
+            validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.URL_PROVIDED);
+            Countly.begin_session();
+            cy.fetch_local_request_queue().then((eq) => {
+                checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.URL_PROVIDED);
+            });
+        });
+    });
+
+    // testing first 8 tests with clear_stored_id flag set to true
+    it("65-SDK is initialized without custom device id, without offline mode, without utm device id", () => {
+        hp.haltAndClearStorage(() => {
+            initMain(undefined, false, undefined, true);
+            expect(Countly.get_device_id_type()).to.eq(Countly.DeviceIdType.SDK_GENERATED);
+            validateSdkGeneratedId(Countly.get_device_id());
+            validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.SDK_GENERATED);
+            Countly.begin_session();
+            cy.fetch_local_request_queue().then((eq) => {
+                checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.SDK_GENERATED);
+            });
+        });
+    });
+    // we provide device id information sdk should use it
+    it("66-SDK is initialized with custom device id, without offline mode, without utm device id", () => {
+        hp.haltAndClearStorage(() => {
+            initMain("gerwutztreimer", false, undefined, true);
+            expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
+            expect(Countly.get_device_id()).to.eq("gerwutztreimer");
+            validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
+            Countly.begin_session();
+            cy.fetch_local_request_queue().then((eq) => {
+                checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
+            });
+        });
+    });
+    // we provide no device id information sdk should generate the id
+    it("67-SDK is initialized without custom device id, with offline mode, without utm device id", () => {
+        hp.haltAndClearStorage(() => {
+            initMain(undefined, true, undefined, true);
+            expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.TEMPORARY_ID);
+            expect(Countly.get_device_id()).to.eq("[CLY]_temp_id");
+            validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.TEMPORARY_ID);
+            Countly.begin_session();
+            cy.fetch_local_request_queue().then((eq) => {
+                checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.TEMPORARY_ID);
+            });
+        });
+    });
+    it("68-SDK is initialized without custom device id, without offline mode, with utm device id", () => {
+        hp.haltAndClearStorage(() => {
+            initMain(undefined, false, "?cly_device_id=abab", true);
+            expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
+            expect(Countly.get_device_id()).to.eq("abab");
+            validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.URL_PROVIDED);
+            Countly.begin_session();
+            cy.fetch_local_request_queue().then((eq) => {
+                checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.URL_PROVIDED);
+            });
+        });
+    });
+    it("69-SDK is initialized with custom device id, with offline mode, without utm device id", () => {
+        hp.haltAndClearStorage(() => {
+            initMain("customID", true, undefined, true);
+            expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
+            expect(Countly.get_device_id()).to.eq("customID");
+            validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
+            Countly.begin_session();
+            cy.fetch_local_request_queue().then((eq) => {
+                checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.DEVELOPER_SUPPLIED);
+            });
+        });
+    });
+    it("70-SDK is initialized with custom device id, without offline mode, with utm device id", () => {
+        hp.haltAndClearStorage(() => {
+            initMain("customID2", false, "?cly_device_id=someID", true);
+            expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
+            expect(Countly.get_device_id()).to.eq("someID");
+            validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.URL_PROVIDED);
+            Countly.begin_session();
+            cy.fetch_local_request_queue().then((eq) => {
+                checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.URL_PROVIDED);
+            });
+        });
+    });
+    it("71-SDK is initialized without custom device id, with offline mode, with utm device id", () => {
+        hp.haltAndClearStorage(() => {
+            initMain(undefined, true, "?cly_device_id=someID", true);
+            expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
+            expect(Countly.get_device_id()).to.eq("someID");
+            validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.URL_PROVIDED);
+            Countly.begin_session();
+            cy.fetch_local_request_queue().then((eq) => {
+                checkRequestsForT(eq, DeviceIdTypeInternalEnumsTest.URL_PROVIDED);
+            });
+        });
+    });
+    it("72-SDK is initialized with custom device id, with offline mode, with utm device id", () => {
+        hp.haltAndClearStorage(() => {
+            initMain("customID3", true, "?cly_device_id=someID2", true);
+            expect(Countly.get_device_id_type()).to.equal(Countly.DeviceIdType.DEVELOPER_SUPPLIED);
+            expect(Countly.get_device_id()).to.eq("someID2");
             validateInternalDeviceIdType(DeviceIdTypeInternalEnumsTest.URL_PROVIDED);
             Countly.begin_session();
             cy.fetch_local_request_queue().then((eq) => {

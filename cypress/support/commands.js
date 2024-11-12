@@ -81,11 +81,11 @@ Cypress.Commands.add("check_session", (queueObject, duration, isSessionEnd, appK
         }
     }
     else if (!isSessionEnd) {
-        expect(queueObject.session_duration).to.be.within(duration - 5, duration + 5);
+        expect(queueObject.session_duration).to.be.within(duration, duration + 2);
     }
     else {
         expect(queueObject.end_session).to.equal(1);
-        expect(queueObject.session_duration).to.be.within(duration - 5, duration + 5);
+        expect(queueObject.session_duration).to.be.within(duration, duration + 1);
     }
     cy.check_request_commons(queueObject, appKey);
     cy.check_commons(queueObject);
@@ -162,7 +162,9 @@ Cypress.Commands.add("check_view_event", (queueObject, name, duration, hasPvid) 
     else {
         expect(queueObject.dur).to.be.within(duration, duration + 1);
     }
-    expect(queueObject.segmentation.name).to.equal(name);
+    if (!name.startsWith("/__cypress/iframes/")) { // changes depending on cypress env
+        expect(queueObject.segmentation.name).to.equal(name);
+    }
     cy.check_commons(queueObject);
 });
 
