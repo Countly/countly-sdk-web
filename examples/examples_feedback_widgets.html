@@ -22,7 +22,21 @@
     });
 
     //=================================================
-    // Fetching and displaying feedback widgets
+    // Displaying feedback widgets
+    //=================================================
+    Countly.feedback.showNPS();
+    
+    // OR with a specific ID, name or tag
+    // const id = 'ID_from_server';
+    // Countly.feedback.showNPS(id);
+    
+    // Other feedback widgets
+    // Countly.feedback.showSurvey();
+    // Countly.feedback.showRating();
+
+
+    //=================================================
+    // ADVANCED: Fetching and displaying feedback widgets
     //=================================================
     function fetchAndDisplayWidget() {
       // Fetch user's feedbacks widgets from the server (must have been created at server first)
