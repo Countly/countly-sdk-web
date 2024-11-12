@@ -457,6 +457,33 @@ declare module "countly-sdk-web" {
     ): void;
 
     /**
+     * Feedback interface with convenience methods for feedback widgets:
+     * - showNPS([nameIDorTag]) - shows an NPS widget by name, id, or tag, or a random one if not provided
+     * - showSurvey([nameIDorTag]) - shows a Survey widget by name, id, or tag, or a random one if not provided
+     * - showRating([nameIDorTag]) - shows a Rating widget by name, id, or tag, or a random one if not provided
+     */
+    const feedback: Feedback;
+    interface Feedback {
+      /**
+       * Displays the first available NPS widget or the one with the provided name, id, or tag.
+       * @param nameIDorTag - Optional name, id, or tag of the NPS widget to display.
+       */
+      showNPS(nameIDorTag?: string): void;
+
+      /**
+       * Displays the first available Survey widget or the one with the provided name, id, or tag.
+       * @param nameIDorTag - Optional name, id, or tag of the Survey widget to display.
+       */
+      showSurvey(nameIDorTag?: string): void;
+
+      /**
+       * Displays the first available Rating widget or the one with the provided name, id, or tag.
+       * @param nameIDorTag - Optional name, id, or tag of the Rating widget to display.
+       */
+      showRating(nameIDorTag?: string): void;
+    }
+
+    /**
      * This function retrieves all associated widget information (IDs, type, name etc in an array/list of objects) of your app
      * @param {Function} callback - Callback function with two parameters, 1st for returned list, 2nd for error
      * @returns {void}

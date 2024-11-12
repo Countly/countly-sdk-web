@@ -1,3 +1,16 @@
+## 24.11.0
+- Mitigated an issue where SDK could try to send old stored offline mode data during init if `clear_stored_id` was true
+- Mitigated an issue where the SDK could stayed on offline mode after the first init with `offline_mode` set to true
+- Mitigated an issue where old Rating widget stickers were not cleared when a new one was presented
+
+- Improved view tracking logic
+- Default request method is now set to "POST"
+- Healtchecks won't be sent in offline mode anymore
+- Added a new interface 'feedback' which includes convenience methods to show feedback widgets:
+  - showNPS([String nameIDorTag]) - for displaying the first available NPS widget or one with the given name, Tag or ID value
+  - showSurvey([String nameIDorTag]) - for displaying the first available Survey widget or one with the given name, Tag or ID value
+  - showRating([String nameIDorTag]) - for displaying the first available Rating widget or one with the given name, Tag or ID value
+
 ## 24.4.1
 - Added types for the SDK
 - Added a new method `set_id(newDeviceId)` for managing device ID changes according to the device ID Type
