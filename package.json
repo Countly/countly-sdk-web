@@ -1,6 +1,6 @@
 {
   "name": "countly-sdk-web",
-  "version": "24.11.0",
+  "version": "24.11.1",
   "description": "Countly Web SDK",
   "main": "lib/countly.js",
   "types": "lib/countly.d.ts",
