@@ -22,37 +22,29 @@ console.error("cleared the storage");
 const confObj = queryExtractor(window.location.search);
 
 //initializing countly with params
-Countly.init({
-	app_key: "YOUR_APP_KEY",
-	url: "https://your.domain.count.ly",
-  device_id: "manual_1",
-  session_update: 5,
-  test_mode: true,
-  use_session_cookie: confObj.use_session_cookie || false,
-	debug:true
-})
+  Countly.init({
+    app_key: "YOUR_APP_KEY",
+    url: "https://your.domain.count.ly",
+    device_id: "manual_1",
+    session_update: 5,
+    test_mode: true,
+    use_session_cookie: confObj.use_session_cookie || false,
+    debug: true
+  })
+  Countly.begin_session();
+  setTimeout(() => {
+    Countly.add_event({
+      key: "buttonClick",
+      "segmentation": {
+        "id": "id"
+      }
+    });
+    Countly.end_session(undefined, true);
+  }, 7000);
+
+
 </script>
 </head>
 <body>
-<script type='text/javascript' >
-function clickEvent(){
-	window.Countly.add_event({
-    key: "buttonClick",
-    "segmentation": {
-        "id": "id"
-    }
-});
-}
-function start(){
-	Countly.begin_session();
-}
-function end(){
-	Countly.end_session(undefined, true);
-}
-</script>
-<button type="button" onclick="clickEvent()">Event</button>
-<button type="button" onclick="start()">Start</button>
-<button type="button" onclick="end()">End</button>
-<button type="button" onclick="windowClose()">Close</button>
 </body>
 </html>
