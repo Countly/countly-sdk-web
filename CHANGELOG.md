@@ -1,3 +1,8 @@
+## 24.11.2
+- Added a new init method to set the interval of Content Zone's timer (Experimental!):
+  - `content_zone_timer_interval` to set the timer interval in `seconds`
+- Mitigated an issue about Content's positioning (Experimental!)
+
 ## 24.11.1
 - Deprecated `initializeRatingWidgets` method, use `feedback.showRating` instead.
 - Deprecated `enableRatingWidgets` method, use `feedback.showRating` instead.
