@@ -2,6 +2,7 @@ var Countly = require("../../lib/countly");
 
 const appKey = "YOUR_APP_KEY";
 const sWait = 100;
+const sWait2 = 550;
 const mWait = 4000;
 const lWait = 10000;
 /**
@@ -9,11 +10,12 @@ const lWait = 10000;
  * @param {Function} callback - callback function that includes the Countly init and the tests
  */
 function haltAndClearStorage(callback) {
-    if (Countly.i !== undefined) {
+    if (Countly.halt !== undefined) {
         Countly.halt();
     }
     cy.wait(sWait).then(() => {
-        cy.clearLocalStorage();
+        cy.clearAllLocalStorage();
+        cy.clearAllCookies();
         cy.wait(sWait).then(() => {
             callback();
         });
@@ -54,14 +56,14 @@ function getTimestampMs() {
  * @param {number} waitIncrement -  time increment to retry the tests
  * @param {Function} continueCallback - callback function with tests
  */
-var waitFunction = function(startTime, waitTime, waitIncrement, continueCallback) {
+var waitFunction = function (startTime, waitTime, waitIncrement, continueCallback) {
     if (waitTime <= getTimestampMs() - startTime) {
         // we have waited enough
         continueCallback();
     }
     else {
         // we need to wait more
-        cy.wait(waitIncrement).then(()=>{
+        cy.wait(waitIncrement).then(() => {
             waitFunction(startTime, waitTime, waitIncrement, continueCallback);
         });
     }
@@ -204,7 +206,7 @@ function testNormalFlow(rq, viewName, countlyAppKey) {
     const thirdRequest = JSON.parse(rq[2].events);
     expect(thirdRequest.length).to.equal(2);
     cy.check_event(thirdRequest[0], { key: "test", count: 1, sum: 1, dur: 1, segmentation: { test: "test" } }, undefined, "");
-    cy.check_event(thirdRequest[0], { key: "test", count: 1, sum: 1, dur: 1, segmentation: { } }, undefined, "");
+    cy.check_event(thirdRequest[0], { key: "test", count: 1, sum: 1, dur: 1, segmentation: {} }, undefined, "");
 
     // 4
     const fourthRequest = JSON.parse(rq[3].user_details);
@@ -329,6 +331,7 @@ function turnSearchStringToObject(searchString) {
 module.exports = {
     haltAndClearStorage,
     sWait,
+    sWait2,
     mWait,
     lWait,
     appKey,
