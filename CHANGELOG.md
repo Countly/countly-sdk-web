@@ -1,3 +1,9 @@
+## 24.11.3
+
+- Added support for content resizing (Experimental!)
+- Mitigated an issue where device ID type was assigned wrongly when SDK was generating an ID after stored device ID was cleared.
+- Mitigated an issue where device ID type of initially generated requests were not correctly reassigned after offline mode.
+
 ## 24.11.2
 - Added a new init method to set the interval of Content Zone's timer (Experimental!):
   - `content_zone_timer_interval` to set the timer interval in `seconds`
