@@ -1,3 +1,7 @@
+## 24.11.4
+
+- Mitigated an issue where `content` and `feedback` interface methods would not have worked if async methods were used when multi instancing the SDK. 
+
 ## 24.11.3
 
 - Added support for content resizing (Experimental!)
