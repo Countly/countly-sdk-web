@@ -1,3 +1,7 @@
+## 24.11.4
+
+- Mitigated an issue where `content` and `feedback` interfaces would not work with async multi instance methods. 
+
 ## 24.11.3
 
 - Added support for content resizing (Experimental!)
