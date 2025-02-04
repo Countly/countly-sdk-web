@@ -1,3 +1,11 @@
+## 25.1.0
+
+- Improved orientation reporting precision.
+- Reduced log verbosity.
+- Added a new init time config option `crash_filter_callback` for filtering crashes.
+
+- Mitigated an issue where content resizing did not work in certain orientations.
+
 ## 24.11.4
 
 - Mitigated an issue where `content` and `feedback` interface methods would not have worked if async methods were used when multi instancing the SDK. 
