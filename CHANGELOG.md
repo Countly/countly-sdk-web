@@ -1,3 +1,19 @@
+## 25.4.0
+
+- ! Minor Breaking Change ! SDK now has Server Configuration feature and it is enabled by default. Changes made on SDK Manager > SDK Configuration on your server will affect SDK behavior directly.
+
+- Mitigated an issue about orientation detection in Safari
+
+- Improved init time Content Zone logic
+- Improved error handler to include script loading issues
+- Improved the wrapper of Feedback Widgets
+
+- Added `refreshContentZone` method to Content interface for refreshing Content Zone requests
+- Added `behavior_settings` init time method for providing server configuration during first initialization
+- Added `content_whitelist` init time method that lets you whitelist your other domains for displaying Content
+
+- `max_logs` config option value will not be used anymore (use `max_breadcrumb_count` instead)
+
 ## 25.1.0
 
 - Improved orientation reporting precision.

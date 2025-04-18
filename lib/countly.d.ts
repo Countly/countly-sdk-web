@@ -486,6 +486,7 @@ declare module "countly-sdk-web" {
     /**
      * Content interface with convenience methods for content zones:
      * - enterContentZone() - enters a content zone
+     * - refreshContentZone() - refreshes the content zone
      * - exitContentZone() - exits a content zone
      */
     const content: Content;
@@ -494,6 +495,10 @@ declare module "countly-sdk-web" {
        * Enters content zone and checks and displays available content regularly
        */
       enterContentZone(): void;
+      /**
+       * Refreshes content zone
+       */
+      refreshContentZone(): void;
       /**
        * Exits content zone
        */

@@ -190,6 +190,120 @@ function events(omitList) {
  * @param {string} viewName - name of the view
  * @param {string} countlyAppKey - app key
 */
+function testNormalFlowInt(rq, viewName, countlyAppKey) {
+    cy.log(JSON.stringify(rq));
+    expect(rq.length).to.equal(14);
+    const idType = rq[0].t;
+    const id = rq[0].device_id;
+
+    // 1 - 2
+    expect(rq[0].campaign_id).to.equal("camp_id");
+    expect(rq[0].campaign_user).to.equal("camp_user_id");
+    expect(rq[1].campaign_id).to.equal("camp_id");
+    expect(rq[1].campaign_user).to.equal("camp_user_id");
+
+    // 3
+    const thirdRequest = JSON.parse(rq[2].events);
+    expect(thirdRequest.length).to.equal(2);
+    cy.check_event(thirdRequest[0], { key: "test", count: 1, sum: 1, dur: 1, segmentation: { test: "test" } }, undefined, "");
+    cy.check_event(thirdRequest[0], { key: "test", count: 1, sum: 1, dur: 1, segmentation: {} }, undefined, "");
+
+    // 4
+    const fourthRequest = JSON.parse(rq[3].user_details);
+    expect(fourthRequest.name).to.equal("Test User");
+    expect(fourthRequest.custom).to.eql({});
+
+    // 5
+    const fifthRequest = JSON.parse(rq[4].user_details);
+    // Instead of expecting a simple object, check for the presence of all the properties
+    expect(fifthRequest).to.have.property('custom');
+    expect(fifthRequest.custom).to.have.property('custom-property');
+    expect(fifthRequest.custom).to.have.property('unique-property');
+    expect(fifthRequest.custom['unique-property']).to.have.property('$setOnce', 'unique-value');
+    expect(fifthRequest.custom).to.have.property('counter');
+    expect(fifthRequest.custom.counter).to.have.property('$inc', 5);
+    expect(fifthRequest.custom).to.have.property('value');
+    expect(fifthRequest.custom.value).to.have.property('$mul', 2);
+    expect(fifthRequest.custom).to.have.property('max-value');
+    expect(fifthRequest.custom['max-value']).to.have.property('$max', 100);
+    expect(fifthRequest.custom).to.have.property('min-value');
+    expect(fifthRequest.custom['min-value']).to.have.property('$min', 1);
+    expect(fifthRequest.custom).to.have.property('array-property');
+    expect(fifthRequest.custom['array-property']).to.have.property('$push').to.be.an('array').that.includes('new-value');
+    expect(fifthRequest.custom['array-property']).to.have.property('$pull').to.be.an('array').that.includes('value-to-remove');
+    expect(fifthRequest.custom).to.have.property('unique-array');
+    expect(fifthRequest.custom['unique-array']).to.have.property('$addToSet').to.be.an('array').that.includes('unique-item');
+
+    // 6
+    const sixthRequest = JSON.parse(rq[5].crash);
+    expect(sixthRequest._error).to.equal("stack");
+
+    // 7
+    expect(rq[6].begin_session).to.equal(1);
+
+    // 8
+    const eighthRequest = JSON.parse(rq[7].events);
+    expect(eighthRequest.length).to.equal(2);
+    cy.check_event(eighthRequest[0], { key: "[CLY]_orientation" }, undefined, "");
+    cy.check_view_event(eighthRequest[1], viewName, undefined, false);
+
+    // 9 - Session duration check
+    expect(rq[8].session_duration).to.equal(30);
+
+    // 10 - End session duration check
+    expect(rq[9].session_duration).to.equal(0);
+
+    // 11 - View event end
+    const eleventhRequest = JSON.parse(rq[10].events);
+    expect(eleventhRequest.length).to.equal(1);
+    cy.check_view_event(eleventhRequest[0], viewName, 0, false);
+
+    // 12 - Device ID change
+    expect(rq[11].old_device_id).to.equal(id);
+    expect(rq[11].device_id).to.equal("new-device-id");
+
+    // 13 - New session with custom device ID
+    expect(rq[12].begin_session).to.equal(1);
+    expect(rq[12].device_id).to.equal("custom-device-id");
+
+    // 14 - Star rating events
+    const fourteenthRequest = JSON.parse(rq[13].events);
+    expect(fourteenthRequest.length).to.equal(3);
+    cy.check_event(fourteenthRequest[0], { key: "[CLY]_orientation" }, undefined, true);
+    cy.check_event(fourteenthRequest[1], { key: "[CLY]_star_rating", segmentation: { widget_id: "test-id", rating: 5 } }, undefined, true);
+    cy.check_event(fourteenthRequest[2], { key: "[CLY]_star_rating", segmentation: { widget_id: "test-id", rating: 5 } }, undefined, true);
+
+    // each request should have same device id, device id type and app key
+    rq.forEach((element, index) => {
+        expect(element.app_key).to.equal(countlyAppKey);
+        expect(element.metrics).to.be.ok;
+        expect(element.dow).to.exist;
+        expect(element.hour).to.exist;
+        expect(element.sdk_name).to.be.ok;
+        expect(element.sdk_version).to.be.ok;
+        expect(element.timestamp).to.be.ok;
+
+        // Device ID and type checks (accounting for ID changes)
+        if (index < 11) {
+            expect(element.device_id).to.equal(id);
+            expect(element.t).to.equal(idType);
+        } else if (index === 11) {
+            expect(element.device_id).to.equal("new-device-id");
+            expect(element.t).to.equal(0);
+        } else {
+            expect(element.device_id).to.equal("custom-device-id");
+            expect(element.t).to.equal(0);
+        }
+    });
+}
+
+// TODO: this validator is so rigid. Must be modified to be more flexible (accepting more variables)
+/**
+ *  Validates requests in the request queue for normal flow test
+ * @param {Array} rq - request queue
+ * @param {string} viewName - name of the view
+ * @param {string} countlyAppKey - app key
+*/
 function testNormalFlow(rq, viewName, countlyAppKey) {
     cy.log(rq);
     expect(rq.length).to.equal(8);
@@ -328,6 +442,66 @@ function turnSearchStringToObject(searchString) {
     return paramsObject;
 }
 
+function integrationMethods() {
+    const idType = Countly.get_device_id_type();
+    const id = Countly.get_device_id();
+    Countly.add_consent("events");
+    Countly.check_any_consent();
+    Countly.check_consent("events");
+    Countly.group_features({ all_features: ["events", "views", "crashes"] });
+    Countly.remove_consent("events");
+    Countly.disable_offline_mode();
+    Countly.add_event({ key: "test", count: 1, sum: 1, dur: 1, segmentation: { test: "test" } });
+    Countly.start_event("test");
+    Countly.cancel_event("gobbledygook");
+    Countly.end_event("test");
+    Countly.report_conversion("camp_id", "camp_user_id");
+    Countly.recordDirectAttribution("camp_id", "camp_user_id");
+    Countly.user_details({ name: "Test User", email: "test@example.com" });
+    Countly.userData.set("custom-property", "custom-value");
+    Countly.userData.unset("custom-property");
+    Countly.userData.set_once("unique-property", "unique-value");
+    Countly.userData.increment("counter");
+    Countly.userData.increment_by("counter", 5);
+    Countly.userData.multiply("value", 2);
+    Countly.userData.max("max-value", 100);
+    Countly.userData.min("min-value", 1);
+    Countly.userData.push("array-property", "new-value");
+    Countly.userData.push_unique("unique-array", "unique-item");
+    Countly.userData.pull("array-property", "value-to-remove");
+    Countly.userData.save();
+    Countly.report_trace({ name: "name", stz: 1, type: "type" });
+    Countly.log_error({ error: "error", stack: "stack" });
+    Countly.add_log("error");
+    Countly.enrollUserToAb(["test-key"]);
+    Countly.fetch_remote_config(["test-key"], [], (err, config) => console.log(config));
+    const remote = Countly.get_remote_config();
+    Countly.track_sessions();
+    Countly.track_pageview();
+    Countly.track_errors();
+    Countly.track_clicks();
+    Countly.track_scrolls();
+    Countly.track_links();
+    Countly.track_forms();
+    Countly.collect_from_forms();
+    Countly.collect_from_facebook();
+    Countly.opt_in();
+    Countly.begin_session();
+    Countly.session_duration(30);
+    Countly.end_session();
+    Countly.content.enterContentZone();
+    Countly.content.refreshContentZone();
+    Countly.content.exitContentZone();
+    Countly.change_id("new-device-id", true);
+    Countly.set_id("custom-device-id");
+    Countly.feedback.showRating();
+    Countly.feedback.showNPS();
+    Countly.feedback.showSurvey();
+    Countly.recordRatingWidgetWithID({ widget_id: "test-id", rating: 5 });
+    Countly.reportFeedbackWidgetManually({ _id: "test-id", type: "rating" }, {}, { rating: 5 });
+    Countly.get_available_feedback_widgets((widgets) => console.log(widgets));
+}
+
 module.exports = {
     haltAndClearStorage,
     sWait,
@@ -344,5 +518,7 @@ module.exports = {
     validateDefaultUtmTags,
     userDetailObj,
     check_commons,
-    turnSearchStringToObject
+    turnSearchStringToObject,
+    integrationMethods,
+    testNormalFlowInt,
 };
