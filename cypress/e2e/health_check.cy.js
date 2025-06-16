@@ -21,7 +21,7 @@ describe("Health Check tests", () => {
 
                 const hcParam = params.get("hc");
                 const hcParamObj = JSON.parse(decodeURIComponent(hcParam));
-                expect(hcParamObj).to.eql({ el: 0, wl: 0, sc: -1, em: "" });
+                expect(hcParamObj).to.eql({ el: 0, wl: 0, sc: -1, em: "", bom: 0, cbom: 0 });
 
                 const metricsParam = params.get("metrics");
                 expect(metricsParam).to.equal("{\"_app_version\":\"0.0\",\"_ua\":\"abcd\"}");
