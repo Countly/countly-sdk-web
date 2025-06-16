@@ -2,12 +2,13 @@
 var Countly = require("../../lib/countly");
 var hp = require("../support/helper.js");
 
-function initMain(val) {
+function initMain(val, disableSync) {
     Countly.init({
         app_key: "spp",
         url: "https://hey.some.ly",
         debug: true,
-        behavior_settings: val
+        behavior_settings: val,
+        disable_sdk_behavior_settings_updates: disableSync
     });
 }
 
@@ -76,7 +77,6 @@ describe("SDK Behavior test", () => {
             });
         });
     });
-
     it("Initialization with default config and integration methods", () => {
         hp.haltAndClearStorage(() => {
             initMain();
@@ -226,6 +226,159 @@ describe("SDK Behavior test", () => {
                     cy.log("Request Queue: " + JSON.stringify(rq));
                     sentReqList(2, ["server_config", "[healthCheck]"]);
                     queues(0, 0);
+                });
+            });
+        });
+    });
+});
+
+describe("SDK Behavior Sync Disable tests", () => {
+    it("Initialization with disable_sdk_behavior_settings_updates enabled - no server config request", () => {
+        hp.haltAndClearStorage(() => {
+            Countly.init({
+                app_key: "spp",
+                url: "https://hey.some.ly",
+                debug: true,
+                disable_sdk_behavior_settings_updates: true
+            });
+            cy.wait(waitT).then(() => {
+                cy.fetch_local_request_queue().then((rq) => {
+                    cy.log("Request Queue: " + JSON.stringify(rq));
+                    // Should only have health check, no server_config request
+                    sentReqList(1, ["[healthCheck]"], ["server_config"]);
+                    queues(0, 0);
+                });
+            });
+        });
+    });
+
+    it("Initialization with disable_sdk_behavior_settings_updates false - server config request made", () => {
+        hp.haltAndClearStorage(() => {
+            Countly.init({
+                app_key: "spp",
+                url: "https://hey.some.ly",
+                debug: true,
+                disable_sdk_behavior_settings_updates: false
+            });
+            cy.wait(waitT).then(() => {
+                cy.fetch_local_request_queue().then((rq) => {
+                    cy.log("Request Queue: " + JSON.stringify(rq));
+                    // Should have both health check and server_config
+                    sentReqList(2, ["server_config", "[healthCheck]"]);
+                    queues(0, 0);
+                });
+            });
+        });
+    });
+
+    it("Initialization without disable_sdk_behavior_settings_updates - default behavior (server config enabled)", () => {
+        hp.haltAndClearStorage(() => {
+            Countly.init({
+                app_key: "spp",
+                url: "https://hey.some.ly",
+                debug: true
+            });
+            cy.wait(waitT).then(() => {
+                cy.fetch_local_request_queue().then((rq) => {
+                    cy.log("Request Queue: " + JSON.stringify(rq));
+                    // Should have both health check and server_config (default behavior)
+                    sentReqList(2, ["server_config", "[healthCheck]"]);
+                    queues(0, 0);
+                });
+            });
+        });
+    });
+
+    it("disable_sdk_behavior_settings_updates with integration methods - no server config interference", () => {
+        hp.haltAndClearStorage(() => {
+            Countly.init({
+                app_key: "spp",
+                url: "https://hey.some.ly",
+                debug: true,
+                disable_sdk_behavior_settings_updates: true
+            });
+            hp.integrationMethods();
+            cy.wait(waitT).then(() => {
+                cy.fetch_local_request_queue().then((rq) => {
+                    cy.log("Request Queue: " + JSON.stringify(rq));
+                    // Should have integration methods but no server_config
+                    sentReqList(8, ["[healthCheck]", "enrollUserToAb", "fetch_remote_config_explicit", "send_request_queue", "get_available_feedback_widgets,"], ["server_config"]);
+                    queues(0, 15);
+                });
+            });
+        });
+    });
+
+    it("disable_sdk_behavior_settings_updates with behavior_settings - should still disable server config", () => {
+        hp.haltAndClearStorage(() => {
+            var settings = {};
+            settings.c = {
+                networking: false
+            };
+            Countly.init({
+                app_key: "spp",
+                url: "https://hey.some.ly",
+                debug: true,
+                disable_sdk_behavior_settings_updates: true,
+                behavior_settings: settings
+            });
+            hp.integrationMethods();
+            cy.wait(waitT).then(() => {
+                cy.fetch_local_request_queue().then((rq) => {
+                    cy.log("Request Queue: " + JSON.stringify(rq));
+                    // Should have no server_config even with behavior_settings
+                    sentReqList(0, [], ["server_config"]);
+                    queues(0, 15);
+                });
+            });
+        });
+    });
+
+    it("disable_sdk_behavior_settings_updates with tracking disabled - should still disable server config", () => {
+        hp.haltAndClearStorage(() => {
+            var settings = {};
+            settings.c = {
+                tracking: false
+            };
+            Countly.init({
+                app_key: "spp",
+                url: "https://hey.some.ly",
+                debug: true,
+                disable_sdk_behavior_settings_updates: true,
+                behavior_settings: settings
+            });
+            hp.integrationMethods();
+            cy.wait(waitT).then(() => {
+                cy.fetch_local_request_queue().then((rq) => {
+                    cy.log("Request Queue: " + JSON.stringify(rq));
+                    // Should have integration methods but no server_config or tracking events
+                    sentReqList(7, ["[healthCheck]", "enrollUserToAb", "fetch_remote_config_explicit", "get_available_feedback_widgets,"], ["server_config"]);
+                    queues(0, 0);
+                });
+            });
+        });
+    });
+
+    it("disable_sdk_behavior_settings_updates with consent required - should still disable server config", () => {
+        hp.haltAndClearStorage(() => {
+            var settings = {};
+            settings.c = {
+                cr: true
+            };
+            Countly.init({
+                app_key: "spp",
+                url: "https://hey.some.ly",
+                debug: true,
+                disable_sdk_behavior_settings_updates: true,
+                behavior_settings: settings
+            });
+            hp.integrationMethods();
+            cy.wait(waitT).then(() => {
+                cy.fetch_local_request_queue().then((rq) => {
+                    cy.log("Request Queue: " + JSON.stringify(rq));
+                    // Should have consent-related requests but no server_config
+                    sentReqList(3, ["[healthCheck]", "enrollUserToAb", "send_request_queue"], ["server_config"]);
+                    queues(0, 2, ["old_device_id", "consent"]);
                 });
             });
         });
