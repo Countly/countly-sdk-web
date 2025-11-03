@@ -60,6 +60,7 @@ describe("Salt Tests", () => {
                         hp.check_commons(paramsObject);
                         expect(paramsObject.checksum256).to.be.ok;
                         expect(paramsObject.checksum256.length).to.equal(64);
+                        expect(paramsObject.checksum256).to.match(/^[A-F0-9]{64}$/);
                         // TODO: directly check the checksum with the node crypto api. Will need some extra decoding logic
                     }
                 });
@@ -67,7 +68,7 @@ describe("Salt Tests", () => {
         });
     });
     it("Node and Web Crypto comparison", () => {
-        const hash = sha256("text" + salt); // node crypto api
+        const hash = sha256("text" + salt).toUpperCase(); // node crypto api
         Countly._internals.calculateChecksum("text", salt).then((hash2) => { // SDK uses web crypto api
             expect(hash2).to.equal(hash);
         });
