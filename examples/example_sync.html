@@ -26,6 +26,25 @@
         //track pageviews automatically
         Countly.track_pageview();
         Countly.track_errors();
+
+        document.getElementById("testButton").addEventListener("click", function () {
+            Countly.add_event({
+                key: "buttonClick",
+                "segmentation": {
+                    "id": "id"
+                }
+            });
+        });
+
+        document.getElementById("uploadBtn").addEventListener("click", function () {
+            var fileInput = document.getElementById("profilePicInput");
+            var file = fileInput.files[0];
+            if (!file) {
+                alert("Please select an image file.");
+                return;
+            }
+            Countly.uploadUserProfilePicture(file);
+        });
     </script>
 </head>
 
@@ -40,19 +59,12 @@
         <img src="./images/team_countly.jpg" id="wallpaper" />
         <br />
         <input type="button" id="testButton" onclick="clickEvent()" value="Test Button">
+        <br /><br />
+        <input type="file" id="profilePicInput" accept="image/*">
+        <br /><br />
+        <input type="button" id="uploadBtn" value="Upload Profile Picture">
         <p><a href='https://countly.com/'>Countly</a></p>
     </center>
-    <script type='text/javascript'>
-        //send event on button click
-        function clickEvent() {
-            Countly.add_event({
-                key: "buttonClick",
-                "segmentation": {
-                    "id": "id"
-                }
-            });
-        }
-    </script>
 </body>
 
 </html>
