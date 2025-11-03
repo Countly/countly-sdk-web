@@ -1,9 +1,9 @@
 ## 25.4.2
 
-* Mitigated an issue where manual feedback reporting could have failed
-* Mitigated a possible issue with request timeouts in IE11
-* Non window contexts also now uses POST requests by default
-* Added a new method `uploadUserProfilePicture` for uploading user profile images to server
+- Mitigated an issue where manual feedback reporting could have failed
+- Mitigated a possible issue with request timeouts in IE11
+- Non window contexts also now uses POST requests by default
+- Added a new method `uploadUserProfilePicture` for uploading user profile images to server
 
 ## 25.4.1
 
