@@ -25,11 +25,11 @@
     // Displaying feedback widgets
     //=================================================
     Countly.feedback.showNPS();
-    
+
     // OR with a specific ID, name or tag
     // const id = 'ID_from_server';
     // Countly.feedback.showNPS(id);
-    
+
     // Other feedback widgets
     // Countly.feedback.showSurvey();
     // Countly.feedback.showRating();
@@ -39,7 +39,6 @@
     // ADVANCED: Fetching and displaying feedback widgets
     //=================================================
     function fetchAndDisplayWidget() {
-      // Fetch user's feedbacks widgets from the server (must have been created at server first)
       Countly.get_available_feedback_widgets(feedbackWidgetsCallback);
     }
 
@@ -51,7 +50,7 @@
       }
 
       // Decide which which widget to show. Here the first rating widget is selected. 
-      const widgetType = "rating";
+      const widgetType = "survey";
       const countlyFeedbackWidget = countlyPresentableFeedback.find(widget => widget.type === widgetType);
       if (!countlyFeedbackWidget) {
         console.error(`[Countly] No ${widgetType} widget found`);
@@ -89,6 +88,7 @@
             console.error(`[Countly] No ${widgetType} widget found`);
             return;
           }
+          console.log(`[Countly] Found ${widgetType} widget`);
 
           // Get data with the widget object
           Countly.getFeedbackWidgetData(countlyFeedbackWidget,
@@ -100,22 +100,40 @@
               }
 
               const CountlyWidgetData = feedbackData;
+              console.log(`[Countly] Found ${widgetType} widget data`, CountlyWidgetData);
               // record data according to the widget type
               if (CountlyWidgetData.type === 'nps') {
-                Countly.reportFeedbackWidgetManually(countlyFeedbackWidget, CountlyWidgetData, { rating: 3, comment: "comment" });
+                console.log(`[Countly] Recording NPS data manually`);
+                Countly.reportFeedbackWidgetManually(countlyFeedbackWidget, CountlyWidgetData, { rating: 5, comment: "comment" });
               } else if (CountlyWidgetData.type === 'survey') {
+                console.log(`[Countly] Recording Survey data manually`);
                 var widgetResponse = {};
                 // form the key/value pairs according to data
-                widgetResponse["answ-" + CountlyWidgetData.questions[0].id] = CountlyWidgetData.questions[0].type === "rating" ? 3 : "answer";
+                widgetResponse["answ-" + CountlyWidgetData.questions[0].id] = CountlyWidgetData.questions[0].type === "rating" ? 5 : "answer";
                 Countly.reportFeedbackWidgetManually(countlyFeedbackWidget, CountlyWidgetData, widgetResponse);
               } else if (CountlyWidgetData.type === 'rating') {
-                Countly.reportFeedbackWidgetManually(countlyFeedbackWidget, CountlyWidgetData, { rating: 3, comment: "comment", email: "email", contactMe: true });
+                console.log(`[Countly] Recording Rating data manually`);
+                Countly.reportFeedbackWidgetManually(countlyFeedbackWidget, CountlyWidgetData, { rating: 5, comment: "comment", email: "email", contactMe: true });
               }
             }
 
           );
         })
     }
+
+    document.querySelector("#one").addEventListener("click", function () {
+      fetchAndDisplayWidget();
+    });
+    document.querySelector("#two").addEventListener("click", function () {
+      getFeedbackWidgetListAndDoThings('nps');
+    });
+    document.querySelector("#three").addEventListener("click", function () {
+      getFeedbackWidgetListAndDoThings('survey');
+    });
+    document.querySelector("#four").addEventListener("click", function () {
+      getFeedbackWidgetListAndDoThings('rating');
+    });
+
   </script>
 </head>
 
@@ -129,10 +147,10 @@
   <center>
     <img src="./images/team_countly.jpg" id="wallpaper" />
     <p><a href='https://countly.com/'>Countly</a></p>
-    <p><button onclick="fetchAndDisplayWidget()">Enable Feedback Widget</button></p>
-    <p><button onclick="getFeedbackWidgetListAndDoThings('nps')">Manually Record NPS Data</button></p>
-    <p><button onclick="getFeedbackWidgetListAndDoThings('survey')">Manually Record Survey Data</button></p>
-    <p><button onclick="getFeedbackWidgetListAndDoThings('rating')">Manually Record Rating Data</button></p>
+    <p><button id="one">Enable Feedback Widget</button></p>
+    <p><button id="two">Manually Record NPS Data</button></p>
+    <p><button id="three">Manually Record Survey Data</button></p>
+    <p><button id="four">Manually Record Rating Data</button></p>
   </center>
 </body>
 

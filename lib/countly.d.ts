@@ -214,6 +214,12 @@ declare module "countly-sdk-web" {
       custom?: { [key: string]: any };
     }): void;
 
+    /**
+     * Upload user profile picture (image) to the server.
+     * @param {File|Blob} imageFile - The image file or blob to upload
+     */
+    function uploadUserProfilePicture(imageFile: File | Blob): void;
+
     namespace userData {
       /**
        * Sets user's custom property value
