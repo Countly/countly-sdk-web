@@ -44,7 +44,7 @@
     "jsdoc": "^4.0.2",
     "markdownlint": "^0.29.0",
     "stylelint": "14.9.1",
-    "stylelint-config-standard": "28.0.0"
+    "stylelint-config-standard": "39.0.1"
   },
   "npmName": "countly-sdk-web",
   "npmFileMap": [
