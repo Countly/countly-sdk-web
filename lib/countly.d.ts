@@ -491,7 +491,7 @@ declare module "countly-sdk-web" {
 
     /**
      * Content interface with convenience methods for content zones:
-     * - enterContentZone() - enters a content zone
+     * - enterContentZone(contentFilterCallback) - enters a content zone
      * - refreshContentZone() - refreshes the content zone
      * - exitContentZone() - exits a content zone
      */
@@ -499,8 +499,9 @@ declare module "countly-sdk-web" {
     interface Content {
       /**
        * Enters content zone and checks and displays available content regularly
+       * @param {Function} [contentFilterCallback] - Optional callback function to filter content based on URL parameters. Should return true to display content, false to ignore.
        */
-      enterContentZone(): void;
+      enterContentZone(contentFilterCallback?: (contentURLParams: object) => boolean): void;
       /**
        * Refreshes content zone
        */
