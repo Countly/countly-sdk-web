@@ -23,6 +23,17 @@
 		//track sessions automatically
 		Countly.q.push(['track_sessions']);
 
+		//content filter example
+		function filter(params) {
+			var shouldContentBeShown = true;
+			console.log("Content filter called with params:", params);
+			// Add your content filtering logic here and determine whether to show content
+			return shouldContentBeShown;
+		}
+
+		//enter content zone with filter
+		Countly.q.push(['content.enterContentZone', filter]);
+
 		//track sessions automatically
 		Countly.q.push(['track_pageview']);
 

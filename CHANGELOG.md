@@ -1,3 +1,7 @@
+## 25.4.3
+
+- Added filtering capability to `content` interface through `enterContentZone(contentFilterCallback)`.
+
 ## 25.4.2
 
 - Mitigated an issue where manual feedback reporting could have failed
