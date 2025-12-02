@@ -27,6 +27,17 @@
         Countly.track_pageview();
         Countly.track_errors();
 
+        //content filter example
+        function filter(params) {
+            var shouldContentBeShown = true;
+            console.log("Content filter called with params:", params);
+            // Add your content filtering logic here and determine whether to show content
+            return shouldContentBeShown;
+        }
+
+        //enter content zone with filter
+        Countly.content.enterContentZone(filter);
+
         document.getElementById("testButton").addEventListener("click", function () {
             Countly.add_event({
                 key: "buttonClick",

@@ -27,9 +27,32 @@ module.exports =  defineConfig({
               req.on('data', chunk => { body += chunk; });
               req.on('end', () => {
                 requests.push({ method: req.method, url: req.url, headers: req.headers, body });
+
+                let payload = { result: 'Success' };
+
+                if (req.url && req.url.indexOf('/o/sdk/content') !== -1) {
+                  payload = {
+                    html: 'http://test/_external/content?id=111&uid=tester&app_id=222',
+                    geo: {
+                      l: {
+                        x: 282,
+                        y: 56,
+                        w: 303,
+                        h: 300
+                      },
+                      p: {
+                        x: 62,
+                        y: 325.5,
+                        w: 288,
+                        h: 216
+                      }
+                    }
+                  };
+                }
+
                 setTimeout(() => {
                   res.writeHead(200, { 'Content-Type': 'application/json' });
-                  res.end(JSON.stringify({ result: 'Success' }));
+                  res.end(JSON.stringify(payload));
                 }, responseDelay);
               });
             });
