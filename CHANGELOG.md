@@ -1,3 +1,7 @@
+## 25.4.4
+
+- Improved user property recording order with respect to sessions and events.
+
 ## 25.4.3
 
 - Added filtering capability to `content` interface through `enterContentZone(contentFilterCallback)`.
