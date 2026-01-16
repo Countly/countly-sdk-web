@@ -76,6 +76,18 @@ declare module "countly-sdk-web" {
     function get_device_id(): string;
 
     /**
+     * Returns the SDK version string currently in use
+     * @returns {string} sdk version
+     */
+    function sdk_version(): string;
+
+    /**
+     * Returns the SDK name string currently in use
+     * @returns {string} sdk name
+     */
+    function sdk_name(): string;
+
+    /**
      * Add consent for specific feature, meaning, user allowed to track that data (either core feature or from custom feature group)
      * @param {string | string[]} feature - name of the feature, possible values: "sessions", "events", "views", "scrolls", "clicks", "forms", "crashes", "attribution", "users", etc. or custom provided through {@link Countly.group_features}
      */

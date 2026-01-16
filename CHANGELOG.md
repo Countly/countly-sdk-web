@@ -1,3 +1,9 @@
+## 25.4.5
+
+- Added SDK info methods:
+  - `Countly.sdk_version()` for retrieving current SDK version
+  - `Countly.sdk_name()` for retrieving the SDK name
+
 ## 25.4.4
 
 - Improved user property recording order with respect to sessions and events.
