@@ -16,7 +16,7 @@
     "lintMD": "markdownlint **/*.md --fix",
     "cypress:open": "cypress open",
     "pretest": "eslint --ignore-path .eslintignore .",
-    "test": "cypress run --spec 'cypress/e2e/remaining_requests.cy.js'"
+    "test": "cypress run"
   },
   "repository": {
     "type": "git",
