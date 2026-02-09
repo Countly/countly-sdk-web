@@ -12,6 +12,7 @@ const lWait = 10000;
 function haltAndClearStorage(callback) {
     if (Countly.halt !== undefined) {
         Countly.halt();
+        Countly._internals.closeContent();
     }
     cy.wait(sWait).then(() => {
         cy.clearAllLocalStorage();
@@ -502,6 +503,45 @@ function integrationMethods() {
     Countly.get_available_feedback_widgets((widgets) => console.log(widgets));
 }
 
+/**
+ * Creates a fake request handler for testing
+ * Captures all requests and allows custom response logic
+ * @param {Object} options - Configuration options
+ * @param {Function} options.onRequest - Called for each request with (req) => response
+ * @param {Object} options.defaultResponse - Default response if onRequest not provided
+ * @returns {Object} - { handler, requests, getRequests, clear }
+ */
+function createFakeRequestHandler(options = {}) {
+    var requests = [];
+    var defaultResponse = options.defaultResponse || { status: 200, responseText: '{"result":"Success"}' };
+
+    var handler = function (req) {
+        requests.push(req);
+        if (options.onRequest) {
+            return options.onRequest(req);
+        }
+        return defaultResponse;
+    };
+
+    return {
+        handler: handler,
+        requests: requests,
+        getRequests: function () { return requests; },
+        clear: function () { requests.length = 0; },
+        findByFunction: function (name) {
+            return requests.filter(function (r) { return r.functionName === name; });
+        },
+        findByParam: function (key, value) {
+            return requests.filter(function (r) {
+                if (value === undefined) {
+                    return r.params && r.params[key] !== undefined;
+                }
+                return r.params && r.params[key] === value;
+            });
+        }
+    };
+}
+
 module.exports = {
     haltAndClearStorage,
     sWait,
@@ -521,4 +561,5 @@ module.exports = {
     turnSearchStringToObject,
     integrationMethods,
     testNormalFlowInt,
+    createFakeRequestHandler,
 };

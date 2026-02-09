@@ -1,6 +1,6 @@
 {
   "name": "countly-sdk-web",
-  "version": "25.4.3",
+  "version": "26.1.0",
   "description": "Countly Web SDK",
   "main": "lib/countly.js",
   "types": "lib/countly.d.ts",
@@ -16,7 +16,7 @@
     "lintMD": "markdownlint **/*.md --fix",
     "cypress:open": "cypress open",
     "pretest": "eslint --ignore-path .eslintignore .",
-    "test": "./node_modules/.bin/cypress run"
+    "test": "cypress run"
   },
   "repository": {
     "type": "git",

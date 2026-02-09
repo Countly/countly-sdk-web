@@ -1,3 +1,25 @@
+## 26.1.0
+
+- Added support for SBS flags:
+  - Event whitelisting / blacklisting
+  - Segmentation whitelisting / blacklisting (global and per-event)
+  - User property whitelisting / blacklisting
+  - Journey trigger events
+- Added support for Feedback Widget resizing logic (will need server update to benefit.)
+- Improved testing consistency of queuing system
+
+- Mitigated an issue where an unintended URL was opened when closing a feedback widget after a content block was closed.
+
+## 25.4.5
+
+- Added SDK info methods:
+  - `Countly.sdk_version()` for retrieving current SDK version
+  - `Countly.sdk_name()` for retrieving the SDK name
+
+## 25.4.4
+
+- Improved user property recording order with respect to sessions and events.
+
 ## 25.4.3
 
 - Added filtering capability to `content` interface through `enterContentZone(contentFilterCallback)`.
