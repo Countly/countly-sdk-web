@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Countly Unified Async Loader</title>
+    <link rel="stylesheet" type="text/css" href="./style/style.css">
+    <script type="text/javascript">
+        (function(l,t){function y(c){return function(){p.push([c].concat(Array.prototype.slice.call(arguments,0)));return d}}function u(c,a,e){e=y(e||a);e.__isCountlyStub=!0;c[a]=e}function z(c){if(!v&&!m){m=!0;var a=t.createElement("script");a.type="text/javascript";a.async=!0;a.src=c;a.crossOrigin="anonymous";a.onload=function(){v=!0;m=!1;var h=l.Countly;h&&"function"===typeof h.init&&h.init(w||{});h=l.Countly;var x=p.slice();p=[];for(var q=0;q<x.length;q++){var b=x[q],f=h,A=b.slice(1);b=b[0].split(".");
+        for(var r=0;r<b.length-1;r++)f=f&&f[b[r]];b=b[b.length-1];b=f&&f[b];"function"!==typeof b||b.__isCountlyStub||b.apply(f,A||[])}};a.onerror=function(){m=!1;console.error("Countly loader failed to load SDK from:",c)};var e=t.getElementsByTagName("script")[0];e.parentNode.insertBefore(a,e)}}var d=l.Countly||(l.Countly={}),p=[],m=!1,v=!1,w=null;d.__clyBootstrap={version:"1.0.0",name:"countly-unified-loader"};for(var n="track_sessions track_pageview track_performance add_event user_details track_errors track_forms track_clicks track_scrolls track_links recordError change_id set_id uploadUserProfilePicture content.enterContentZone content.refreshContentZone content.exitContentZone feedback.showNPS feedback.showSurvey feedback.showRating userData.set userData.set_once userData.increment userData.increment_by userData.multiply userData.max userData.min userData.push userData.push_unique userData.pull userData.unset userData.save".split(" "),
+        k=0;k<n.length;k++){var g=n[k].split(".");2===g.length?(d[g[0]]=d[g[0]]||{},u(d[g[0]],g[1],n[k])):u(d,g[0],n[k])}d.init=function(c,a){"object"===typeof c&&(a=c||{},c=a.app_key);a=a||{};c&&(a.app_key=c);for(var e in a)Object.prototype.hasOwnProperty.call(a,e)&&(d[e]=a[e]);"YOUR_APP_KEY"!==d.app_key&&"https://your.server.ly"!==d.url||console.warn("Please do not use default set of app key and server url");w=a;z(d.sdk_url||"https://cdn.jsdelivr.net/npm/countly-sdk-web@latest/lib/countly.min.js");return d}})(window,
+        document);
+
+        Countly.init("YOUR_APP_KEY", {
+            url: "https://YOUR_SERVER_URL",
+            debug: true,
+            clear_stored_id: true
+        });
+
+        Countly.track_sessions();
+        Countly.track_pageview();
+        Countly.content.enterContentZone();
+
+        function clickEvent() {
+            Countly.add_event({
+                key: "buttonClick",
+                segmentation: {
+                    id: "id"
+                }
+            });
+        }
+
+        function uploadProfilePicture() {
+            var fileInput = document.getElementById("profilePicInput");
+            var file = fileInput.files[0];
+            if (!file) {
+                alert("Please select an image file.");
+                return;
+            }
+            Countly.uploadUserProfilePicture(file);
+        }
+    </script>
+</head>
+
+<body>
+    <div id="header">
+        <h1>Countly Unified Async Loader</h1>
+        <img id="logo" src="./images/logo.png">
+    </div>
+
+    <center>
+        <img src="./images/team_countly.jpg" id="wallpaper" />
+        <br />
+        <input type="button" id="testButton" onclick="clickEvent()" value="Test Button">
+        <br /><br />
+        <input type="file" id="profilePicInput" accept="image/*">
+        <br /><br />
+        <input type="button" onclick="uploadProfilePicture()" value="Upload Profile Picture">
+        <p><a href="https://countly.com/">Countly</a></p>
+    </center>
+</body>
+
+</html>
