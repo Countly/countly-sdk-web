@@ -1,3 +1,7 @@
+## 26.1.1
+
+- Improved device metric detection capabilities.
+
 ## 26.1.0
 
 - Added support for SBS flags:
