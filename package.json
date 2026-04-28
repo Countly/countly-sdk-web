@@ -1,6 +1,6 @@
 {
   "name": "countly-sdk-web",
-  "version": "26.1.1",
+  "version": "26.1.2",
   "description": "Countly Web SDK",
   "main": "lib/countly.js",
   "types": "lib/countly.d.ts",
@@ -15,7 +15,7 @@
     "lint": "./node_modules/.bin/eslint --ignore-path .eslintignore --fix .",
     "lintMD": "markdownlint **/*.md --fix",
     "cy:open": "cypress open",
-    "cy:run": "cypress run",
+    "cy:run": "cypress run --spec 'cypress/e2e/device_id_change.cy.js'",
     "pretest": "eslint --ignore-path .eslintignore .",
     "test": "cypress run"
   },
