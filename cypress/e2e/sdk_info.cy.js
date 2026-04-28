@@ -3,7 +3,7 @@
 var Countly = require("../../lib/countly");
 var hp = require("../support/helper.js");
 const SDK_NAME = "javascript_native_web";
-const SDK_VERSION = "26.1.1";
+const SDK_VERSION = "26.1.2";
 
 function initMain(name, version) {
     Countly.init({

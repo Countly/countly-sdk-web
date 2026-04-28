@@ -275,3 +275,48 @@ describe("Set ID change tests ", () => {
     });
 
 });
+
+describe("Device ID remote config sequencing", () => {
+    it("delays remote config refetch by 1 second after merge device ID changes", () => {
+        hp.haltAndClearStorage(() => {
+            var fakeServer = hp.createFakeRequestHandler({
+                onRequest: function (req) {
+                    if (req.functionName === "fetch_remote_config_explicit") {
+                        return { status: 200, responseText: "{}" };
+                    }
+
+                    return { status: 200, responseText: '{"result":"Success"}' };
+                }
+            });
+
+            var inst = Countly.init({
+                app_key: hp.appKey,
+                url: "https://test.count.ly",
+                device_id: "old ID",
+                debug: true,
+                use_explicit_rc_api: true,
+                disable_sdk_behavior_settings_updates: true,
+                fake_request_handler: fakeServer.handler
+            });
+
+            cy.wait(hp.sWait).then(() => {
+                inst.remote_config = function () { };
+                fakeServer.clear();
+                Countly.change_id("new ID", true);
+            });
+
+            cy.wait(300).then(() => {
+                var earlyRemoteConfigRequest = fakeServer.getRequests().find((req) => req.functionName === "fetch_remote_config_explicit");
+                expect(earlyRemoteConfigRequest).to.not.exist;
+            });
+
+            cy.wait(1100).then(() => {
+                var requests = fakeServer.getRequests();
+                var remoteConfigRequest = requests.find((req) => req.functionName === "fetch_remote_config_explicit");
+
+                expect(remoteConfigRequest).to.exist;
+                expect(remoteConfigRequest.params.device_id).to.equal("new ID");
+            });
+        });
+    });
+});
