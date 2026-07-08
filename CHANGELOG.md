@@ -1,3 +1,7 @@
+## 26.1.3
+
+- Added support for Feedback Widgets and Content working with certain proxy configurations.
+
 ## 26.1.2
 
 - Delayed remote config refresh after merged device ID changes to reduce request ordering races.
