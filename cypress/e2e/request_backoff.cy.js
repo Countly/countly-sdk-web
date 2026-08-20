@@ -141,9 +141,10 @@ describe("Request Back-off Mechanism Tests", () => {
                 cy.fetch_local_request_queue().then((rq) => {
                     cy.log("Request Queue: " + JSON.stringify(rq));
                     expect(rq.length).to.equal(0);
-                    cy.task("setResponseDelay", 0);
-                    Countly.add_event({ key: "test_2" });
-                    Countly.attempt_to_send_stored_requests();
+                    cy.task("setResponseDelay", 0).then(() => {
+                        Countly.add_event({ key: "test_2" });
+                        Countly.attempt_to_send_stored_requests();
+                    });
                     cy.wait(7000).then(() => {
                         cy.fetch_local_request_queue().then((rq) => {
                             cy.log("Request Queue: " + JSON.stringify(rq));
@@ -165,9 +166,10 @@ describe("Request Back-off Mechanism Tests", () => {
                 cy.fetch_local_request_queue().then((rq) => {
                     cy.log("Request Queue: " + JSON.stringify(rq));
                     expect(rq.length).to.equal(0);
-                    cy.task("setResponseDelay", 0);
-                    Countly.add_event({ key: "test_2" });
-                    Countly.attempt_to_send_stored_requests();
+                    cy.task("setResponseDelay", 0).then(() => {
+                        Countly.add_event({ key: "test_2" });
+                        Countly.attempt_to_send_stored_requests();
+                    });
                     cy.wait(8000).then(() => {
                         cy.fetch_local_request_queue().then((rq) => {
                             cy.log("Request Queue: " + JSON.stringify(rq));
@@ -182,16 +184,18 @@ describe("Request Back-off Mechanism Tests", () => {
     it("3_D_sc timeout and duration Delay", () => {
         hp.haltAndClearStorage(() => {
             cy.task("setResponseDelay", 3500);
-            cy.task("startServer");
-            initMain(undefined, undefined, undefined, undefined, { c: { bom_at: 3, bom_d: 15 } });
-            Countly.add_event({ key: "test_1" });
+            cy.task("startServer").then(() => {
+                initMain(undefined, undefined, undefined, undefined, { c: { bom_at: 3, bom_d: 15 } });
+                Countly.add_event({ key: "test_1" });
+            });
             cy.wait(5000).then(() => {
                 cy.fetch_local_request_queue().then((rq) => {
                     cy.log("Request Queue: " + JSON.stringify(rq));
                     expect(rq.length).to.equal(0);
                     Countly.add_event({ key: "test_2" });
-                    cy.task("setResponseDelay", 0);
-                    Countly.get_available_feedback_widgets();
+                    cy.task("setResponseDelay", 0).then(() => {
+                        Countly.get_available_feedback_widgets();
+                    });
                     cy.wait(5000).then(() => {
                         cy.task("getRequests").then((reqs) => {
                             cy.log("Server Requests: " + JSON.stringify(reqs));
