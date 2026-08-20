@@ -86,6 +86,10 @@ module.exports =  defineConfig({
           requests = [];
           return null;
         },
+        sha256(data) {
+          const crypto = require('crypto');
+          return crypto.createHash('sha256').update(data).digest('hex');
+        },
       });
 
       // IMPORTANT: Return the config object with any changed environment variables

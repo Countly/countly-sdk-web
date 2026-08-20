@@ -12,11 +12,8 @@
   "scripts": {
     "docs": "node_modules/.bin/jsdoc lib/countly.js README.md -c jsdoc_conf.json -d docs",
     "build": "webpack",
-    "lint": "./node_modules/.bin/eslint --ignore-path .eslintignore --fix .",
-    "lintMD": "markdownlint **/*.md --fix",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
-    "pretest": "eslint --ignore-path .eslintignore .",
     "test": "cypress run"
   },
   "repository": {
@@ -35,17 +32,10 @@
   },
   "homepage": "https://countly.com/",
   "devDependencies": {
-    "cypress": "13.6.0",
-    "cypress-localstorage-commands": "2.2.5",
-    "eslint": "8.37.0",
-    "eslint-config-airbnb": "19.0.4",
-    "eslint-plugin-chai-friendly": "0.7.2",
-    "eslint-plugin-cypress": "2.13.2",
-    "eslint-plugin-import": "2.27.5",
-    "jsdoc": "4.0.2",
-    "markdownlint": "0.29.0",
-    "stylelint": "14.9.1",
-    "stylelint-config-standard": "28.0.0"
+    "cypress": "15.21.0",
+    "cypress-localstorage-commands": "2.3.0",
+    "docdash": "2.0.2",
+    "jsdoc": "4.0.5"
   },
   "npmName": "countly-sdk-web",
   "npmFileMap": [

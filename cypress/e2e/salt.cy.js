@@ -2,7 +2,6 @@
 /* eslint-disable require-jsdoc */
 var Countly = require("../../lib/countly");
 var hp = require("../support/helper.js");
-const crypto = require('crypto');
 
 function initMain(salt) {
     Countly.init({
@@ -68,20 +67,10 @@ describe("Salt Tests", () => {
         });
     });
     it("Node and Web Crypto comparison", () => {
-        const hash = sha256("text" + salt).toUpperCase(); // node crypto api
-        Countly._internals.calculateChecksum("text", salt).then((hash2) => { // SDK uses web crypto api
-            expect(hash2).to.equal(hash);
+        cy.task("sha256", "text" + salt).then((hash) => { // node crypto api
+            cy.wrap(Countly._internals.calculateChecksum("text", salt)).then((hash2) => { // SDK uses web crypto api
+                expect(hash2).to.equal(hash.toUpperCase());
+            });
         });
     });
 });
-
-/**
- * Calculate sha256 hash of given data
- * @param {*} data - data to hash
- * @returns {string} - sha256 hash
- */
-function sha256(data) {
-    const hash = crypto.createHash('sha256');
-    hash.update(data);
-    return hash.digest('hex');
-}
