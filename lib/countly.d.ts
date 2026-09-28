@@ -506,6 +506,7 @@ declare module "countly-sdk-web" {
      * - enterContentZone(contentFilterCallback) - enters a content zone
      * - refreshContentZone() - refreshes the content zone
      * - exitContentZone() - exits a content zone
+     * - setGlobalContentSegmentation(segmentation) - sets the segmentation added to content and feedback widget events
      */
     const content: Content;
     interface Content {
@@ -522,6 +523,11 @@ declare module "countly-sdk-web" {
        * Exits content zone
        */
       exitContentZone(): void;
+      /**
+       * Sets a segmentation that is recorded with every content and feedback widget event, on top of the keys those events provide themselves. It is kept for as long as the page is open, including when a session ends and a new one starts, and it is never stored.
+       * @param {Object} [segmentation] - Key/value pairs to add, null or an empty object clears them
+       */
+      setGlobalContentSegmentation(segmentation?: object): void;
     }
     /**
      * This function retrieves all associated widget information (IDs, type, name etc in an array/list of objects) of your app
