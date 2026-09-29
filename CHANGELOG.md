@@ -1,6 +1,6 @@
 ## XX.XX.XX
 
-- Added a new method `Countly.content.setGlobalContentSegmentation(segmentation)` that sets a segmentation recorded with every content and feedback widget event. It is kept for as long as the page is open, including across sessions, and is not restored after a page reload. The keys those events already report are not overridden.
+- Added a new method `setGlobalContentSegmentation` to the `content` interface for adding a segmentation to every content and feedback widget event. It is not stored and lasts until the page is reloaded.
 
 ## 26.1.3
 
