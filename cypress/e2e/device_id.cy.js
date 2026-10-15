@@ -273,9 +273,9 @@ describe("Device ID init tests for request state", ()=>{
                     cy.fetch_local_request_queue().then((r2) => {
                         cy.log("request queue: " + r2);
                         const req2 = r2;
-                        assert.equal(r2.length, 2);
+                        // no session for the new ID, as sessions are not tracked automatically
+                        assert.equal(r2.length, 1);
                         expect(r2[0].events).to.be.ok;
-                        expect(r2[1].begin_session).to.be.ok;
                         assert.notDeepEqual(req1, req2);
                     });
                 });

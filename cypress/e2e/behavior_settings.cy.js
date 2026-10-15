@@ -54,6 +54,60 @@ describe("Behavior settings filters", () => {
         });
     });
 
+    it("event whitelist leaves the SDK's own events alone", () => {
+        hp.haltAndClearStorage(() => {
+            initWithBehavior({ c: { ew: ["kept"] } });
+            Countly.track_pageview("filtered_page");
+            Countly.add_event({ key: "other", count: 1 });
+            cy.wait(200).then(() => collectEventKeysFromQueues()).then((events) => {
+                const keys = events.map((e) => e.key);
+                expect(keys).to.include("[CLY]_view");
+                expect(keys).to.not.include("other");
+            });
+        });
+    });
+
+    it("segmentation whitelist leaves the SDK's own events alone", () => {
+        hp.haltAndClearStorage(() => {
+            initWithBehavior({ c: { sw: ["keep"] } });
+            Countly.track_pageview("filtered_page");
+            cy.wait(200).then(() => collectEventKeysFromQueues()).then((events) => {
+                const view = events.filter((e) => e.key === "[CLY]_view")[0];
+                expect(view.segmentation.name).to.equal("filtered_page");
+            });
+        });
+    });
+
+    it("event and segmentation filters leave the content's own events alone", () => {
+        hp.haltAndClearStorage(() => {
+            Countly.init({
+                app_key: hp.appKey,
+                url: "https://your.domain.count.ly",
+                debug: true,
+                test_mode_eq: true,
+                behavior_settings: { c: { ew: ["kept"], sw: ["keep"] } },
+                fake_request_handler: (req) => {
+                    if (req.params && req.params.method === "queue") {
+                        return { status: 200, responseText: JSON.stringify({ html: "https://your.domain.count.ly/_external/content?id=1", geo: { l: { x: 0, y: 0, w: 100, h: 100 }, p: { x: 0, y: 0, w: 100, h: 100 } } }) };
+                    }
+                    return { status: 200, responseText: "{\"result\":\"Success\"}" };
+                }
+            });
+            Countly.content.enterContentZone();
+            cy.wait(5500).then(() => {
+                var frame = document.getElementById("cly-content-iframe");
+                expect(frame, "content is shown").to.exist;
+                window.dispatchEvent(new MessageEvent("message", { data: { event: [{ key: "[CLY]_content_shown", segmentation: { content_id: "c1" } }, { key: "banner_click", segmentation: { keep: 1 } }] }, origin: "https://your.domain.count.ly", source: frame.contentWindow }));
+                var queued = Countly._internals.getEventQueue();
+                var shown = queued.filter((e) => e.key === "[CLY]_content_shown");
+                expect(shown, "the content's own event").to.have.length(1);
+                expect(shown[0].segmentation).to.include({ content_id: "c1" });
+                expect(queued.filter((e) => e.key === "banner_click"), "a custom event the content sends is still filtered").to.have.length(0);
+                frame.remove();
+            });
+        });
+    });
+
     it("global segmentation blacklist/whitelist applied", () => {
         hp.haltAndClearStorage(() => {
             initWithBehavior({ c: { sb: ["secret"] } });

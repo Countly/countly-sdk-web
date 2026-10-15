@@ -1,6 +1,6 @@
 /* eslint-disable require-jsdoc */
 var Countly = require("../../lib/countly");
-var hp = require("../support/helper");
+var hp = require("../support/helper.js");
 
 function initMain(clear) {
     Countly.init({
@@ -19,7 +19,8 @@ function event(number) {
             id: number
         }
     };
-}
+};
+
 
 // All the tests below checks if the functions are working correctly
 // Currently tests for 'beforeunload' and 'unload' events has to be done manually by using the throttling option of the browser
@@ -39,11 +40,11 @@ describe("Test Countly.q related methods and processes", () => {
             expect(Countly.q.length).to.equal(0);
 
             // Add 4 events to the .q
-            Countly.q.push(["track_errors"]); // adding this as calling it during init used to cause an error (at v23.12.5)
-            Countly.q.push(["add_event", event(1)]);
-            Countly.q.push(["add_event", event(2)]);
-            Countly.q.push(["add_event", event(3)]);
-            Countly.q.push(["add_event", event(4)]);
+            Countly.q.push(['track_errors']); // adding this as calling it during init used to cause an error (at v23.12.5)
+            Countly.q.push(['add_event', event(1)]);
+            Countly.q.push(['add_event', event(2)]);
+            Countly.q.push(['add_event', event(3)]);
+            Countly.q.push(['add_event', event(4)]);
             // Check that the .q has 4 events
             expect(Countly.q.length).to.equal(5);
 
@@ -87,8 +88,8 @@ describe("Test Countly.q related methods and processes", () => {
             });
         });
     });
-    // This test is same with the ones above but this time we use change_id to trigger processAsyncQueue
-    it("Check changing device ID without merge empties the .q", () => {
+    //This test is same with the ones above but this time we use change_id to trigger processAsyncQueue
+    it('Check changing device ID without merge empties the .q', () => {
         hp.haltAndClearStorage(() => {
             // Disable heartbeat and init the SDK
             Countly.noHeartBeat = true;
@@ -100,10 +101,10 @@ describe("Test Countly.q related methods and processes", () => {
             expect(Countly.q.length).to.equal(0);
 
             // Add 4 events to the .q
-            Countly.q.push(["add_event", event(1)]);
-            Countly.q.push(["add_event", event(2)]);
-            Countly.q.push(["add_event", event(3)]);
-            Countly.q.push(["add_event", event(4)]);
+            Countly.q.push(['add_event', event(1)]);
+            Countly.q.push(['add_event', event(2)]);
+            Countly.q.push(['add_event', event(3)]);
+            Countly.q.push(['add_event', event(4)]);
             // Check that the .q has 4 events
             expect(Countly.q.length).to.equal(4);
 
@@ -120,26 +121,23 @@ describe("Test Countly.q related methods and processes", () => {
                 // Check that the .q is empty
                 expect(Countly.q.length).to.equal(0);
                 cy.fetch_local_event_queue().then((eq) => {
-                    // Check that event queue has new device ID's orientation event
-                    expect(eq.length).to.equal(1);
-                    expect(eq[0].key).to.equal("[CLY]_orientation");
+                    // Check that the event queue was flushed for the previous device ID
+                    expect(eq.length).to.equal(0);
                     cy.fetch_local_request_queue().then((rq) => {
-                        // Check that events are now in request queue (second request is begin session for new device ID)
-                        expect(rq.length).to.equal(2);
+                        // Check that events are now in request queue (no session for the new device ID, as none was running)
+                        expect(rq.length).to.equal(1);
                         const eventsArray = JSON.parse(rq[0].events);
                         expect(eventsArray[0].key).to.equal("event_1");
                         expect(eventsArray[1].key).to.equal("event_2");
                         expect(eventsArray[2].key).to.equal("event_3");
                         expect(eventsArray[3].key).to.equal("event_4");
-                        // check begin session
-                        expect(rq[1].begin_session).to.equal(1);
                     });
                 });
             });
         });
     });
     // This test checks if calling user_details triggers processAsyncQueue (it sends events from .q to event queue and then to request queue)
-    it("Check sending user details empties .q", () => {
+    it('Check sending user details empties .q', () => {
         hp.haltAndClearStorage(() => {
             // Disable heartbeat and init the SDK
             Countly.noHeartBeat = true;
@@ -151,10 +149,10 @@ describe("Test Countly.q related methods and processes", () => {
             expect(Countly.q.length).to.equal(0);
 
             // Add 4 events to the .q
-            Countly.q.push(["add_event", event(1)]);
-            Countly.q.push(["add_event", event(2)]);
-            Countly.q.push(["add_event", event(3)]);
-            Countly.q.push(["add_event", event(4)]);
+            Countly.q.push(['add_event', event(1)]);
+            Countly.q.push(['add_event', event(2)]);
+            Countly.q.push(['add_event', event(3)]);
+            Countly.q.push(['add_event', event(4)]);
             // Check that the .q has 4 events
             expect(Countly.q.length).to.equal(4);
 
@@ -166,7 +164,7 @@ describe("Test Countly.q related methods and processes", () => {
                 expect(Countly.q.length).to.equal(4);
 
                 // Trigger processAsyncQueue by adding user details
-                Countly.user_details({ name: "test_user" });
+                Countly.user_details({name: "test_user"});
 
                 // Check that the .q is empty
                 expect(Countly.q.length).to.equal(0);
@@ -190,7 +188,7 @@ describe("Test Countly.q related methods and processes", () => {
         });
     });
     // This Test checks if calling userData.save triggers processAsyncQueue (it sends events from .q to event queue and then to request queue)
-    it("Check sending custom user info empties .q", () => {
+    it('Check sending custom user info empties .q', () => {
         hp.haltAndClearStorage(() => {
             // Disable heartbeat and init the SDK
             Countly.noHeartBeat = true;
@@ -202,10 +200,10 @@ describe("Test Countly.q related methods and processes", () => {
             expect(Countly.q.length).to.equal(0);
 
             // Add 4 events to the .q
-            Countly.q.push(["add_event", event(1)]);
-            Countly.q.push(["add_event", event(2)]);
-            Countly.q.push(["add_event", event(3)]);
-            Countly.q.push(["add_event", event(4)]);
+            Countly.q.push(['add_event', event(1)]);
+            Countly.q.push(['add_event', event(2)]);
+            Countly.q.push(['add_event', event(3)]);
+            Countly.q.push(['add_event', event(4)]);
             // Check that the .q has 4 events
             expect(Countly.q.length).to.equal(4);
 
@@ -242,7 +240,7 @@ describe("Test Countly.q related methods and processes", () => {
         });
     });
     // This test check if the heartbeat is processing the .q (executes processAsyncQueue)
-    it("Check if heatbeat is processing .q", () => {
+    it('Check if heatbeat is processing .q', () => {
         hp.haltAndClearStorage(() => {
             // init the SDK
             Countly.q = [];
@@ -257,32 +255,73 @@ describe("Test Countly.q related methods and processes", () => {
                     // Check that the request queue is empty
                     expect(rq.length).to.equal(0);
                     // Add 4 events to the .q
-                    Countly.q.push(["add_event", event(1)]);
-                    Countly.q.push(["add_event", event(2)]);
-                    Countly.q.push(["add_event", event(3)]);
-                    Countly.q.push(["add_event", event(4)]);
+                    Countly.q.push(['add_event', event(1)]);
+                    Countly.q.push(['add_event', event(2)]);
+                    Countly.q.push(['add_event', event(3)]);
+                    Countly.q.push(['add_event', event(4)]);
                     // Check that the .q has 4 events
                     expect(Countly.q.length).to.equal(4);
                     // Wait for heartBeat to process the .q
                     cy.wait(1500).then(() => {
                     // Check that the .q is empty
-                        expect(Countly.q.length).to.equal(0);
-                        cy.fetch_local_event_queue().then((eq) => {
+                    expect(Countly.q.length).to.equal(0);
+                    cy.fetch_local_event_queue().then((eq) => {
                         // Check that event queue is empty as all must be in request queue
-                            expect(eq.length).to.equal(0);
-                            cy.fetch_local_request_queue().then((rq) => {
+                        expect(eq.length).to.equal(0);
+                        cy.fetch_local_request_queue().then((rq) => {
                             // Check that events are now in request queue
-                                expect(rq.length).to.equal(1);
-                                const eventsArray = JSON.parse(rq[0].events);
-                                expect(eventsArray[0].key).to.equal("event_1");
-                                expect(eventsArray[1].key).to.equal("event_2");
-                                expect(eventsArray[2].key).to.equal("event_3");
-                                expect(eventsArray[3].key).to.equal("event_4");
-                            });
+                            expect(rq.length).to.equal(1);
+                            const eventsArray = JSON.parse(rq[0].events);
+                            expect(eventsArray[0].key).to.equal("event_1");
+                            expect(eventsArray[1].key).to.equal("event_2");
+                            expect(eventsArray[2].key).to.equal("event_3");
+                            expect(eventsArray[3].key).to.equal("event_4");
                         });
+                    });
                     });
                 });
             });
         });
     });
+
+    it("Runs a queued call meant for the main instance on the main instance, also when another instance works through Countly.q first", () => {
+        cy.visit("./cypress/fixtures/async_queue_instances.html");
+        cy.wait(2000).then(() => {
+            cy.fetch_local_request_queue("SECOND_APP_KEY").then((rq) => {
+                var secondKeys = rq.filter((r) => r.events).reduce((all, r) => all.concat(JSON.parse(r.events).map((e) => e.key)), []);
+                expect(secondKeys, "events recorded by the second instance").to.deep.equal(["for_second"]);
+                expect(rq.filter((r) => r.user_details).length, "the second instance's user details").to.equal(1);
+                cy.fetch_local_event_queue("MAIN_APP_KEY").then((eq) => {
+                    expect(eq.map((e) => e.key), "events recorded by the main instance, in their order").to.deep.equal(["for_main", "for_main_by_key"]);
+                });
+            });
+        });
+    });
+
+    it("Leaves Countly.q to the next instance once an instance is halted", () => {
+        hp.haltAndClearStorage(() => {
+            initMain();
+            Countly.halt();
+            // the next instance runs no heartbeat, so only a halted instance could take the queued call
+            Countly.noHeartBeat = true;
+            initMain();
+            Countly.q.push(["add_event", event(1)]);
+            cy.wait(1500).then(() => {
+                expect(Countly.q.length, "calls still waiting in Countly.q").to.equal(1);
+            });
+        });
+    });
+
+    it("Keeps processing Countly.q and the heartbeat after a queued call throws", () => {
+        // a halted instance of an earlier test keeps its heartbeat and can take the queued calls, so a fresh page is used
+        cy.visit("./cypress/fixtures/async_queue_throw.html");
+        cy.wait(3000).then(() => {
+            cy.fetch_local_request_queue().then((rq) => {
+                var keys = rq.filter((r) => r.events).reduce((all, r) => all.concat(JSON.parse(r.events).map((e) => e.key)), []);
+                expect(keys, "the call queued after the throwing ones still ran").to.include("event_1");
+                expect(keys, "the heartbeat kept moving events on").to.include("event_2");
+            });
+        });
+    });
+
 });

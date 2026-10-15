@@ -1,0 +1,28 @@
+<!-- Used in async queue tests: a fresh page, so no instance from an earlier test can run the queued calls -->
+<html>
+<head>
+  <script type='text/javascript' src='../../lib/countly.js'></script>
+  <script type='module'>
+
+    window.localStorage.clear();
+    Countly.init({
+      app_key: "YOUR_APP_KEY",
+      url: "https://your.domain.count.ly",
+      debug: true,
+      test_mode: true
+    });
+    // queued after init, so the heartbeat runs them
+    Countly.q.push(function () {
+      throw new Error("thrown by a queued call");
+    });
+    Countly.q.push(["show_feedback_popup", "000000000000000000000000"]);
+    Countly.q.push(["add_event", { key: "event_1", count: 1 }]);
+    setTimeout(function () {
+      Countly.add_event({ key: "event_2", count: 1 });
+    }, 1500);
+  </script>
+</head>
+<body>
+  <h1>Async queue</h1>
+</body>
+</html>

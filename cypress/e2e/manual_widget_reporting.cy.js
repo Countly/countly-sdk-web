@@ -142,6 +142,26 @@ describe("Manual nps recording tests ", () => {
             });
         });
     });
+    it("Checks if an nps score of 0 is sent", () => {
+        hp.haltAndClearStorage(() => {
+            initMain();
+            Countly.reportFeedbackWidgetManually(CountlyFeedbackWidgetMaker("123", "nps"), CountlyWidgetData, widgetResponseMakerNpsRating(0));
+            cy.fetch_local_event_queue().then((eq) => {
+                expect(eq.length).to.equal(1);
+                cy.expect(eq[0].segmentation.rating).to.equal(0);
+            });
+        });
+    });
+    it("Checks if an nps without a score is omitted", () => {
+        hp.haltAndClearStorage(() => {
+            initMain();
+            Countly.reportFeedbackWidgetManually(CountlyFeedbackWidgetMaker("123", "nps"), CountlyWidgetData, widgetResponseMakerNpsRating(undefined));
+            Countly.reportFeedbackWidgetManually(CountlyFeedbackWidgetMaker("123", "nps"), CountlyWidgetData, widgetResponseMakerNpsRating(null));
+            cy.fetch_local_event_queue().then((eq) => {
+                expect(eq.length).to.equal(0);
+            });
+        });
+    });
     it("Checks if nps would be omitted with no id", () => {
         hp.haltAndClearStorage(() => {
             initMain();

@@ -1,6 +1,8 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 /* eslint-disable require-jsdoc */
 var Countly = require("../../lib/countly");
+var Utils = require("../support/sdk-modules/Utils.js");
+// import * as Countly from "../../dist/countly_umd.js";
 var hp = require("../support/helper.js");
 
 function initMain(salt) {
@@ -66,11 +68,12 @@ describe("Salt Tests", () => {
             });
         });
     });
-    it("Node and Web Crypto comparison", () => {
-        cy.task("sha256", "text" + salt).then((hash) => { // node crypto api
-            cy.wrap(Countly._internals.calculateChecksum("text", salt)).then((hash2) => { // SDK uses web crypto api
-                expect(hash2).to.equal(hash.toUpperCase());
-            });
+    it('Web Crypto checksum matches a known SHA-256 digest', () => {
+        // sha256("text" + "salt"), computed with node's crypto module, so the SDK's Web Crypto path is
+        // checked against an independent implementation without pulling node builtins into the browser bundle
+        const hash = "3353E16497AD272FEA4382119FF2801E54F0A4CF2057F4E32D00317BDA5126C3";
+        Utils.calculateChecksum("text", salt).then((hash2) => {
+            expect(hash2).to.equal(hash);
         });
     });
 });

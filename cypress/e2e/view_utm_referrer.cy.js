@@ -218,6 +218,10 @@ describe("View with utm and referrer tests ", () => {
     // then we check if the referrer is recorded correctly
     // also we verify utms are recorded properly too
     it("Check if referrer is recorded correctly", () => {
+        // the instances the test above used would hand their queues over when the page's own instance sets the device ID, as another tab does
+        if (Countly.halt !== undefined) {
+            Countly.halt();
+        }
         cy.visit("./cypress/fixtures/referrer.html", {
             onBeforeLoad(win) {
                 Object.defineProperty(win.document, "referrer", {

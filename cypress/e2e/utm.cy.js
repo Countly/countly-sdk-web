@@ -202,4 +202,13 @@ describe("UTM tests ", () => {
             });
         });
     });
+    it("Records encoded utm values as the visitor sees them", () => {
+        hp.haltAndClearStorage(() => {
+            initMulti("YOUR_APP_KEY", "?utm_source=news%20letter&utm_campaign=Black%20Friday%20%2B%2050%25&utm_content=a=b&utm_term=100%", undefined);
+            cy.fetch_local_request_queue().then((rq) => {
+                const custom = JSON.parse(rq[0].user_details).custom;
+                hp.validateDefaultUtmTags(custom, "news letter", "", "Black Friday + 50%", "100%", "a=b");
+            });
+        });
+    });
 });

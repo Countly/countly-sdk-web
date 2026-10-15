@@ -33,4 +33,24 @@ describe("Crashes tests ", () => {
             });
         });
     });
+
+    it("Keeps no breadcrumbs when the breadcrumb limit is 0", () => {
+        hp.haltAndClearStorage(() => {
+            Countly.init({
+                app_key: "YOUR_APP_KEY",
+                url: "https://your.domain.count.ly",
+                test_mode: true,
+                max_breadcrumb_count: 0
+            });
+            Countly.add_log("first breadcrumb");
+            Countly.add_log("second breadcrumb");
+            Countly.log_error(new Error("reported without breadcrumbs"));
+            cy.wait(1000).then(() => {
+                cy.fetch_local_request_queue().then((rq) => {
+                    var crash = JSON.parse(rq.filter((r) => r.crash)[0].crash);
+                    expect(crash._logs || "").to.not.contain("breadcrumb");
+                });
+            });
+        });
+    });
 });
