@@ -10,6 +10,20 @@ declare module "countly-sdk-web" {
      *
      * debug : Enables SDK logs to be printed into the browser console. (default: false)
      *
+     * push_vapid_public_key : Base64-URL VAPID public key from Management > Applications > Push Notifications > Web (VAPID). Required for web push.
+     *
+     * push_service_worker_path : URL of the Countly service worker on your origin. (default: "/countly_sw.js")
+     *
+     * push_service_worker_scope : Scope the worker is registered under. (default: the folder countly-push/ next to the worker file)
+     *
+     * push_service_worker_registration : An existing ServiceWorkerRegistration, or the promise register() returns for it, to subscribe through instead of registering countly_sw.js. Use it when your own worker imports countly_sw.js.
+     *
+     * push_auto_register : Re-registers the push subscription silently on every load once notification permission is granted. Never prompts. (default: true)
+     *
+     * push_subscribe_timeout : Milliseconds to wait for the browser to create the push subscription before enable_push_notifications gives up on that attempt with reason "timeout". (default: 30000)
+     *
+     * push_notification_listener : Function called with a PushNotificationEvent when a notification is received, clicked or closed. Same as set_push_notification_listener.
+     *
      * For the full list of configuration options, see https://support.count.ly/hc/en-us/articles/360037441932-Web-analytics-JavaScript#h_01HABTQ439HZN7Y6A6F07Y6G0K
      */
     function init(config: object): void;
@@ -37,6 +51,12 @@ declare module "countly-sdk-web" {
      * @returns {Boolean} true if consent was given for the feature or false if it was not
      */
     function check_consent(feature: string): boolean;
+
+    /**
+     * Check if any consent is given, for some cases, when crucial parts are like device_id are needed for any request
+     * @returns {Boolean} true is has any consent given, false if no consents given
+     */
+    function check_any_consent(): boolean;
 
     enum DeviceIdType {
       DEVELOPER_SUPPLIED,
@@ -109,6 +129,89 @@ declare module "countly-sdk-web" {
      * @param {string} [device_id] - Optional new device ID to use when disabling offline mode. If not provided, a new ID will be generated.
      */
     function disable_offline_mode(device_id?: string): void;
+
+    /**
+     * Opts in user for tracking, if complies with other user ignore rules like bot useragent and prefetch settings
+     */
+    function opt_in(): void;
+
+    /**
+     * Opts out user of any metric tracking, and takes Countly's push subscription off the browser
+     */
+    function opt_out(): void;
+
+    /**
+     * Attempt to send stored requests
+     */
+    function attempt_to_send_stored_requests(): void;
+
+    /**
+     * Enable web push notifications: asks for notification permission, registers the Countly service worker,
+     * subscribes with the configured VAPID public key and registers the subscription with the server.
+     * Call it directly from a user gesture (a click handler), not through Countly.q — Firefox and Safari
+     * refuse the permission prompt otherwise. Idempotent; re-subscribes when the VAPID key changed.
+     * @param {object} [opts] - per-call overrides: push_vapid_public_key, push_service_worker_path, push_service_worker_scope, push_service_worker_registration
+     * @return {Promise<{subscribed: boolean, endpoint?: string, reason?: string, error?: string}>} reason is one of "unsupported", "no_consent", "missing_vapid_key", "invalid_vapid_key", "denied", "default", "service_worker_conflict", "service_worker_redundant", "service_worker_missing", "timeout", "subscription_conflict", "disabled", "error"
+     */
+    function enable_push_notifications(opts?: {
+      push_vapid_public_key?: string;
+      push_service_worker_path?: string;
+      push_service_worker_scope?: string;
+      push_service_worker_registration?: ServiceWorkerRegistration | Promise<ServiceWorkerRegistration>;
+    }): Promise<{ subscribed: boolean; endpoint?: string; reason?: string; error?: string }>;
+
+    /**
+     * Disable web push notifications: unsubscribes in the browser and blacklists the token on the server.
+     * Remembered across page loads, so the automatic re-registration never undoes it; only another
+     * enable_push_notifications call subscribes again. Not gated on consent.
+     * @param {object} [opts] - per-call override: push_service_worker_scope
+     * @return {Promise<{unsubscribed: boolean, reason?: string, error?: string}>}
+     */
+    function disable_push_notifications(opts?: {
+      push_service_worker_scope?: string;
+    }): Promise<{ unsubscribed: boolean; reason?: string; error?: string }>;
+
+    /**
+     * Record a push notification click as a [CLY]_push_action event. The Countly service worker relay
+     * calls this for you; call it yourself only from a custom worker integration.
+     * @param {string} messageId - 24 character id of the Countly message that produced the notification
+     * @param {number} [buttonIndex=0] - 0 for the notification body, 1 or 2 for an action button
+     */
+    function record_push_action(messageId: string, buttonIndex?: number): void;
+
+    /**
+     * What the push notification listener is told about one notification.
+     * type "received": the worker got the push and showed the notification; "clicked": the body
+     * (buttonIndex 0) or an action button (1 or 2, with its buttonTitle and url) was clicked;
+     * "closed": the notification was dismissed. payload is the whole message as the server sent it,
+     * including any custom key/values. Only pages open at the time hear "received" and "closed"; a
+     * click made while no page was open is recorded by the worker itself and reported to the next
+     * page that loads.
+     * "closed" is best effort and differs by browser and OS: dismissals mostly go unreported on
+     * Windows, macOS Chrome and Firefox report Notification Center removals, Safari does not; Firefox
+     * (and Safari for Notification Center clicks) also reports "closed" right after "clicked".
+     * Safari shows no action buttons, and neither does desktop Firefox before version 152 (buttonIndex
+     * is always 0 there; Firefox for Android always showed them).
+     */
+    interface PushNotificationEvent {
+      type: "received" | "clicked" | "closed";
+      messageId: string;
+      title: string;
+      message: string;
+      url: string;
+      buttons: { title: string; url: string }[];
+      payload: Record<string, any> | null;
+      buttonIndex?: number;
+      buttonTitle?: string;
+    }
+
+    /**
+     * Set the function told when a push notification is received, clicked or closed. The
+     * [CLY]_push_action event is recorded whether or not a listener is set, and a listener that
+     * throws does not affect it. Pass null to remove the listener.
+     * @param {function|null} listener - called with a PushNotificationEvent
+     */
+    function set_push_notification_listener(listener: ((event: PushNotificationEvent) => void) | null): void;
 
     /**
      * Start session
@@ -347,6 +450,14 @@ declare module "countly-sdk-web" {
     function log_error(err: Object, segments?: Object): void;
 
     /**
+     * Record and report error, this is were tracked errors are modified and send to the request queue
+     * @param {Error} err - Error object
+     * @param {Boolean} nonfatal - nonfatal if true and false if fatal
+     * @param {Object} [segments] - custom crash segments
+     */
+    function recordError(err: Error, nonfatal: boolean, segments?: Object): void;
+
+    /**
      * Add new line in the log of breadcrumbs of what user did, will be included together with error report
      * @param {string} record - any text describing what user did
      */
@@ -392,6 +503,18 @@ declare module "countly-sdk-web" {
       page?: string,
       ignoreList?: string[],
       viewSegments?: object
+    ): void;
+
+    /**
+     * Track page views user visits. Alias of {@link track_pageview} method for compatibility with NodeJS SDK
+     * @param {string} [page] - optional name of the page, by default uses current url path
+     * @param {string[]} [ignoreList] - optional array of strings or regexps to test for the url/view name to ignore and not report
+     * @param {object} [segments] - optional view segments to track with the view
+     */
+    function track_view(
+      page?: string,
+      ignoreList?: string[],
+      segments?: object
     ): void;
 
     /**
@@ -475,6 +598,27 @@ declare module "countly-sdk-web" {
     ): void;
 
     /**
+     * Report a rating widget result, given by the user in your own interface
+     * @param {Object} ratingWidget - object with rating widget properties
+     * @param {string} ratingWidget.widget_id - id of the widget in the dashboard
+     * @param {boolean} [ratingWidget.contactMe] - did user give consent to contact him
+     * @param {string} [ratingWidget.platform] - user's platform (will be filled if not provided)
+     * @param {string} [ratingWidget.app_version] - app's app version (will be filled if not provided)
+     * @param {number} ratingWidget.rating - user's rating from 1 to 5
+     * @param {string} [ratingWidget.email] - user's email
+     * @param {string} [ratingWidget.comment] - user's comment
+     */
+    function recordRatingWidgetWithID(ratingWidget: {
+      widget_id: string;
+      rating: number;
+      contactMe?: boolean;
+      platform?: string;
+      app_version?: string;
+      email?: string;
+      comment?: string;
+    }): void;
+
+    /**
      * Feedback interface with convenience methods for feedback widgets:
      * - showNPS([nameIDorTag]) - shows an NPS widget by name, id, or tag, or a random one if not provided
      * - showSurvey([nameIDorTag]) - shows a Survey widget by name, id, or tag, or a random one if not provided
@@ -506,6 +650,8 @@ declare module "countly-sdk-web" {
      * - enterContentZone(contentFilterCallback) - enters a content zone
      * - refreshContentZone() - refreshes the content zone
      * - exitContentZone() - exits a content zone
+     * - setGlobalContentSegmentation(segmentation) - sets the segmentation recorded with every content and feedback widget event
+     * - setTheme(theme) - sets the theme content and feedback widgets are shown in
      */
     const content: Content;
     interface Content {
@@ -522,6 +668,21 @@ declare module "countly-sdk-web" {
        * Exits content zone
        */
       exitContentZone(): void;
+      /**
+       * Sets the segmentation recorded with every content and feedback widget event and given to the feedback widgets
+       * the SDK opens, in place of the one set before. An event's own keys win over it. Keys the server reads on these
+       * events, such as "rating", "closed", "campaign_id" or keys starting with "answ", are left out, as are values
+       * other than strings, numbers, booleans and lists of those. It stays when the device ID changes.
+       * @param {Object|null} segmentation - the segmentation; null or an empty object clears it
+       */
+      setGlobalContentSegmentation(segmentation: { [key: string]: string | number | boolean | Array<string | number | boolean> } | null): void;
+      /**
+       * Sets the theme content and feedback widgets are shown in. By default they follow the page: the color-scheme
+       * it declares in its CSS or its color-scheme meta tag when it names only one, otherwise the browser's light or
+       * dark setting. Content already on the screen keeps the theme it opened with.
+       * @param {"dark"|"light"|false|null} theme - the theme, false to tell them no theme at all, or null to follow the page again
+       */
+      setTheme(theme: "dark" | "light" | false | null): void;
     }
     /**
      * This function retrieves all associated widget information (IDs, type, name etc in an array/list of objects) of your app
@@ -554,7 +715,7 @@ declare module "countly-sdk-web" {
      * @param {Object} presentableFeedback - Current presentable feedback
      * @param {string} [id] - DOM id to append the feedback widget (optional, in case not used pass undefined)
      * @param {string} [className] - Class name to append the feedback widget (optional, in case not used pass undefined)
-     * @param {Object} [feedbackWidgetSegmentation] - Segmentation object to be passed to the feedback widget (optional)
+     * @param {Object} [feedbackWidgetSegmentation] - Segmentation object to be passed to the feedback widget, which the global content segmentation is added behind (optional)
      */
     function present_feedback_widget(
       presentableFeedback: object,

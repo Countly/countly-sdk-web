@@ -16,11 +16,23 @@ function haltAndClearStorage(callback) {
     }
     cy.wait(sWait).then(() => {
         cy.clearAllLocalStorage();
+        cy.clearAllSessionStorage();
         cy.clearAllCookies();
         cy.wait(sWait).then(() => {
             callback();
         });
     });
+}
+
+/**
+ * what waits to be sent: the requests left in the shared storage, as while sending fails, then what the tab keeps
+ * @param {String} key - app key, the default test app key if not given
+ * @returns {Object} the tab's event queue and the waiting requests, in the order they would be sent
+ */
+function waitingQueues(key) {
+    var queues = Countly._internals.getLocalQueues();
+    var left = JSON.parse(window.localStorage.getItem((key || appKey) + "/cly_queue") || "[]");
+    return { eventQ: queues.eventQ, requestQ: (Array.isArray(left) ? left : []).concat(queues.requestQ) };
 }
 
 /**
@@ -57,14 +69,14 @@ function getTimestampMs() {
  * @param {number} waitIncrement -  time increment to retry the tests
  * @param {Function} continueCallback - callback function with tests
  */
-var waitFunction = function (startTime, waitTime, waitIncrement, continueCallback) {
+var waitFunction = function(startTime, waitTime, waitIncrement, continueCallback) {
     if (waitTime <= getTimestampMs() - startTime) {
         // we have waited enough
         continueCallback();
     }
     else {
         // we need to wait more
-        cy.wait(waitIncrement).then(() => {
+        cy.wait(waitIncrement).then(()=>{
             waitFunction(startTime, waitTime, waitIncrement, continueCallback);
         });
     }
@@ -207,7 +219,7 @@ function testNormalFlowInt(rq, viewName, countlyAppKey) {
     const thirdRequest = JSON.parse(rq[2].events);
     expect(thirdRequest.length).to.equal(2);
     cy.check_event(thirdRequest[0], { key: "test", count: 1, sum: 1, dur: 1, segmentation: { test: "test" } }, undefined, "");
-    cy.check_event(thirdRequest[0], { key: "test", count: 1, sum: 1, dur: 1, segmentation: {} }, undefined, "");
+    cy.check_event(thirdRequest[0], { key: "test", count: 1, sum: 1, dur: 1, segmentation: { } }, undefined, "");
 
     // 4
     const fourthRequest = JSON.parse(rq[3].user_details);
@@ -250,23 +262,23 @@ function testNormalFlowInt(rq, viewName, countlyAppKey) {
 
     // 9 - Session duration check
     expect(rq[8].session_duration).to.equal(30);
-
-    // 10 - End session duration check
-    expect(rq[9].session_duration).to.equal(0);
-
+    
+    // 10 - End session duration check, begin and end can fall on either side of a clock second
+    expect(rq[9].session_duration).to.be.within(0, 1);
+    
     // 11 - View event end
     const eleventhRequest = JSON.parse(rq[10].events);
     expect(eleventhRequest.length).to.equal(1);
     cy.check_view_event(eleventhRequest[0], viewName, 0, false);
-
+    
     // 12 - Device ID change
     expect(rq[11].old_device_id).to.equal(id);
     expect(rq[11].device_id).to.equal("new-device-id");
-
+    
     // 13 - New session with custom device ID
     expect(rq[12].begin_session).to.equal(1);
     expect(rq[12].device_id).to.equal("custom-device-id");
-
+    
     // 14 - Star rating events
     const fourteenthRequest = JSON.parse(rq[13].events);
     expect(fourteenthRequest.length).to.equal(3);
@@ -283,7 +295,7 @@ function testNormalFlowInt(rq, viewName, countlyAppKey) {
         expect(element.sdk_name).to.be.ok;
         expect(element.sdk_version).to.be.ok;
         expect(element.timestamp).to.be.ok;
-
+        
         // Device ID and type checks (accounting for ID changes)
         if (index < 11) {
             expect(element.device_id).to.equal(id);
@@ -458,7 +470,7 @@ function integrationMethods() {
     Countly.end_event("test");
     Countly.report_conversion("camp_id", "camp_user_id");
     Countly.recordDirectAttribution("camp_id", "camp_user_id");
-    Countly.user_details({ name: "Test User", email: "test@example.com" });
+    Countly.user_details({ name: "Test User", email: "test@example.com" }); 
     Countly.userData.set("custom-property", "custom-value");
     Countly.userData.unset("custom-property");
     Countly.userData.set_once("unique-property", "unique-value");
@@ -514,29 +526,29 @@ function integrationMethods() {
 function createFakeRequestHandler(options = {}) {
     var requests = [];
     var defaultResponse = options.defaultResponse || { status: 200, responseText: '{"result":"Success"}' };
-
-    var handler = function (req) {
+    
+    var handler = function(req) {
         requests.push(req);
         if (options.onRequest) {
             return options.onRequest(req);
         }
         return defaultResponse;
     };
-
+    
     return {
         handler: handler,
         requests: requests,
-        getRequests: function () { return requests; },
-        clear: function () { requests.length = 0; },
-        findByFunction: function (name) {
-            return requests.filter(function (r) { return r.functionName === name; });
+        getRequests: function() { return requests; },
+        clear: function() { requests.length = 0; },
+        findByFunction: function(name) {
+            return requests.filter(function(r) { return r.functionName === name; });
         },
-        findByParam: function (key, value) {
-            return requests.filter(function (r) {
+        findByParam: function(key, value) {
+            return requests.filter(function(r) { 
                 if (value === undefined) {
                     return r.params && r.params[key] !== undefined;
                 }
-                return r.params && r.params[key] === value;
+                return r.params && r.params[key] === value; 
             });
         }
     };
@@ -544,6 +556,7 @@ function createFakeRequestHandler(options = {}) {
 
 module.exports = {
     haltAndClearStorage,
+    waitingQueues,
     sWait,
     sWait2,
     mWait,

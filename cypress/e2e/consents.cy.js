@@ -99,6 +99,53 @@ describe("Consent tests", () => {
             });
         });
     });
+    it("Withdrawing a given consent is reported to the server", () => {
+        hp.haltAndClearStorage(() => {
+            initMain(true);
+            Countly.add_consent(["events"]);
+            cy.wait(1500).then(() => {
+                Countly.remove_consent("events");
+                cy.wait(1500).then(() => {
+                    cy.fetch_local_request_queue().then((rq) => {
+                        var consents = rq.filter((r) => r.consent).map((r) => JSON.parse(r.consent));
+                        expect(consents.length).to.equal(2);
+                        expect(consents[0].events).to.equal(true);
+                        expect(consents[1].events).to.equal(false);
+                        expect(consents[1].views, "the request carries the whole consent state").to.equal(false);
+                    });
+                });
+            });
+        });
+    });
+    it("Withdrawing a consent that was never given sends nothing", () => {
+        hp.haltAndClearStorage(() => {
+            initMain(true);
+            Countly.add_consent(["events"]);
+            cy.wait(1500).then(() => {
+                Countly.remove_consent("views");
+                cy.wait(1500).then(() => {
+                    cy.fetch_local_request_queue().then((rq) => {
+                        expect(rq.filter((r) => r.consent).length).to.equal(1);
+                    });
+                });
+            });
+        });
+    });
+    it("Non-merge ID change removes the consents without sending a consent request", () => {
+        hp.haltAndClearStorage(() => {
+            initMain(true);
+            Countly.add_consent(["events", "sessions"]);
+            cy.wait(1500).then(() => {
+                Countly.change_id("Richard Wagner III", false);
+                cy.wait(1500).then(() => {
+                    expect(Countly.check_consent("events"), "the consent is gone").to.equal(false);
+                    cy.fetch_local_request_queue().then((rq) => {
+                        expect(rq.filter((r) => r.consent).length, "only the consent request of the first user").to.equal(1);
+                    });
+                });
+            });
+        });
+    });
     it("Merge ID change should not reset consents", () => {
         hp.haltAndClearStorage(() => {
             initMain(true);

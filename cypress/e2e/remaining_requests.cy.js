@@ -20,13 +20,13 @@ describe("Remaining requests tests ", () => {
             Countly.end_session(undefined, true);
 
             cy.wait(1000).then(() => {
-                var queues = Countly._internals.getLocalQueues();
+                var queues = hp.waitingQueues();
                 expect(queues.eventQ.length).to.equal(0);
                 expect(queues.requestQ.length).to.equal(3);
                 expect(queues.requestQ[0]["begin_session"]).to.equal(1);
                 expect(queues.requestQ[1]["end_session"]).to.equal(1);
                 expect(JSON.parse(queues.requestQ[2]["events"])[0].key).to.equal("[CLY]_orientation");
-
+                
                 var requests = Countly._internals.testingGetRequests();
                 expect(requests.length).to.equal(3);
                 expect(requests[0].params["rr"]).to.equal(undefined);
@@ -52,13 +52,12 @@ describe("Remaining requests tests ", () => {
                 // Change ID
                 Countly.change_id("newID");
                 cy.fetch_local_request_queue().then((rq2) => {
-                    // We expect 4 requests in queue: begin_session, end_session, orientation and change ID
+                    // We expect the same 3 requests: the session had ended, so none starts for the new ID
                     cy.log(rq2);
-                    expect(rq2.length).to.equal(4);
+                    expect(rq2.length).to.equal(3);
                     expect(rq2[0].rr).to.equal(undefined);
                     expect(rq2[1].rr).to.equal(undefined);
                     expect(rq2[2].rr).to.equal(undefined);
-                    expect(rq2[3].rr).to.equal(undefined);
                 });
             });
         });

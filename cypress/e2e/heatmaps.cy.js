@@ -25,12 +25,13 @@ describe("Browser heatmap tests, scrolls", () => {
         hp.waitFunction(hp.getTimestampMs(), 1000, 100, () => {
             cy.fetch_local_request_queue(hp.appKey).then((rq) => {
                 cy.log(rq);
-                // There should be 4 requests: session -> event batch 1 -> session_duration -> event batch 2
-                expect(rq.length).to.equal(4);
+                // There should be 5 requests: session -> event batch 1 -> session_duration -> event batch 2, which the first page
+                // flushed when it was left -> event batch 3 of the second page
+                expect(rq.length).to.equal(5);
                 const beginSessionReq = rq[0];
                 const eventBatch1 = JSON.parse(rq[1].events);
                 const sessionDurationReq = rq[2];
-                const eventBatch2 = JSON.parse(rq[3].events);
+                const eventBatch2 = JSON.parse(rq[3].events).concat(JSON.parse(rq[4].events));
 
                 // 1st req
                 cy.check_session(beginSessionReq, undefined, undefined, hp.appKey);

@@ -1,6 +1,7 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 /* eslint-disable require-jsdoc */
 var Countly = require("../../lib/countly");
+var Utils = require("../support/sdk-modules/Utils.js");
 var hp = require("../support/helper");
 
 function initMain() {
@@ -67,7 +68,69 @@ describe("User Agent tests ", () => {
     // userAgentData is not supported by all browsers yet so it is hard to test with consistency
     it("Check if currentUserAgentDataString override works", () => {
         hp.haltAndClearStorage(() => {
-            expect(Countly._internals.currentUserAgentDataString('123')).to.equal("123");
+            expect(Utils.currentUserAgentDataString('123')).to.equal("123");
+        });
+    });
+
+    it("Check if Windows platformVersion parsing works", () => {
+        hp.haltAndClearStorage(() => {
+            expect(Utils.parseWindowsVersionFromPlatformVersion("13.0.0")).to.equal("11");
+            expect(Utils.parseWindowsVersionFromPlatformVersion("14.0.0")).to.equal("11");
+            expect(Utils.parseWindowsVersionFromPlatformVersion("12.0.0")).to.equal("10");
+            expect(Utils.parseWindowsVersionFromPlatformVersion("1.0.0")).to.equal("10");
+            expect(Utils.parseWindowsVersionFromPlatformVersion("invalid")).to.equal(null);
+            expect(Utils.parseWindowsVersionFromPlatformVersion("")).to.equal(null);
+        });
+    });
+
+    it("Check if browser fields are parsed from userAgentData hints", () => {
+        hp.haltAndClearStorage(() => {
+            var mockUserAgentData = {
+                platform: "Windows",
+                brands: [{ brand: "Chromium", version: "120" }, { brand: "Google Chrome", version: "120" }],
+                getHighEntropyValues: () => Promise.resolve({
+                    platform: "Windows",
+                    platformVersion: "14.0.0",
+                    fullVersionList: [
+                        { brand: "Chromium", version: "120.0.0.0" },
+                        { brand: "Google Chrome", version: "120.0.6099.216" }
+                    ]
+                })
+            };
+
+            return Utils.getUserAgentClientHints(mockUserAgentData).then((hints) => {
+                expect(hints.browserName).to.equal("Google Chrome");
+                expect(hints.browserVersion).to.equal("120.0.6099.216");
+                expect(hints.windowsVersion).to.equal("11");
+            });
+        });
+    });
+
+    it("Check if Not:A-Brand is ignored in UA-CH parsing", () => {
+        hp.haltAndClearStorage(() => {
+            var mockUserAgentData = {
+                platform: "Windows",
+                brands: [
+                    { brand: "Not:A-Brand", version: "99" },
+                    { brand: "Google Chrome", version: "145" },
+                    { brand: "Chromium", version: "145" }
+                ],
+                getHighEntropyValues: () => Promise.resolve({
+                    platform: "Windows",
+                    platformVersion: "19.0.0",
+                    fullVersionList: [
+                        { brand: "Not:A-Brand", version: "99.0.0.0" },
+                        { brand: "Google Chrome", version: "145.0.7632.160" },
+                        { brand: "Chromium", version: "145.0.7632.160" }
+                    ]
+                })
+            };
+
+            return Utils.getUserAgentClientHints(mockUserAgentData).then((hints) => {
+                expect(hints.browserName).to.equal("Google Chrome");
+                expect(hints.browserVersion).to.equal("145.0.7632.160");
+                expect(hints.windowsVersion).to.equal("11");
+            });
         });
     });
 });

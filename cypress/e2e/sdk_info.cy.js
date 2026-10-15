@@ -1,9 +1,7 @@
-/* eslint-disable cypress/no-unnecessary-waiting */
 /* eslint-disable require-jsdoc */
 var Countly = require("../../lib/countly");
+import { SDK_NAME, SDK_VERSION } from "../support/sdk-modules/Constants.js";
 var hp = require("../support/helper.js");
-const SDK_NAME = "javascript_native_web";
-const SDK_VERSION = "26.1.2";
 
 function initMain(name, version) {
     Countly.init({

@@ -62,7 +62,7 @@ a {
   color: #0d172a;
   cursor: pointer;
   display: inline-block;
-  font-family: "Basier circle", "Noto Color Emoji";
+  font-family: "Basier circle", "Noto Color Emoji", sans-serif;
   font-size: 10px;
   font-weight: 600;
   line-height: 1;
@@ -201,7 +201,7 @@ a {
 #buttons {
   display: grid;
   justify-items: center;
-  grid-gap: 12px;
+  gap: 12px;
 }
 
 #new-ratings {

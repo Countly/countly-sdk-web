@@ -1,6 +1,5 @@
 import { turnSearchStringToObject, check_commons } from "../support/helper";
 
-var expectedRequests = 4;
 const myEvent = {
     key: "buttonClick",
     segmentation: {
@@ -11,7 +10,7 @@ const myEvent = {
 describe("Web Worker Request Intercepting Tests", () => {
     it("SDK able to send requests for most basic calls", () => {
         // create a worker
-        const myWorker = new Worker("../../test_workers/worker.js", { type: "module" });
+        const myWorker = new Worker("../../test_workers/worker.js");
 
         // send an event to worker
         myWorker.postMessage({ data: myEvent, type: "event" });
@@ -33,6 +32,7 @@ describe("Web Worker Request Intercepting Tests", () => {
             check_commons(paramsObject);
 
             // we expect 4 requests: begin_session, end_session, healthcheck, event(event includes view and buttonClick)
+            let expectedRequests = 4;
             if (paramsObject.hc) {
                 // check hc params types, values can change
                 assert.isTrue(typeof paramsObject.hc.el === "number");

@@ -17,6 +17,8 @@ module.exports =  defineConfig({
               res.setHeader('Access-Control-Allow-Origin', '*');
               res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
               res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+              // a connection per request: one sent as the server closes an idle connection (after 5 s) can be lost
+              res.setHeader('Connection', 'close');
 
               if (req.method === 'OPTIONS') {
                 res.writeHead(204);
@@ -85,6 +87,10 @@ module.exports =  defineConfig({
         clearRequests() {
           requests = [];
           return null;
+        },
+        sha256(data) {
+          const crypto = require('crypto');
+          return crypto.createHash('sha256').update(data).digest('hex');
         },
       });
 
