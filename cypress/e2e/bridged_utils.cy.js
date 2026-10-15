@@ -1,6 +1,8 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 /* eslint-disable require-jsdoc */
 var Countly = require("../../lib/countly");
+import { SDK_NAME, SDK_VERSION } from "../support/sdk-modules/Constants.js";
+// import * as Countly from "../../dist/countly_umd.js";
 var hp = require("../support/helper.js");
 
 function initMain(name, version) {
@@ -14,8 +16,6 @@ function initMain(name, version) {
     });
 }
 
-const SDK_NAME = "javascript_native_web";
-const SDK_VERSION = "26.1.3";
 
 // tests
 describe("Bridged SDK Utilities Tests", () => {

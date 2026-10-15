@@ -1,8 +1,6 @@
-/* eslint-disable cypress/no-unnecessary-waiting */
 /* eslint-disable require-jsdoc */
-var Countly = require("../../lib/countly");
-// import * as Countly from "../../dist/countly_umd.js";
-var hp = require("../support/helper.js");
+const Countly = require("../../lib/countly");
+const hp = require("../support/helper");
 
 function initMain() {
     Countly.init({

@@ -1,0 +1,32 @@
+<!-- Used in async queue tests: a main and a second instance on a fresh page, the second one working through Countly.q first. Their app keys differ from the spec's own instance, which shares this origin's storage -->
+<html>
+<head>
+  <script type='text/javascript' src='../../lib/countly.js'></script>
+  <script type='module'>
+
+    window.localStorage.clear();
+    Countly.init({
+      app_key: "MAIN_APP_KEY",
+      url: "https://your.domain.count.ly",
+      debug: true,
+      test_mode: true,
+      test_mode_eq: true
+    });
+    Countly.init({
+      app_key: "SECOND_APP_KEY",
+      url: "https://your.domain.count.ly",
+      debug: true,
+      test_mode: true,
+      test_mode_eq: true
+    });
+    Countly.q.push(["add_event", { key: "for_main", count: 1 }]);
+    Countly.q.push(["SECOND_APP_KEY", "add_event", { key: "for_second", count: 1 }]);
+    Countly.q.push(["MAIN_APP_KEY", "add_event", { key: "for_main_by_key", count: 1 }]);
+    // user details make the second instance work through Countly.q before the main instance's heartbeat does
+    Countly.i.SECOND_APP_KEY.user_details({ name: "second user" });
+  </script>
+</head>
+<body>
+  <h1>Async queue with two instances</h1>
+</body>
+</html>

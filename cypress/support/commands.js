@@ -336,44 +336,35 @@ Cypress.Commands.add("check_custom_properties_limit", (propertiesObject, customP
 });
 
 /**
- * fetches request queue from the local storage 
+ * fetches the request queue the page keeps: in its tab's sessionStorage, or in localStorage where it has none
  */
 Cypress.Commands.add("fetch_local_request_queue", (appKey) => {
     cy.wait(hp.sWait).then(() => {
         appKey = appKey || hp.appKey;
-        cy.getLocalStorage(`${appKey}/cly_queue`).then((e) => {
-            if (e === undefined) {
-                expect.fail("request queue inside the local storage should not be undefined");
-            }
-            if (e === null) {
-                // assume the queue is empty
-                return [];
-            }
-            const queue = JSON.parse(e);
-            return queue;
-        });
+        return storedQueue(`${appKey}/cly_queue`);
     });
 });
 
 /**
- * fetches event queue from the local storage 
+ * fetches the event queue the page keeps: in its tab's sessionStorage, or in localStorage where it has none
  */
 Cypress.Commands.add("fetch_local_event_queue", (appKey) => {
     cy.wait(hp.sWait).then(() => {
         appKey = appKey || hp.appKey;
-        cy.getLocalStorage(`${appKey}/cly_event`).then((e) => {
-            if (e === undefined) {
-                expect.fail("event queue inside the local storage should not be undefined");
-            }
-            if (e === null) {
-                // assume the queue is empty
-                return [];
-            }
-            const queue = JSON.parse(e);
-            return queue;
-        });
+        return storedQueue(`${appKey}/cly_event`);
     });
 });
+
+/**
+ * what is waiting to be sent: what tabs left in localStorage when their page was left, then what this tab keeps
+ * @param {String} key - storage key of the queue
+ * @returns {Array} the stored items, in the order they would be sent
+ */
+function storedQueue(key) {
+    var left = JSON.parse(window.localStorage.getItem(key) || "[]");
+    var own = JSON.parse(window.sessionStorage.getItem(key) || "[]");
+    return (Array.isArray(left) ? left : []).concat(Array.isArray(own) ? own : []);
+}
 
 /**
  * fetches values from local storage 

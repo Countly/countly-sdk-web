@@ -1,6 +1,7 @@
-
+/* eslint-disable require-jsdoc */
 var Countly = require("../../lib/countly");
-var hp = require("../support/helper.js");
+var hp = require("../support/helper");
+import { triggerStorageChange } from "../support/integration_helper";
 
 function initMain(val, disableSync) {
     Countly.init({
@@ -32,7 +33,7 @@ function sentReqList(size, expectedKeywords, nonexistingKeywords) {
     }
 }
 function queues(eqsize, rqsize, expectedKeywords, nonexistingKeywords) {
-    var queues = Countly._internals.getLocalQueues(); // get local queues
+    var queues = hp.waitingQueues("spp"); // get what waits to be sent
     const allKeysE = queues.eventQ.flatMap(item => Object.keys(item));
     const allKeysQ = queues.requestQ.flatMap(item => Object.keys(item));
     const uniqueKeys = [...new Set(allKeysE), ...new Set(allKeysQ)];
@@ -84,13 +85,13 @@ describe("SDK Behavior test", () => {
             cy.wait(waitT).then(() => {
                 cy.fetch_local_request_queue().then((rq) => {
                     cy.log("Request Queue: " + JSON.stringify(rq));
-                    sentReqList(9, ["server_config", "[healthCheck]", "enrollUserToAb", "fetch_remote_config_explicit", "send_request_queue", "get_available_feedback_widgets,"]);
+                    sentReqList(10, ["server_config", "[healthCheck]", "enrollUserToAb", "fetch_remote_config_explicit", "send_request_queue", "get_available_feedback_widgets,"]);
                     queues(0, 15);
                 });
             });
         });
     });
-
+    
     it("Config with networking disabled", () => {
         hp.haltAndClearStorage(() => {
             var settings = {};
@@ -102,9 +103,68 @@ describe("SDK Behavior test", () => {
             cy.wait(waitT).then(() => {
                 cy.fetch_local_request_queue().then((rq) => {
                     cy.log("Request Queue: " + JSON.stringify(rq));
-                    sentReqList(1, ["server_config"]);
+                    sentReqList(2, ["server_config"]);
                     queues(0, 15);
                 });
+            });
+        });
+    });
+    
+    it("Sends the queued requests on the same page once networking is switched back on", () => {
+        hp.haltAndClearStorage(() => {
+            initMain({ c: { networking: false } });
+            Countly.add_event({ key: "waits_for_networking" });
+            cy.wait(waitT).then(() => {
+                var sentWhileOff = Countly._internals.testingGetRequests().filter((r) => r.functionName === "send_request_queue");
+                expect(sentWhileOff.length, "nothing is sent while networking is off").to.equal(0);
+                triggerStorageChange("spp/cly_config", JSON.stringify({ v: 2, t: 2, c: { networking: true } }));
+                cy.wait(waitT).then(() => {
+                    var sent = Countly._internals.testingGetRequests().filter((r) => r.functionName === "send_request_queue");
+                    expect(sent.length).to.be.greaterThan(0);
+                });
+            });
+        });
+    });
+
+    it("Reports a request it could not build instead of stalling silently", () => {
+        hp.haltAndClearStorage(() => {
+            cy.spy(console, "error").as("consoleError");
+            Countly.init({ app_key: "spp", url: "https://hey.some.ly", debug: true, headers: { "bad header": "1" } });
+            Countly.add_event({ key: "with_a_bad_header" });
+            cy.wait(waitT).then(() => {
+                cy.get("@consoleError").should((spy) => {
+                    var lines = spy.getCalls().map((call) => String(call.args[0]));
+                    expect(lines.some((line) => line.indexOf("send_request_queue") !== -1)).to.equal(true);
+                });
+            });
+        });
+    });
+
+    it("Calls back once when a request times out", () => {
+        // on a timeout a browser reports the request as done with status 0 and then as timed out
+        function TimingOutXhr() {}
+        TimingOutXhr.prototype.open = function () {};
+        TimingOutXhr.prototype.setRequestHeader = function () {};
+        TimingOutXhr.prototype.send = function () {
+            setTimeout(() => {
+                this.readyState = 4;
+                this.status = 0;
+                this.responseText = "";
+                this.onreadystatechange();
+                this.ontimeout();
+            }, 50);
+        };
+        hp.haltAndClearStorage(() => {
+            Countly.init({ app_key: "spp", url: "https://hey.some.ly", test_mode: true, debug: true });
+            var original = window.XMLHttpRequest;
+            window.XMLHttpRequest = TimingOutXhr;
+            var calls = 0;
+            Countly._internals.sendXmlHttpRequest("timeout_test", "https://hey.some.ly/i", { a: 1 }, () => {
+                calls++;
+            });
+            cy.wait(500).then(() => {
+                window.XMLHttpRequest = original;
+                expect(calls).to.equal(1);
             });
         });
     });
@@ -120,13 +180,13 @@ describe("SDK Behavior test", () => {
             cy.wait(waitT).then(() => {
                 cy.fetch_local_request_queue().then((rq) => {
                     cy.log("Request Queue: " + JSON.stringify(rq));
-                    sentReqList(8, ["server_config", "[healthCheck]", "enrollUserToAb", "fetch_remote_config_explicit", "get_available_feedback_widgets,"]);
-                    queues(0, 0);
+                    sentReqList(10, ["server_config", "[healthCheck]", "enrollUserToAb", "fetch_remote_config_explicit", "get_available_feedback_widgets,"]);
+                    queues(0,0);
                 });
             });
         });
     });
-
+    
     it("Config with both tracking and networking disabled", () => {
         hp.haltAndClearStorage(() => {
             var settings = {};
@@ -139,13 +199,13 @@ describe("SDK Behavior test", () => {
             cy.wait(waitT).then(() => {
                 cy.fetch_local_request_queue().then((rq) => {
                     cy.log("Request Queue: " + JSON.stringify(rq));
-                    sentReqList(1, ["server_config"]);
-                    queues(0, 0);
+                    sentReqList(3, ["server_config"]);
+                    queues(0,0);
                 });
             });
         });
     });
-
+    
     it("Config with consent required true", () => {
         hp.haltAndClearStorage(() => {
             var settings = {};
@@ -157,13 +217,13 @@ describe("SDK Behavior test", () => {
             cy.wait(waitT).then(() => {
                 cy.fetch_local_request_queue().then((rq) => {
                     cy.log("Request Queue: " + JSON.stringify(rq));
-                    sentReqList(4, ["server_config", "[healthCheck]", "enrollUserToAb", "send_request_queue"]); // device id change sent
+                    sentReqList(5, ["server_config", "[healthCheck]", "enrollUserToAb", "send_request_queue"]); // device id change sent
                     queues(0, 2, ["old_device_id", "consent"]);
                 });
             });
         });
     });
-
+    
     it("Limited queue sizes with networking disabled", () => {
         hp.haltAndClearStorage(() => {
             var settings = {};
@@ -173,11 +233,11 @@ describe("SDK Behavior test", () => {
                 networking: false,
             };
             initMain(settings);
-            Countly.add_event({ key: "test_1" });
-            Countly.add_event({ key: "test_2" });
-            Countly.add_event({ key: "test_3" });
-            Countly.add_event({ key: "test_4" });
-            Countly.add_event({ key: "test_5" });
+            Countly.add_event({key: "test_1"});
+            Countly.add_event({key: "test_2"});
+            Countly.add_event({key: "test_3"});
+            Countly.add_event({key: "test_4"});
+            Countly.add_event({key: "test_5"});
             cy.wait(3000).then(() => {
                 cy.fetch_local_request_queue().then((rq) => {
                     cy.log("Request Queue: " + JSON.stringify(rq));
@@ -187,7 +247,7 @@ describe("SDK Behavior test", () => {
             });
         });
     });
-
+    
     it("Session update interval configuration", () => {
         hp.haltAndClearStorage(() => {
             var settings = {};
@@ -205,7 +265,7 @@ describe("SDK Behavior test", () => {
             });
         });
     });
-
+    
     it("Disabled tracking types configuration", () => {
         hp.haltAndClearStorage(() => {
             var settings = {};
@@ -218,9 +278,9 @@ describe("SDK Behavior test", () => {
             };
             initMain(settings);
             Countly.track_sessions();
-            Countly.add_event({ key: "test_1" });
+            Countly.add_event({key: "test_1"});
             Countly.track_pageview();
-            Countly.log_error({ message: "test" });
+            Countly.log_error({message: "test"});
             cy.wait(4000).then(() => {
                 cy.fetch_local_request_queue().then((rq) => {
                     cy.log("Request Queue: " + JSON.stringify(rq));
@@ -255,7 +315,7 @@ describe("SDK Behavior Sync Disable tests", () => {
     it("Initialization with disable_sdk_behavior_settings_updates false - server config request made", () => {
         hp.haltAndClearStorage(() => {
             Countly.init({
-                app_key: "spp",
+                app_key: "spp", 
                 url: "https://hey.some.ly",
                 debug: true,
                 disable_sdk_behavior_settings_updates: false
@@ -275,7 +335,7 @@ describe("SDK Behavior Sync Disable tests", () => {
         hp.haltAndClearStorage(() => {
             Countly.init({
                 app_key: "spp",
-                url: "https://hey.some.ly",
+                url: "https://hey.some.ly", 
                 debug: true
             });
             cy.wait(waitT).then(() => {

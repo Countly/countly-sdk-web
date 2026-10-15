@@ -4,6 +4,7 @@
 <!--Countly script-->
 <script type='text/javascript' src='../../lib/countly.js'></script>
 <script type='module'>
+window.Countly = Countly;
 import { queryExtractor } from '../support/integration_helper.js';
 // here we implement a cookie and localStorage clearing logic
 const deleteAllCookies = () => {

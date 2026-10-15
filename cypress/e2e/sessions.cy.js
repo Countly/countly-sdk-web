@@ -30,7 +30,7 @@ const dummyQueue = [
 describe("Session tests ", () => {
     it("Checks if session start, extension and ending works with a dummy queue", () => {
         hp.haltAndClearStorage(() => {
-            // initialize countly
+        // initialize countly
             initMain();
             // begin session
             Countly.begin_session();
@@ -50,7 +50,7 @@ describe("Session tests ", () => {
     });
     it("Checks if session start, extension and ending works", () => {
         hp.haltAndClearStorage(() => {
-            // initialize countly
+        // initialize countly
             initMain();
             // begin session
             Countly.begin_session();
@@ -75,6 +75,10 @@ describe("Session tests ", () => {
 });
 describe("Browser session tests, auto", () => {
     it("Single session test with auto sessions", () => {
+        // the instance the tests above used would hand its queue over when the page's own instance sets the device ID, as another tab does
+        if (Countly.halt !== undefined) {
+            Countly.halt();
+        }
         cy.visit("./cypress/fixtures/session_test_auto.html?use_session_cookie=true")
             .wait(waitTime);
         cy.contains("Event").click().wait(300);
@@ -117,7 +121,11 @@ describe("Browser session tests, manual 1", () => {
 describe("Browser session tests, manual 2", () => {
     it("Single bounce test with manual sessions 2", () => {
         cy.visit("./cypress/fixtures/session_test_manual_2.html?use_session_cookie=true").wait(waitTime);
-        cy.contains("Event").click().wait(300);
+        cy.contains("Event").click();
+        // the page ends its session as it unloads, so it is left only once the heartbeat queued the event before that
+        cy.window().should((win) => {
+            expect(win.Countly._internals.getEventQueue()).to.have.length(0);
+        });
         cy.visit("./cypress/fixtures/base.html");
         cy.fetch_local_request_queue(app_key).then((rq) => {
             cy.log(rq);
@@ -178,7 +186,11 @@ describe("Browser session tests, manual 1, no cookie", () => {
 describe("Browser session tests, manual 2, no cookie", () => {
     it("Single bounce test with manual sessions 2 and no cookies", () => {
         cy.visit("./cypress/fixtures/session_test_manual_2.html").wait(waitTime);
-        cy.contains("Event").click().wait(500);
+        cy.contains("Event").click();
+        // the page ends its session as it unloads, so it is left only once the heartbeat queued the event before that
+        cy.window().should((win) => {
+            expect(win.Countly._internals.getEventQueue()).to.have.length(0);
+        });
         cy.visit("./cypress/fixtures/base.html");
         cy.fetch_local_request_queue(app_key).then((rq) => {
             cy.log(rq);
@@ -198,7 +210,7 @@ describe("Browser session tests, manual 2, no cookie", () => {
 describe("Check request related functions", () => {
     it("Check if prepareRequest forms a proper request object", () => {
         hp.haltAndClearStorage(() => {
-            // initialize countly
+        // initialize countly
             initMain();
             let reqObject = {};
             Countly._internals.prepareRequest(reqObject);
@@ -208,7 +220,7 @@ describe("Check request related functions", () => {
     });
     it("Check if prepareRequest forms a proper request object from a bad one ", () => {
         hp.haltAndClearStorage(() => {
-            // initialize countly
+        // initialize countly
             initMain();
             let reqObject = { app_key: null, device_id: null };
             Countly._internals.prepareRequest(reqObject);
@@ -218,7 +230,7 @@ describe("Check request related functions", () => {
     });
     it("Check if prepareRequest forms a proper request object and not erase an extra value ", () => {
         hp.haltAndClearStorage(() => {
-            // initialize countly
+        // initialize countly
             initMain();
             let reqObject = { extraKey: "value" };
             Countly._internals.prepareRequest(reqObject);

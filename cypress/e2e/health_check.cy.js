@@ -48,4 +48,39 @@ describe("Health Check tests", () => {
             });
         });
     });
+    it("Sends nothing for an ignored visitor, so no user without a device ID is created", () => {
+        var sent = [];
+        hp.haltAndClearStorage(() => {
+            Countly.init({
+                app_key: "YOUR_APP_KEY",
+                url: "https://your.domain.count.ly",
+                debug: true,
+                ignore_visitor: true,
+                remote_config: true,
+                fake_request_handler: (req) => {
+                    sent.push(req.functionName + " device_id:" + req.params.device_id);
+                    return { status: 200, responseText: "{\"result\":\"Success\"}" };
+                }
+            });
+            Countly.fetch_remote_config();
+            Countly.get_available_feedback_widgets(() => {});
+            cy.wait(1500).then(() => {
+                expect(sent.filter((request) => request.indexOf("device_id:undefined") !== -1)).to.deep.equal([]);
+            });
+        });
+    });
+    it("Reads the counters back from cookies with cookie storage", () => {
+        hp.haltAndClearStorage(() => {
+            document.cookie = "YOUR_APP_KEY/cly_hc_error_count=3; path=/";
+            document.cookie = "YOUR_APP_KEY/cly_hc_warning_count=2; path=/";
+            Countly.init({
+                app_key: "YOUR_APP_KEY",
+                url: "https://your.domain.count.ly",
+                test_mode: true,
+                storage: "cookie"
+            });
+            expect(Countly.hcErrorCount).to.equal(3);
+            expect(Countly.hcWarningCount).to.equal(2);
+        });
+    });
 });
