@@ -304,7 +304,9 @@ function calculateChecksum(data, salt) {
 }
 
 /**
- * Decodes standard base64 text into bytes, with atob or, in runtimes without it, Buffer
+ * Decodes standard base64 text into bytes, with atob or, in runtimes without it, Buffer.
+ * Buffer is read from globalThis: Parcel replaces a bare Buffer in browser bundles with the npm buffer package, which
+ * every site would then have to install.
  * @param {String} base64 - standard base64 text
  * @returns {Uint8Array} the decoded bytes
  * @throws when atob rejects the text, or when the runtime has neither atob nor Buffer
@@ -318,8 +320,8 @@ function base64ToBytes(base64) {
         }
         return bytes;
     }
-    if (typeof Buffer !== "undefined") {
-        return new Uint8Array(Buffer.from(base64, "base64"));
+    if (typeof globalThis.Buffer !== "undefined") {
+        return new Uint8Array(globalThis.Buffer.from(base64, "base64"));
     }
     throw new Error("No base64 decoder in this runtime");
 }
