@@ -14,7 +14,8 @@
     "build": "webpack",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
-    "test": "cypress run"
+    "test": "cypress run",
+    "test:consumers": "npm --prefix test/consumers test"
   },
   "repository": {
     "type": "git",
