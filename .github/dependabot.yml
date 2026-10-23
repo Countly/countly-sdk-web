@@ -36,3 +36,22 @@ updates:
     labels:
       - dependencies
     versioning-strategy: increase-if-necessary
+  - package-ecosystem: npm
+    directory: "/test/consumers/"
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 10
+    reviewers:
+      - turtledreams
+    assignees:
+      - turtledreams
+    labels:
+      - dependencies
+    versioning-strategy: increase-if-necessary
+    groups:
+      consumer-test-tools:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"

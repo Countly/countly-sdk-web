@@ -1,3 +1,8 @@
+## NEXT RELEASE
+
+- Mitigated an issue where importing the SDK as an ES module (Vite 8 and other `"type": "module"` projects, Node.js, jsDelivr's `+esm`) or with `require()` gave a wrapper object instead of the SDK, so `Countly.init` was undefined. `Countly.default` keeps working.
+- Mitigated an issue where building a site with Parcel required the `buffer` package.
+
 ## 26.8.0
 
 - ! Minor Breaking Change ! Form tracking (`track_forms`) and form data collection (`collect_from_forms`) now leave out sensitive data:
