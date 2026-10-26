@@ -36,11 +36,11 @@ self.COUNTLY_PUSH_LIFECYCLE = false;
 // (node_modules/countly-sdk-web/lib/countly_sw.js), and replace it whenever you upgrade the SDK. Any
 // name works: one without "countly" or "push" stays clear of ad blocker rules, which also block other
 // push providers' worker files, and a new name per version makes browsers fetch the new copy at once.
-importScripts("/js/sw-addon-26.8.0.js");
+importScripts("/js/sw-addon-26.8.1.js");
 
 // Or import it from a CDN, pinned to the version you tested with: a floating tag would change your
 // users' worker without a deploy, and visitors whose ad blocker blocks the CDN get no push from you.
-// importScripts("https://cdn.jsdelivr.net/npm/countly-sdk-web@26.8.0/lib/countly_sw.js");
+// importScripts("https://cdn.jsdelivr.net/npm/countly-sdk-web@26.8.1/lib/countly_sw.js");
 
 // ...your own handlers follow. They run alongside Countly's; a `push` without Countly's payload
 // or a click on a notification you showed is ignored by the imported handlers.

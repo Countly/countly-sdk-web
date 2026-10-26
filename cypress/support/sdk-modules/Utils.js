@@ -229,6 +229,35 @@ function addNewProperties(orig, transferOb, props) {
 }
 
 /**
+ * Returns a copy of a value that JSON can always encode, with the JSON the original gives wherever it can be encoded.
+ * BigInt numbers become strings, so IDs keep every digit. A value JSON still cannot encode, such as an object that refers
+ * back to itself (a React click event holds the window), is left out and logged as an error, so it can never stop the SDK
+ * from turning its queues into JSON later.
+ * @param {*} value - value to copy
+ * @param {string} errorLog - prefix for error log
+ * @param {function} logCall - internal logging function
+ * @returns {*} the value, its copy, or undefined when JSON cannot encode it
+ */
+function makeJsonSafe(value, errorLog, logCall) {
+    if (typeof value === "bigint") {
+        return value.toString();
+    }
+    if (value === null || typeof value !== "object") {
+        return value;
+    }
+    try {
+        var json = JSON.stringify(value, function(key, v) {
+            return typeof v === "bigint" ? v.toString() : v;
+        });
+        return typeof json === "undefined" ? undefined : JSON.parse(json);
+    }
+    catch (ex) {
+        logCall(logLevelEnums.ERROR, errorLog + ", A value JSON cannot encode was left out: [" + ex + "]");
+        return undefined;
+    }
+}
+
+/**
  * Truncates an object's key/value pairs to a certain length
  * @param {Object} obj - original object to be truncated
  * @param {Number} keyLimit - limit for key length
@@ -253,8 +282,12 @@ function truncateObject(obj, keyLimit, valueLimit, segmentLimit, errorLog, logCa
             obj = resizedObj;
         }
         for (var key in obj) {
+            var safeValue = makeJsonSafe(obj[key], errorLog, logCall);
+            if (typeof safeValue === "undefined" && typeof obj[key] !== "undefined") {
+                continue;
+            }
             var newKey = truncateSingleValue(key, keyLimit, errorLog, logCall);
-            var newValue = truncateSingleValue(obj[key], valueLimit, errorLog, logCall);
+            var newValue = truncateSingleValue(safeValue, valueLimit, errorLog, logCall);
             ob[newKey] = newValue;
         }
     }
@@ -304,7 +337,9 @@ function calculateChecksum(data, salt) {
 }
 
 /**
- * Decodes standard base64 text into bytes, with atob or, in runtimes without it, Buffer
+ * Decodes standard base64 text into bytes, with atob or, in runtimes without it, Buffer.
+ * Buffer is read from globalThis: Parcel replaces a bare Buffer in browser bundles with the npm buffer package, which
+ * every site would then have to install.
  * @param {String} base64 - standard base64 text
  * @returns {Uint8Array} the decoded bytes
  * @throws when atob rejects the text, or when the runtime has neither atob nor Buffer
@@ -318,8 +353,8 @@ function base64ToBytes(base64) {
         }
         return bytes;
     }
-    if (typeof Buffer !== "undefined") {
-        return new Uint8Array(Buffer.from(base64, "base64"));
+    if (typeof globalThis.Buffer !== "undefined") {
+        return new Uint8Array(globalThis.Buffer.from(base64, "base64"));
     }
     throw new Error("No base64 decoder in this runtime");
 }
@@ -1037,6 +1072,7 @@ export {
     stripTrailingSlash,
     createNewObjectFromProperties,
     addNewProperties,
+    makeJsonSafe,
     truncateObject,
     truncateSingleValue,
     get_closest_element,

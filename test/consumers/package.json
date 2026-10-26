@@ -1,0 +1,31 @@
+{
+  "name": "countly-sdk-web-consumer-tests",
+  "private": true,
+  "description": "Loads countly-sdk-web the way pages, bundlers, frameworks, runtimes and test runners do, and checks what each one receives",
+  "scripts": {
+    "test": "node --test --test-concurrency=1 bundlers.test.mjs browser.test.mjs frameworks.test.mjs runtimes.test.mjs compiled.test.mjs test-runners.test.mjs"
+  },
+  "devDependencies": {
+    "@babel/core": "7.29.7",
+    "@babel/plugin-transform-modules-commonjs": "7.29.7",
+    "@rollup/plugin-commonjs": "29.0.3",
+    "@rollup/plugin-node-resolve": "16.0.3",
+    "@rspack/core": "2.2.9",
+    "babel-jest": "30.5.2",
+    "esbuild": "0.28.2",
+    "happy-dom": "21.0.4",
+    "jest": "30.5.2",
+    "jest-environment-jsdom": "30.5.2",
+    "next": "16.4.2",
+    "parcel": "2.16.4",
+    "playwright-core": "1.64.1",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "requirejs": "2.3.8",
+    "rollup": "4.64.12",
+    "typescript": "5.9.3",
+    "vite": "8.3.5",
+    "vitest": "5.0.5",
+    "webpack": "5.112.0"
+  }
+}

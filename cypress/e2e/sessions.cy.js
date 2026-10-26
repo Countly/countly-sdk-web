@@ -72,6 +72,42 @@ describe("Session tests ", () => {
             });
         });
     });
+    it("Records one orientation event for each resize after sessions started again on the page", () => {
+        hp.haltAndClearStorage(() => {
+            var sent = [];
+            // recorded ones: sent, or still waiting in the queues
+            var orientations = () => {
+                var waiting = hp.waitingQueues();
+                var inRequests = sent.concat(waiting.requestQ).filter((p) => p.events).reduce((n, p) => n + JSON.parse(p.events).filter((e) => e.key === "[CLY]_orientation").length, 0);
+                return inRequests + waiting.eventQ.filter((e) => e.key === "[CLY]_orientation").length;
+            };
+            Countly.init({
+                app_key: "YOUR_APP_KEY",
+                url: "https://your.domain.count.ly",
+                device_id: "first user",
+                fake_request_handler: (req) => {
+                    sent.push(req.params);
+                    return { status: 200, responseText: "{\"result\":\"Success\"}" };
+                }
+            });
+            Countly.track_sessions();
+            cy.wait(1000).then(() => {
+                // a user switch without merge starts a session for the next user
+                Countly.change_id("second user", false);
+                cy.wait(1000).then(() => {
+                    Countly.change_id("third user", false);
+                    cy.wait(2500).then(() => {
+                        expect(sent.filter((p) => p.begin_session).length, "sessions started").to.equal(3);
+                        var before = orientations();
+                        window.dispatchEvent(new Event("resize"));
+                        cy.wait(1500).then(() => {
+                            expect(orientations() - before, "orientation events for one resize").to.equal(1);
+                        });
+                    });
+                });
+            });
+        });
+    });
 });
 describe("Browser session tests, auto", () => {
     it("Single session test with auto sessions", () => {

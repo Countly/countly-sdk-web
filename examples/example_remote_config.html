@@ -21,7 +21,7 @@
             url: COUNTLY_SERVER_KEY, //your server goes here
             debug: true,
             rc_automatic_optin_for_ab: true, // set it to false for not opting in users for AB testing while fetching the remote config (only with latest API)
-            use_explicit_rc_api: false, // set it to true to use the latest API
+            use_explicit_rc_api: true, // the default, set it to false to use the legacy API
             remote_config: function (err, configs) {
                 //handle initial remote configs here
                 console.log(err, configs);

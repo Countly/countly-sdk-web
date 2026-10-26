@@ -156,3 +156,86 @@ describe("Internal limit tests ", () => {
         });
     });
 });
+
+// taken before any test runs: the SDK truncates the event and user details objects it is given, in place
+const customEventJson = JSON.stringify(customEvent);
+const userDetailJson = JSON.stringify(userDetail);
+
+/**
+ * Starts the SDK with the same limits, set by the SDK behavior settings of the server instead of init options
+ */
+function initWithServerLimits() {
+    Countly.init({
+        app_key: "YOUR_APP_KEY",
+        url: "https://your.domain.count.ly",
+        test_mode_eq: true,
+        test_mode: true,
+        debug: true,
+        behavior_settings: { c: { lkl: limits.key, lvs: limits.value, lsv: limits.segment, lbc: limits.breadcrumb, ltlpt: limits.line_thread, ltl: limits.line_length } }
+    });
+}
+
+describe("Internal limit tests with the limits from the SDK behavior settings", () => {
+    it("Applies the key, value and segmentation limits to custom events", () => {
+        hp.haltAndClearStorage(() => {
+            initWithServerLimits();
+            var event = JSON.parse(customEventJson);
+            Countly.add_event(event);
+            cy.fetch_local_event_queue().then((eq) => {
+                expect(eq.length).to.equal(1);
+                cy.check_custom_event_limit(eq[0], event, limits);
+            });
+        });
+    });
+    it("Applies the key limit to view names", () => {
+        hp.haltAndClearStorage(() => {
+            initWithServerLimits();
+            Countly.track_pageview(viewName);
+            cy.fetch_local_event_queue().then((eq) => {
+                expect(eq.length).to.equal(1);
+                cy.check_view_event_limit(eq[0], viewName, limits);
+            });
+        });
+    });
+    it("Applies the breadcrumb and stack trace limits to crashes", () => {
+        hp.haltAndClearStorage(() => {
+            initWithServerLimits();
+            Object.keys(bread).forEach((name) => Countly.add_log(bread[name]));
+            Countly.log_error(error);
+            cy.fetch_local_request_queue().then((rq) => {
+                expect(rq.length).to.equal(1);
+                cy.check_error_limit(rq[0], limits);
+            });
+        });
+    });
+    it("Applies the key and value limits to user details", () => {
+        hp.haltAndClearStorage(() => {
+            initWithServerLimits();
+            var details = JSON.parse(userDetailJson);
+            Countly.user_details(details);
+            cy.fetch_local_request_queue().then((rq) => {
+                expect(rq.length).to.equal(1);
+                cy.check_user_details(rq[0], details, limits);
+            });
+        });
+    });
+    it("Applies the key and value limits to custom user properties", () => {
+        hp.haltAndClearStorage(() => {
+            initWithServerLimits();
+            Countly.userData.set(customProperties.set[0], customProperties.set[1]);
+            Countly.userData.set_once(customProperties.set_once[0], customProperties.set_once[1]);
+            Countly.userData.increment_by(customProperties.increment_by[0], customProperties.increment_by[1]);
+            Countly.userData.multiply(customProperties.multiply[0], customProperties.multiply[1]);
+            Countly.userData.max(customProperties.max[0], customProperties.max[1]);
+            Countly.userData.min(customProperties.min[0], customProperties.min[1]);
+            Countly.userData.push(customProperties.push[0], customProperties.push[1]);
+            Countly.userData.push_unique(customProperties.push_unique[0], customProperties.push_unique[1]);
+            Countly.userData.pull(customProperties.pull[0], customProperties.pull[1]);
+            Countly.userData.save();
+            cy.fetch_local_request_queue().then((rq) => {
+                expect(rq.length).to.equal(1);
+                cy.check_custom_properties_limit(rq[0], customProperties, limits);
+            });
+        });
+    });
+});

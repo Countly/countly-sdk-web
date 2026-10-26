@@ -1,6 +1,6 @@
 {
   "name": "countly-sdk-web",
-  "version": "26.8.0",
+  "version": "26.8.1",
   "description": "Countly Web SDK",
   "main": "lib/countly.js",
   "types": "lib/countly.d.ts",
@@ -14,7 +14,8 @@
     "build": "webpack",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
-    "test": "cypress run"
+    "test": "cypress run",
+    "test:consumers": "npm --prefix test/consumers test"
   },
   "repository": {
     "type": "git",

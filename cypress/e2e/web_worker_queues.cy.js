@@ -31,4 +31,24 @@ describe("Web Worker Local Queue Tests", () => {
             cy.check_session(requestQueue[1], 0, false, false, false);
         });
     });
+    it("Records the status and message of a failed request for the next health check", () => {
+        let myWorker;
+        let health;
+        cy.intercept("POST", "https://your.domain.count.ly/i", { statusCode: 200, body: "{\"result\":\"Success\"}" });
+        // the server configuration request at start fails
+        cy.intercept("POST", "https://your.domain.count.ly/o/sdk", { statusCode: 503, body: "{\"result\":\"Service Unavailable\"}" }).as("serverConfig").then(() => {
+            myWorker = new Worker("../../test_workers/worker_for_test.js");
+            myWorker.onmessage = function(e) {
+                health = e.data;
+                myWorker.terminate();
+            };
+        });
+        cy.wait("@serverConfig");
+        cy.wait(1000).then(() => {
+            myWorker.postMessage({ data: "health", type: "hc" });
+        });
+        cy.wait(1000).then(() => {
+            expect(health).to.deep.equal({ sc: 503, em: "{\"result\":\"Service Unavailable\"}" });
+        });
+    });
 });
