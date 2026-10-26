@@ -16,16 +16,16 @@
     "happy-dom": "21.0.4",
     "jest": "30.5.2",
     "jest-environment-jsdom": "30.5.2",
-    "next": "16.4.2",
+    "next": "16.4.3",
     "parcel": "2.16.4",
     "playwright-core": "1.64.1",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "requirejs": "2.3.8",
-    "rollup": "4.64.12",
+    "rollup": "4.65.0",
     "typescript": "5.9.3",
     "vite": "8.3.5",
     "vitest": "5.0.5",
-    "webpack": "5.112.0"
+    "webpack": "5.112.2"
   }
 }
