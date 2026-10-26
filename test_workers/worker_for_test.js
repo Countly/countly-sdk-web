@@ -23,5 +23,9 @@ onmessage = function(e) {
     } else if (type === "get") {
         const queues = Countly._internals.getLocalQueues();
         postMessage(queues);
+    } else if (type === "hc") {
+        // the running instance's values, Countly itself holds the ones of init
+        const instance = Countly.i.YOUR_APP_KEY;
+        postMessage({ sc: instance.hcStatusCode, em: instance.hcErrorMessage });
     }
 };

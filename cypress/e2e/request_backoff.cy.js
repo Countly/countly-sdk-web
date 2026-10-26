@@ -270,7 +270,7 @@ describe("Request Back-off Mechanism Tests", () => {
             cy.task("setResponseDelay", 3500);
             // the SDK starts sending as soon as it is initialized, so the server has to be up first
             cy.task("startServer").then(() => {
-                var oldTimestamp = Math.floor(Date.now() / 1000) - 2 * 60 * 60; // 2 hours ago
+                var oldTimestamp = Date.now() - 2 * 60 * 60 * 1000; // 2 hours ago, in ms as the SDK stamps requests
                 initMain(undefined, oldTimestamp, undefined, undefined, { c: { bom_at: 3, bom_d: 15, bom_ra: 1 } });
                 Countly.add_event({ key: "test_1" });
             });
@@ -393,7 +393,7 @@ describe("Request Back-off Mechanism Tests", () => {
             cy.task("setResponseDelay", 31000);
             // the SDK starts sending as soon as it is initialized, so the server has to be up first
             cy.task("startServer").then(() => {
-                var oldTimestamp = Math.floor(Date.now() / 1000) - 10 * 365 * 24 * 60 * 60; // 10 years old timestamp in ms
+                var oldTimestamp = Date.now() - 10 * 365 * 24 * 60 * 60 * 1000; // 10 years old timestamp in ms
                 initMain(undefined, oldTimestamp);
                 Countly.add_event({ key: "test_1" });
                 Countly.attempt_to_send_stored_requests();
@@ -440,7 +440,7 @@ describe("Request Back-off Mechanism Tests", () => {
             cy.task("setResponseDelay", 11000);
             // the SDK starts sending as soon as it is initialized, so the server has to be up first
             cy.task("startServer").then(() => {
-                var oldTimestamp = Math.floor(Date.now() / 1000) - 25 * 60 * 60; // 25 hours old timestamp in ms
+                var oldTimestamp = Date.now() - 25 * 60 * 60 * 1000; // 25 hours old timestamp in ms
                 initMain(undefined, oldTimestamp, true);
                 Countly.add_event({ key: "test_1"});
                 Countly.attempt_to_send_stored_requests();
@@ -468,7 +468,7 @@ describe("Request Back-off Mechanism Tests", () => {
             cy.task("setResponseDelay", 0);
             // the SDK starts sending as soon as it is initialized, so the server has to be up first
             cy.task("startServer").then(() => {
-                var oldTimestamp = Math.floor(Date.now() / 1000) - 25 * 60 * 60; // 25 hours old timestamp in ms
+                var oldTimestamp = Date.now() - 25 * 60 * 60 * 1000; // 25 hours old timestamp in ms
                 initMain(undefined, oldTimestamp, true);
                 Countly.add_event({ key: "test_1" });
                 Countly.attempt_to_send_stored_requests();
@@ -503,7 +503,7 @@ describe("Request Back-off Mechanism Tests", () => {
             cy.task("setResponseDelay", 0);
             // the SDK starts sending as soon as it is initialized, so the server has to be up first
             cy.task("startServer").then(() => {
-                var oldTimestamp = Math.floor(Date.now() / 1000) - 25 * 60 * 60; // 25 hours old timestamp in ms
+                var oldTimestamp = Date.now() - 25 * 60 * 60 * 1000; // 25 hours old timestamp in ms
                 initMain(undefined, oldTimestamp, true);
                 Countly.add_event({ key: "test_1" });
                 Countly.attempt_to_send_stored_requests();
