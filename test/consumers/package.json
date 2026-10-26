@@ -6,7 +6,7 @@
     "test": "node --test --test-concurrency=1 bundlers.test.mjs browser.test.mjs frameworks.test.mjs runtimes.test.mjs compiled.test.mjs test-runners.test.mjs"
   },
   "devDependencies": {
-    "@babel/core": "7.29.7",
+    "@babel/core": "8.0.7",
     "@babel/plugin-transform-modules-commonjs": "7.29.7",
     "@rollup/plugin-commonjs": "29.0.3",
     "@rollup/plugin-node-resolve": "16.0.3",
