@@ -33,7 +33,7 @@
   },
   "homepage": "https://countly.com/",
   "devDependencies": {
-    "cypress": "15.21.0",
+    "cypress": "16.2.0",
     "cypress-localstorage-commands": "2.3.0",
     "docdash": "2.0.2",
     "jsdoc": "4.0.5"
