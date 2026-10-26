@@ -296,7 +296,7 @@ var pushConstants = Object.freeze({
     DEFAULT_SCOPE_FOLDER: "countly-push/",
 });
 
-var SDK_VERSION = "26.8.0";
+var SDK_VERSION = "26.8.1";
 var SDK_NAME = "javascript_native_web";
 
 /**

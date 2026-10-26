@@ -1,7 +1,20 @@
-## NEXT RELEASE
+## 26.8.1
+
+- ! Minor Breaking Change ! Remote config is now downloaded with the current remote config API (`method=rc`) by default, as `use_explicit_rc_api` now defaults to `true`. It needs Countly server 22.09 or newer; set `use_explicit_rc_api` to `false` to keep the legacy API. The values and the A/B test enrollment stay the same, except that downloading only some keys now enrolls the user only in the A/B tests that use those keys.
+
+- Added `disable_health_check` init option for turning off the health check request the SDK sends when it starts (default `false`).
+- Added support for the drop old request time (`dort`) SDK behavior setting: queued requests older than the set number of hours are dropped instead of sent.
 
 - Mitigated an issue where importing the SDK as an ES module (Vite 8 and other `"type": "module"` projects, Node.js, jsDelivr's `+esm`) or with `require()` gave a wrapper object instead of the SDK, so `Countly.init` was undefined. `Countly.default` keeps working.
+- Mitigated an issue where an event or user property holding a value JSON cannot encode, such as a `BigInt` or an object that refers back to itself (a React click event holds the window), stopped sending for the rest of the page. A `BigInt` is now sent as a string, other such values are left out.
+- Mitigated an issue where, with `require_consent`, `Countly.init` threw an error in browsers that refuse access to storage, as when the visitor blocks cookies.
+- Mitigated an issue where duplicate orientation events could have been recorded in SPAs.
+- Mitigated an issue where calls pushed into `Countly.q` through a reference kept from before the SDK started, were never run.
+- Mitigated an issue where the health check counted errors and warnings only with `debug` on, and lost the ones logged on pages without automatic sessions. Its counters now restart when it is sent, even if it fails.
+- Mitigated an issue where the back-off request age setting (`bom_ra`) never applied, so requests older than it still paused sending while the server was slow.
 - Mitigated an issue where building a site with Parcel required the `buffer` package.
+- Mitigated an issue where the health check reported the status code and response of a failed request only for queued requests.
+- Mitigated an issue where crash reports from Firefox and Safari had no error name or message, and those of unhandled promise rejections had no reason, only a line inside the SDK.
 
 ## 26.8.0
 

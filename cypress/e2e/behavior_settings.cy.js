@@ -630,3 +630,65 @@ describe("Journey trigger behavior settings", () => {
         });
     });
 });
+
+describe("Drop old request time (dort)", () => {
+    /**
+     * Leaves a request recorded hoursAgo hours ago in the browser's storage, as a page that could not send it did
+     * @param {Number} hoursAgo - age of the request
+     * @param {String} key - key of the event the request carries
+     */
+    function leaveRequestFrom(hoursAgo, key) {
+        var ts = Date.now() - hoursAgo * 60 * 60 * 1000;
+        localStorage.setItem(hp.appKey + "/cly_queue", JSON.stringify([{ app_key: hp.appKey, device_id: "visitor", t: 0, timestamp: ts, events: JSON.stringify([{ key: key, count: 1, timestamp: ts }]) }]));
+    }
+
+    /**
+     * Starts the SDK with the given behavior settings and a request handler that answers with success
+     * @param {Array} sent - collects the parameters of every request
+     * @param {Object} settings - behavior settings
+     */
+    function initSending(sent, settings) {
+        Countly.init({
+            app_key: hp.appKey,
+            url: "https://example.count.ly",
+            device_id: "visitor",
+            behavior_settings: settings,
+            fake_request_handler: (req) => {
+                sent.push(req.params);
+                return { status: 200, responseText: "{\"result\":\"Success\"}" };
+            }
+        });
+    }
+
+    /**
+     * Keys of the events in the sent requests, in the order they were sent
+     * @param {Array} sent - parameters of the sent requests
+     * @returns {Array} event keys
+     */
+    function sentEventKeys(sent) {
+        return sent.filter((p) => p.events).reduce((all, p) => all.concat(JSON.parse(p.events).map((e) => e.key)), []);
+    }
+
+    it("drops queued requests older than dort hours instead of sending them", () => {
+        hp.haltAndClearStorage(() => {
+            var sent = [];
+            leaveRequestFrom(2, "two_hours_old");
+            initSending(sent, { c: { dort: 1 } });
+            Countly.add_event({ key: "fresh" });
+            cy.wait(1500).then(() => {
+                expect(sentEventKeys(sent)).to.deep.equal(["fresh"]);
+            });
+        });
+    });
+    it("sends queued requests younger than dort hours", () => {
+        hp.haltAndClearStorage(() => {
+            var sent = [];
+            leaveRequestFrom(2, "two_hours_old");
+            initSending(sent, { c: { dort: 3 } });
+            Countly.add_event({ key: "fresh" });
+            cy.wait(1500).then(() => {
+                expect(sentEventKeys(sent)).to.deep.equal(["two_hours_old", "fresh"]);
+            });
+        });
+    });
+});

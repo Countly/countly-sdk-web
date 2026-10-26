@@ -43,6 +43,41 @@ function consent_check(eq, eventArr, custom, internalOnly) {
     }
 }
 
+/**
+ * Makes reading localStorage and sessionStorage throw, as Chrome does for a site whose cookies the visitor blocked
+ * @param {Window} win - window to block storage in
+ * @returns {Function} puts the storage back
+ */
+function denyStorage(win) {
+    var saved = {};
+    ["localStorage", "sessionStorage"].forEach((name) => {
+        saved[name] = Object.getOwnPropertyDescriptor(win, name);
+        Object.defineProperty(win, name, {
+            configurable: true,
+            get() {
+                throw new DOMException("Failed to read the '" + name + "' property from 'Window': Access is denied for this document.", "SecurityError");
+            }
+        });
+    });
+    return () => {
+        ["localStorage", "sessionStorage"].forEach((name) => {
+            if (saved[name]) {
+                Object.defineProperty(win, name, saved[name]);
+            }
+            else {
+                delete win[name];
+            }
+        });
+    };
+}
+var restoreStorage = null;
+afterEach(() => {
+    if (restoreStorage) {
+        restoreStorage();
+        restoreStorage = null;
+    }
+});
+
 // tests
 describe("Consent tests", () => {
     it("Only custom event should be sent to the queue", () => {
@@ -155,6 +190,27 @@ describe("Consent tests", () => {
             cy.fetch_local_event_queue().then((eq) => {
                 expect(eq.length).to.equal(6);
                 consent_check(eq, hp.eventArray, false, true);
+            });
+        });
+    });
+    it("Starts with consent required when the browser refuses access to storage, as with cookies blocked", () => {
+        hp.haltAndClearStorage(() => {
+            var sent = [];
+            restoreStorage = denyStorage(window);
+            expect(() => Countly.init({
+                app_key: "YOUR_APP_KEY",
+                url: "https://your.domain.count.ly",
+                require_consent: true,
+                fake_request_handler: (req) => {
+                    sent.push(req.params);
+                    return { status: 200, responseText: "{\"result\":\"Success\"}" };
+                }
+            })).not.to.throw();
+            Countly.add_consent("events");
+            Countly.add_event({ key: "after_consent" });
+            cy.wait(1500).then(() => {
+                var keys = sent.filter((p) => p.events).reduce((all, p) => all.concat(JSON.parse(p.events).map((e) => e.key)), []);
+                expect(keys).to.deep.equal(["after_consent"]);
             });
         });
     });

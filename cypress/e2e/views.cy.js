@@ -303,3 +303,46 @@ describe("View ID tests ", () => {
         });
     });
 });
+
+/**
+ * The names of the views started, in the event queue
+ * @param {Array} eq - event queue
+ * @returns {Array} view names
+ */
+function startedViews(eq) {
+    return eq.filter((e) => e.key === "[CLY]_view" && e.segmentation.visit === 1).map((e) => e.segmentation.name);
+}
+
+describe("Views on the ignore list", () => {
+    it("Records no view for a page on the ignore list", () => {
+        hp.haltAndClearStorage(() => {
+            initMain();
+            Countly.track_pageview("/test-page", ["/test-page"]);
+            Countly.track_pageview("/test2", ["/test1", "/test2", "/test3"]);
+            Countly.track_pageview("/download/123", ["/download/*"]);
+            Countly.track_pageview("/shop", ["/test-page"]);
+            cy.fetch_local_event_queue().then((eq) => {
+                expect(startedViews(eq)).to.deep.equal(["/shop"]);
+            });
+        });
+    });
+    it("Applies an ignore list given alone to the current page", () => {
+        hp.haltAndClearStorage(() => {
+            initMain();
+            Countly.track_pageview([Countly.getViewName()]);
+            Countly.track_pageview(["/another-page"]);
+            cy.fetch_local_event_queue().then((eq) => {
+                expect(startedViews(eq)).to.deep.equal([Countly.getViewName()]);
+            });
+        });
+    });
+    it("Keeps tracking when an ignore list entry is not a valid pattern", () => {
+        hp.haltAndClearStorage(() => {
+            initMain();
+            Countly.track_pageview("/shop", ["(", "/admin"]);
+            cy.fetch_local_event_queue().then((eq) => {
+                expect(startedViews(eq)).to.deep.equal(["/shop"]);
+            });
+        });
+    });
+});

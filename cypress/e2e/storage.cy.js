@@ -320,3 +320,23 @@ describe("Saved SDK behavior settings", () => {
         });
     });
 });
+
+describe("Storage left by older SDK versions", () => {
+    it("Keeps the device ID and this app's waiting requests from the old cookies, then removes the old device ID cookies", () => {
+        hp.haltAndClearStorage(() => {
+            // older versions kept these in cookies named without the app key
+            document.cookie = "cly_id=returning-visitor; path=/";
+            document.cookie = "cly_id_type=0; path=/";
+            document.cookie = "cly_queue=" + JSON.stringify([
+                { app_key: "YOUR_APP_KEY", device_id: "returning-visitor", events: JSON.stringify([{ key: "kept_from_old_version", count: 1 }]), timestamp: 1700000000000 },
+                { app_key: "ANOTHER_APP_KEY", device_id: "returning-visitor", events: JSON.stringify([{ key: "of_another_app", count: 1 }]), timestamp: 1700000000000 }
+            ]) + "; path=/";
+            initMain();
+            expect(Countly.get_device_id()).to.equal("returning-visitor");
+            var waiting = hp.waitingQueues().requestQ.filter((r) => r.events).map((r) => JSON.parse(r.events)[0].key);
+            expect(waiting).to.deep.equal(["kept_from_old_version"]);
+            var oldCookies = document.cookie.split(";").map((c) => c.trim().split("=")[0]).filter((name) => ["cly_id", "cly_id_type"].indexOf(name) !== -1);
+            expect(oldCookies).to.deep.equal([]);
+        });
+    });
+});

@@ -501,3 +501,39 @@ describe("User details tests ", () => {
         });
     });
 });
+
+describe("User details from the visitor's Facebook profile", () => {
+    afterEach(() => {
+        delete window.FB;
+    });
+    it("Records the visitor's Facebook profile as user details", () => {
+        hp.haltAndClearStorage(() => {
+            var asked = [];
+            window.FB = {
+                api: (path, callback) => {
+                    asked.push(path);
+                    callback({ name: "Ada Lovelace", email: "ada@example.com", gender: "female", birthday: "12/10/1815", work: [{ employer: { name: "Analytical Engines" } }], location: { name: "London" }, timezone: 0 });
+                }
+            };
+            initMain();
+            Countly.collect_from_facebook({ city: "location.name", tz: "timezone", hometown: "hometown.name" });
+            cy.fetch_local_request_queue().then((rq) => {
+                var details = rq.filter((r) => r.user_details).map((r) => JSON.parse(r.user_details));
+                expect(asked).to.deep.equal(["/me"]);
+                expect(details.length).to.equal(1);
+                expect(details[0]).to.include({ name: "Ada Lovelace", email: "ada@example.com", gender: "F", organization: "Analytical Engines" });
+                expect(String(details[0].byear)).to.equal("1815");
+                expect(details[0].custom).to.deep.equal({ city: "London", tz: 0 });
+            });
+        });
+    });
+    it("Records nothing when the Facebook SDK is not on the page", () => {
+        hp.haltAndClearStorage(() => {
+            initMain();
+            Countly.collect_from_facebook();
+            cy.fetch_local_request_queue().then((rq) => {
+                expect(rq.filter((r) => r.user_details).length).to.equal(0);
+            });
+        });
+    });
+});

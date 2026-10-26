@@ -1,0 +1,20 @@
+<!-- Used in crash tests: errors the page itself throws reach the SDK's handlers here, not the test runner's -->
+<html>
+<head>
+  <script type='text/javascript' src='../../lib/countly.js'></script>
+  <script type='module'>
+
+    window.localStorage.clear();
+    window.sessionStorage.clear();
+    Countly.init({
+      app_key: "YOUR_APP_KEY",
+      url: "https://your.domain.count.ly",
+      test_mode: true
+    });
+    Countly.track_errors();
+  </script>
+</head>
+<body>
+  <h1>Crash handlers</h1>
+</body>
+</html>

@@ -324,4 +324,29 @@ describe("Test Countly.q related methods and processes", () => {
         });
     });
 
+    it("Runs the calls pushed through a reference to Countly.q kept from before the SDK started", () => {
+        hp.haltAndClearStorage(() => {
+            var sent = [];
+            // what Google Tag Manager's createQueue("Countly.q") gives a tag: the array as it was found
+            var kept = Countly.q;
+            kept.push(["add_event", event(1)]);
+            Countly.init({
+                app_key: "YOUR_APP_KEY",
+                url: "https://your.domain.count.ly",
+                fake_request_handler: (req) => {
+                    sent.push(req.params);
+                    return { status: 200, responseText: "{\"result\":\"Success\"}" };
+                }
+            });
+            cy.wait(1000).then(() => {
+                kept.push(["add_event", event(2)]);
+                cy.wait(1500).then(() => {
+                    var keys = sent.filter((p) => p.events).reduce((all, p) => all.concat(JSON.parse(p.events).map((e) => e.key)), []);
+                    expect(keys).to.deep.equal(["event_1", "event_2"]);
+                    expect(Countly.q, "the array the tag keeps is still the SDK's queue").to.equal(kept);
+                });
+            });
+        });
+    });
+
 });

@@ -275,3 +275,112 @@ describe("Manual Rating widget recording tests, new call ", () => {
         });
     });
 });
+describe("Manual widget reporting that records nothing", () => {
+    it("Records nothing for a widget type the SDK does not know", () => {
+        hp.haltAndClearStorage(() => {
+            initMain();
+            Countly.reportFeedbackWidgetManually(CountlyFeedbackWidgetMaker("123", "poll"), CountlyWidgetData, widgetResponseMakerNpsRating(3));
+            cy.fetch_local_event_queue().then((eq) => {
+                expect(eq.length).to.equal(0);
+            });
+        });
+    });
+    it("Records nothing without the feedback consent", () => {
+        hp.haltAndClearStorage(() => {
+            Countly.init({
+                app_key: "YOUR_APP_KEY",
+                url: "https://your.domain.count.ly",
+                test_mode_eq: true,
+                test_mode: true,
+                require_consent: true
+            });
+            Countly.add_consent("events");
+            Countly.reportFeedbackWidgetManually(CountlyFeedbackWidgetMaker("123", "nps"), CountlyWidgetData, widgetResponseMakerNpsRating(3));
+            cy.fetch_local_event_queue().then((eq) => {
+                expect(eq.length).to.equal(0);
+            });
+        });
+    });
+});
+describe("Feedback widget data", () => {
+    const widgetData = { _id: "widget-1", questions: [{ id: "q1", type: "rating" }] };
+
+    /**
+     * Starts the SDK with a request handler that answers the widget data requests with the given answer
+     * @param {Array} sent - collects every request
+     * @param {Object} answer - status and responseText for the widget data requests
+     * @param {Object} options - more init options
+     */
+    function initAnswering(sent, answer, options) {
+        Countly.init(Object.assign({
+            app_key: "YOUR_APP_KEY",
+            url: "https://your.domain.count.ly",
+            app_version: "2.1.0",
+            fake_request_handler: (req) => {
+                sent.push(req);
+                return req.functionName.indexOf("getFeedbackWidgetData") === 0 ? answer : { status: 200, responseText: "{\"result\":\"Success\"}" };
+            }
+        }, options || {}));
+    }
+
+    /**
+     * The widget data requests among the sent ones
+     * @param {Array} sent - every sent request
+     * @returns {Array} widget data requests
+     */
+    function widgetRequests(sent) {
+        return sent.filter((req) => req.functionName.indexOf("getFeedbackWidgetData") === 0);
+    }
+
+    ["nps", "survey", "rating"].forEach((type) => {
+        it("Fetches the data of a " + type + " widget from its widget endpoint, counting it as shown", () => {
+            hp.haltAndClearStorage(() => {
+                var sent = [];
+                var result = null;
+                initAnswering(sent, { status: 200, responseText: JSON.stringify(widgetData) });
+                Countly.getFeedbackWidgetData({ _id: "widget-1", type: type }, (data, err) => {
+                    result = { data: data, err: err };
+                });
+                var requests = widgetRequests(sent);
+                expect(requests.length).to.equal(1);
+                expect(requests[0].url).to.equal("https://your.domain.count.ly/o/surveys/" + type + "/widget");
+                expect(requests[0].params).to.include({ widget_id: "widget-1", shown: 1, sdk_name: Countly.sdk_name(), sdk_version: Countly.sdk_version(), app_version: "2.1.0" });
+                expect(result).to.deep.equal({ data: widgetData, err: null });
+            });
+        });
+    });
+    it("Gives the callback an error when the widget data cannot be fetched", () => {
+        hp.haltAndClearStorage(() => {
+            var sent = [];
+            var result = null;
+            initAnswering(sent, { status: 500, responseText: "{\"result\":\"Internal server error\"}" });
+            Countly.getFeedbackWidgetData({ _id: "widget-1", type: "nps" }, (data, err) => {
+                result = { data: data, err: err };
+            });
+            expect(widgetRequests(sent).length).to.equal(1);
+            expect(result.data).to.equal(null);
+            expect(result.err).to.be.ok;
+        });
+    });
+    it("Fetches nothing and gives the callback a consent error without the feedback consent", () => {
+        hp.haltAndClearStorage(() => {
+            var sent = [];
+            var result = null;
+            initAnswering(sent, { status: 200, responseText: JSON.stringify(widgetData) }, { require_consent: true });
+            Countly.getFeedbackWidgetData({ _id: "widget-1", type: "nps" }, (data, err) => {
+                result = { data: data, err: err };
+            });
+            expect(widgetRequests(sent).length).to.equal(0);
+            expect(result.data).to.equal(null);
+            expect(result.err).to.be.ok;
+        });
+    });
+    it("Fetches nothing for a widget type the SDK does not know", () => {
+        hp.haltAndClearStorage(() => {
+            var sent = [];
+            initAnswering(sent, { status: 200, responseText: JSON.stringify(widgetData) });
+            Countly.getFeedbackWidgetData({ _id: "widget-1", type: "poll" }, () => {});
+            expect(widgetRequests(sent).length).to.equal(0);
+        });
+    });
+});
