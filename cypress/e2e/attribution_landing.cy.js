@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 /* eslint-disable require-jsdoc */
 var Countly = require("../../lib/countly");
 var hp = require("../support/helper");
@@ -32,6 +33,27 @@ function expectLanding(req, query) {
 }
 
 describe("Landing attribution tests", () => {
+    it("Sends the exact landing JSON, URL-encoded, on /i", () => {
+        hp.haltAndClearStorage(() => {
+            const query = "utm_source=news letter&utm_medium=email&cly_clk=k1";
+            const expected = JSON.stringify({ type: "landing", value: landingOf(query) });
+            const sentQueries = [];
+            cy.intercept("https://your.domain.count.ly/i*", (req) => {
+                sentQueries.push(req.method === "GET" ? req.url.split("?")[1] : req.body);
+                req.reply({ statusCode: 200, body: { result: "Success" } });
+            });
+            initLanding("?" + query, { test_mode: false, test_mode_eq: false });
+            cy.wait(3000).then(() => {
+                const withLanding = sentQueries.filter((q) => typeof q === "string" && q.indexOf("attribution=") !== -1);
+                expect(withLanding.length).to.equal(1);
+                // the parameter is the JSON string, URL-encoded, and nothing else
+                const raw = withLanding[0].split("&").filter((part) => part.indexOf("attribution=") === 0);
+                expect(raw).to.deep.equal(["attribution=" + encodeURIComponent(expected)]);
+                expect(decodeURIComponent(raw[0].substring("attribution=".length))).to.equal(expected);
+            });
+        });
+    });
+
     it("Sends the landing address once with utm tags, and still sends custom.utm_*", () => {
         hp.haltAndClearStorage(() => {
             initLanding("?utm_source=hehe&utm_campaign=spring&other=1");
@@ -81,6 +103,14 @@ describe("Landing attribution tests", () => {
                 const sent = attributionRequests(rq);
                 expect(sent.length).to.equal(1);
                 expectLanding(sent[0], "foo=bar&gclid=xyz");
+            });
+        });
+    });
+    it("Sends nothing for a parameter that is not on the allow-list", () => {
+        hp.haltAndClearStorage(() => {
+            initLanding("?foo=bar&fbclid=xyz", { attribution_landing_params: ["gclid"] });
+            cy.fetch_local_request_queue().then((rq) => {
+                expect(attributionRequests(rq).length).to.equal(0);
             });
         });
     });
@@ -141,6 +171,12 @@ describe("Landing attribution tests", () => {
                         const sent = attributionRequests(rq3);
                         expect(sent.length).to.equal(1);
                         expectLanding(sent[0], "utm_source=hehe");
+                        // taking the consent back and giving it again does not send the landing again
+                        Countly.remove_consent("attribution");
+                        Countly.add_consent("attribution");
+                        cy.fetch_local_request_queue().then((rq4) => {
+                            expect(attributionRequests(rq4).length).to.equal(1);
+                        });
                     });
                 });
             });

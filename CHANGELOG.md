@@ -1,6 +1,10 @@
 ## NEXT RELEASE
 
-- Added an automatic attribution signal: when the page address has a `utm_*` parameter, a Countly click id (`cly_clk`) or a parameter named in the new `attribution_landing_params` init option, the SDK sends the landing address once as `attribution={"type":"landing","value":"<address>"}`, without any API call. It needs the `attribution` consent and waits until it is given. A reload of the same address in the same tab does not send it again; a different landing address with campaign parameters does. Servers that support it parse the campaign from it; older servers ignore it, and `utm_*` tags are still recorded as user properties as before.
+- Added an automatic attribution signal for campaign landings, without any API call:
+  - when the page address has a `utm_*` parameter, a Countly click id (`cly_clk`) or a parameter named in `attribution_landing_params`, the SDK sends the landing address as `attribution={"type":"landing","value":"<address>"}`
+  - it needs the `attribution` consent, and waits until it is given
+  - a reload of the same address in the same tab does not send it again; a different landing address with campaign parameters does
+  - servers that support it parse the campaign from it; older servers ignore it, and `utm_*` tags are still recorded as user properties as before
 - Added `attribution_landing_params` init option for naming additional landing parameters that mark a campaign landing, such as `["gclid", "fbclid"]` (default `[]`: only `utm_*` and `cly_clk`).
 
 ## 26.8.1
