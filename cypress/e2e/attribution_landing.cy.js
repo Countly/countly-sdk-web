@@ -67,6 +67,27 @@ describe("Landing attribution tests", () => {
             });
         });
     });
+    it("Sends the query of a global getSearchQuery override, not the browser address", () => {
+        hp.haltAndClearStorage(() => {
+            const originalReader = Countly.getSearchQuery;
+            // an integration replaces the public reader before init, as single page apps do
+            Countly.getSearchQuery = function() {
+                return "?utm_source=virtual";
+            };
+            Countly.init({
+                app_key: hp.appKey,
+                url: "https://your.domain.count.ly",
+                test_mode: true,
+                test_mode_eq: true
+            });
+            Countly.getSearchQuery = originalReader;
+            cy.fetch_local_request_queue().then((rq) => {
+                const sent = attributionRequests(rq);
+                expect(sent.length).to.equal(1);
+                expectLanding(sent[0], "utm_source=virtual");
+            });
+        });
+    });
     it("Sends the landing address for a utm tag outside the utm filter", () => {
         hp.haltAndClearStorage(() => {
             initLanding("utm_aa=hehe", { utm: { bb: true } });
