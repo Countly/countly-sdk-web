@@ -1,0 +1,57 @@
+name: Public API
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  api:
+    name: Breaking changes
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout SDK code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      # The first parent of the pull request's merge commit is the base branch it merges into.
+      - name: Compare the public API with the base branch
+        run: |
+          git worktree add "$RUNNER_TEMP/base" HEAD^1
+          roots=(
+            'Countly=sdk'
+            'Instance=new sdk.CountlyClass({ app_key: "key", url: "https://example.invalid" })'
+          )
+          node .github/scripts/public_api.mjs "$RUNNER_TEMP/base/lib/countly.js" "${roots[@]}" > "$RUNNER_TEMP/base.txt"
+          node .github/scripts/public_api.mjs lib/countly.js "${roots[@]}" > "$RUNNER_TEMP/head.txt"
+          LC_ALL=C comm -23 "$RUNNER_TEMP/base.txt" "$RUNNER_TEMP/head.txt" | sed 's/^/Removed or changed: /' > "$RUNNER_TEMP/breaking.txt"
+
+      - name: Require a CHANGELOG entry for breaking changes
+        run: |
+          if [ ! -s "$RUNNER_TEMP/breaking.txt" ]; then
+            echo "No breaking change to the public API." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          {
+            echo "### Breaking changes to the public API"
+            echo '```'
+            cat "$RUNNER_TEMP/breaking.txt"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          if git diff --quiet HEAD^1 HEAD -- CHANGELOG.md; then
+            echo "::error title=Breaking API change::This pull request breaks the public API without a CHANGELOG.md entry. The job summary lists each break."
+            exit 1
+          fi
+          echo "::warning title=Breaking API change::This pull request breaks the public API. Check that CHANGELOG.md marks it as a breaking change."
