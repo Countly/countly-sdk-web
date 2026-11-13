@@ -1,0 +1,197 @@
+// The public API of the Countly Web SDK. CI fails when the SDK no longer matches this file.
+// countly-sdk-js writes it with npm run api:update and copies it to countly-sdk-web with npm run sync:web.
+// A change here needs a CHANGELOG.md line that tells integrators what changed.
+
+// Functions of an initialized SDK
+add_consent
+add_event
+add_log
+attempt_to_send_stored_requests
+begin_session
+cancel_event
+change_id
+check_any_consent
+check_consent
+collect_from_facebook
+collect_from_forms
+content.enterContentZone
+content.exitContentZone
+content.refreshContentZone
+content.setGlobalContentSegmentation
+content.setTheme
+deserialize
+disable_offline_mode
+disable_push_notifications
+enableRatingWidgets
+enable_feedback
+enable_offline_mode
+enable_push_notifications
+end_event
+end_session
+enrollUserToAb
+feedback.showNPS
+feedback.showRating
+feedback.showSurvey
+fetch_remote_config
+getFeedbackWidgetData
+getSearchQuery
+getViewName
+getViewUrl
+get_available_feedback_widgets
+get_device_id
+get_device_id_type
+get_remote_config
+group_features
+halt
+init
+initializeRatingWidgets
+initialize_feedback_popups
+log_error
+opt_in
+opt_out
+presentRatingWidgetWithID
+present_feedback_widget
+recordDirectAttribution
+recordError
+recordRatingWidgetWithID
+record_push_action
+remove_consent
+remove_consent_internal
+reportFeedbackWidgetManually
+report_conversion
+report_feedback
+report_trace
+sdk_name
+sdk_version
+serialize
+session_duration
+set_id
+set_push_notification_listener
+show_feedback_popup
+start_event
+test_mode_rq
+track_clicks
+track_errors
+track_forms
+track_links
+track_pageview
+track_scrolls
+track_sessions
+track_view
+uploadUserProfilePicture
+userData.increment
+userData.increment_by
+userData.max
+userData.min
+userData.multiply
+userData.pull
+userData.push
+userData.push_unique
+userData.save
+userData.set
+userData.set_once
+userData.unset
+user_details
+
+// Declarations in the TypeScript definitions
+"countly-sdk-web".Countly.Content.enterContentZone: enterContentZone(contentFilterCallback?: (contentURLParams: object) => boolean): void;
+"countly-sdk-web".Countly.Content.exitContentZone: exitContentZone(): void;
+"countly-sdk-web".Countly.Content.refreshContentZone: refreshContentZone(): void;
+"countly-sdk-web".Countly.Content.setGlobalContentSegmentation: setGlobalContentSegmentation(segmentation: { [key: string]: string | number | boolean | Array<string | number | boolean>; } | null): void;
+"countly-sdk-web".Countly.Content.setTheme: setTheme(theme: "dark" | "light" | false | null): void;
+"countly-sdk-web".Countly.Content: interface Content { }
+"countly-sdk-web".Countly.DeviceIdType.DEVELOPER_SUPPLIED: DEVELOPER_SUPPLIED (position 0)
+"countly-sdk-web".Countly.DeviceIdType.SDK_GENERATED: SDK_GENERATED (position 1)
+"countly-sdk-web".Countly.DeviceIdType.TEMPORARY_ID: TEMPORARY_ID (position 2)
+"countly-sdk-web".Countly.DeviceIdType: enum DeviceIdType { }
+"countly-sdk-web".Countly.Feedback.showNPS: showNPS(nameIDorTag?: string): void;
+"countly-sdk-web".Countly.Feedback.showRating: showRating(nameIDorTag?: string): void;
+"countly-sdk-web".Countly.Feedback.showSurvey: showSurvey(nameIDorTag?: string): void;
+"countly-sdk-web".Countly.Feedback: interface Feedback { }
+"countly-sdk-web".Countly.PushNotificationEvent.buttonIndex: buttonIndex?: number;
+"countly-sdk-web".Countly.PushNotificationEvent.buttonTitle: buttonTitle?: string;
+"countly-sdk-web".Countly.PushNotificationEvent.buttons: buttons: { title: string; url: string; }[];
+"countly-sdk-web".Countly.PushNotificationEvent.message: message: string;
+"countly-sdk-web".Countly.PushNotificationEvent.messageId: messageId: string;
+"countly-sdk-web".Countly.PushNotificationEvent.payload: payload: Record<string, any> | null;
+"countly-sdk-web".Countly.PushNotificationEvent.title: title: string;
+"countly-sdk-web".Countly.PushNotificationEvent.type: type: "received" | "clicked" | "closed";
+"countly-sdk-web".Countly.PushNotificationEvent.url: url: string;
+"countly-sdk-web".Countly.PushNotificationEvent: interface PushNotificationEvent { }
+"countly-sdk-web".Countly.add_consent: function add_consent(feature: string | string[]): void;
+"countly-sdk-web".Countly.add_event: function add_event(event: { key: string; count?: number; sum?: number; dur?: number; segmentation?: { [key: string]: any; }; }): void;
+"countly-sdk-web".Countly.add_log: function add_log(record: string): void;
+"countly-sdk-web".Countly.attempt_to_send_stored_requests: function attempt_to_send_stored_requests(): void;
+"countly-sdk-web".Countly.begin_session: function begin_session(noHeartBeat: boolean, force: boolean): void;
+"countly-sdk-web".Countly.cancel_event: function cancel_event(key: string): boolean;
+"countly-sdk-web".Countly.change_id: function change_id(newId: string, merge: boolean): void;
+"countly-sdk-web".Countly.check_any_consent: function check_any_consent(): boolean;
+"countly-sdk-web".Countly.check_consent: function check_consent(feature: string): boolean;
+"countly-sdk-web".Countly.collect_from_facebook: function collect_from_facebook(custom?: { [key: string]: string; }): void;
+"countly-sdk-web".Countly.collect_from_forms: function collect_from_forms(parent?: Object, useCustom?: boolean): void;
+"countly-sdk-web".Countly.content: const content: Content;
+"countly-sdk-web".Countly.disable_offline_mode: function disable_offline_mode(device_id?: string): void;
+"countly-sdk-web".Countly.disable_push_notifications: function disable_push_notifications(opts?: { push_service_worker_scope?: string; }): Promise<{ unsubscribed: boolean; reason?: string; error?: string; }>;
+"countly-sdk-web".Countly.enable_offline_mode: function enable_offline_mode(): void;
+"countly-sdk-web".Countly.enable_push_notifications: function enable_push_notifications(opts?: { push_vapid_public_key?: string; push_service_worker_path?: string; push_service_worker_scope?: string; push_service_worker_registration?: ServiceWorkerRegistration | Promise<ServiceWorkerRegistration>; }): Promise<{ subscribed: boolean; endpoint?: string; reason?: string; error?: string; }>;
+"countly-sdk-web".Countly.end_event: function end_event(event: string | { key: string; count?: number; sum?: number; dur?: number; segmentation?: { [key: string]: any; }; }): void;
+"countly-sdk-web".Countly.end_session: function end_session(sec: number, force: boolean): void;
+"countly-sdk-web".Countly.enrollUserToAb: function enrollUserToAb(keys?: string[]): void;
+"countly-sdk-web".Countly.feedback: const feedback: Feedback;
+"countly-sdk-web".Countly.fetch_remote_config: function fetch_remote_config(keys?: string[], omit_keys?: string[], callback?: (error: any, config: any) => void): void;
+"countly-sdk-web".Countly.getFeedbackWidgetData: function getFeedbackWidgetData(CountlyFeedbackWidget: { _id: string; type: string; name: string; }, callback: (widgetData: Object, error: Error | null) => void): void;
+"countly-sdk-web".Countly.getSearchQuery: function getSearchQuery(): string;
+"countly-sdk-web".Countly.getViewName: function getViewName(): string;
+"countly-sdk-web".Countly.getViewUrl: function getViewUrl(): string;
+"countly-sdk-web".Countly.get_available_feedback_widgets: function get_available_feedback_widgets(callback: (widgets: Array<{ _id: string; type: string; name: string; }>, error: Error | null) => void): void;
+"countly-sdk-web".Countly.get_device_id: function get_device_id(): string;
+"countly-sdk-web".Countly.get_device_id_type: function get_device_id_type(): DeviceIdType;
+"countly-sdk-web".Countly.get_remote_config: function get_remote_config(key?: string): object;
+"countly-sdk-web".Countly.group_features: function group_features(features: object): void;
+"countly-sdk-web".Countly.init: function init(config: object): void;
+"countly-sdk-web".Countly.log_error: function log_error(err: Object, segments?: Object): void;
+"countly-sdk-web".Countly.opt_in: function opt_in(): void;
+"countly-sdk-web".Countly.opt_out: function opt_out(): void;
+"countly-sdk-web".Countly.present_feedback_widget: function present_feedback_widget(presentableFeedback: object, id?: string, className?: string, feedbackWidgetSegmentation?: object): void;
+"countly-sdk-web".Countly.q: let q: any[];
+"countly-sdk-web".Countly.recordDirectAttribution: function recordDirectAttribution(campaign_id?: string, campaign_user_id?: string): void;
+"countly-sdk-web".Countly.recordError: function recordError(err: Error, nonfatal: boolean, segments?: Object): void;
+"countly-sdk-web".Countly.recordRatingWidgetWithID: function recordRatingWidgetWithID(ratingWidget: { widget_id: string; rating: number; contactMe?: boolean; platform?: string; app_version?: string; email?: string; comment?: string; }): void;
+"countly-sdk-web".Countly.record_push_action: function record_push_action(messageId: string, buttonIndex?: number): void;
+"countly-sdk-web".Countly.remove_consent: function remove_consent(feature: string | string[]): void;
+"countly-sdk-web".Countly.reportFeedbackWidgetManually: function reportFeedbackWidgetManually(CountlyFeedbackWidget: { _id: string; type: string; }, CountlyWidgetData: object, widgetResult: { rating: number; comment?: string; } | { [key: string]: string | number; } | { rating: number; email?: string; contactMe?: boolean; comment?: string; } | null): void;
+"countly-sdk-web".Countly.report_trace: function report_trace(trace: { type: string; name: string; stz: number; etz: number; app_metrics: { [key: string]: number; }; apm_attr?: { [key: string]: any; }; }): void;
+"countly-sdk-web".Countly.sdk_name: function sdk_name(): string;
+"countly-sdk-web".Countly.sdk_version: function sdk_version(): string;
+"countly-sdk-web".Countly.session_duration: function session_duration(sec: number): void;
+"countly-sdk-web".Countly.set_id: function set_id(newId: string): void;
+"countly-sdk-web".Countly.set_push_notification_listener: function set_push_notification_listener(listener: ((event: PushNotificationEvent) => void) | null): void;
+"countly-sdk-web".Countly.start_event: function start_event(key: string): void;
+"countly-sdk-web".Countly.track_clicks: function track_clicks(parent?: Object): void;
+"countly-sdk-web".Countly.track_errors: function track_errors(segments?: Object): void;
+"countly-sdk-web".Countly.track_forms: function track_forms(parent?: Object, trackHidden?: boolean): void;
+"countly-sdk-web".Countly.track_links: function track_links(parent?: Object): void;
+"countly-sdk-web".Countly.track_pageview: function track_pageview(page?: string, ignoreList?: string[], viewSegments?: object): void;
+"countly-sdk-web".Countly.track_scrolls: function track_scrolls(parent?: Object): void;
+"countly-sdk-web".Countly.track_sessions: function track_sessions(): void;
+"countly-sdk-web".Countly.track_view: function track_view(page?: string, ignoreList?: string[], segments?: object): void;
+"countly-sdk-web".Countly.uploadUserProfilePicture: function uploadUserProfilePicture(imageFile: File | Blob): void;
+"countly-sdk-web".Countly.userData.increment: function increment(key: string): void;
+"countly-sdk-web".Countly.userData.increment_by: function increment_by(key: string, value: number): void;
+"countly-sdk-web".Countly.userData.max: function max(key: string, value: number): void;
+"countly-sdk-web".Countly.userData.min: function min(key: string, value: number): void;
+"countly-sdk-web".Countly.userData.multiply: function multiply(key: string, value: number): void;
+"countly-sdk-web".Countly.userData.pull: function pull(key: string, value: string | number): void;
+"countly-sdk-web".Countly.userData.push: function push(key: string, value: string | number): void;
+"countly-sdk-web".Countly.userData.push_unique: function push_unique(key: string, value: string | number): void;
+"countly-sdk-web".Countly.userData.save: function save(): void;
+"countly-sdk-web".Countly.userData.set: function set(key: string, value: string | number): void;
+"countly-sdk-web".Countly.userData.set_once: function set_once(key: string, value: string | number): void;
+"countly-sdk-web".Countly.userData.unset: function unset(key: string): void;
+"countly-sdk-web".Countly.userData: namespace
+"countly-sdk-web".Countly.user_details: function user_details(user: { name?: string; username?: string; email?: string; organization?: string; phone?: string; picture?: string; gender?: string; byear?: number; custom?: { [key: string]: any; }; }): void;
+"countly-sdk-web".Countly: namespace
+"countly-sdk-web".default: export default Countly;
+"countly-sdk-web": module
+Window.Countly: Countly: any;
+Window: interface Window { }
