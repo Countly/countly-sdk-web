@@ -1,11 +1,20 @@
 ## NEXT RELEASE
 
 - Added an automatic attribution signal for campaign landings, without any API call:
-  - when the page address has a `utm_*` parameter, a Countly click id (`cly_clk`) or a parameter named in `attribution_landing_params`, the SDK sends the landing address as `attribution={"type":"landing","value":"<address>"}`
+  - when the page address has a `utm_*` parameter, a Countly click id (`cly_clk`), an ad click id or a parameter named in `attribution_landing_params`, the SDK sends the landing address as `attribution={"type":"landing","value":"<address>"}`
+  - the ad click ids are `gclid`, `fbclid`, `msclkid`, `ttclid`, `twclid` and `li_fat_id`, when they have a value; the server reads which ad platform the click came from
   - it needs the `attribution` consent, and waits until it is given
   - a reload of the same address in the same tab does not send it again; a different landing address with campaign parameters does
   - servers that support it parse the campaign from it; older servers ignore it, and `utm_*` tags are still recorded as user properties as before
-- Added `attribution_landing_params` init option for naming additional landing parameters that mark a campaign landing, such as `["gclid", "fbclid"]` (default `[]`: only `utm_*` and `cly_clk`).
+- Added `attribution_landing_params` init option for naming additional landing parameters that mark a campaign landing, such as `["ref"]` (default `[]`).
+- Added `recordAdRevenue(amount, {network, placement, format, currency, precision})` for recording the revenue of one paid ad impression as the `[CLY]_ad_revenue` event:
+  - call it from the ad network's paid-impression callback, with the amount in the currency the app uses for purchases; the SDK converts nothing
+  - each detail is optional and sent as a segment only when given; it needs the `events` consent
+- Added `Countly.attribution.appLink({code, path, params})`, which returns a campaign's smart link for the page to show, so that a visitor with the app installed opens it at `path`:
+  - the link carries the page's `utm_*` tags and the parameters named in `attribution_landing_params`; `params` adds more
+  - `android: "intent"` returns the `intent://` form, with the link as the browser fallback
+  - it sends nothing: the server counts the click when the link is opened
+- Added `attribution_link_host`, `attribution_app_id` and `attribution_android_package` init options for the smart links `Countly.attribution.appLink` builds (the link host defaults to `url`).
 
 ## 26.8.1
 

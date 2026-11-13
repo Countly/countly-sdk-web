@@ -109,9 +109,33 @@ describe("Landing attribution tests", () => {
             });
         });
     });
+    // the server reads the platform of an ad click from these on the landing address (design 11.3 B)
+    ["gclid", "fbclid", "msclkid", "ttclid", "twclid", "li_fat_id"].forEach((clickId) => {
+        it("Sends the landing address for the ad click id " + clickId + " alone", () => {
+            hp.haltAndClearStorage(() => {
+                initLanding("?foo=bar&" + clickId + "=Cj0KCQ-1_x");
+                cy.fetch_local_request_queue().then((rq) => {
+                    const sent = attributionRequests(rq);
+                    expect(sent.length).to.equal(1);
+                    expectLanding(sent[0], "foo=bar&" + clickId + "=Cj0KCQ-1_x");
+                    expect(rq.filter((req) => req.user_details !== undefined).length).to.equal(0);
+                });
+            });
+        });
+    });
+    it("Sends one landing address carrying both the utm tags and the ad click id", () => {
+        hp.haltAndClearStorage(() => {
+            initLanding("?utm_source=google&utm_campaign=spring&gclid=abc");
+            cy.fetch_local_request_queue().then((rq) => {
+                const sent = attributionRequests(rq);
+                expect(sent.length).to.equal(1);
+                expectLanding(sent[0], "utm_source=google&utm_campaign=spring&gclid=abc");
+            });
+        });
+    });
     it("Sends nothing for a landing without campaign parameters", () => {
         hp.haltAndClearStorage(() => {
-            initLanding("?foo=bar&gclid=xyz&cly_id=cmp&cly_uid=usr");
+            initLanding("?foo=bar&ref=xyz&gclid=&cly_id=cmp&cly_uid=usr");
             cy.fetch_local_request_queue().then((rq) => {
                 expect(attributionRequests(rq).length).to.equal(0);
             });
@@ -119,17 +143,17 @@ describe("Landing attribution tests", () => {
     });
     it("Sends the landing address for an allow-listed parameter", () => {
         hp.haltAndClearStorage(() => {
-            initLanding("?foo=bar&gclid=xyz", { attribution_landing_params: ["gclid"] });
+            initLanding("?foo=bar&ref=xyz", { attribution_landing_params: ["ref"] });
             cy.fetch_local_request_queue().then((rq) => {
                 const sent = attributionRequests(rq);
                 expect(sent.length).to.equal(1);
-                expectLanding(sent[0], "foo=bar&gclid=xyz");
+                expectLanding(sent[0], "foo=bar&ref=xyz");
             });
         });
     });
     it("Sends nothing for a parameter that is not on the allow-list", () => {
         hp.haltAndClearStorage(() => {
-            initLanding("?foo=bar&fbclid=xyz", { attribution_landing_params: ["gclid"] });
+            initLanding("?foo=bar&promo=xyz", { attribution_landing_params: ["ref"] });
             cy.fetch_local_request_queue().then((rq) => {
                 expect(attributionRequests(rq).length).to.equal(0);
             });
@@ -137,7 +161,7 @@ describe("Landing attribution tests", () => {
     });
     it("Ignores an allow-list that is not an array", () => {
         hp.haltAndClearStorage(() => {
-            initLanding("?gclid=xyz", { attribution_landing_params: "gclid" });
+            initLanding("?ref=xyz", { attribution_landing_params: "ref" });
             cy.fetch_local_request_queue().then((rq) => {
                 expect(attributionRequests(rq).length).to.equal(0);
             });
