@@ -1,0 +1,167 @@
+[
+  {
+    "path": "/o/sdk",
+    "params": {
+      "app_key": "parity-app-key",
+      "av": "<masked>",
+      "device_id": "parity-device-001",
+      "dow": "<masked>",
+      "hour": "<masked>",
+      "method": "sc",
+      "sdk_name": "javascript_native_web",
+      "sdk_version": "<masked>",
+      "t": 0,
+      "timestamp": "<masked>"
+    }
+  },
+  {
+    "path": "/i",
+    "params": {
+      "app_key": "parity-app-key",
+      "av": "<masked>",
+      "device_id": "parity-device-001",
+      "dow": "<masked>",
+      "hc": {
+        "bom": "<masked>",
+        "cbom": "<masked>",
+        "el": "<masked>",
+        "em": "<masked>",
+        "sc": "<masked>",
+        "wl": "<masked>"
+      },
+      "hour": "<masked>",
+      "metrics": {
+        "_app_version": "<masked>",
+        "_ua": "<masked>"
+      },
+      "sdk_name": "javascript_native_web",
+      "sdk_version": "<masked>",
+      "t": 0,
+      "timestamp": "<masked>",
+      "tz": "<masked>"
+    }
+  },
+  {
+    "path": "/i",
+    "params": {
+      "app_key": "parity-app-key",
+      "av": "<masked>",
+      "begin_session": 1,
+      "device_id": "parity-device-001",
+      "dow": "<masked>",
+      "hour": "<masked>",
+      "metrics": {
+        "_app_version": "<masked>",
+        "_browser": "<masked>",
+        "_browser_version": "<masked>",
+        "_device_type": "<masked>",
+        "_locale": "<masked>",
+        "_ua": "<masked>"
+      },
+      "rr": "<masked>",
+      "sdk_name": "javascript_native_web",
+      "sdk_version": "<masked>",
+      "t": 0,
+      "timestamp": "<masked>",
+      "tz": "<masked>"
+    }
+  },
+  {
+    "path": "/i",
+    "params": {
+      "app_key": "parity-app-key",
+      "av": "<masked>",
+      "device_id": "parity-device-001",
+      "dow": "<masked>",
+      "end_session": 1,
+      "hour": "<masked>",
+      "metrics": {
+        "_ua": "<masked>"
+      },
+      "rr": "<masked>",
+      "sdk_name": "javascript_native_web",
+      "sdk_version": "<masked>",
+      "session_duration": "<masked>",
+      "t": 0,
+      "timestamp": "<masked>",
+      "tz": "<masked>"
+    }
+  },
+  {
+    "path": "/i",
+    "params": {
+      "app_key": "parity-app-key",
+      "av": "<masked>",
+      "device_id": "parity-device-001",
+      "dow": "<masked>",
+      "events": [
+        {
+          "count": 1,
+          "dow": "<masked>",
+          "hour": "<masked>",
+          "id": "<masked>",
+          "key": "[CLY]_view",
+          "pvid": "<masked>",
+          "segmentation": {
+            "name": "Home",
+            "source": "scenario",
+            "start": 1,
+            "view": "web_worker",
+            "visit": 1
+          },
+          "timestamp": "<masked>"
+        },
+        {
+          "count": 1,
+          "dow": "<masked>",
+          "dur": "<masked>",
+          "hour": "<masked>",
+          "id": "<masked>",
+          "key": "[CLY]_view",
+          "pvid": "<masked>",
+          "segmentation": {
+            "name": "Home"
+          },
+          "timestamp": "<masked>"
+        },
+        {
+          "count": 1,
+          "dow": "<masked>",
+          "hour": "<masked>",
+          "id": "<masked>",
+          "key": "[CLY]_view",
+          "pvid": "<masked>",
+          "segmentation": {
+            "name": "Settings",
+            "view": "web_worker",
+            "visit": 1
+          },
+          "timestamp": "<masked>"
+        },
+        {
+          "count": 1,
+          "dow": "<masked>",
+          "dur": "<masked>",
+          "hour": "<masked>",
+          "id": "<masked>",
+          "key": "[CLY]_view",
+          "pvid": "<masked>",
+          "segmentation": {
+            "name": "Settings"
+          },
+          "timestamp": "<masked>"
+        }
+      ],
+      "hour": "<masked>",
+      "metrics": {
+        "_ua": "<masked>"
+      },
+      "rr": "<masked>",
+      "sdk_name": "javascript_native_web",
+      "sdk_version": "<masked>",
+      "t": 0,
+      "timestamp": "<masked>",
+      "tz": "<masked>"
+    }
+  }
+]

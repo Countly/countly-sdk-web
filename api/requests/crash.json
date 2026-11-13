@@ -1,0 +1,76 @@
+[
+  {
+    "path": "/o/sdk",
+    "params": {
+      "app_key": "parity-app-key",
+      "av": "<masked>",
+      "device_id": "parity-device-001",
+      "dow": "<masked>",
+      "hour": "<masked>",
+      "method": "sc",
+      "sdk_name": "javascript_native_web",
+      "sdk_version": "<masked>",
+      "t": 0,
+      "timestamp": "<masked>"
+    }
+  },
+  {
+    "path": "/i",
+    "params": {
+      "app_key": "parity-app-key",
+      "av": "<masked>",
+      "device_id": "parity-device-001",
+      "dow": "<masked>",
+      "hc": {
+        "bom": "<masked>",
+        "cbom": "<masked>",
+        "el": "<masked>",
+        "em": "<masked>",
+        "sc": "<masked>",
+        "wl": "<masked>"
+      },
+      "hour": "<masked>",
+      "metrics": {
+        "_app_version": "<masked>",
+        "_ua": "<masked>"
+      },
+      "sdk_name": "javascript_native_web",
+      "sdk_version": "<masked>",
+      "t": 0,
+      "timestamp": "<masked>",
+      "tz": "<masked>"
+    }
+  },
+  {
+    "path": "/i",
+    "params": {
+      "app_key": "parity-app-key",
+      "av": "<masked>",
+      "crash": {
+        "_app_version": "0.0",
+        "_custom": {
+          "tier": "gold"
+        },
+        "_error": "<masked>",
+        "_javascript": true,
+        "_logs": "breadcrumb one",
+        "_nonfatal": true,
+        "_not_os_specific": true,
+        "_run": "<masked>",
+        "_view": "web_worker"
+      },
+      "device_id": "parity-device-001",
+      "dow": "<masked>",
+      "hour": "<masked>",
+      "metrics": {
+        "_ua": "<masked>"
+      },
+      "rr": "<masked>",
+      "sdk_name": "javascript_native_web",
+      "sdk_version": "<masked>",
+      "t": 0,
+      "timestamp": "<masked>",
+      "tz": "<masked>"
+    }
+  }
+]
