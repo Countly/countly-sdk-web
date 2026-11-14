@@ -1,4 +1,4 @@
-## NEXT RELEASE
+## XX.XX.XX
 
 - Added an automatic attribution signal for campaign landings, without any API call:
   - when the page address has a `utm_*` parameter, a Countly click id (`cly_clk`), an ad click id or a parameter named in `attribution_landing_params`, the SDK sends the landing address as `attribution={"type":"landing","value":"<address>"}`
