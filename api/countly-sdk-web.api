@@ -7,6 +7,7 @@ add_consent
 add_event
 add_log
 attempt_to_send_stored_requests
+attribution.appLink
 begin_session
 cancel_event
 change_id
@@ -51,6 +52,7 @@ opt_in
 opt_out
 presentRatingWidgetWithID
 present_feedback_widget
+recordAdRevenue
 recordDirectAttribution
 recordError
 recordRatingWidgetWithID
@@ -94,6 +96,16 @@ userData.unset
 user_details
 
 // Declarations in the TypeScript definitions
+"countly-sdk-web".Countly.AppLinkOptions.android: android?: "intent" | "https";
+"countly-sdk-web".Countly.AppLinkOptions.androidPackage: androidPackage?: string;
+"countly-sdk-web".Countly.AppLinkOptions.appId: appId?: string;
+"countly-sdk-web".Countly.AppLinkOptions.code: code: string;
+"countly-sdk-web".Countly.AppLinkOptions.host: host?: string;
+"countly-sdk-web".Countly.AppLinkOptions.params: params?: { [key: string]: string | number | boolean | null | undefined; };
+"countly-sdk-web".Countly.AppLinkOptions.path: path?: string;
+"countly-sdk-web".Countly.AppLinkOptions: interface AppLinkOptions { }
+"countly-sdk-web".Countly.Attribution.appLink: appLink(options: AppLinkOptions): string | null;
+"countly-sdk-web".Countly.Attribution: interface Attribution { }
 "countly-sdk-web".Countly.Content.enterContentZone: enterContentZone(contentFilterCallback?: (contentURLParams: object) => boolean): void;
 "countly-sdk-web".Countly.Content.exitContentZone: exitContentZone(): void;
 "countly-sdk-web".Countly.Content.refreshContentZone: refreshContentZone(): void;
@@ -122,6 +134,7 @@ user_details
 "countly-sdk-web".Countly.add_event: function add_event(event: { key: string; count?: number; sum?: number; dur?: number; segmentation?: { [key: string]: any; }; }): void;
 "countly-sdk-web".Countly.add_log: function add_log(record: string): void;
 "countly-sdk-web".Countly.attempt_to_send_stored_requests: function attempt_to_send_stored_requests(): void;
+"countly-sdk-web".Countly.attribution: const attribution: Attribution;
 "countly-sdk-web".Countly.begin_session: function begin_session(noHeartBeat: boolean, force: boolean): void;
 "countly-sdk-web".Countly.cancel_event: function cancel_event(key: string): boolean;
 "countly-sdk-web".Countly.change_id: function change_id(newId: string, merge: boolean): void;
@@ -154,6 +167,7 @@ user_details
 "countly-sdk-web".Countly.opt_out: function opt_out(): void;
 "countly-sdk-web".Countly.present_feedback_widget: function present_feedback_widget(presentableFeedback: object, id?: string, className?: string, feedbackWidgetSegmentation?: object): void;
 "countly-sdk-web".Countly.q: let q: any[];
+"countly-sdk-web".Countly.recordAdRevenue: function recordAdRevenue(amount: number, details?: { network?: string; placement?: string; format?: string; currency?: string; precision?: string; }): void;
 "countly-sdk-web".Countly.recordDirectAttribution: function recordDirectAttribution(campaign_id?: string, campaign_user_id?: string): void;
 "countly-sdk-web".Countly.recordError: function recordError(err: Error, nonfatal: boolean, segments?: Object): void;
 "countly-sdk-web".Countly.recordRatingWidgetWithID: function recordRatingWidgetWithID(ratingWidget: { widget_id: string; rating: number; contactMe?: boolean; platform?: string; app_version?: string; email?: string; comment?: string; }): void;
