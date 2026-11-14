@@ -3,7 +3,7 @@
   "private": true,
   "description": "Loads countly-sdk-web the way pages, bundlers, frameworks, runtimes and test runners do, and checks what each one receives",
   "scripts": {
-    "test": "node --test --test-concurrency=1 bundlers.test.mjs browser.test.mjs frameworks.test.mjs runtimes.test.mjs compiled.test.mjs test-runners.test.mjs"
+    "test": "node --test --test-concurrency=1 api.test.mjs requests.test.mjs bundlers.test.mjs browser.test.mjs frameworks.test.mjs runtimes.test.mjs compiled.test.mjs test-runners.test.mjs"
   },
   "devDependencies": {
     "@babel/core": "7.29.7",
