@@ -3,7 +3,8 @@
 - Added an automatic attribution signal for campaign landings, without any API call:
   - when the page address has a `utm_*` parameter, a Countly click id (`cly_clk`), an ad click id or a parameter named in `attribution_landing_params`, the SDK sends the landing address as `attribution={"type":"landing","value":"<address>"}`
   - the ad click ids are `gclid`, `fbclid`, `msclkid`, `ttclid`, `twclid` and `li_fat_id`, when they have a value; the server reads which ad platform the click came from
-  - it needs the `attribution` consent, and waits until it is given
+  - it needs the `attribution` consent, and waits until it is given on that page; a landing left before the consent is given is not sent
+  - with `require_consent`, the landing request also carries the consent state when the consent was just given, so a server that stores campaigns only with the `attribution` consent reads it before the consent request arrives
   - a reload of the same address in the same tab does not send it again; a different landing address with campaign parameters does
   - servers that support it parse the campaign from it; older servers ignore it, and `utm_*` tags are still recorded as user properties as before
 - Added `attribution_landing_params` init option for naming additional landing parameters that mark a campaign landing, such as `["ref"]` (default `[]`).

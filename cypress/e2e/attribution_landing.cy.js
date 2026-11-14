@@ -227,6 +227,36 @@ describe("Landing attribution tests", () => {
             });
         });
     });
+    it("Carries the consent on the landing request when the attribution consent was just given", () => {
+        hp.haltAndClearStorage(() => {
+            initLanding("?utm_source=hehe", { require_consent: true });
+            Countly.add_consent(["sessions", "attribution"]);
+            cy.wait(1500).then(() => {
+                const rq = JSON.parse(window.sessionStorage.getItem(hp.appKey + "/cly_queue") || "[]");
+                const landingIndex = rq.findIndex((req) => req.attribution !== undefined);
+                const consentIndex = rq.findIndex((req) => req.consent !== undefined && req.attribution === undefined);
+                expect(landingIndex).to.be.greaterThan(-1);
+                // the landing request comes first and carries the whole consent state the consent request reports after it
+                expect(consentIndex).to.be.greaterThan(landingIndex);
+                expect(JSON.parse(rq[landingIndex].consent)).to.deep.equal(JSON.parse(rq[consentIndex].consent));
+                expect(JSON.parse(rq[landingIndex].consent).attribution).to.equal(true);
+                expect(JSON.parse(rq[landingIndex].consent).sessions).to.equal(true);
+                expect(JSON.parse(rq[landingIndex].consent).events).to.equal(false);
+                expect(Object.keys(rq[landingIndex]).filter((key) => ["attribution", "consent"].indexOf(key) !== -1).length).to.equal(2);
+            });
+        });
+    });
+    it("Does not add a consent to the landing request without require_consent", () => {
+        hp.haltAndClearStorage(() => {
+            initLanding("?utm_source=hehe");
+            cy.fetch_local_request_queue().then((rq) => {
+                const sent = attributionRequests(rq);
+                expect(sent.length).to.equal(1);
+                expect(sent[0].consent).to.equal(undefined);
+                expect(rq.filter((req) => req.consent !== undefined).length).to.equal(0);
+            });
+        });
+    });
     it("Sends nothing when the attribution consent is not given", () => {
         hp.haltAndClearStorage(() => {
             initLanding("?utm_source=hehe", { require_consent: true });

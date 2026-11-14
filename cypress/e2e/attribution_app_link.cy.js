@@ -49,6 +49,13 @@ describe("Attribution app link tests", () => {
             })).to.equal("https://go.example.com/at/" + APP_ID + "/c1/shop/a%20b/%C3%BC?utm_medium=web&utm_source=override&promo=10%25%26more");
         });
     });
+    it("Carries qr=1 as an ordinary link parameter", () => {
+        hp.haltAndClearStorage(() => {
+            initPage("?utm_source=print", { attribution_link_host: "https://go.example.com", attribution_app_id: APP_ID });
+            expect(Countly.attribution.appLink({ code: "Spring_Sale", params: { qr: 1 } }))
+                .to.equal("https://go.example.com/at/" + APP_ID + "/Spring_Sale?utm_source=print&qr=1");
+        });
+    });
     it("Reads this page's query when it is called", () => {
         hp.haltAndClearStorage(() => {
             var query = "?utm_campaign=first";
