@@ -872,6 +872,48 @@ function parseUrlParts(urlString) {
 }
 
 /**
+ * Split a query string into decoded [name, value] pairs, a pair without "=" being [name].
+ * A "+" stays as it is, as links carrying device IDs are often built without encoding.
+ * @param {string} searchQuery - the query, with or without the leading "?"
+ * @returns {Array<Array<string>>} the pairs, in order
+ */
+function parseQueryPairs(searchQuery) {
+    var pairs = [];
+    if (!searchQuery) {
+        return pairs;
+    }
+    if (searchQuery.indexOf("?") === 0) {
+        searchQuery = searchQuery.substring(1);
+    }
+    var decodeQueryPart = (part) => {
+        try {
+            return decodeURIComponent(part);
+        }
+        catch {
+            return part;
+        }
+    };
+    var parts = searchQuery.split("&");
+    for (var i = 0; i < parts.length; i++) {
+        var separatorIndex = parts[i].indexOf("=");
+        pairs.push(separatorIndex === -1 ? [decodeQueryPart(parts[i])] : [decodeQueryPart(parts[i].substring(0, separatorIndex)), decodeQueryPart(parts[i].substring(separatorIndex + 1))]);
+    }
+    return pairs;
+}
+
+/**
+ * The SDK's own reader of the page's query, Countly.getSearchQuery unless the page replaces it.
+ * Kept apart, as Countly.getSearchQuery can be replaced by the page before init.
+ * @returns {string|undefined} the query of the page's address, undefined outside a browser
+ */
+function defaultGetSearchQuery() {
+    if (!isBrowser) {
+        return;
+    }
+    return window.location.search;
+}
+
+/**
  * Schemes a content link may never open, in any form: they run script, load a document that inherits an
  * origin, reach the local machine or an OS handler. The same list the Countly server applies to content.
  */
@@ -1096,5 +1138,7 @@ export {
     parseWindowsVersionFromPlatformVersion,
     calculateChecksum,
     base64ToBytes,
-    parseUrlParts
+    parseUrlParts,
+    parseQueryPairs,
+    defaultGetSearchQuery
 };

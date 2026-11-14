@@ -58,12 +58,13 @@ describe("View with utm and referrer tests ", () => {
                 expect(eq[1].segmentation.referrer).to.eq(undefined);
                 expect(eq[2].segmentation.referrer).to.eq(undefined);
             });
-            // adding utm creates a user_details request
+            // adding utm creates a user_details request, then the landing attribution request
             cy.fetch_local_request_queue().then((rq) => {
                 cy.log(rq);
                 const custom = JSON.parse(rq[0].user_details).custom;
                 hp.validateDefaultUtmTags(custom, "hehe", "", "", "", "");
-                expect(rq.length).to.eq(1);
+                expect(rq.length).to.eq(2);
+                expect(JSON.parse(rq[1].attribution).type).to.eq("landing");
             });
         });
     });

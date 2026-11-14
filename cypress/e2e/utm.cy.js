@@ -97,11 +97,15 @@ describe("UTM tests ", () => {
             });
             // check if no utm tag in request queue if the query is wrong
             cy.fetch_local_request_queue("Countly_4").then((rq) => {
-                expect(rq.length).to.eq(0);
+                // no user properties, only the landing address, which is sent for any utm_* parameter
+                expect(rq.length).to.eq(1);
+                expect(JSON.parse(rq[0].attribution).type).to.eq("landing");
             });
             // check if no utm tag in request queue if the query is wrong
             cy.fetch_local_request_queue("Countly_5").then((rq) => {
-                expect(rq.length).to.eq(0);
+                // no user properties, only the landing address, which is sent for any utm_* parameter
+                expect(rq.length).to.eq(1);
+                expect(JSON.parse(rq[0].attribution).type).to.eq("landing");
             });
         });
     });
@@ -185,12 +189,16 @@ describe("UTM tests ", () => {
 
             // check if custom utm tags works for multi 1
             cy.fetch_local_request_queue("Countly_multi_next_1").then((rq) => {
-                expect(rq.length).to.eq(0);
+                // no user properties, only the landing address, which is sent for any utm_* parameter
+                expect(rq.length).to.eq(1);
+                expect(JSON.parse(rq[0].attribution).type).to.eq("landing");
             });
 
             // check if custom utm tags works for multi 2
             cy.fetch_local_request_queue("Countly_multi_next_2").then((rq) => {
-                expect(rq.length).to.eq(0);
+                // no user properties, only the landing address, which is sent for any utm_* parameter
+                expect(rq.length).to.eq(1);
+                expect(JSON.parse(rq[0].attribution).type).to.eq("landing");
             });
 
             // check if custom utm tags works for multi 3

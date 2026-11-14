@@ -112,6 +112,7 @@
         "fetch_remote_config",
         "enrollUserToAb",
         "recordDirectAttribution",
+        "recordAdRevenue",
         "collect_from_forms",
         "collect_from_facebook",
         "get_available_feedback_widgets",

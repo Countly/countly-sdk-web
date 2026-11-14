@@ -305,6 +305,52 @@ declare module "countly-sdk-web" {
     ): void;
 
     /**
+     * Record the revenue of one paid ad impression, as the ad network's callback gives it, as the [CLY]_ad_revenue event.
+     * Needs the "events" consent. The amount is sent as it is: give it in the currency the app uses for purchases.
+     * @param {number} amount - the impression's revenue (AdMob gives micros: divide them by 1000000 first)
+     * @param {Object} [details] - each optional, sent as a segment only when given
+     */
+    function recordAdRevenue(
+      amount: number,
+      details?: {
+        network?: string;
+        placement?: string;
+        format?: string;
+        currency?: string;
+        precision?: string;
+      }
+    ): void;
+
+    /**
+     * Smart links for a page on the app's own site, so that a visitor with the app installed opens it there
+     */
+    const attribution: Attribution;
+    interface AppLinkOptions {
+      /** the campaign's link code */
+      code: string;
+      /** the deep-link path in the app, such as "/product/42" */
+      path?: string;
+      /** more query parameters; they win over this page's ones of the same name */
+      params?: { [key: string]: string | number | boolean | null | undefined };
+      /** "intent" for the intent:// form, for Android browsers */
+      android?: "intent" | "https";
+      /** the link host, such as "https://go.example.com", in place of attribution_link_host */
+      host?: string;
+      /** the Countly app id, in place of attribution_app_id */
+      appId?: string;
+      /** the Android package, in place of attribution_android_package */
+      androidPackage?: string;
+    }
+    interface Attribution {
+      /**
+       * The smart link of a campaign, carrying this page's UTM tags and the parameters named in attribution_landing_params.
+       * Nothing is sent by this call: the server counts the click when the link is opened.
+       * @returns the link, or null when the code or the host cannot be used
+       */
+      appLink(options: AppLinkOptions): string | null;
+    }
+
+    /**
      * Provide information about user
      * @param {Object} user - Countly {@link UserDetails} object
      * @param {string} [user.name] - user's full name

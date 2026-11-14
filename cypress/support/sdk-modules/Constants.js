@@ -33,6 +33,7 @@ var featureList = Object.keys(featureEnums).map(function (key) {
     [CLY]_orientation - "users" consent
     [CLY]_push_action - "push" consent
     [CLY]_action - "clicks" or "scroll" consent
+    [CLY]_ad_revenue - "events" consent
  */
 var internalEventKeyEnums = {
     NPS: "[CLY]_nps",
@@ -42,9 +43,13 @@ var internalEventKeyEnums = {
     ORIENTATION: "[CLY]_orientation",
     ACTION: "[CLY]_action",
     PUSH_ACTION: "[CLY]_push_action",
+    AD_REVENUE: "[CLY]_ad_revenue",
 };
 
 var internalEventKeyEnumsArray = Object.values(internalEventKeyEnums);
+
+// click ids ad platforms add to a landing URL; the server reads which platform the click came from
+var paidClickIdParams = ["gclid", "fbclid", "msclkid", "ttclid", "twclid", "li_fat_id"];
 /**
  * 
  *log level Enums:
@@ -118,6 +123,9 @@ var logLineConsent = Object.freeze({
     add_log: featureEnums.CRASHES,
     report_conversion: featureEnums.ATTRIBUTION,
     recordDirectAttribution: featureEnums.ATTRIBUTION,
+    sendLandingAttribution: featureEnums.ATTRIBUTION,
+    appLink: featureEnums.ATTRIBUTION,
+    recordAdRevenue: featureEnums.EVENTS,
     user_details: featureEnums.USERS,
     "[userData]": featureEnums.USERS,
     collect_from_forms: featureEnums.USERS,
@@ -333,4 +341,4 @@ var contentReservedSegmentationPrefix = "answ";
 // 17: "#fragment"
 var urlParseRE = /^(((([^:\/#\?]+:)?(?:(\/\/)((?:(([^:@\/#\?]+)(?:\:([^:@\/#\?]+))?)@)?(([^:\/#\?\]\[]+|\[[^\/\]@#?]+\])(?:\:([0-9]+))?))?)?)?((\/?(?:[^\/\?#]+\/+)*)([^\?#]*)))?(\?[^#]+)?)(#.*)?/;
 
-export { CDN, DeviceIdTypeInternalEnums, SDK_NAME, SDK_VERSION, configurationDefaultValues, contentReservedSegmentationKeys, contentReservedSegmentationPrefix, featureEnums, featureList, healthCheckCounterEnum, internalEventKeyEnums, internalEventKeyEnumsArray, logGatheringDefaultValues, logLevelEnums, logLevelToWireChar, logLineConsent, pushConstants, pushMessageTypes, pushStorageKeys, pushWorkerParams, tabHandoverTimes, urlParseRE };
+export { CDN, DeviceIdTypeInternalEnums, SDK_NAME, SDK_VERSION, configurationDefaultValues, contentReservedSegmentationKeys, contentReservedSegmentationPrefix, featureEnums, featureList, healthCheckCounterEnum, internalEventKeyEnums, internalEventKeyEnumsArray, logGatheringDefaultValues, logLevelEnums, logLevelToWireChar, logLineConsent, paidClickIdParams, pushConstants, pushMessageTypes, pushStorageKeys, pushWorkerParams, tabHandoverTimes, urlParseRE };
