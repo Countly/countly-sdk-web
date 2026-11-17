@@ -1,0 +1,6 @@
+/node_modules/
+/test/consumers/node_modules/
+/test/consumers/.apps/
+.vscode/*
+*.jar
+/ngx-countly/
