@@ -1,0 +1,90 @@
+name: ngx-countly
+
+on:
+  push:
+    branches: [master, staging]
+    paths: ['ngx-countly/**', '.github/workflows/ngx-countly.yml']
+  pull_request:
+    branches: [master, staging]
+    paths: ['ngx-countly/**', '.github/workflows/ngx-countly.yml']
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: ngx-countly
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ngx-countly/package-lock.json
+      - run: npm ci
+      - name: Build the library (Angular 17 toolchain, partial compilation)
+        run: npm run build:lib
+      - name: Test the library
+        run: npm run test:ci
+      - name: Build the demo
+        run: npx ng build demo
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ngx-countly
+          path: ngx-countly/dist/ngx-countly
+
+  # The published build must work on every Angular it claims: compile it into a
+  # fresh app of the newest major, both standalone and NgModule.
+  latest-angular:
+    needs: build-test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .
+    strategy:
+      matrix:
+        style: [standalone, ngmodule]
+    steps:
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: ngx-countly
+          path: ngx-countly
+      - name: Create a ${{ matrix.style }} app on the latest Angular
+        run: |
+          npx -y @angular/cli@latest new app --defaults --skip-git --ssr=false --standalone=${{ matrix.style == 'standalone' }}
+          cd app
+          npm i ../ngx-countly
+          echo '<button countlyEvent="signup" [countlySegmentation]="{ plan: 1 }">Sign up</button>' >> src/app/app.html
+      - name: Wire ngx-countly in with provideCountly()
+        if: matrix.style == 'standalone'
+        working-directory: app
+        run: |
+          cat > src/app/app.config.ts <<'TS'
+          import { ApplicationConfig } from '@angular/core';
+          import { provideRouter } from '@angular/router';
+          import { provideCountly, withErrorHandler, withRouterTracking } from 'ngx-countly';
+          import { routes } from './app.routes';
+
+          export const appConfig: ApplicationConfig = {
+            providers: [
+              provideRouter(routes),
+              provideCountly({ appKey: 'k', url: 'https://countly.test' }, withRouterTracking(), withErrorHandler()),
+            ],
+          };
+          TS
+          sed -i "s/^import { Component\(.*\)$/import { Component\1\nimport { CountlyEventDirective } from 'ngx-countly';/; s/imports: \[/imports: [CountlyEventDirective, /" src/app/app.ts
+      - name: Wire ngx-countly in with CountlyModule.forRoot()
+        if: matrix.style == 'ngmodule'
+        working-directory: app
+        run: |
+          sed -i "s/^import { App } from '.\/app';/import { App } from '.\/app';\nimport { CountlyModule } from 'ngx-countly';/; s/^    AppRoutingModule$/    AppRoutingModule,\n    CountlyModule.forRoot({ appKey: 'k', url: 'https:\/\/countly.test', routerTracking: true, errorHandler: true }),/" src/app/app-module.ts
+      - name: Build (AOT)
+        working-directory: app
+        run: npx ng build

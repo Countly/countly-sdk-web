@@ -1,0 +1,33 @@
+{
+  "name": "ngx-countly",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/common": ">=17.0.0 <23.0.0",
+    "@angular/core": ">=17.0.0 <23.0.0",
+    "@angular/router": ">=17.0.0 <23.0.0",
+    "rxjs": "^7.4.0"
+  },
+  "dependencies": {
+    "countly-sdk-web": "^26.8.1",
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false,
+  "description": "Countly for Angular: provideCountly(), router view tracking, error reporting and an event directive, on countly-sdk-web",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Countly/countly-sdk-web",
+    "directory": "ngx-countly/projects/ngx-countly"
+  },
+  "bugs": {
+    "url": "https://github.com/Countly/countly-sdk-web/issues"
+  },
+  "homepage": "https://github.com/Countly/countly-sdk-web/tree/master/ngx-countly/projects/ngx-countly#readme",
+  "keywords": [
+    "angular",
+    "countly",
+    "analytics",
+    "crash-reporting",
+    "sdk"
+  ]
+}
