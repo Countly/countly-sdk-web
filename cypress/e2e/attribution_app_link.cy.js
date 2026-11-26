@@ -49,6 +49,21 @@ describe("Attribution app link tests", () => {
             })).to.equal("https://go.example.com/at/" + APP_ID + "/c1/shop/a%20b/%C3%BC?utm_medium=web&utm_source=override&promo=10%25%26more");
         });
     });
+    it("Carries a space the page's query encodes as + as a space, and a literal plus as a plus", () => {
+        hp.haltAndClearStorage(() => {
+            initPage("?utm_campaign=Black+Friday&utm_term=a%2Bb&ref=r+1&utm_content=c%20d", {
+                attribution_link_host: "https://go.example.com",
+                attribution_app_id: APP_ID,
+                attribution_landing_params: ["ref"]
+            });
+            const link = Countly.attribution.appLink({ code: "c1" });
+            expect(link).to.equal("https://go.example.com/at/" + APP_ID + "/c1?utm_campaign=Black%20Friday&utm_term=a%2Bb&ref=r%201&utm_content=c%20d");
+            // the server reads the link's query as it reads the landing's: the same values
+            const linkQuery = new URLSearchParams(link.split("?")[1]);
+            const landingQuery = new URLSearchParams("utm_campaign=Black+Friday&utm_term=a%2Bb&ref=r+1&utm_content=c%20d");
+            expect(Array.from(linkQuery.entries())).to.deep.equal(Array.from(landingQuery.entries()));
+        });
+    });
     it("Carries qr=1 as an ordinary link parameter", () => {
         hp.haltAndClearStorage(() => {
             initPage("?utm_source=print", { attribution_link_host: "https://go.example.com", attribution_app_id: APP_ID });
