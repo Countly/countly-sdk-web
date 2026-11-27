@@ -55,6 +55,18 @@ describe("TypeScript declarations compile for typical use", () => {
         assert.deepEqual(typeCheck(dir, "node16.cts", TYPED_USE, { module: ts.ModuleKind.Node16, moduleResolution: ts.ModuleResolutionKind.Node16 }), []);
     });
 
+    test("the ad revenue and app link calls compile, and a wrong argument type is reported", () => {
+        const use = TYPED_USE +
+            "Countly.recordAdRevenue(0.0042, { network: \"applovin\", format: \"interstitial\", currency: \"USD\" });\n" +
+            "Countly.recordAdRevenue(1);\n" +
+            "const link: string | null = Countly.attribution.appLink({ code: \"spring\", path: \"/product/42\", params: { promo: \"a\" }, android: \"intent\" });\n";
+        const options = { module: ts.ModuleKind.ESNext, moduleResolution: ts.ModuleResolutionKind.Bundler };
+        assert.deepEqual(typeCheck(dir, "attribution.ts", use, options), []);
+        const messages = typeCheck(dir, "attribution-typo.ts", use.replace("{ code: \"spring\",", "{ code: 42,"), options);
+        assert.equal(messages.length, 1);
+        assert.match(messages[0], /'number' is not assignable to type 'string'/);
+    });
+
     test("a typo in an SDK method name is reported, so the declarations are really checked", () => {
         const messages = typeCheck(dir, "typo.ts", TYPED_USE.replace("Countly.add_event", "Countly.add_evnt"), { module: ts.ModuleKind.ESNext, moduleResolution: ts.ModuleResolutionKind.Bundler });
         assert.equal(messages.length, 1);
