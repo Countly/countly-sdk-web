@@ -90,11 +90,57 @@ describe("Landing attribution tests", () => {
     });
     it("Sends the landing address for a utm tag outside the utm filter", () => {
         hp.haltAndClearStorage(() => {
-            initLanding("utm_aa=hehe", { utm: { bb: true } });
+            initLanding("utm_id=hehe", { utm: { bb: true } });
             cy.fetch_local_request_queue().then((rq) => {
                 const sent = attributionRequests(rq);
                 expect(sent.length).to.equal(1);
-                expectLanding(sent[0], "utm_aa=hehe");
+                expectLanding(sent[0], "utm_id=hehe");
+            });
+        });
+    });
+    // the UTM tags the server reads from a landing
+    ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "utm_id", "utm_source_platform", "utm_creative_format", "utm_marketing_tactic"].forEach((tag) => {
+        it("Sends the landing address for the utm tag " + tag + " alone", () => {
+            hp.haltAndClearStorage(() => {
+                initLanding("?foo=bar&" + tag + "=x");
+                cy.fetch_local_request_queue().then((rq) => {
+                    const sent = attributionRequests(rq);
+                    expect(sent.length).to.equal(1);
+                    expectLanding(sent[0], "foo=bar&" + tag + "=x");
+                });
+            });
+        });
+    });
+    it("Sends nothing for a utm_* name the server does not read", () => {
+        hp.haltAndClearStorage(() => {
+            initLanding("?utm_foo=x");
+            cy.fetch_local_request_queue().then((rq) => {
+                expect(attributionRequests(rq).length).to.equal(0);
+            });
+        });
+    });
+    // the server reads the first value of a name, a "+" as a space, and a value of only spaces as none
+    ["utm_source=", "utm_source", "utm_source=+%20", "utm_source=&utm_source=x"].forEach((query) => {
+        it("Sends nothing for a utm tag without a value: " + query, () => {
+            hp.haltAndClearStorage(() => {
+                initLanding("?" + query);
+                cy.fetch_local_request_queue().then((rq) => {
+                    expect(attributionRequests(rq).length).to.equal(0);
+                });
+            });
+        });
+    });
+    // a Countly link's campaign code: countly_cid, and cly_id of older links
+    ["countly_cid", "cly_id"].forEach((name) => {
+        it("Sends the landing address for the campaign code " + name + " alone", () => {
+            hp.haltAndClearStorage(() => {
+                initLanding("?" + name + "=abc");
+                cy.fetch_local_request_queue().then((rq) => {
+                    const sent = attributionRequests(rq);
+                    expect(sent.length).to.equal(1);
+                    expectLanding(sent[0], name + "=abc");
+                    expect(rq.filter((req) => req.user_details !== undefined).length).to.equal(0);
+                });
             });
         });
     });
@@ -135,19 +181,27 @@ describe("Landing attribution tests", () => {
     });
     it("Sends nothing for a landing without campaign parameters", () => {
         hp.haltAndClearStorage(() => {
-            initLanding("?foo=bar&ref=xyz&gclid=&cly_id=cmp&cly_uid=usr");
+            initLanding("?foo=bar&ref=xyz&gclid=&cly_clk=&countly_cid=&cly_id=&cly_uid=usr&utm_foo=x");
             cy.fetch_local_request_queue().then((rq) => {
                 expect(attributionRequests(rq).length).to.equal(0);
             });
         });
     });
-    it("Sends the landing address for an allow-listed parameter", () => {
+    it("Sends nothing for an allow-listed parameter alone", () => {
         hp.haltAndClearStorage(() => {
             initLanding("?foo=bar&ref=xyz", { attribution_landing_params: ["ref"] });
             cy.fetch_local_request_queue().then((rq) => {
+                expect(attributionRequests(rq).length).to.equal(0);
+            });
+        });
+    });
+    it("Sends the whole landing address, the allow-listed parameter with it, for a campaign parameter", () => {
+        hp.haltAndClearStorage(() => {
+            initLanding("?ref=xyz&utm_source=x", { attribution_landing_params: ["ref"] });
+            cy.fetch_local_request_queue().then((rq) => {
                 const sent = attributionRequests(rq);
                 expect(sent.length).to.equal(1);
-                expectLanding(sent[0], "foo=bar&ref=xyz");
+                expectLanding(sent[0], "ref=xyz&utm_source=x");
             });
         });
     });

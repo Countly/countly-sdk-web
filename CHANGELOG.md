@@ -1,13 +1,14 @@
 ## XX.XX.XX
 
 - Added an automatic attribution signal for campaign landings, without any API call:
-  - when the page address has a `utm_*` parameter, a Countly click id (`cly_clk`), an ad click id or a parameter named in `attribution_landing_params`, the SDK sends the landing address as `attribution={"type":"landing","value":"<address>"}`
-  - the ad click ids are `gclid`, `fbclid`, `msclkid`, `ttclid`, `twclid` and `li_fat_id`, when they have a value; the server reads which ad platform the click came from
+  - when the page address has, with a value, a UTM tag the server reads, a Countly campaign code (`countly_cid`, or `cly_id` of older links), a Countly click id (`cly_clk`) or an ad click id, the SDK sends the landing address as `attribution={"type":"landing","value":"<address>"}`; without one the server stores nothing from a landing, so nothing is sent
+  - the UTM tags are `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content`, `utm_id`, `utm_source_platform`, `utm_creative_format` and `utm_marketing_tactic`; another `utm_*` name, or a parameter named in `attribution_landing_params`, does not send a landing on its own
+  - the ad click ids are `gclid`, `fbclid`, `msclkid`, `ttclid`, `twclid` and `li_fat_id`; the server reads which ad platform the click came from
   - it needs the `attribution` consent, and waits until it is given on that page; a landing left before the consent is given is not sent
   - with `require_consent`, the landing request also carries the consent state when the consent was just given, so a server that stores campaigns only with the `attribution` consent reads it before the consent request arrives
   - a reload of the same address in the same tab does not send it again; a different landing address with campaign parameters does
   - servers that support it parse the campaign from it; older servers ignore it, and `utm_*` tags are still recorded as user properties as before
-- Added `attribution_landing_params` init option for naming additional landing parameters that mark a campaign landing, such as `["ref"]` (default `[]`).
+- Added `attribution_landing_params` init option for naming additional landing parameters that `Countly.attribution.appLink` carries, such as `["ref"]` (default `[]`); such a parameter alone does not send a landing.
 - Added `recordAdRevenue(amount, {network, placement, format, currency, precision})` for recording the revenue of one paid ad impression as the `[CLY]_ad_revenue` event:
   - call it from the ad network's paid-impression callback, with the amount in the currency the app uses for purchases; the SDK converts nothing
   - each detail is optional and sent as a segment only when given; it needs the `events` consent
